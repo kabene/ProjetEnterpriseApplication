@@ -100,3 +100,6 @@ target/
 
 # End of https://www.toptal.com/developers/gitignore/api/java,eclipse,java-web
 
+.idea/
+
+frontend/node_modules/
