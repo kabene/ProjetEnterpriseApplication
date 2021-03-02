@@ -2,6 +2,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/java,eclipse,java-web
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,eclipse,java-web
 
+### MACOS###
+.DS_Store
+
+
 ### Eclipse ###
 .metadata
 bin/
@@ -91,12 +95,14 @@ local.properties
 *.tar.gz
 *.rar
 
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
 ### Java-Web ###
 ## ignoring target file
 target/
+
 
 # End of https://www.toptal.com/developers/gitignore/api/java,eclipse,java-web
 
