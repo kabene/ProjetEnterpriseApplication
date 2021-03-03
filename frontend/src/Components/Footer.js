@@ -5,7 +5,7 @@ let footer = document.querySelector("#footer");
 const Footer = () => {
     let footerHtml = `   
         <div class="footer text-center justify-content-center mt-2 mb-2">
-            <img id="logo-footer" src="` + logo + `" alt="logo" />
+            <img id="logoFooter" src="` + logo + `" alt="logo" />
             <span>1bis sente des artistes – Verviers, num, codeCommune</span>
         </div>  
     `;

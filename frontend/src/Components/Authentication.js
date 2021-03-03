@@ -17,7 +17,7 @@ const Authentication = () => {
                     </div>
                     <button class="btn btn-primary w-35 m-5" id="button_login" type="submit">Se connecter</button>
                 </div>
-                <div class="col-1" id="authentication-line"></div>
+                <div class="col-1" id="authenticationLine"></div>
                 <div class="col-1"></div>
                 <div class="col-4 px-0 py-4 px-5 mr-5 border border-dark m-auto">
                     <div class="form-group">
@@ -46,11 +46,11 @@ const Authentication = () => {
                         
                     </div>
                     <div class="form-group">
-                        <input class="form-control input-signup my-2" id="num_signup" type="text" name="num_signup" placeholder="numero"/>
-                        <input class="form-control input-signup my-2" id="boite_signup" type="text" name="boite_signup" placeholder="boite"/>
-                        <input class="form-control input-signup my-2" id="postal_signup" type="text" name="postal_signup" placeholder="code postal"/>
-                        <input class="form-control input-signup my-2" id="commune_signup" type="text" name="commune_signup" placeholder="commune"/>
-                        <input class="form-control input-signup my-2" id="municipality_signup" type="text" name="municipality_signup" placeholder="pays"/>
+                        <input class="form-control inputSignup my-2" id="num_signup" type="text" name="num_signup" placeholder="numero"/>
+                        <input class="form-control inputSignup my-2" id="boite_signup" type="text" name="boite_signup" placeholder="boite"/>
+                        <input class="form-control inputSignup my-2" id="postal_signup" type="text" name="postal_signup" placeholder="code postal"/>
+                        <input class="form-control inputSignup my-2" id="commune_signup" type="text" name="commune_signup" placeholder="commune"/>
+                        <input class="form-control inputSignup my-2" id="municipality_signup" type="text" name="municipality_signup" placeholder="pays"/>
                     </div>
                     <select class="selectpicker" id="selectpicker_role">
                         <option>Client</option>

@@ -29,7 +29,7 @@ const HomePage = () => {
                         </div>
                     </div>
                     <div class="carousel-item">
-                    <h4><span class="badge badge-light venduBadge">Vendu!</span></h4>
+                    <h4><span class="badge badge-light badgeSold">Vendu!</span></h4>
                         <img class="d-block w-50 m-auto" src="` + meuble3 + `" alt="Meuble 3">
                         <div class="carousel-caption text-dark pb-5 position-static">
                             <h5>Meuble 3 description</h5>

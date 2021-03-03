@@ -4,18 +4,18 @@
     background-color: rgb(180, 173, 173);
 }
 
-#logo-navbar {
+#logoNavbar {
     width: 4.5em;
     cursor: pointer;
 }
 
 @media (min-width: 359px) and (max-width: 1132px) {
-    #logo-navbar {
+    #logoNavbar {
         margin-left: 2.5em;
     }
 }
 
-#store-name {
+#storeName {
     margin-left: 0.7em;
     font-weight: bold;
     font-size: 1.3em;
@@ -26,12 +26,12 @@
 }
 
 @media (max-width: 173px) {
-    #store-name {
+    #storeName {
         white-space: normal;
     }
 }
 
-.navbar-button {
+.navbarButton {
     width: 7em;
     height: 4em;
     margin-right: 1.5em;
@@ -39,30 +39,32 @@
     margin-bottom: 1em;
 }
 
-#voirMeubleButton {
+#seeFurnitureButton {
     margin-right: 10em;
 }
 
 @media (max-width: 443px) {
-    #voirMeubleButton {
+    #seeFurnitureButton {
         margin-right: 1.5em;
     }
 }
 
 
-/********************************On HomePage**********************************/
+/********************************On Authentication**********************************/
 
-#authentication-line {
+#authenticationLine {
     border-right: solid;
 }
 
-.input-signup {
+.inputSignup {
     width: 7em;
     display: inline;
     margin-left: 1.5em;
 }
 
-.venduBadge {
+/********************************On HomePage**********************************/
+
+.badgeSold {
     transform: rotateZ(-25deg);
     margin-top: 2em;
     margin-left: 5em;
@@ -78,6 +80,6 @@ footer {
     background-color: rgb(180, 173, 173);
 }
 
-#logo-footer {
+#logoFooter {
     width: 2em;
 }

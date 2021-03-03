@@ -10,7 +10,7 @@ const Navbar = () => {
                 <span class="navbar-toggler-icon"></span>
             </button>
             <ul class="navbar-nav"> 
-                <li class="nav-item mt-1 mb-1"><img id="logo-navbar" src="` + logo + `" alt="logo" href="#" data-uri="/"/><span id="store-name" href="#" data-uri="/">LI VI SATCHO</span></li>
+                <li class="nav-item mt-1 mb-1"><img id="logoNavbar" src="` + logo + `" alt="logo" href="#" data-uri="/"/><span id="storeName" href="#" data-uri="/">LI VI SATCHO</span></li>
             </ul>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto"> 
@@ -18,26 +18,26 @@ const Navbar = () => {
                 
     //if quidam
     /*navbarHtml += `
-                    <li class="nav-item"><button type="button" class="btn btn-primary navbar-button" id="voirMeubleButton" href="#" data-uri="/furnitures">Voir les meubles</button>
-                    <button type="button" class="btn btn-primary navbar-button" href="#" data-uri="/authentication">S'identifier</button></li>
+                    <li class="nav-item"><button type="button" class="btn btn-primary navbarButton" id="seeFurnitureButton" href="#" data-uri="/furnitures">Voir les meubles</button>
+                    <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/authentication">S'identifier</button></li>
     `;
     */
     //if client
     navbarHtml += `                 
-                    <li class="nav-item"><button type="button" class="btn btn-secondary navbar-button p-0" href="#" data-uri="/visits">Mes demandes de visite</button>
-                    <button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/requestVisit">Demander une visite</button>
-                    <button type="button" class="btn btn-primary navbar-button" href="#" data-uri="/furnitures">Voir les meubles</button>
-                    <button type="button" class="btn btn-secondary navbar-button pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
+                    <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton p-0" href="#" data-uri="/visits">Mes demandes de visite</button>
+                    <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/requestVisit">Demander une visite</button>
+                    <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
+                    <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
                     <li class="my-auto font-weight-bold">utilisateurs.pseudo</li>
     `;
     
     //if admin
     /*navbarHtml += `                 
-                    <li class="nav-item"><button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/furnitureList">Rechercher un meuble</button>
-                    <button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/visits">Demandes de visite</button>
-                    <button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/customers">Gestion des clients</button>
-                    <button type="button" class="btn btn-primary navbar-button" href="#" data-uri="/furnitures">Voir les meubles</button>
-                    <button type="button" class="btn btn-secondary navbar-button pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
+                    <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/furnitureList">Rechercher un meuble</button>
+                    <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visits">Demandes de visite</button>
+                    <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/customers">Gestion des clients</button>
+                    <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
+                    <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
                     <li class="my-auto font-weight-bold">utilisateurs.pseudo</li>
     `;
      */            
