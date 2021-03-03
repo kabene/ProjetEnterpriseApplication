@@ -18,25 +18,25 @@ const Navbar = () => {
                 
     //if quidam
     /*navbarHtml += `
-                    <li class="nav-item"><button type="button" class="btn btn-primary navbar-button" id="voirMeubleButton" href="#" data-uri="/meubles">Voir les meubles</button>
-                    <button type="button" class="btn btn-primary navbar-button" href="#" data-uri="/auth">S'identifier</button></li>
+                    <li class="nav-item"><button type="button" class="btn btn-primary navbar-button" id="voirMeubleButton" href="#" data-uri="/furnitures">Voir les meubles</button>
+                    <button type="button" class="btn btn-primary navbar-button" href="#" data-uri="/authentication">S'identifier</button></li>
     `;
     */
     //if client
     navbarHtml += `                 
-                    <li class="nav-item"><button type="button" class="btn btn-secondary navbar-button p-0" href="#" data-uri="/visites">Mes demandes de visite</button>
-                    <button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/demanderVisite">Demander une visite</button>
-                    <button type="button" class="btn btn-primary navbar-button" href="#" data-uri="/meubles">Voir les meubles</button>
+                    <li class="nav-item"><button type="button" class="btn btn-secondary navbar-button p-0" href="#" data-uri="/visits">Mes demandes de visite</button>
+                    <button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/requestVisit">Demander une visite</button>
+                    <button type="button" class="btn btn-primary navbar-button" href="#" data-uri="/furnitures">Voir les meubles</button>
                     <button type="button" class="btn btn-secondary navbar-button pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
                     <li class="my-auto font-weight-bold">utilisateurs.pseudo</li>
     `;
     
     //if admin
     /*navbarHtml += `                 
-                    <li class="nav-item"><button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/listeMeubles">Rechercher un meuble</button>
-                    <button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/visites">Demandes de visite</button>
-                    <button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/clients">Gestion des clients</button>
-                    <button type="button" class="btn btn-primary navbar-button" href="#" data-uri="/meubles">Voir les meubles</button>
+                    <li class="nav-item"><button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/furnitureList">Rechercher un meuble</button>
+                    <button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/visits">Demandes de visite</button>
+                    <button type="button" class="btn btn-secondary navbar-button" href="#" data-uri="/customers">Gestion des clients</button>
+                    <button type="button" class="btn btn-primary navbar-button" href="#" data-uri="/furnitures">Voir les meubles</button>
                     <button type="button" class="btn btn-secondary navbar-button pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
                     <li class="my-auto font-weight-bold">utilisateurs.pseudo</li>
     `;

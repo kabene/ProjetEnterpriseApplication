@@ -1,21 +1,21 @@
 import HomePage from "./HomePage.js";
 import Authentication from "./Authentication.js";
-import Meubles from "./Meubles.js";
-import Clients from "./Clients.js";
-import Visites from "./Visites.js";
+import Furnitures from "./Furnitures.js";
+import Customer from "./Customer.js";
+import Visits from "./Visits.js";
 import ErrorPage from "./ErrorPage.js";
-import ListeMeubles from "./ListeMeubles.js";
-import DemanderVisite from "./DemanderVisite.js";
+import FurnitureList from "./FurnitureList.js";
+import RequestVisit from "./RequestVisit.js";
 import LogoutComponent from "./LogoutComponent.js";
 
 const routes = {
     "/": HomePage,
-    "/auth": Authentication,
-    "/meubles": Meubles,
-    "/clients": Clients,
-    "/visites": Visites,
-    "/listeMeubles": ListeMeubles,
-    "/demanderVisite": DemanderVisite,
+    "/authentication": Authentication,
+    "/furnitures": Furnitures,
+    "/customers": Customer,
+    "/visits": Visits,
+    "/furnitureList": FurnitureList,
+    "/requestVisit": RequestVisit,
     "/logout": LogoutComponent
 };
 
