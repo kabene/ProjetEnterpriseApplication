@@ -25,7 +25,7 @@ const Navbar = () => {
     //if client
     navbarHtml += `                 
                     <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton p-0" href="#" data-uri="/visits">Mes demandes de visite</button>
-                    <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/requestVisit">Demander une visite</button>
+                    <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>
                     <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
                     <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
                     <li class="my-auto font-weight-bold">utilisateurs.pseudo</li>
