@@ -5,7 +5,7 @@ import Customer from "./Customer.js";
 import Visits from "./Visits.js";
 import ErrorPage from "./ErrorPage.js";
 import FurnitureList from "./FurnitureList.js";
-import RequestVisit from "./RequestVisit.js";
+import VisitRequest from "./VisitRequest.js";
 import LogoutComponent from "./LogoutComponent.js";
 
 const routes = {
@@ -15,7 +15,7 @@ const routes = {
     "/customers": Customer,
     "/visits": Visits,
     "/furnitureList": FurnitureList,
-    "/requestVisit": RequestVisit,
+    "/visitRequest": VisitRequest,
     "/logout": LogoutComponent
 };
 
