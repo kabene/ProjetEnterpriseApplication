@@ -3,7 +3,7 @@ let page = document.querySelector("#page");
 //mettre dans deux pages différentes ? -> impossible de rendre la page seponsive avec deux formulaires
 
 const Authentication = () => {
-    page.innerHTML = `
+    let pageHTML = `
         <form>
             <div class="row mx-0 mt-5">
                 <div class="col-4 px-0 py-4 ml-5 border border-dark m-auto">
@@ -61,8 +61,8 @@ const Authentication = () => {
                 </div>
             </div>
         </form>
-    
     `;
+    page.innerHTML = pageHTML;
 }
 
 export default Authentication;

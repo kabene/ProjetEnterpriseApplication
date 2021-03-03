@@ -1,7 +1,8 @@
 let page = document.querySelector("#page");
 
 const LogoutComponent = () => {
-    page.innerHTML = `<h1>Lien pour se deconnecter (clients/admins)</h1>`;
+    let pageHTML = `<h1>Lien pour se deconnecter (clients/admins)</h1>`;
+    page.innerHTML = pageHTML;
 }
 
 export default LogoutComponent;

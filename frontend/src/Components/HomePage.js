@@ -5,7 +5,7 @@ import meuble3 from "../img/furnitures/Secretaire.png";
 let page = document.querySelector("#page");
 
 const HomePage = () => {
-    page.innerHTML = `
+    let pageHTML = `
     <div class="row mx-0 pt-5">
         <div class="col-2"></div>
         <div class="col-8">
@@ -49,6 +49,7 @@ const HomePage = () => {
         <div class="col-2"></div>
     </div>
     `;
+    page.innerHTML = pageHTML;
 }
 
 export default HomePage;
