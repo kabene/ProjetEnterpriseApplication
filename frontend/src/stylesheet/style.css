@@ -1,0 +1,85 @@
+/*********************************On Navbar*********************************/
+
+.navbar {
+    background-color: rgb(180, 173, 173);
+}
+
+#logoNavbar {
+    width: 4.5em;
+    cursor: pointer;
+}
+
+@media (min-width: 359px) and (max-width: 1132px) {
+    #logoNavbar {
+        margin-left: 2.5em;
+    }
+}
+
+#storeName {
+    margin-left: 0.7em;
+    font-weight: bold;
+    font-size: 1.3em;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+@media (max-width: 173px) {
+    #storeName {
+        white-space: normal;
+    }
+}
+
+.navbarButton {
+    width: 7em;
+    height: 4em;
+    margin-right: 1.5em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+#seeFurnitureButton {
+    margin-right: 10em;
+}
+
+@media (max-width: 443px) {
+    #seeFurnitureButton {
+        margin-right: 1.5em;
+    }
+}
+
+
+/********************************On Authentication**********************************/
+
+#authenticationLine {
+    border-right: solid;
+}
+
+.inputSignup {
+    width: 7em;
+    display: inline;
+    margin-left: 1.5em;
+}
+
+/********************************On HomePage**********************************/
+
+.badgeSold {
+    transform: rotateZ(-25deg);
+    margin-top: 2em;
+    margin-left: 5em;
+    color: red;
+    background-color: lightgray;
+    height: 2em;
+}
+
+
+/********************************On Footer**********************************/
+
+footer {
+    background-color: rgb(180, 173, 173);
+}
+
+#logoFooter {
+    width: 2em;
+}
