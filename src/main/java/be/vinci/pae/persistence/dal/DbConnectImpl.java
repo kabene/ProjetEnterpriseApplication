@@ -14,9 +14,10 @@ public class DbConnectImpl implements ConnectionBackendServices {
 
   /**
    * make the connection to the DB
-   * @pre: no input required
-   * @post: establish a connection between postgresql database and the system
-   * first @author: karim
+   *
+   * @param
+   * @post establish a connection between postgresql database and the system first
+   * @author karim
    */
   public DbConnectImpl() {
     try {
@@ -26,7 +27,8 @@ public class DbConnectImpl implements ConnectionBackendServices {
       e.printStackTrace();
     }
     try {
-      conn = ds.getConnection();  // shouldnt be there but i dont know where I'll do it later Karim#TODO
+      conn = ds
+          .getConnection();
     } catch (SQLException e) {
       System.out.println("Impossible de joindre le server !");
       System.exit(1);
@@ -37,9 +39,10 @@ public class DbConnectImpl implements ConnectionBackendServices {
   /**
    * Set data from .properties
    *
+   * @param
    * @pre: setup data sources
-   * @post: return DataSource object with the every information from the properties
-   * first @author: karim
+   * @post: return DataSource object with the every information from the properties first @author:
+   * @author: karim
    */
   private DataSource setupDataSource() {
     BasicDataSource ds = new BasicDataSource();
@@ -55,8 +58,8 @@ public class DbConnectImpl implements ConnectionBackendServices {
    *
    * @param query
    * @pre query : to execute
-   * @post send preparedStatement filled
-   * first @author: karim
+   * @post send preparedStatement filled first
+   * @author: karim
    */
   @Override
   public PreparedStatement makeStatement(String query) {
