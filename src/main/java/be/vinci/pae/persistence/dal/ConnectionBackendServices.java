@@ -5,10 +5,9 @@ import java.sql.PreparedStatement;
 public interface ConnectionBackendServices {
 
   /**
-   * Create a  PreparedStatement
    *
-   * @pre query : to execute
-   * @post send preparedStatement filled first @author: karim
+   * @param query String represt the query.
+   * @return send preparedStatement filled first.
    */
   PreparedStatement makeStatement(String query);
 }

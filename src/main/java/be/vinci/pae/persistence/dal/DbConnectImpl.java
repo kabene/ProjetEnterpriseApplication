@@ -13,11 +13,7 @@ public class DbConnectImpl implements ConnectionBackendServices {
   Connection conn = null;
 
   /**
-   * make the connection to the DB
-   *
-   * @param
-   * @post establish a connection between postgresql database and the system first
-   * @author karim
+   * establish a connection between postgresql database and the system first.
    */
   public DbConnectImpl() {
     try {
@@ -37,12 +33,7 @@ public class DbConnectImpl implements ConnectionBackendServices {
 
 
   /**
-   * Set data from .properties
-   *
-   * @param
-   * @pre: setup data sources
-   * @post: return DataSource object with the every information from the properties first @author:
-   * @author: karim
+   * @return DataSource object with the every information from the properties.
    */
   private DataSource setupDataSource() {
     BasicDataSource ds = new BasicDataSource();
@@ -54,12 +45,8 @@ public class DbConnectImpl implements ConnectionBackendServices {
   }
 
   /**
-   * Crée un PreparedStatement
-   *
-   * @param query
-   * @pre query : to execute
-   * @post send preparedStatement filled first
-   * @author: karim
+   * @param query String query represent query
+   * @return PreparedStatement.
    */
   @Override
   public PreparedStatement makeStatement(String query) {
