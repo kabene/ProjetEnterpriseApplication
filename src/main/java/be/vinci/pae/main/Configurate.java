@@ -12,16 +12,16 @@ public class Configurate {
   private static Map<String, Object> dependencies = new HashMap<>();
 
   /**
-   * get configuration should give a string thaht contains the config file.
-   * @param prop string .properties.
+   * get configuration should give a string that contains the config file.
+   * @param key string .properties.
    * @return a string who represent the value.
    */
-  public static String getConfiguration(String prop) {
-    if (dependencies.containsKey(prop)) {
-      return (String) dependencies.get(prop);
+  public static String getConfiguration(String key) {
+    if (dependencies.containsKey(key)) {
+      return (String) dependencies.get(key);
     }
-    String value = (String) props.get(prop);
-    dependencies.put(prop, value);
+    String value = (String) props.get(key);
+    dependencies.put(key, value);
     return value;
   }
 

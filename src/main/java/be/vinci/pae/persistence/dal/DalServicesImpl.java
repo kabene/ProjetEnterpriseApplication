@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 //import org.apache.commons.dbcp2.BasicDataSource;
 
-public class DbConnectImpl implements ConnectionBackendServices {
+public class DalServicesImpl implements ConnectionDalServices {
 
   private DataSource ds;
   Connection conn = null;
@@ -15,7 +15,7 @@ public class DbConnectImpl implements ConnectionBackendServices {
   /**
    * establish a connection between postgresql database and the system first.
    */
-  public DbConnectImpl() {
+  public DalServicesImpl() {
     try {
       Class.forName("org.postgresql.Driver");
     } catch (ClassNotFoundException e) {
