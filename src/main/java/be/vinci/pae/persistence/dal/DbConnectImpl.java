@@ -1,11 +1,11 @@
 package be.vinci.pae.persistence.dal;
 
-import be.vinci.pae.main.Configurate;
+//import be.vinci.pae.main.Configurate;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-import org.apache.commons.dbcp2.BasicDataSource;
+//import org.apache.commons.dbcp2.BasicDataSource;
 
 public class DbConnectImpl implements ConnectionBackendServices {
 
