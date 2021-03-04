@@ -45,7 +45,8 @@ public class DbConnectImpl implements ConnectionBackendServices {
   */
 
   /**
-   *  create a prepared statement based on the String query on param.
+   * create a prepared statement based on the String query on param.
+   *
    * @param query String query represent query
    * @return PreparedStatement.
    */
