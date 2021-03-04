@@ -12,6 +12,7 @@ public class Configurate {
   private static Map<String, Object> dependencies = new HashMap<>();
 
   /**
+   * get configuration should give a string thaht contains the config file.
    * @param prop string .properties.
    * @return a string who represent the value.
    */

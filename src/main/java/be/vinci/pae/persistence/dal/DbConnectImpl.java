@@ -32,9 +32,8 @@ public class DbConnectImpl implements ConnectionBackendServices {
   }
 
 
-  /**
-   * @return DataSource object with the every information from the properties.
-   */
+
+  /*
   private DataSource setupDataSource() {
     BasicDataSource ds = new BasicDataSource();
     ds.setDriverClassName("org.postgresql.Driver");
@@ -43,8 +42,10 @@ public class DbConnectImpl implements ConnectionBackendServices {
     ds.setPassword(Configurate.getConfiguration("password"));
     return ds;
   }
+  */
 
   /**
+   *  create a prepared statement based on the String query on param.
    * @param query String query represent query
    * @return PreparedStatement.
    */
