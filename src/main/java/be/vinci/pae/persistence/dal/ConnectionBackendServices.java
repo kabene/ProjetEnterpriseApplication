@@ -1,4 +1,4 @@
-package be.vinci.pae.persistence.connection;
+package be.vinci.pae.persistence.dal;
 
 import java.sql.PreparedStatement;
 

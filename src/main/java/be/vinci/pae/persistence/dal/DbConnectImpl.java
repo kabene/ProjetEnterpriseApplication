@@ -1,4 +1,4 @@
-package be.vinci.pae.persistence.connection;
+package be.vinci.pae.persistence.dal;
 
 import be.vinci.pae.main.Configurate;
 import java.sql.Connection;
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-public class DbConnect implements ConnectionBackendServices {
+public class DbConnectImpl implements ConnectionBackendServices {
 
   private DataSource ds;
   Connection conn = null;
@@ -18,7 +18,7 @@ public class DbConnect implements ConnectionBackendServices {
    * @post: establish a connection between postgresql database and the system
    * first @author: karim
    */
-  public DbConnect() {
+  public DbConnectImpl() {
     try {
       Class.forName("org.postgresql.Driver");
     } catch (ClassNotFoundException e) {
