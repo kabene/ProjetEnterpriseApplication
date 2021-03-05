@@ -1,9 +1,6 @@
-let page = document.querySelector("#page");
+import {escapeHtml} from "../utils/utils.js"
 
-//mettre dans deux pages différentes ? -> impossible de rendre la page seponsive avec deux formulaires
-
-const Authentication = () => {
-    let pageHTML = `
+let pageHTML = `
         <form>
             <div class="row mx-0 mt-5">
                 <div class="col-4 px-0 py-4 ml-5 border border-dark m-auto">
@@ -15,7 +12,7 @@ const Authentication = () => {
                         <label for="passwordLogin" class="ml-5">Mot de passe</label>
                         <input class="form-control w-75 m-auto" id="passwordLogin" type="password" name="passwordLogin" placeholder="Entrez votre mot de passe"/>
                     </div>
-                    <button class="btn btn-primary w-35 m-5" id="buttonLogin" type="submit">Se connecter</button>
+                    <button class="btn btn-primary w-35 m-5" id="loginButton" type="submit">Se connecter</button>
                 </div>
                 <div class="col-1" id="authenticationLine"></div>
                 <div class="col-1"></div>
@@ -52,17 +49,42 @@ const Authentication = () => {
                         <input class="form-control inputSignup my-2" id="communeSignup" type="text" name="communeSignup" placeholder="commune"/>
                         <input class="form-control inputSignup my-2" id="municipalitySignup" type="text" name="municipalitySignup" placeholder="pays"/>
                     </div>
-                    <select class="selectpicker" id="selectpicker_role">
+                    <select class="selectpicker">
                         <option>Client</option>
                         <option>Anticaire</option>
                         <option>Administrateur</option>  
                     </select>
-                    <button class="btn btn-primary w-35 ml-5 mt-4" id="button_signup" type="submit">S'inscrire</button>
+                    <button class="btn btn-primary w-35 ml-5 mt-4" id="signupButton" type="submit">S'inscrire</button>
                 </div>
             </div>
         </form>
     `;
+
+const Authentication = () => {
+    let page = document.querySelector("#page");
     page.innerHTML = pageHTML;
+
+    let loginButton = document.querySelector("#loginButton");
+    loginButton.addEventListener("click", onLogin);
+
+    let signupButton = document.querySelector("#signupButton");
+    signupButton.addEventListener("click", onSignUp);
+}
+
+const onLogin = (e) => {
+    e.preventDefault();
+    console.log("on login");
+    let username = escapeHtml(document.querySelector("#usernameLogin").value);
+    let password = escapeHtml(document.querySelector("#passwordLogin").value);
+    let user = {
+        username: username,
+        password: password
+    }
+}
+
+const onSignUp = (e) => {
+    e.preventDefault();
+    console.log("on sign up");
 }
 
 export default Authentication;
