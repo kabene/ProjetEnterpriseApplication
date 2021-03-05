@@ -1,4 +1,4 @@
-package be.vinci.pae.buisness.factories;
+package be.vinci.pae.business.factories;
 
 public interface UserFactory {
 

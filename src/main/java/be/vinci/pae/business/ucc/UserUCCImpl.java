@@ -1,4 +1,4 @@
-package be.vinci.pae.buisness.ucc;
+package be.vinci.pae.business.ucc;
 
 public class UserUCCImpl implements UserUCC{
 
