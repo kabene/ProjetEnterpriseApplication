@@ -2,7 +2,7 @@ package be.vinci.pae.business.pojos;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-public class UserImpl implements User{
+public class UserImpl implements User {
 
     private int id;
     private String username;
