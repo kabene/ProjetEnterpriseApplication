@@ -1,4 +1,4 @@
-package be.vinci.pae.buisness.pojos;
+package be.vinci.pae.business.pojos;
 
 import org.mindrot.jbcrypt.BCrypt;
 

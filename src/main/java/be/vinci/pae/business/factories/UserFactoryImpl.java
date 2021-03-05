@@ -1,8 +1,8 @@
-package be.vinci.pae.buisness.factories;
+package be.vinci.pae.business.factories;
 
-import be.vinci.pae.buisness.dto.UserDTO;
-import be.vinci.pae.buisness.pojos.User;
-import be.vinci.pae.buisness.pojos.UserImpl;
+import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.pojos.User;
+import be.vinci.pae.business.pojos.UserImpl;
 
 public class UserFactoryImpl implements UserFactory {
 

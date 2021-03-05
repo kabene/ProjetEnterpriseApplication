@@ -1,4 +1,4 @@
-package be.vinci.pae.buisness.dto;
+package be.vinci.pae.business.dto;
 
 public interface UserDTO {
 

@@ -1,6 +1,6 @@
-package be.vinci.pae.buisness.ucc;
+package be.vinci.pae.business.ucc;
 
-import be.vinci.pae.buisness.dto.UserDTO;
+import be.vinci.pae.business.dto.UserDTO;
 
 public class UserUCCImpl implements UserUCC{
 
