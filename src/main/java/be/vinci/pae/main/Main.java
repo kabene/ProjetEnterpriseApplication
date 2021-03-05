@@ -28,7 +28,7 @@ public class Main {
    */
   public static void main(String[] args) throws IOException {
     //load properties file
-    Configurate.load("src.main.resources.prod.properties");
+    Configurate.load("src/main/resources/prod.properties");
     //start server
     final HttpServer server = startServer();
     System.out.println("Jersey app started at " + Configurate.getConfiguration("BaseUri"));
