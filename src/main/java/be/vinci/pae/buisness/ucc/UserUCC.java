@@ -1,5 +1,7 @@
 package be.vinci.pae.buisness.ucc;
 
-public interface UserUCC {
+import be.vinci.pae.buisness.dto.UserDTO;
 
+public interface UserUCC {
+    UserDTO login(String login, String password);
 }
