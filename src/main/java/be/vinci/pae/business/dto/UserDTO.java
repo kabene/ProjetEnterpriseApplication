@@ -2,14 +2,14 @@ package be.vinci.pae.business.dto;
 
 public interface UserDTO {
 
-    int getID();
+  int getID();
 
-    void setID(int id);
+  void setID(int id);
 
-    String getUsername();
+  String getUsername();
 
-    void setUsername(String username);
+  void setUsername(String username);
 
-    //implement adress + other attributes
+  //implement adress + other attributes
 
 }

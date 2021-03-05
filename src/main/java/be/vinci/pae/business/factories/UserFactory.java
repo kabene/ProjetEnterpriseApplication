@@ -5,8 +5,8 @@ import be.vinci.pae.business.pojos.User;
 
 public interface UserFactory {
 
-    User getUser();
+  User getUser();
 
-    UserDTO getUserDTO();
+  UserDTO getUserDTO();
 
 }

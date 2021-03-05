@@ -4,12 +4,12 @@ import be.vinci.pae.business.dto.UserDTO;
 
 public interface User extends UserDTO {
 
-    String getPassword();
+  String getPassword();
 
-    void setPassword(String password);
+  void setPassword(String password);
 
-    boolean checkPassword(String password);
+  boolean checkPassword(String password);
 
-    String hashPassword(String password);
+  String hashPassword(String password);
 
 }

@@ -6,14 +6,14 @@ import be.vinci.pae.business.pojos.UserImpl;
 
 public class UserFactoryImpl implements UserFactory {
 
-    @Override
-    public User getUser() {
-        return new UserImpl();
-    }
+  @Override
+  public User getUser() {
+    return new UserImpl();
+  }
 
-    @Override
-    public UserDTO getUserDTO() {
-        return new UserImpl();
-    }
+  @Override
+  public UserDTO getUserDTO() {
+    return new UserImpl();
+  }
 
 }

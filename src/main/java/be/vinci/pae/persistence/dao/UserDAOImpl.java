@@ -4,8 +4,8 @@ import be.vinci.pae.business.dto.UserDTO;
 
 public class UserDAOImpl implements UserDAO {
 
-    @Override
-    public UserDTO findByUsername(String username) {
-        return null;  // generated stub
-    }
+  @Override
+  public UserDTO findByUsername(String username) {
+    return null;  // generated stub
+  }
 }
