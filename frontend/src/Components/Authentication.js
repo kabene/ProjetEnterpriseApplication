@@ -91,7 +91,7 @@ const onLogin = (e) => {
     })
     .then((response) => {
       if (!response.ok)
-        throw new Error( "Error code : " + response.status + " : " + response.statusText);
+        throw new Error("Error code : " + response.status + " : " + response.statusText);
       return response.json();
     })
     .then((data) => console.log("Logged in !!\n" + data))
