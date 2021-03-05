@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 public interface ConnectionBackendServices {
 
   /**
-   *
+   * Provides a PreparedStatement for the given SQL query.
    * @param query String represt the query.
    * @return send preparedStatement filled first.
    */
