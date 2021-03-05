@@ -14,6 +14,6 @@ public interface UserDTO {
 
   void setUsername(String username);
 
-  //implement adress + other attributes
+  //implement address + other attributes
 
 }

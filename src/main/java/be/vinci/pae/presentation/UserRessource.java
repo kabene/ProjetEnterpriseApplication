@@ -25,9 +25,9 @@ public class UserRessource {
   @Path("login")
   @Produces(MediaType.APPLICATION_JSON)
   public UserDTO login(User user) {
-    UserDTO res = userFactory.getUserDTO();
-    res.setUsername(user.getUsername());
-    res.setID(user.getID());
+    if (user.getUsername() == null || user.getPassword() == null)
+      return null;
+    UserDTO res = userUCC.login(user.getUsername(), user.getPassword());
     return res;
   }
 
