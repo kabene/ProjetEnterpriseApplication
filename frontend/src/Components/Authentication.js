@@ -76,10 +76,26 @@ const onLogin = (e) => {
     console.log("on login");
     let username = escapeHtml(document.querySelector("#usernameLogin").value);
     let password = escapeHtml(document.querySelector("#passwordLogin").value);
+    if (username === "" || password === "")
+        return ;
     let user = {
         username: username,
         password: password
     }
+    fetch("/api/users/login", {
+        method: "POST",
+        body: JSON.stringify(user),
+        headers: {
+            "Content-Type": "application/json",
+        }
+    })
+    .then((response) => {
+      if (!response.ok)
+        throw new Error( "Error code : " + response.status + " : " + response.statusText);
+      return response.json();
+    })
+    .then((data) => console.log("Logged in !!\n" + data))
+    .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
 }
 
 const onSignUp = (e) => {
