@@ -13,7 +13,7 @@ public class ApplicationBinder extends AbstractBinder {
 
   @Override
   protected void configure() {
-    bind(UserFactoryImpl.class).to(UserFactory.class).in(Singleton.class);
+    bind(UserFactoryImpl.class).to(UserFactory.class).in(Singleton.class); //TODO extract injection info into .properties
     bind(UserUCCImpl.class).to(UserUCC.class).in(Singleton.class);
   }
 }
