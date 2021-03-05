@@ -1,5 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
-public interface UserDAO {
+import be.vinci.pae.buisness.dto.UserDTO;
 
+public interface UserDAO {
+    UserDTO findByUsername(String username);
 }
