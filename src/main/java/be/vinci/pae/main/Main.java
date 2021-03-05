@@ -18,7 +18,7 @@ public class Main {
         .register(JacksonFeature.class)
         .register(ApplicationBinder.class).property("jersey.config.server.wadl.disableWadl", true);
 
-    return GrizzlyHttpServerFactory.createHttpServer(URI.create(Configurate.getConfiguration("BaseUri")), rc);
+    return GrizzlyHttpServerFactory.createHttpServer(URI.create(Configurate.getConfiguration("baseUri")), rc);
   }
 
   /**
@@ -31,7 +31,7 @@ public class Main {
     Configurate.load("src/main/resources/prod.properties");
     //start server
     final HttpServer server = startServer();
-    System.out.println("Jersey app started at " + Configurate.getConfiguration("BaseUri"));
+    System.out.println("Jersey app started at " + Configurate.getConfiguration("baseUri"));
     //Listen to key press and shut down
     System.out.println("Hit a key to stop it...");
     System.in.read();

@@ -20,7 +20,7 @@ public class Configurate {
     if (dependencies.containsKey(key)) {
       return (String) dependencies.get(key);
     }
-    String value = (String) props.get(key);
+    String value = (String) props.getProperty(key);
     dependencies.put(key, value);
     return value;
   }
