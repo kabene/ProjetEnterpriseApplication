@@ -1,7 +1,7 @@
 package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.UserDTO;
-import be.vinci.pae.business.factories.UserFactory;
+//import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.ucc.UserUCC;
 import jakarta.inject.Inject;
@@ -18,12 +18,17 @@ import jakarta.ws.rs.core.Response.Status;
 @Path("/users")
 public class UserRessource {
 
-  @Inject
-  private UserFactory userFactory;
+  //@Inject
+  //private UserFactory userFactory;
 
   @Inject
   private UserUCC userUCC;
 
+  /**
+   * POST users/login - Manages login requests.
+   * @param user
+   * @return
+   */
   @POST
   @Path("login")
   @Produces(MediaType.APPLICATION_JSON)
