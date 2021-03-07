@@ -13,12 +13,17 @@ import org.glassfish.jersey.server.ResourceConfig;
  */
 public class Main {
 
+  /**
+   * Starts the http server.
+   * @return the new server.
+   */
   public static HttpServer startServer() {
     final ResourceConfig rc = new ResourceConfig().packages("be.vinci.pae.presentation")
         .register(JacksonFeature.class)
         .register(ApplicationBinder.class).property("jersey.config.server.wadl.disableWadl", true);
 
-    return GrizzlyHttpServerFactory.createHttpServer(URI.create(Configurate.getConfiguration("baseUri")), rc);
+    return GrizzlyHttpServerFactory
+        .createHttpServer(URI.create(Configurate.getConfiguration("baseUri")), rc);
   }
 
   /**

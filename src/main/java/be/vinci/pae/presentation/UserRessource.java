@@ -26,8 +26,10 @@ public class UserRessource {
 
   /**
    * POST users/login - Manages login requests.
-   * @param user
-   * @return
+   *
+   * @param user : containing request username and password
+   * @return UserDTO user information
+   * @throws WebApplicationException to send a fail status
    */
   @POST
   @Path("login")
@@ -41,7 +43,7 @@ public class UserRessource {
     UserDTO res = userUCC.login(user.getUsername(), user.getPassword());
     if (res == null) { // user not found
       throw new WebApplicationException(
-          Response.status(Status.NOT_FOUND).entity("Resource not found").type("text/plain")
+          Response.status(Status.NOT_FOUND).entity("Invalid credentials").type("text/plain")
               .build());
     }
     return res;
