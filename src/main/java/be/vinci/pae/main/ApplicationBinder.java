@@ -4,6 +4,8 @@ import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.factories.UserFactoryImpl;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.business.ucc.UserUCCImpl;
+import be.vinci.pae.persistence.dal.ConnectionDalServices;
+import be.vinci.pae.persistence.dal.DalServicesImpl;
 import be.vinci.pae.persistence.dao.UserDAO;
 import be.vinci.pae.persistence.dao.UserDAOImpl;
 import jakarta.inject.Singleton;
@@ -19,5 +21,6 @@ public class ApplicationBinder extends AbstractBinder {
         .in(Singleton.class); //TODO extract injection info into .properties
     bind(UserUCCImpl.class).to(UserUCC.class).in(Singleton.class);
     bind(UserDAOImpl.class).to(UserDAO.class).in(Singleton.class);
+    bind(DalServicesImpl.class).to(ConnectionDalServices.class).in(Singleton.class);
   }
 }
