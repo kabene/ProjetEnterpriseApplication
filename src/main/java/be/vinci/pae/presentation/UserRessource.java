@@ -26,6 +26,7 @@ public class UserRessource {
 
   /**
    * POST users/login - Manages login requests.
+   *
    * @param user : containing request username and password
    * @return UserDTO user information
    * @throws WebApplicationException to send a fail status

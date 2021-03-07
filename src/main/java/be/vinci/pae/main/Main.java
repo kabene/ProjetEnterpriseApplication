@@ -18,7 +18,8 @@ public class Main {
         .register(JacksonFeature.class)
         .register(ApplicationBinder.class).property("jersey.config.server.wadl.disableWadl", true);
 
-    return GrizzlyHttpServerFactory.createHttpServer(URI.create(Configurate.getConfiguration("baseUri")), rc);
+    return GrizzlyHttpServerFactory
+        .createHttpServer(URI.create(Configurate.getConfiguration("baseUri")), rc);
   }
 
   /**
