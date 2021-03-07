@@ -1,18 +1,39 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.factories.UserFactory;
+import be.vinci.pae.business.pojos.User;
+import be.vinci.pae.persistence.dao.UserDAO;
+import jakarta.inject.Inject;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserUCCImpl implements UserUCC {
+
+  @Inject
+  UserDAO userDAO;
+  @Inject
+  UserFactory userFactory;
 
   /**
    * Logs in after checking the given credentials.
    *
    * @param username : the given username
    * @param password : the given password
-   * @return the corresponding UserUCC or null if invalid credentials
+   * @return the corresponding UserDTO or null if invalid credentials
    */
   @Override
   public UserDTO login(String username, String password) {
-    return null; //stub
+    User userFound = userDAO.findByUsername(username);
+    if(userFound == null) {
+      return null; // invalid username
+    }
+    if(!BCrypt.checkpw(password, userFound.getPassword())) {
+      return null; // invalid password
+    }
+
+    UserDTO res = userFactory.getUserDTO();
+    res.setID(userFound.getID());
+    res.setUsername(userFound.getUsername());
+    return res;
   }
 }

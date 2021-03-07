@@ -9,7 +9,7 @@ public interface UserUCC {
    *
    * @param username : the given username
    * @param password : the given password
-   * @return the corresponding UserUCC or null if invalid credentials
+   * @return the corresponding UserDTO or null if invalid credentials
    */
   UserDTO login(String username, String password);
 }
