@@ -13,6 +13,10 @@ import org.glassfish.jersey.server.ResourceConfig;
  */
 public class Main {
 
+  /**
+   * Starts the http server.
+   * @return the new server.
+   */
   public static HttpServer startServer() {
     final ResourceConfig rc = new ResourceConfig().packages("be.vinci.pae.presentation")
         .register(JacksonFeature.class)

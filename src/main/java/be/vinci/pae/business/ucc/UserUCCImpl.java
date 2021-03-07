@@ -24,10 +24,10 @@ public class UserUCCImpl implements UserUCC {
   @Override
   public UserDTO login(String username, String password) {
     User userFound = userDAO.findByUsername(username);
-    if(userFound == null) {
+    if (userFound == null) {
       return null; // invalid username
     }
-    if(!BCrypt.checkpw(password, userFound.getPassword())) {
+    if (!BCrypt.checkpw(password, userFound.getPassword())) {
       return null; // invalid password
     }
 
