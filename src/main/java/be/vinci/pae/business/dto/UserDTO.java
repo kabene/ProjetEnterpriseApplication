@@ -1,5 +1,9 @@
 package be.vinci.pae.business.dto;
 
+import be.vinci.pae.business.pojos.UserImpl;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = UserImpl.class)
 public interface UserDTO {
 
   int getID();
@@ -10,6 +14,6 @@ public interface UserDTO {
 
   void setUsername(String username);
 
-  //implement adress + other attributes
+  //implement address + other attributes
 
 }
