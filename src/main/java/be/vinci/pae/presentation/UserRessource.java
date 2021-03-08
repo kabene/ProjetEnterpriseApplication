@@ -37,6 +37,7 @@ public class UserRessource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response login(User user) { //TODO return Response
+    System.out.println("POST users/login username = " + user.getUsername());
     if (user.getUsername() == null || user.getPassword() == null) { // invalid request
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
