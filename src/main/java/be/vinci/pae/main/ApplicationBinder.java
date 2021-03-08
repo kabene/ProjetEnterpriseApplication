@@ -1,13 +1,9 @@
 package be.vinci.pae.main;
 
 import be.vinci.pae.business.factories.UserFactory;
-import be.vinci.pae.business.factories.UserFactoryImpl;
 import be.vinci.pae.business.ucc.UserUCC;
-import be.vinci.pae.business.ucc.UserUCCImpl;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
-import be.vinci.pae.persistence.dal.DalServicesImpl;
 import be.vinci.pae.persistence.dao.UserDAO;
-import be.vinci.pae.persistence.dao.UserDAOImpl;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.ext.Provider;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;

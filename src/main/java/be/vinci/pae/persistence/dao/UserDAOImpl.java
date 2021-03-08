@@ -29,7 +29,7 @@ public class UserDAOImpl implements UserDAO {
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, username);
       ResultSet rs = ps.executeQuery();
-      if(rs.next()) {
+      if (rs.next()) {
         userFound.setUsername(rs.getString("username"));
         userFound.setPassword(rs.getString("password"));
       } else {
