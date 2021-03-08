@@ -50,7 +50,8 @@ public class DalServicesImpl implements ConnectionDalServices {
   }
 
   /**
-   * @return DataSource.
+   * set the data structure and source of the Db connection 42.
+   * @return DataSource filled with structure of data.
    */
   private DataSource setupDataSource() {
     BasicDataSource ds = new BasicDataSource();
