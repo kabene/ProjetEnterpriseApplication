@@ -33,7 +33,10 @@ public class Main {
    */
   public static void main(String[] args) throws IOException {
     //load properties file
-    Configurate.load("src/main/resources/prod.properties");
+    if(args.length != 1) {
+      System.exit(1);
+    }
+    Configurate.load(args[0]);
     //start server
     final HttpServer server = startServer();
     System.out.println("Jersey app started at " + Configurate.getConfiguration("baseUri"));
