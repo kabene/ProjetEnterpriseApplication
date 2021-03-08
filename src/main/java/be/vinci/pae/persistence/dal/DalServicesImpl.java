@@ -23,8 +23,8 @@ public class DalServicesImpl implements ConnectionDalServices {
       e.printStackTrace();
     }
     try {
-      conn = ds.getConnection(); // find an alternative because  it's running on dual task
       this.ds = setupDataSource();
+      conn = ds.getConnection(); // find an alternative because  it's running on dual task
     } catch (SQLException e) {
       System.out.println("Impossible de joindre le server !");
       System.exit(1);

@@ -25,7 +25,7 @@ public class UserDAOImpl implements UserDAO {
   public User findByUsername(String username) {
     User userFound = userFactory.getUser();
     try {
-      String query = "SELECT u.* FROM utilisateurs u WHERE u.pseudo = '?'";
+      String query = "SELECT u.* FROM users u WHERE u.username = '?'";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, username);
       ResultSet rs = ps.executeQuery();
