@@ -27,7 +27,7 @@ public class UserUCCImpl implements UserUCC {
     if (userFound == null) {
       return null; // invalid username
     }
-    if (!BCrypt.checkpw(password, userFound.getPassword())) {
+    if (!userFound.checkPassword(password)) {
       return null; // invalid password
     }
 

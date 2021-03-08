@@ -29,18 +29,13 @@ public class UserImpl implements User {
   }
 
   @Override
-  public String getPassword() {
-    return password;
-  }
-
-  @Override
   public void setPassword(String password) {
     this.password = password;
   }
 
   @Override
-  public boolean checkPassword(String password) {
-    return BCrypt.checkpw(password, this.password);
+  public boolean checkPassword(String plainText) {
+    return BCrypt.checkpw(plainText, this.password);
   }
 
   @Override
