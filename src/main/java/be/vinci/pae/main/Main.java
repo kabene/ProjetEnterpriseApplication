@@ -15,6 +15,7 @@ public class Main {
 
   /**
    * Starts the http server.
+   *
    * @return the new server.
    */
   public static HttpServer startServer() {
@@ -33,7 +34,7 @@ public class Main {
    */
   public static void main(String[] args) throws IOException {
     //load properties file
-    if(args.length != 1) {
+    if (args.length != 1) {
       System.exit(1);
     }
     Configurate.load(args[0]);
