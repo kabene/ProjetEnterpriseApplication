@@ -6,6 +6,7 @@ import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.ucc.UserUCC;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -33,20 +34,22 @@ public class UserRessource {
    */
   @POST
   @Path("login")
+  @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public UserDTO login(User user) {
+  public Response login(User user) { //TODO return Response
+    System.out.println("POST users/login username = " + user.getUsername());
     if (user.getUsername() == null || user.getPassword() == null) { // invalid request
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
               .build());
     }
-    UserDTO res = userUCC.login(user.getUsername(), user.getPassword());
-    if (res == null) { // user not found
+    UserDTO userDTO = userUCC.login(user.getUsername(), user.getPassword());
+    if (userDTO == null) { // user not found
       throw new WebApplicationException(
           Response.status(Status.NOT_FOUND).entity("Invalid credentials").type("text/plain")
               .build());
     }
-    return res;
+    return Response.ok(userDTO, MediaType.APPLICATION_JSON).build();
   }
 
 }

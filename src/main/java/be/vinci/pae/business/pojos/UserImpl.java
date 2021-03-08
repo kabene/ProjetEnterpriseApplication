@@ -39,8 +39,8 @@ public class UserImpl implements User {
   }
 
   @Override
-  public boolean checkPassword(String password) {
-    return BCrypt.checkpw(password, this.password);
+  public boolean checkPassword(String plainText) {
+    return BCrypt.checkpw(plainText, this.password);
   }
 
   @Override

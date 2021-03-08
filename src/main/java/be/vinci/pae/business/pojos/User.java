@@ -10,7 +10,7 @@ public interface User extends UserDTO {
 
   void setPassword(String password);
 
-  boolean checkPassword(String password);
+  boolean checkPassword(String plainText);
 
   String hashPassword(String password);
 

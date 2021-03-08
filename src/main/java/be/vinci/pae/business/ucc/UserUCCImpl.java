@@ -5,7 +5,6 @@ import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
-import org.mindrot.jbcrypt.BCrypt;
 
 public class UserUCCImpl implements UserUCC {
 
@@ -27,7 +26,7 @@ public class UserUCCImpl implements UserUCC {
     if (userFound == null) {
       return null; // invalid username
     }
-    if (!BCrypt.checkpw(password, userFound.getPassword())) {
+    if (!userFound.checkPassword(password)) {
       return null; // invalid password
     }
 
