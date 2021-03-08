@@ -15,7 +15,7 @@ public class ApplicationBinder extends AbstractBinder {
   protected void configure() {
     try {
       bind(Class.forName(Configurate.getConfiguration("UserFactory"))).to(UserFactory.class)
-          .in(Singleton.class); //TODO extract injection info into .properties
+          .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("UserUCC"))).to(UserUCC.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("UserDAO"))).to(UserDAO.class)
