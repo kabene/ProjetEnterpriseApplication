@@ -29,6 +29,11 @@ public class UserImpl implements User {
   }
 
   @Override
+  public String getPassword() {
+    return password;
+  }
+
+  @Override
   public void setPassword(String password) {
     this.password = password;
   }
