@@ -1,7 +1,10 @@
 package be.vinci.pae.business.pojos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.mindrot.jbcrypt.BCrypt;
 
+@JsonInclude(Include.NON_NULL)
 public class UserImpl implements User {
 
   private int id;
