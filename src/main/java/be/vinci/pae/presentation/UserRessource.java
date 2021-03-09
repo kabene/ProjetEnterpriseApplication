@@ -2,6 +2,7 @@ package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.UserDTO;
 //import be.vinci.pae.business.factories.UserFactory;
+import be.vinci.pae.business.filters.Authorize;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.ucc.UserUCC;
 import jakarta.inject.Inject;
@@ -57,7 +58,7 @@ public class UserRessource {
   @GET
   @Path("me")
   @Produces(MediaType.APPLICATION_JSON)
-  //@Authorize
+  @Authorize
   public Response getUser(@Context ContainerRequest request) {
     UserDTO currentUser = (UserDTO) request.getProperty("user");
     return Response.ok(currentUser, MediaType.APPLICATION_JSON).build();
