@@ -32,9 +32,10 @@ public class UserUCCImpl implements UserUCC {
       return null; // invalid password
     }
 
+    /*
     UserDTO res = userFactory.getUserDTO();
     res.setID(userFound.getID());
-    res.setUsername(userFound.getUsername());
-    return res;
+    res.setUsername(userFound.getUsername());*/
+    return (UserDTO) userFound;
   }
 }

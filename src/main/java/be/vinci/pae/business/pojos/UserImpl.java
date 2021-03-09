@@ -1,14 +1,19 @@
 package be.vinci.pae.business.pojos;
 
+import be.vinci.pae.main.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.mindrot.jbcrypt.BCrypt;
 
 @JsonInclude(Include.NON_NULL)
 public class UserImpl implements User {
 
+  @JsonView(Views.Public.class)
   private int id;
+  @JsonView(Views.Public.class)
   private String username;
+  @JsonView(Views.Internal.class)
   private String password;
 
   @Override
