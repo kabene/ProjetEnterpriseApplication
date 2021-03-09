@@ -11,7 +11,7 @@ public interface UserDAO {
    * @param username : the username to look for
    * @return a UserDTO corresponding to the user found or null if no user has the given username.
    */
-  User findByUsername(String username);
+  UserDTO findByUsername(String username);
 
   UserDTO findById(int id);
 }

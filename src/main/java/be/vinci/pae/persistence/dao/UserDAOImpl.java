@@ -23,8 +23,8 @@ public class UserDAOImpl implements UserDAO {
    * @return a UserDTO corresponding to the user found or null if no user has the given username.
    */
   @Override
-  public User findByUsername(String username) {
-    User userFound = userFactory.getUser();
+  public UserDTO findByUsername(String username) {
+    UserDTO userFound = userFactory.getUserDTO();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u WHERE u.username = ?";
       PreparedStatement ps = dalServices.makeStatement(query);

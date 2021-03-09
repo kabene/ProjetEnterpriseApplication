@@ -6,7 +6,7 @@ import be.vinci.pae.business.pojos.User;
 public class MockUserDAO implements UserDAO {
 
   @Override
-  public User findByUsername(String username) {
+  public UserDTO findByUsername(String username) {
     return null; // generated stub
   }
 

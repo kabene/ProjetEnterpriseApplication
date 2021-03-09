@@ -24,18 +24,13 @@ public class UserUCCImpl implements UserUCC {
    */
   @Override
   public UserDTO login(String username, String password) {
-    User userFound = userDAO.findByUsername(username);
+    User userFound = (User) userDAO.findByUsername(username);
     if (userFound == null) {
       return null; // invalid username
     }
     if (!userFound.checkPassword(password)) {
       return null; // invalid password
     }
-
-    /*
-    UserDTO res = userFactory.getUserDTO();
-    res.setID(userFound.getID());
-    res.setUsername(userFound.getUsername());*/
     return (UserDTO) userFound;
   }
 }
