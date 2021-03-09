@@ -1,0 +1,29 @@
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "username": "other",
+  "password": "azerty"
+}
+### /login as 'other' (pwd : azerty) -> fail (no user found)
+
+
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "username": "ex",
+  "password": "qwerty"
+}
+### /login as 'ex' (pwd : qwerty) -> fail (invalid pwd)
+
+
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "username": "ex",
+  "password": "azerty"
+}
+### /login as 'ex' (pwd : azerty) -> success
+
