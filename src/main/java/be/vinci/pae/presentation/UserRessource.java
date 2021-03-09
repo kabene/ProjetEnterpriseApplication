@@ -1,9 +1,12 @@
 package be.vinci.pae.presentation;
 
+import be.vinci.pae.business.authentication.Authentication;
 import be.vinci.pae.business.dto.UserDTO;
 //import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.ucc.UserUCC;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
@@ -24,6 +27,9 @@ public class UserRessource {
 
   @Inject
   private UserUCC userUCC;
+  @Inject
+  private Authentication authentication;
+  private final ObjectMapper jsonMapper = new ObjectMapper();
 
   /**
    * POST users/login - Manages login requests.
@@ -49,7 +55,9 @@ public class UserRessource {
           Response.status(Status.NOT_FOUND).entity("Invalid credentials").type("text/plain")
               .build());
     }
-    return Response.ok(userDTO, MediaType.APPLICATION_JSON).build();
+    String token = authentication.createToken(userDTO);
+    ObjectNode node = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
+    return Response.ok(node, MediaType.APPLICATION_JSON).build();
   }
 
 }
