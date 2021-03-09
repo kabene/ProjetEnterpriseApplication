@@ -1,5 +1,6 @@
 package be.vinci.pae.business.ucc;
 
+
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
@@ -9,9 +10,10 @@ import jakarta.inject.Inject;
 public class UserUCCImpl implements UserUCC {
 
   @Inject
-  UserDAO userDAO;
+  private UserDAO userDAO;
   @Inject
-  UserFactory userFactory;
+  private UserFactory userFactory;
+
 
   /**
    * Logs in after checking the given credentials.

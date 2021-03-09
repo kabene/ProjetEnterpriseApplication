@@ -1,5 +1,7 @@
 package be.vinci.pae.main;
 
+import be.vinci.pae.business.authentication.Authentication;
+import be.vinci.pae.business.authentication.AuthenticationImpl;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
@@ -22,6 +24,7 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("ConnectionDalServices")))
           .to(ConnectionDalServices.class).in(Singleton.class);
+      bind(AuthenticationImpl.class).to(Authentication.class).in(Singleton.class);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
