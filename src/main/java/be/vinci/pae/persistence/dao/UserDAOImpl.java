@@ -1,5 +1,6 @@
 package be.vinci.pae.persistence.dao;
 
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
@@ -30,6 +31,7 @@ public class UserDAOImpl implements UserDAO {
       ps.setString(1, username);
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
+        userFound.setID(rs.getInt("user_id"));
         userFound.setUsername(rs.getString("username"));
         userFound.setPassword(rs.getString("password"));
       } else {
@@ -37,6 +39,26 @@ public class UserDAOImpl implements UserDAO {
       }
     } catch (SQLException e) {
       e.printStackTrace();
+      userFound = null;
+    }
+    return userFound;
+  }
+
+  @Override
+  public UserDTO findById(int user_id) {
+    UserDTO userFound = userFactory.getUserDTO();
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.id = ?";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setInt(1, user_id);
+      ResultSet rs = ps.executeQuery();
+      if(rs.next()) {
+        userFound.setID(rs.getInt("user_id"));
+        userFound.setUsername(rs.getString("username"));
+      } else {
+        userFound = null;
+      }
+    } catch (SQLException throwables) {
       userFound = null;
     }
     return userFound;
