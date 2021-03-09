@@ -48,7 +48,7 @@ public class UserDAOImpl implements UserDAO {
   public UserDTO findById(int userId) {
     UserDTO userFound = userFactory.getUserDTO();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.id = ?";
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ?";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, userId);
       ResultSet rs = ps.executeQuery();
