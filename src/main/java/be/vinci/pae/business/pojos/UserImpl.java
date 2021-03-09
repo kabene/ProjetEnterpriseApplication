@@ -1,6 +1,6 @@
 package be.vinci.pae.business.pojos;
 
-import be.vinci.pae.main.Views;
+import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;

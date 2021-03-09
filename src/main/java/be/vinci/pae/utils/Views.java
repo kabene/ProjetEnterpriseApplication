@@ -1,4 +1,4 @@
-package be.vinci.pae.main;
+package be.vinci.pae.utils;
 
 public class Views {
   public static class Public {

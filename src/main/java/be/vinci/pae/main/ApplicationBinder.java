@@ -6,6 +6,7 @@ import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.UserDAO;
+import be.vinci.pae.utils.Configurate;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.ext.Provider;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;

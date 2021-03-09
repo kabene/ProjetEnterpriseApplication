@@ -3,7 +3,7 @@ package be.vinci.pae.business.authentication;
 import be.vinci.pae.business.dto.UserDTO;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import be.vinci.pae.main.Configurate;
+import be.vinci.pae.utils.Configurate;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
 
