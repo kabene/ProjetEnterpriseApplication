@@ -45,12 +45,12 @@ public class UserDAOImpl implements UserDAO {
   }
 
   @Override
-  public UserDTO findById(int user_id) {
+  public UserDTO findById(int userId) {
     UserDTO userFound = userFactory.getUserDTO();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u WHERE u.id = ?";
       PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, user_id);
+      ps.setInt(1, userId);
       ResultSet rs = ps.executeQuery();
       if(rs.next()) {
         userFound.setID(rs.getInt("user_id"));
