@@ -70,7 +70,8 @@ public class UserRessource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response getUser(@Context ContainerRequest request) {
-    UserDTO currentUser = Json.filterPublicJsonView( (UserDTO) request.getProperty("user"), UserDTO.class);
+    UserDTO currentUser = Json
+        .filterPublicJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
     return Response.ok(currentUser, MediaType.APPLICATION_JSON).build();
   }
 }

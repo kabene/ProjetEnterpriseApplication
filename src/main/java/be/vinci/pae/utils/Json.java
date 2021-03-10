@@ -7,6 +7,13 @@ public class Json {
 
   private final static ObjectMapper jsonMapper = new ObjectMapper();
 
+  /**
+   * Filters a pojo to send as a response using views.
+   * @param item : pojo to filter
+   * @param targetClass : class to filter as.
+   * @param <T> : class to filter as
+   * @return the filtered pojo.
+   */
   public static <T> T filterPublicJsonView(T item, Class<T> targetClass) {
     try {
       String publicItemAsString = jsonMapper.writerWithView(Views.Public.class)

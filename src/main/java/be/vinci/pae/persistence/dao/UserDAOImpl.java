@@ -2,7 +2,6 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
-import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
