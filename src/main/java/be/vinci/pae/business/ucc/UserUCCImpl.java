@@ -11,8 +11,8 @@ public class UserUCCImpl implements UserUCC {
 
   @Inject
   private UserDAO userDAO;
-  @Inject
-  private UserFactory userFactory;
+//  @Inject
+//  private UserFactory userFactory;
 
 
   /**

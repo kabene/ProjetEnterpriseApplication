@@ -65,6 +65,11 @@ public class UserRessource {
     return Response.ok(node, MediaType.APPLICATION_JSON).build();
   }
 
+  /**
+   * Returns the current user after checking the given jwt.
+   * @param request
+   * @return the current user.
+   */
   @GET
   @Path("me")
   @Produces(MediaType.APPLICATION_JSON)
