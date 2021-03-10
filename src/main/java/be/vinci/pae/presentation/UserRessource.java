@@ -67,7 +67,7 @@ public class UserRessource {
 
   /**
    * Returns the current user after checking the given jwt.
-   * @param request
+   * @param request : the request context
    * @return the current user.
    */
   @GET
