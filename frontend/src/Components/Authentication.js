@@ -92,7 +92,7 @@ const onLogin = (e) => {
     username: username,
     password: password
   }
-  fetch("/api/users/login", {
+  fetch("/users/login", {
     method: "POST",
     body: JSON.stringify(user),
     headers: {
@@ -130,7 +130,7 @@ const onSignUp = (e) => {
     street: document.getElementById("streetSignup").value
   }
 
-  fetch("/api/users/signup", {
+  fetch("/users/signup", {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     body: JSON.stringify(user), // body data type must match "Content-Type" header
     headers: {
