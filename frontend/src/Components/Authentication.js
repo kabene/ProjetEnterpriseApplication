@@ -1,5 +1,5 @@
 import {escapeHtml} from "../utils/utils.js"
-import {setUserSessionData} from "../utils/session";
+import {getUserSessionData, setUserSessionData} from "../utils/session";
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
 
@@ -72,6 +72,12 @@ const Authentication = () => {
 
   let signupButton = document.querySelector("#signupButton");
   signupButton.addEventListener("click", onSignUp);
+
+  const user = getUserSessionData();
+  if (user) {
+    Navbar();
+    RedirectUrl("/");
+  }
 }
 
 const onLogin = (e) => {
@@ -115,6 +121,37 @@ const onUserLogin = (data) => {
 const onSignUp = (e) => {
   e.preventDefault();
   console.log("on sign up");
+  let user = {
+    pseudo: document.getElementById("usernameSignup").value,
+    name: document.getElementById("nameSignup").value,
+    forename: document.getElementById("fornameSignup").value,
+    email: document.getElementById("emailSignup").value,
+    password: document.getElementById("passwordSignup").value,
+    street: document.getElementById("streetSignup").value
+  }
+
+  fetch("/api/users/signup", {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    body: JSON.stringify(user), // body data type must match "Content-Type" header
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText);
+    }
+    return response.json();
+
+  }).then((data) => onUserRegistration(data))
+    .catch((err) => print("error Auth.js .catch signup"));
+}
+const onUserRegistration = (userData) => {
+  console.log("onUserRegistration", userData);
+  const user = {...userData, isAutenticated: true};
+  setUserSessionData(user);
+  Navbar();
+  RedirectUrl("/");
 }
 
 export default Authentication;
