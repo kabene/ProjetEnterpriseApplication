@@ -1,4 +1,7 @@
 import {escapeHtml} from "../utils/utils.js"
+import {setUserSessionData} from "../utils/session";
+import Navbar from "./Navbar";
+import {RedirectUrl} from "./Router";
 
 let pageHTML = `
         <form>
@@ -61,46 +64,57 @@ let pageHTML = `
     `;
 
 const Authentication = () => {
-    let page = document.querySelector("#page");
-    page.innerHTML = pageHTML;
+  let page = document.querySelector("#page");
+  page.innerHTML = pageHTML;
 
-    let loginButton = document.querySelector("#loginButton");
-    loginButton.addEventListener("click", onLogin);
+  let loginButton = document.querySelector("#loginButton");
+  loginButton.addEventListener("click", onLogin);
 
-    let signupButton = document.querySelector("#signupButton");
-    signupButton.addEventListener("click", onSignUp);
+  let signupButton = document.querySelector("#signupButton");
+  signupButton.addEventListener("click", onSignUp);
 }
 
 const onLogin = (e) => {
-    e.preventDefault();
-    console.log("on login");
-    let username = escapeHtml(document.querySelector("#usernameLogin").value);
-    let password = escapeHtml(document.querySelector("#passwordLogin").value);
-    if (username === "" || password === "")
-        return ;
-    let user = {
-        username: username,
-        password: password
+  e.preventDefault();
+  console.log("on login");
+  let username = escapeHtml(document.querySelector("#usernameLogin").value);
+  let password = escapeHtml(document.querySelector("#passwordLogin").value);
+  if (username === "" || password === "") {
+    return;
+  }
+  let user = {
+    username: username,
+    password: password
+  }
+  fetch("/api/users/login", {
+    method: "POST",
+    body: JSON.stringify(user),
+    headers: {
+      "Content-Type": "application/json",
     }
-    fetch("/api/users/login", {
-        method: "POST",
-        body: JSON.stringify(user),
-        headers: {
-            "Content-Type": "application/json",
-        }
-    })
-    .then((response) => {
-      if (!response.ok)
-        throw new Error("Error code : " + response.status + " : " + response.statusText);
-      return response.json();
-    })
-    .then((data) => console.log("Logged in !!\n" + data))
-    .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText);
+    }
+    return response.json();
+  })
+  .then((data) => onUserLogin(data))
+  .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
+}
+
+const onUserLogin = (data) => {
+  console.log("Logged in !!\n" + data)
+  const user = {...data, isAutenticated: true};
+  setUserSessionData(user);
+  Navbar();
+  RedirectUrl("/");
 }
 
 const onSignUp = (e) => {
-    e.preventDefault();
-    console.log("on sign up");
+  e.preventDefault();
+  console.log("on sign up");
 }
 
 export default Authentication;
