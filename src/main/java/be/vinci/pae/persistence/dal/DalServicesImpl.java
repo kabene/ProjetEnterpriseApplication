@@ -1,6 +1,6 @@
 package be.vinci.pae.persistence.dal;
 
-import be.vinci.pae.main.Configurate;
+import be.vinci.pae.utils.Configurate;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

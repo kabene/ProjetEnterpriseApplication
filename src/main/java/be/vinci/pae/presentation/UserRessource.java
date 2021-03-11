@@ -6,6 +6,7 @@ import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.filters.Authorize;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.ucc.UserUCC;
+import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
@@ -58,17 +59,24 @@ public class UserRessource {
           Response.status(Status.NOT_FOUND).entity("Invalid credentials").type("text/plain")
               .build());
     }
+    userDTO = Json.filterPublicJsonView(userDTO, UserDTO.class);
     String token = authentication.createToken(userDTO);
     ObjectNode node = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
     return Response.ok(node, MediaType.APPLICATION_JSON).build();
   }
 
+  /**
+   * Returns the current user after checking the given jwt.
+   * @param request : the request context
+   * @return the current user.
+   */
   @GET
   @Path("me")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response getUser(@Context ContainerRequest request) {
-    UserDTO currentUser = (UserDTO) request.getProperty("user");
+    UserDTO currentUser = Json
+        .filterPublicJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
     return Response.ok(currentUser, MediaType.APPLICATION_JSON).build();
   }
 }

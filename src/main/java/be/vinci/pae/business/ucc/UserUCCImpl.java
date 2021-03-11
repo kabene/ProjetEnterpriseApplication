@@ -2,7 +2,7 @@ package be.vinci.pae.business.ucc;
 
 
 import be.vinci.pae.business.dto.UserDTO;
-import be.vinci.pae.business.factories.UserFactory;
+//import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
@@ -11,8 +11,8 @@ public class UserUCCImpl implements UserUCC {
 
   @Inject
   private UserDAO userDAO;
-  @Inject
-  private UserFactory userFactory;
+//@Inject
+//private UserFactory userFactory;
 
 
   /**
@@ -24,17 +24,13 @@ public class UserUCCImpl implements UserUCC {
    */
   @Override
   public UserDTO login(String username, String password) {
-    User userFound = userDAO.findByUsername(username);
+    User userFound = (User) userDAO.findByUsername(username);
     if (userFound == null) {
       return null; // invalid username
     }
     if (!userFound.checkPassword(password)) {
       return null; // invalid password
     }
-
-    UserDTO res = userFactory.getUserDTO();
-    res.setID(userFound.getID());
-    res.setUsername(userFound.getUsername());
-    return res;
+    return (UserDTO) userFound;
   }
 }

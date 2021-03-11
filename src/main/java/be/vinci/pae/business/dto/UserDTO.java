@@ -14,6 +14,10 @@ public interface UserDTO {
 
   void setUsername(String username);
 
+  String getPassword();
+
+  void setPassword(String password);
+
   //implement address + other attributes
 
 }

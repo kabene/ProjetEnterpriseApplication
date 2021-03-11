@@ -2,7 +2,6 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
-import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -23,8 +22,8 @@ public class UserDAOImpl implements UserDAO {
    * @return a UserDTO corresponding to the user found or null if no user has the given username.
    */
   @Override
-  public User findByUsername(String username) {
-    User userFound = userFactory.getUser();
+  public UserDTO findByUsername(String username) {
+    UserDTO userFound = userFactory.getUserDTO();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u WHERE u.username = ?";
       PreparedStatement ps = dalServices.makeStatement(query);
@@ -48,7 +47,7 @@ public class UserDAOImpl implements UserDAO {
   public UserDTO findById(int userId) {
     UserDTO userFound = userFactory.getUserDTO();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.id = ?";
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ?";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, userId);
       ResultSet rs = ps.executeQuery();
