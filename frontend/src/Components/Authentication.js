@@ -53,7 +53,7 @@ let pageHTML = `
                         <input class="form-control inputSignup my-2" id="municipalitySignup" type="text" name="municipalitySignup" placeholder="pays"/>
                     </div>
                     <select class="selectpicker">
-                        <option>Client</option>
+                        <option selected="selected">Client</option>
                         <option>Anticaire</option>
                         <option>Administrateur</option>  
                     </select>
@@ -127,7 +127,13 @@ const onSignUp = (e) => {
     forename: document.getElementById("fornameSignup").value,
     email: document.getElementById("emailSignup").value,
     password: document.getElementById("passwordSignup").value,
-    street: document.getElementById("streetSignup").value
+    street: document.getElementById("streetSignup").value,
+    streetNumber:document.getElementById("numSignup").value,
+    box:document.getElementById("boiteSignup").value,
+    zip:document.getElementById("postalSignup").value,
+    commune:document.getElementById("communeSignup").value,
+    municipality:document.getElementById("municipalitySignup")
+
   }
 
   fetch("/users/signup", {
@@ -144,7 +150,7 @@ const onSignUp = (e) => {
     return response.json();
 
   }).then((data) => onUserRegistration(data))
-    .catch((err) => print("error Auth.js .catch signup"));
+    .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
 }
 const onUserRegistration = (userData) => {
   console.log("onUserRegistration", userData);
