@@ -36,7 +36,8 @@ public class Main {
   public static void main(String[] args) throws IOException {
     //load properties file
     if (args.length != 1) {
-      System.out.println( "you haven't set the path to a .properties file  in parameter of your  main  ");
+      System.out
+          .println("put the path to a .properties file in parameter of your main");
       System.exit(1);
     }
     Configurate.load(args[0]);

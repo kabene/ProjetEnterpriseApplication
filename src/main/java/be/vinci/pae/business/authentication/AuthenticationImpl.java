@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.Response.Status;
 
 public class AuthenticationImpl implements Authentication {
 
-  private final Algorithm JWT_ALGORITHM = Algorithm
+  private final Algorithm JWTALGORITHM = Algorithm
       .HMAC256(Configurate.getConfiguration("JWTSecret"));
 
 
@@ -18,7 +18,7 @@ public class AuthenticationImpl implements Authentication {
     String token;
     try {
       token =
-          JWT.create().withIssuer("auth0").withClaim("user", user.getID()).sign(this.JWT_ALGORITHM);
+          JWT.create().withIssuer("auth0").withClaim("user", user.getID()).sign(this.JWTALGORITHM);
     } catch (Exception e) {
       throw new WebApplicationException("Unable to create token", e, Status.INTERNAL_SERVER_ERROR);
     }

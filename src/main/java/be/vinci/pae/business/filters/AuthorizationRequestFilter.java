@@ -15,16 +15,16 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.ext.Provider;
-import java.io.IOException;
+
 
 @Singleton
 @Provider
 @Authorize
 public class AuthorizationRequestFilter implements ContainerRequestFilter {
 
-  private final Algorithm JWT_ALGORITHM = Algorithm
+  private final Algorithm JWTALGORITHM = Algorithm
       .HMAC256(Configurate.getConfiguration("JWTSecret"));
-  private final JWTVerifier JWT_VERIFIER = JWT.require(this.JWT_ALGORITHM).withIssuer("auth0")
+  private final JWTVerifier JWTVERIFIER = JWT.require(this.JWTALGORITHM).withIssuer("auth0")
       .build();
 
   @Inject
@@ -37,9 +37,9 @@ public class AuthorizationRequestFilter implements ContainerRequestFilter {
       requestContext
           .abortWith(Response.status(Status.UNAUTHORIZED).entity("Missing token").build());
     } else {
-      DecodedJWT decodedToken ;
+      DecodedJWT decodedToken;
       try {
-        decodedToken = this.JWT_VERIFIER.verify(token);
+        decodedToken = this.JWTVERIFIER.verify(token);
       } catch (Exception e) {
         throw new WebApplicationException("Malformed token", e, Status.UNAUTHORIZED);
       }
