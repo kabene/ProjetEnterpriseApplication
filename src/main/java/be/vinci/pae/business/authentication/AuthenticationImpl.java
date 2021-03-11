@@ -6,6 +6,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import be.vinci.pae.utils.Configurate;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
 
 public class AuthenticationImpl implements Authentication {
 
@@ -24,6 +27,22 @@ public class AuthenticationImpl implements Authentication {
     }
     return token;
 
+  }
+
+  @Override
+  public String createLongToken(UserDTO user) {
+    String token;
+    LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+    LocalDateTime end = now.plusMonths(1);
+    Date date = Date.from(end.toInstant(ZoneOffset.UTC));
+    try {
+      token =
+          JWT.create().withExpiresAt(date).withIssuer("auth0").withClaim("user", user.getID())
+              .sign(this.jwtAlgorithm); //expires in 1 mounth -> to store as cookie on client side
+    } catch (Exception e) {
+      throw new WebApplicationException("Unable to create token", e, Status.INTERNAL_SERVER_ERROR);
+    }
+    return token;
   }
 }
 

@@ -47,9 +47,11 @@ public class UserRessource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response rememberMe(@Context ContainerRequest request) {
-    UserDTO currentUser = Json.filterPublicJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
-    String token = authentication.createToken(currentUser);
-    ObjectNode node = jsonMapper.createObjectNode().put("token", token).putPOJO("user", currentUser);
+    UserDTO currentUser = Json
+        .filterPublicJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
+    String token = authentication.createLongToken(currentUser);
+    ObjectNode node = jsonMapper.createObjectNode().put("token", token)
+        .putPOJO("user", currentUser);
     return Response.ok(node, MediaType.APPLICATION_JSON).build();
   }
 
@@ -64,7 +66,7 @@ public class UserRessource {
   @Path("login")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response login(User user) { //TODO return Response
+  public Response login(User user) {
     if (user.getUsername() == null || user.getPassword() == null) { // invalid request
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
