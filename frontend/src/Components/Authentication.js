@@ -111,7 +111,7 @@ const onLogin = (e) => {
 }
 
 const onUserLogin = (data) => {
-  console.log("Logged in !!\n" + data)
+  console.log("Logged in !!\n", data)
   const user = {...data, isAutenticated: true};
   setUserSessionData(user);
   Navbar();

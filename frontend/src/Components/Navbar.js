@@ -5,7 +5,7 @@ let navBar = document.querySelector("#navbar");
 
 const Navbar = () => {
   let navbarHtml;
-  let user = getUserSessionData();
+  let pers = getUserSessionData();
   navbarHtml = `
 
         <nav class="navbar navbar-expand-md navbar-light py-0"> 
@@ -20,7 +20,7 @@ const Navbar = () => {
                 <ul class="navbar-nav ml-auto"> 
         `;
 
-  if(!user){
+  if(!pers){
     navbarHtml += `
     <li class="nav-item"><button type="button" class="btn btn-primary navbarButton" id="seeFurnitureButton" href="#" data-uri="/furnitures">Voir les meubles</button>
     <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/authentication">S'identifier</button></li>
@@ -31,7 +31,7 @@ const Navbar = () => {
                   <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>
                   <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
                   <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
-                  <li class="my-auto font-weight-bold">utilisateurs.pseudo</li>
+                  <li class="my-auto font-weight-bold"> ${ pers.user.username } </li>
                   `;
   }
   
