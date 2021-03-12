@@ -18,10 +18,10 @@ public class UserUCCImplTest {
   private static UserUCC userUCC;
   private UserDTO user;
 
-  @BeforeAll
   /**
-   Initialise.
+   * Initialise test variable and dependency injection.
    */
+  @BeforeAll
   public static void init() {
     Configurate.load("properties/test.properties");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new ApplicationBinder());
