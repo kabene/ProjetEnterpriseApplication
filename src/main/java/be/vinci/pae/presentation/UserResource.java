@@ -25,7 +25,7 @@ import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
 @Path("/users")
-public class UserRessource {
+public class UserResource {
 
   //@Inject
   //private UserFactory userFactory;
