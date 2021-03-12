@@ -19,7 +19,8 @@ public class AuthenticationImpl implements Authentication {
   @Override
   public String createToken(UserDTO user) {
     LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
-    LocalDateTime end = now.plusHours(12); //expires in 12 hours -> to store as cookie on client side
+    LocalDateTime end = now
+        .plusHours(12); //expires in 12 hours -> to store as cookie on client side
     return getTokenFromExpirationDate(user, end);
 
   }

@@ -70,7 +70,6 @@ public class UserResource {
   public Response login(JsonNode reqNode) {
     String username = reqNode.get("username").asText();
     String password = reqNode.get("password").asText();
-    boolean rememberMe = reqNode.get("rememberMe").asBoolean();
     if (username == null || password == null) { // invalid request
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
@@ -84,9 +83,10 @@ public class UserResource {
     }
     userDTO = Json.filterPublicJsonView(userDTO, UserDTO.class);
     String token;
-    if(rememberMe){
+    boolean rememberMe = reqNode.get("rememberMe").asBoolean();
+    if (rememberMe) {
       token = authentication.createLongToken(userDTO);
-    }else {
+    } else {
       token = authentication.createToken(userDTO);
     }
     ObjectNode resNode = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
