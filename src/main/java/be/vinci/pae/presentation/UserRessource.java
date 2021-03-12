@@ -93,12 +93,6 @@ public class UserRessource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response signup(User user) {
-
-
-  /*  String token = authentication.createToken(userDTO);
-    ObjectNode node = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
-    return Response.ok(node, MediaType.APPLICATION_JSON).build();
-    */
     return null;
   }
 }
