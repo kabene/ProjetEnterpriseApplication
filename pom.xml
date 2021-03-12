@@ -64,7 +64,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-runner</artifactId>
+			<artifactId>junit-platform-launcher</artifactId>
 			<version>1.7.0</version>
 		</dependency>
     <dependency>
@@ -76,6 +76,12 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
 			<version>2.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.23.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
