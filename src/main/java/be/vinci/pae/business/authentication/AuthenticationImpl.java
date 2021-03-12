@@ -38,7 +38,7 @@ public class AuthenticationImpl implements Authentication {
     try {
       token =
           JWT.create().withExpiresAt(date).withIssuer("auth0").withClaim("user", user.getID())
-              .sign(this.jwtAlgorithm); //expires in 1 mounth -> to store as cookie on client side
+              .sign(this.JWTALGORITHM); //expires in 1 mounth -> to store as cookie on client side
     } catch (Exception e) {
       throw new WebApplicationException("Unable to create token", e, Status.INTERNAL_SERVER_ERROR);
     }
