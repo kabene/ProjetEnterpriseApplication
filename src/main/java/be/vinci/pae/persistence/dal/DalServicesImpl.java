@@ -17,12 +17,6 @@ public class DalServicesImpl implements ConnectionDalServices {
    */
   public DalServicesImpl() {
     try {
-      Class.forName("org.postgresql.Driver");
-    } catch (ClassNotFoundException e) {
-      System.out.println("Driver PostgreSQL manquant !");
-      e.printStackTrace();
-    }
-    try {
       this.ds = setupDataSource();
       conn = ds.getConnection(); // find an alternative because  it's running on dual task
     } catch (SQLException e) {

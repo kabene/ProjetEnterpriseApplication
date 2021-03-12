@@ -1,5 +1,5 @@
 import logo from "../img/logoAE_v2.png";
-import {getUserSessionData, setUserLocalData} from "../utils/session.js";
+import {getUserSessionData} from "../utils/session.js";
 import {escapeHtml} from "../utils/utils.js";
 
 let navBar = document.querySelector("#navbar");
@@ -7,7 +7,7 @@ let navBar = document.querySelector("#navbar");
 const Navbar = () => {
   let navbarHtml;
   let pers = getUserSessionData();
-
+//class=navbar navbar-expand-md navbar-light py-0"
   navbarHtml = `
 
         <nav class="navbar navbar-expand-md navbar-light py-0"> 
@@ -22,13 +22,13 @@ const Navbar = () => {
                 <ul class="navbar-nav ml-auto"> 
         `;
 
-  if(!pers){
+  if (!pers) {
     navbarHtml += `
     <li class="nav-item"><button type="button" class="btn btn-primary navbarButton" id="seeFurnitureButton" href="#" data-uri="/furnitures">Voir les meubles</button>
     <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/authentication">S'identifier</button></li>
     `;
-  }else {
-    var user=escapeHtml(pers.user.username);
+  } else {
+    var user = escapeHtml(pers.user.username);
     navbarHtml += `
                   <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton p-0" href="#" data-uri="/visits">Mes demandes de visite</button>
                   <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>
@@ -37,7 +37,6 @@ const Navbar = () => {
                   <li class="my-auto font-weight-bold"> ${user}</li>
                   `;
   }
-  
 
   //if client
   /*
