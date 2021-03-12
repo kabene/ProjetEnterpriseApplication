@@ -1,6 +1,7 @@
 import {escapeHtml} from "../utils/utils.js"
 import {getUserSessionData, setUserSessionData} from "../utils/session";
 import Navbar from "./Navbar";
+import {setLayout}from "../utils/render.js"
 import {RedirectUrl} from "./Router";
 
 let pageHTML = `
@@ -47,10 +48,10 @@ let pageHTML = `
                     </div>
                     <div class="form-group">
                         <input class="form-control inputSignup my-2" id="numSignup" type="text" name="numSignup" placeholder="numero"/>
-                        <input class="form-control inputSignup my-2" id="boiteSignup" type="text" name="boiteSignup" placeholder="boite"/>
+                        <input class="form-control inputSignup my-2" id="boxSignup" type="text" name="boxSignup" placeholder="boite"/>
                         <input class="form-control inputSignup my-2" id="postalSignup" type="text" name="postalSignup" placeholder="code postal"/>
                         <input class="form-control inputSignup my-2" id="communeSignup" type="text" name="communeSignup" placeholder="commune"/>
-                        <input class="form-control inputSignup my-2" id="municipalitySignup" type="text" name="municipalitySignup" placeholder="pays"/>
+                        <input class="form-control inputSignup my-2" id="countrySignup" type="text" name="countrySignup" placeholder="pays"/>
                     </div>
                     <select class="selectpicker">
                         <option selected="selected">Client</option>
@@ -114,7 +115,7 @@ const onUserLogin = (data) => {
   console.log("Logged in !!\n", data)
   const user = {...data, isAutenticated: true};
   setUserSessionData(user);
-  Navbar();
+  setLayout();
   RedirectUrl("/");
 }
 
@@ -129,10 +130,10 @@ const onSignUp = (e) => {
     password: document.getElementById("passwordSignup").value,
     street: document.getElementById("streetSignup").value,
     streetNumber:document.getElementById("numSignup").value,
-    box:document.getElementById("boiteSignup").value,
+    box:document.getElementById("boxSignup").value,
     zip:document.getElementById("postalSignup").value,
     commune:document.getElementById("communeSignup").value,
-    municipality:document.getElementById("municipalitySignup")
+    country:document.getElementById("countrySignup").value
 
   }
 
@@ -156,7 +157,7 @@ const onUserRegistration = (userData) => {
   console.log("onUserRegistration", userData);
   const user = {...userData, isAutenticated: true};
   setUserSessionData(user);
-  Navbar();
+  setLayout();
   RedirectUrl("/");
 }
 

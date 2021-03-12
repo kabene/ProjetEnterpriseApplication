@@ -1,11 +1,14 @@
 import logo from "../img/logoAE_v2.png";
 import {getUserSessionData} from "../utils/session.js";
+import {escapeHtml} from "../utils/utils.js";
 
 let navBar = document.querySelector("#navbar");
 
 const Navbar = () => {
   let navbarHtml;
   let pers = getUserSessionData();
+  var user=escapeHtml(pers.user.username);
+
   navbarHtml = `
 
         <nav class="navbar navbar-expand-md navbar-light py-0"> 
@@ -31,7 +34,7 @@ const Navbar = () => {
                   <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>
                   <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
                   <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
-                  <li class="my-auto font-weight-bold"> ${ pers.user.username } </li>
+                  <li class="my-auto font-weight-bold"> ${user}</li>
                   `;
   }
   
