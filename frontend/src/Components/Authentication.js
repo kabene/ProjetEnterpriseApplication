@@ -1,5 +1,5 @@
 import {escapeHtml} from "../utils/utils.js"
-import {getUserSessionData, setUserSessionData} from "../utils/session";
+import {getUserSessionData, setUserSessionData, setUserLocalData} from "../utils/session";
 import Navbar from "./Navbar";
 import {setLayout}from "../utils/render.js"
 import {RedirectUrl} from "./Router";
@@ -15,6 +15,11 @@ let pageHTML = `
                     <div class="form-group">
                         <label for="passwordLogin" class="ml-5">Mot de passe</label>
                         <input class="form-control w-75 m-auto" id="passwordLogin" type="password" name="passwordLogin" placeholder="Entrez votre mot de passe"/>
+                    </div>
+                    <div class="form-group">
+                      <label for="rememberMe" class="ml-5 form-check-label">
+                        <input class="form-check-input" id="rememberMe" type="checkbox" name="rememberMe"/> Se souvenir de moi
+                      </label>
                     </div>
                     <button class="btn btn-primary w-35 m-5" id="loginButton" type="submit">Se connecter</button>
                 </div>
@@ -84,14 +89,17 @@ const Authentication = () => {
 const onLogin = (e) => {
   e.preventDefault();
   console.log("on login");
-  let username = escapeHtml(document.querySelector("#usernameLogin").value);
-  let password = escapeHtml(document.querySelector("#passwordLogin").value);
+  let username = document.querySelector("#usernameLogin").value;
+  let password = document.querySelector("#passwordLogin").value;
+  let rememberMe = document.querySelector("#rememberMe").checked;
+  console.log("remember me: ", rememberMe);
   if (username === "" || password === "") {
     return;
   }
   let user = {
     username: username,
-    password: password
+    password: password,
+    rememberMe: rememberMe,
   }
   fetch("/users/login", {
     method: "POST",
@@ -107,14 +115,17 @@ const onLogin = (e) => {
     }
     return response.json();
   })
-  .then((data) => onUserLogin(data))
+  .then((data) => onUserLogin(data, rememberMe))
   .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
 }
 
-const onUserLogin = (data) => {
+const onUserLogin = (data, rememberMe) => {
   console.log("Logged in !!\n", data)
   const user = {...data, isAutenticated: true};
   setUserSessionData(user);
+  if(rememberMe === true) {
+    setUserLocalData(data.token);
+  }
   setLayout();
   RedirectUrl("/");
 }
