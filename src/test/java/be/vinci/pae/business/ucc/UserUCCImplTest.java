@@ -19,7 +19,7 @@ public class UserUCCImplTest {
   private UserDTO user;
 
   @BeforeAll
-  /*
+  /**
     Initialise.
    */
   public static void init() {
