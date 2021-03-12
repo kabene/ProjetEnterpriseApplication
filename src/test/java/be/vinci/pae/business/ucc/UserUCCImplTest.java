@@ -18,7 +18,7 @@ public class UserUCCImplTest {
   private static UserUCC userUCC;
   private UserDTO user;
 
-  @BeforeAlll
+  @BeforeAll
   /**
    Initialise.
    */
