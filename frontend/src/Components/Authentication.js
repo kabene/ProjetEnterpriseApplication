@@ -1,4 +1,8 @@
 import {escapeHtml} from "../utils/utils.js"
+import {getUserSessionData, setUserSessionData, setUserLocalData} from "../utils/session";
+import Navbar from "./Navbar";
+import {setLayout}from "../utils/render.js"
+import {RedirectUrl} from "./Router";
 
 let pageHTML = `
         <form>
@@ -11,6 +15,11 @@ let pageHTML = `
                     <div class="form-group">
                         <label for="passwordLogin" class="ml-5">Mot de passe</label>
                         <input class="form-control w-75 m-auto" id="passwordLogin" type="password" name="passwordLogin" placeholder="Entrez votre mot de passe"/>
+                    </div>
+                    <div class="form-group">
+                      <label for="rememberMe" class="ml-5 form-check-label">
+                        <input class="form-check-input" id="rememberMe" type="checkbox" name="rememberMe"/> Se souvenir de moi
+                      </label>
                     </div>
                     <button class="btn btn-primary w-35 m-5" id="loginButton" type="submit">Se connecter</button>
                 </div>
@@ -44,13 +53,13 @@ let pageHTML = `
                     </div>
                     <div class="form-group">
                         <input class="form-control inputSignup my-2" id="numSignup" type="text" name="numSignup" placeholder="numero"/>
-                        <input class="form-control inputSignup my-2" id="boiteSignup" type="text" name="boiteSignup" placeholder="boite"/>
+                        <input class="form-control inputSignup my-2" id="boxSignup" type="text" name="boxSignup" placeholder="boite"/>
                         <input class="form-control inputSignup my-2" id="postalSignup" type="text" name="postalSignup" placeholder="code postal"/>
                         <input class="form-control inputSignup my-2" id="communeSignup" type="text" name="communeSignup" placeholder="commune"/>
-                        <input class="form-control inputSignup my-2" id="municipalitySignup" type="text" name="municipalitySignup" placeholder="pays"/>
+                        <input class="form-control inputSignup my-2" id="countrySignup" type="text" name="countrySignup" placeholder="pays"/>
                     </div>
                     <select class="selectpicker">
-                        <option>Client</option>
+                        <option selected="selected">Client</option>
                         <option>Anticaire</option>
                         <option>Administrateur</option>  
                     </select>
@@ -61,46 +70,106 @@ let pageHTML = `
     `;
 
 const Authentication = () => {
-    let page = document.querySelector("#page");
-    page.innerHTML = pageHTML;
+  let page = document.querySelector("#page");
+  page.innerHTML = pageHTML;
 
-    let loginButton = document.querySelector("#loginButton");
-    loginButton.addEventListener("click", onLogin);
+  let loginButton = document.querySelector("#loginButton");
+  loginButton.addEventListener("click", onLogin);
 
-    let signupButton = document.querySelector("#signupButton");
-    signupButton.addEventListener("click", onSignUp);
+  let signupButton = document.querySelector("#signupButton");
+  signupButton.addEventListener("click", onSignUp);
+
+  const user = getUserSessionData();
+  if (user) {
+    Navbar();
+    RedirectUrl("/");
+  }
 }
 
 const onLogin = (e) => {
-    e.preventDefault();
-    console.log("on login");
-    let username = escapeHtml(document.querySelector("#usernameLogin").value);
-    let password = escapeHtml(document.querySelector("#passwordLogin").value);
-    if (username === "" || password === "")
-        return ;
-    let user = {
-        username: username,
-        password: password
+  e.preventDefault();
+  console.log("on login");
+  let username = document.querySelector("#usernameLogin").value;
+  let password = document.querySelector("#passwordLogin").value;
+  let rememberMe = document.querySelector("#rememberMe").checked;
+  console.log("remember me: ", rememberMe);
+  if (username === "" || password === "") {
+    return;
+  }
+  let user = {
+    username: username,
+    password: password,
+    rememberMe: rememberMe,
+  }
+  fetch("/users/login", {
+    method: "POST",
+    body: JSON.stringify(user),
+    headers: {
+      "Content-Type": "application/json",
     }
-    fetch("/api/users/login", {
-        method: "POST",
-        body: JSON.stringify(user),
-        headers: {
-            "Content-Type": "application/json",
-        }
-    })
-    .then((response) => {
-      if (!response.ok)
-        throw new Error("Error code : " + response.status + " : " + response.statusText);
-      return response.json();
-    })
-    .then((data) => console.log("Logged in !!\n" + data))
-    .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText);
+    }
+    return response.json();
+  })
+  .then((data) => onUserLogin(data, rememberMe))
+  .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
+}
+
+const onUserLogin = (data, rememberMe) => {
+  console.log("Logged in !!\n", data)
+  const user = {...data, isAutenticated: true};
+  setUserSessionData(user);
+  if(rememberMe === true) {
+    setUserLocalData(data.token);
+  }
+  setLayout();
+  RedirectUrl("/");
 }
 
 const onSignUp = (e) => {
-    e.preventDefault();
-    console.log("on sign up");
+  e.preventDefault();
+  console.log("on sign up");
+  let user = {
+    pseudo: document.getElementById("usernameSignup").value,
+    name: document.getElementById("nameSignup").value,
+    forename: document.getElementById("fornameSignup").value,
+    email: document.getElementById("emailSignup").value,
+    password: document.getElementById("passwordSignup").value,
+    street: document.getElementById("streetSignup").value,
+    streetNumber:document.getElementById("numSignup").value,
+    box:document.getElementById("boxSignup").value,
+    zip:document.getElementById("postalSignup").value,
+    commune:document.getElementById("communeSignup").value,
+    country:document.getElementById("countrySignup").value
+
+  }
+
+  fetch("/users/signup", {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    body: JSON.stringify(user), // body data type must match "Content-Type" header
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText);
+    }
+    return response.json();
+
+  }).then((data) => onUserRegistration(data))
+    .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
+}
+const onUserRegistration = (userData) => {
+  console.log("onUserRegistration", userData);
+  const user = {...userData, isAutenticated: true};
+  setUserSessionData(user);
+  setLayout();
+  RedirectUrl("/");
 }
 
 export default Authentication;

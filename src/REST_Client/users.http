@@ -23,7 +23,8 @@ Content-Type: application/json
 
 {
   "username": "ex",
-  "password": "azerty"
+  "password": "azerty",
+  "rememberMe": true
 }
 ### /login as 'ex' (pwd : azerty) -> success
 
