@@ -1,8 +1,14 @@
+import {removeSessionData, removeLocalData} from "../utils/session.js";
+import {RedirectUrl} from "./Router.js";
+import {setLayout} from "../utils/render.js"
+
 let page = document.querySelector("#page");
 
 const LogoutComponent = () => {
-    let pageHTML = `<h1>Lien pour se deconnecter (clients/admins)</h1>`;
-    page.innerHTML = pageHTML;
+    removeSessionData();
+    removeLocalData();
+    setLayout();
+    RedirectUrl("/");
 }
 
 export default LogoutComponent;

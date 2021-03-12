@@ -7,6 +7,7 @@ import be.vinci.pae.business.filters.Authorize;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.utils.Json;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
@@ -25,7 +26,7 @@ import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
 @Path("/users")
-public class UserRessource {
+public class UserResource {
 
   //@Inject
   //private UserFactory userFactory;
@@ -37,36 +38,64 @@ public class UserRessource {
   private final ObjectMapper jsonMapper = new ObjectMapper();
 
   /**
+   * Login via "remember me" token.
+   *
+   * @param request : the request context
+   * @return user information and new jwt
+   */
+  @GET
+  @Path("login")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public Response rememberMe(@Context ContainerRequest request) {
+    UserDTO currentUser = Json
+        .filterPublicJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
+    String token = authentication.createLongToken(currentUser);
+    ObjectNode node = jsonMapper.createObjectNode().put("token", token)
+        .putPOJO("user", currentUser);
+    return Response.ok(node, MediaType.APPLICATION_JSON).build();
+  }
+
+  /**
    * POST users/login - Manages login requests.
    *
-   * @param user : containing request username and password
-   * @return UserDTO user information
+   * @param reqNode : containing request username, password and rememberMe flag
+   * @return user information and jwt
    * @throws WebApplicationException to send a fail status
    */
   @POST
   @Path("login")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response login(User user) { //TODO return Response
-    if (user.getUsername() == null || user.getPassword() == null) { // invalid request
+  public Response login(JsonNode reqNode) {
+    String username = reqNode.get("username").asText();
+    String password = reqNode.get("password").asText();
+    if (username == null || password == null) { // invalid request
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
               .build());
     }
-    UserDTO userDTO = userUCC.login(user.getUsername(), user.getPassword());
+    UserDTO userDTO = userUCC.login(username, password);
     if (userDTO == null) { // user not found
       throw new WebApplicationException(
           Response.status(Status.NOT_FOUND).entity("Invalid credentials").type("text/plain")
               .build());
     }
     userDTO = Json.filterPublicJsonView(userDTO, UserDTO.class);
-    String token = authentication.createToken(userDTO);
-    ObjectNode node = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
-    return Response.ok(node, MediaType.APPLICATION_JSON).build();
+    String token;
+    boolean rememberMe = reqNode.get("rememberMe").asBoolean();
+    if (rememberMe) {
+      token = authentication.createLongToken(userDTO);
+    } else {
+      token = authentication.createToken(userDTO);
+    }
+    ObjectNode resNode = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
+    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
 
   /**
    * Returns the current user after checking the given jwt.
+   *
    * @param request : the request context
    * @return the current user.
    */
@@ -78,5 +107,20 @@ public class UserRessource {
     UserDTO currentUser = Json
         .filterPublicJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
     return Response.ok(currentUser, MediaType.APPLICATION_JSON).build();
+  }
+
+  /**
+   * POST users/signup - Manages signup requests.
+   *
+   * @param user : containing request with all datas
+   * @return UserDTO user information
+   * @throws WebApplicationException to send a fail status
+   */
+  @POST
+  @Path("signup")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response signup(User user) {
+    return null;
   }
 }
