@@ -19,6 +19,9 @@ public class UserUCCImplTest {
   private UserDTO user;
 
   @BeforeAll
+  /*
+    Initialise.
+   */
   public static void init() {
     Configurate.load("src/main/resources/test.properties");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new ApplicationBinder());
