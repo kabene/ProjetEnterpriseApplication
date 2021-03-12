@@ -25,7 +25,7 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("ConnectionDalServices")))
           .to(ConnectionDalServices.class).in(Singleton.class);
-      bind(AuthenticationImpl.class).to(Authentication.class).in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("Authentication"))).to(Authentication.class).in(Singleton.class);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
