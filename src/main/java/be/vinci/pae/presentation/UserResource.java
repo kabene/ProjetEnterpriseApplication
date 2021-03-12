@@ -25,7 +25,7 @@ import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
 @Path("/users")
-public class UserRessource {
+public class UserResource {
 
   //@Inject
   //private UserFactory userFactory;
@@ -37,17 +37,36 @@ public class UserRessource {
   private final ObjectMapper jsonMapper = new ObjectMapper();
 
   /**
+   * Login via "remember me" token.
+   *
+   * @param request : the request context
+   * @return user information and new jwt
+   */
+  @GET
+  @Path("login")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public Response rememberMe(@Context ContainerRequest request) {
+    UserDTO currentUser = Json
+        .filterPublicJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
+    String token = authentication.createLongToken(currentUser);
+    ObjectNode node = jsonMapper.createObjectNode().put("token", token)
+        .putPOJO("user", currentUser);
+    return Response.ok(node, MediaType.APPLICATION_JSON).build();
+  }
+
+  /**
    * POST users/login - Manages login requests.
    *
    * @param user : containing request username and password
-   * @return UserDTO user information
+   * @return user information and jwt
    * @throws WebApplicationException to send a fail status
    */
   @POST
   @Path("login")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response login(User user) { //TODO return Response
+  public Response login(User user) {
     if (user.getUsername() == null || user.getPassword() == null) { // invalid request
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
