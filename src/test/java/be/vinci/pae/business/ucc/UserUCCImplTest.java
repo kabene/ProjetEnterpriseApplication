@@ -23,7 +23,7 @@ public class UserUCCImplTest {
     Initialise.
    */
   public static void init() {
-    Configurate.load("src/main/resources/test.properties");
+    Configurate.load("properties/test.properties");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new ApplicationBinder());
     userUCC = locator.getService(UserUCC.class);
   }
