@@ -67,6 +67,7 @@ public class UserRessource {
 
   /**
    * Returns the current user after checking the given jwt.
+   *
    * @param request : the request context
    * @return the current user.
    */
@@ -78,5 +79,20 @@ public class UserRessource {
     UserDTO currentUser = Json
         .filterPublicJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
     return Response.ok(currentUser, MediaType.APPLICATION_JSON).build();
+  }
+
+  /**
+   * POST users/signup - Manages signup requests.
+   *
+   * @param user : containing request with all datas
+   * @return UserDTO user information
+   * @throws WebApplicationException to send a fail status
+   */
+  @POST
+  @Path("signup")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response signup(User user) {
+    return null;
   }
 }

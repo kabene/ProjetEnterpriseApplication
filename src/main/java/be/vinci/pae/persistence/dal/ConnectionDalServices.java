@@ -10,4 +10,5 @@ public interface ConnectionDalServices {
    * @return send preparedStatement filled first.
    */
   PreparedStatement makeStatement(String query);
+
 }
