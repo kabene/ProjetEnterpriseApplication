@@ -1,5 +1,5 @@
 import logo from "../img/logoAE_v2.png";
-import {getUserSessionData} from "../utils/session.js";
+import {getUserSessionData, setUserLocalData} from "../utils/session.js";
 import {escapeHtml} from "../utils/utils.js";
 
 let navBar = document.querySelector("#navbar");

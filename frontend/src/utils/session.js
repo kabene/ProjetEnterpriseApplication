@@ -26,8 +26,8 @@ const getUserLocalData = () => {
   return JSON.parse(retrievedUser);
 };
 
-const setUserLocalData = (user) => {
-  const storageValue = JSON.stringify(user);
+const setUserLocalData = (token) => {
+  const storageValue = JSON.stringify(token);
   localStorage.setItem(STORE_NAME, storageValue);
 };
 

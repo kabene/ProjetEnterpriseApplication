@@ -7,6 +7,8 @@ import ErrorPage from "./ErrorPage.js";
 import FurnitureList from "./FurnitureList.js";
 import VisitRequest from "./VisitRequest.js";
 import LogoutComponent from "./LogoutComponent.js";
+import { getUserLocalData, getUserSessionData, setUserLocalData, setUserSessionData } from "../utils/session.js";
+import { setLayout } from "../utils/render.js";
 
 const routes = {
     "/": HomePage,
@@ -32,6 +34,7 @@ const Router = () => {
 const onLoadHandler = async (e) => {
     let url = window.location.pathname;
     console.log("onLoad : ", url);
+    getRememberMe(); // logs in if remember me
     componentToRender = routes[url];
     if(!componentToRender){
         ErrorPage(url)
@@ -81,5 +84,39 @@ const RedirectUrl = (uri, data) => {
     else 
         componentToRender(data);
 };
+
+const getRememberMe = () => {
+    let sessionData = getUserSessionData();
+    if(!sessionData) {
+        let token = getUserLocalData();
+        if(token) {
+            fetch("/users/login", {
+                method: "GET",
+                headers: {
+                    Authorization: token
+                }
+            }).then((response) => {
+                if (!response.ok) throw new Error("Error code : " + response.status + " : " + response.statusText);
+                return response.json();
+            })
+            .then((data) => onUserLogin(data))
+            .catch((err) => {
+                console.log("remember me token expired : ", err);
+            });
+        }else {
+            console.log("Not logged in -> no remember me token stored");
+        }
+    }else {
+        console.log("Already logged in -> existing session data");
+    }
+}
+
+const onUserLogin = (data) => {
+    console.log("Logged in via remember me token : ", data)
+    const user = {...data, isAutenticated: true};
+    setUserSessionData(user);
+    setUserLocalData(data.token);
+    setLayout();
+  }
 
 export {Router, RedirectUrl};

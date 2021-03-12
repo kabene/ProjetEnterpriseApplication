@@ -1,5 +1,5 @@
 import {escapeHtml} from "../utils/utils.js"
-import {getUserSessionData, setUserSessionData} from "../utils/session";
+import {getUserSessionData, setUserSessionData, setUserLocalData} from "../utils/session";
 import Navbar from "./Navbar";
 import {setLayout}from "../utils/render.js"
 import {RedirectUrl} from "./Router";
@@ -115,14 +115,17 @@ const onLogin = (e) => {
     }
     return response.json();
   })
-  .then((data) => onUserLogin(data))
+  .then((data) => onUserLogin(data, rememberMe))
   .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
 }
 
-const onUserLogin = (data) => {
+const onUserLogin = (data, rememberMe) => {
   console.log("Logged in !!\n", data)
   const user = {...data, isAutenticated: true};
   setUserSessionData(user);
+  if(rememberMe === true) {
+    setUserLocalData(data.token);
+  }
   setLayout();
   RedirectUrl("/");
 }
