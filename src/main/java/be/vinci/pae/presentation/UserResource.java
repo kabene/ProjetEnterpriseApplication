@@ -37,7 +37,7 @@ public class UserResource {
   private final ObjectMapper jsonMapper = new ObjectMapper();
 
   /**
-   * Login via "remember me" token
+   * Login via "remember me" token.
    *
    * @param request : the request context
    * @return user information and new jwt
