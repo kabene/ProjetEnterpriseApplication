@@ -50,7 +50,8 @@ class UserUCCImplTest {
   @Test
   void test_login_givenGoodUsernameAndGoodPassword_shouldReturnUser() {
     user.setUsername("ex");
-    user.setPassword("$2a$04$62XdSoqyDOBZWQCk/cuh1.OY/x3mnPi2wjcmDC0HCCzc7MVcj/VmW"); //hash for azerty
+    user.setPassword(
+        "$2a$04$62XdSoqyDOBZWQCk/cuh1.OY/x3mnPi2wjcmDC0HCCzc7MVcj/VmW"); //hash for azerty
     user.setID(1);
     assertEquals(user.getID(), userUCC.login("ex", "azerty").getID());
   }
