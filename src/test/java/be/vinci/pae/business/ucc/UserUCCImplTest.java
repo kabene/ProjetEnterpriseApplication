@@ -1,11 +1,10 @@
 package be.vinci.pae.business.ucc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.UserImpl;
-import be.vinci.pae.business.ucc.UserUCC;
-import be.vinci.pae.business.ucc.UserUCCImpl;
 import be.vinci.pae.main.ApplicationBinder;
 import be.vinci.pae.utils.Configurate;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -28,7 +27,7 @@ public class UserUCCImplTest {
 
 
   @BeforeEach
-  public void setUp() throws Exception {
+  public void setUp() {
     user = new UserImpl();
   }
 
