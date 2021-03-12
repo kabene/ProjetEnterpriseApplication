@@ -20,7 +20,7 @@ public class UserUCCImplTest {
   private UserDTO user;
 
   @BeforeAll
-  static void init() {
+  public static void init() {
     Configurate.load("src/main/resources/test.properties");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new ApplicationBinder());
     userUCC = locator.getService(UserUCC.class);
@@ -28,27 +28,27 @@ public class UserUCCImplTest {
 
 
   @BeforeEach
-  void setUp() throws Exception {
+  public void setUp() throws Exception {
     user = new UserImpl();
   }
 
   @Test
-  void test_login_givenBadPassword_shouldReturnNull() {
+  public void test_login_givenBadPassword_shouldReturnNull() {
     assertNull(userUCC.login("ex", "azertyu"));
   }
 
   @Test
-  void test_login_givenBadUsername_shouldReturnNull() {
+  public void test_login_givenBadUsername_shouldReturnNull() {
     assertNull(userUCC.login("Ba.", "noob"));
   }
 
   @Test
-  void test_login_givenBadUsernameAndBadPassword_shouldReturnNull() {
+  public void test_login_givenBadUsernameAndBadPassword_shouldReturnNull() {
     assertNull(userUCC.login("Notime", "inTrouble"));
   }
 
   @Test
-  void test_login_givenGoodUsernameAndGoodPassword_shouldReturnUser() {
+  public void test_login_givenGoodUsernameAndGoodPassword_shouldReturnUser() {
     user.setUsername("ex");
     user.setPassword(
         "$2a$04$62XdSoqyDOBZWQCk/cuh1.OY/x3mnPi2wjcmDC0HCCzc7MVcj/VmW"); //hash for azerty pwd
