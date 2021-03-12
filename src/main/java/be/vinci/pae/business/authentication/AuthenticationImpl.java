@@ -12,7 +12,7 @@ import java.util.Date;
 
 public class AuthenticationImpl implements Authentication {
 
-  private final Algorithm JWTALGORITHM = Algorithm
+  private final Algorithm jwtAlgorithm = Algorithm
       .HMAC256(Configurate.getConfiguration("JWTSecret"));
 
 
@@ -38,7 +38,7 @@ public class AuthenticationImpl implements Authentication {
     try {
       token =
           JWT.create().withExpiresAt(date).withIssuer("auth0").withClaim("user", user.getID())
-              .sign(this.JWTALGORITHM);
+              .sign(this.jwtAlgorithm);
     } catch (Exception e) {
       throw new WebApplicationException("Unable to create token", e, Status.INTERNAL_SERVER_ERROR);
     }

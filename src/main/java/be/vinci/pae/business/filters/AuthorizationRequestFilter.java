@@ -22,9 +22,9 @@ import jakarta.ws.rs.ext.Provider;
 @Authorize
 public class AuthorizationRequestFilter implements ContainerRequestFilter {
 
-  private final Algorithm JWTALGORITHM = Algorithm
+  private final Algorithm jwtAlgorithm = Algorithm
       .HMAC256(Configurate.getConfiguration("JWTSecret"));
-  private final JWTVerifier JWTVERIFIER = JWT.require(this.JWTALGORITHM).withIssuer("auth0")
+  private final JWTVerifier jwtVerifier = JWT.require(this.jwtAlgorithm).withIssuer("auth0")
       .build();
 
   @Inject
@@ -39,7 +39,7 @@ public class AuthorizationRequestFilter implements ContainerRequestFilter {
     } else {
       DecodedJWT decodedToken;
       try {
-        decodedToken = this.JWTVERIFIER.verify(token);
+        decodedToken = this.jwtVerifier.verify(token);
       } catch (Exception e) {
         throw new WebApplicationException("Malformed token", e, Status.UNAUTHORIZED);
       }
