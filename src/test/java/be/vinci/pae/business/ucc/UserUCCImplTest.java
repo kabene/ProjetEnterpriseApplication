@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class UserUCCImplTest {
+public class UserUCCImplTest {
 
   private static UserUCC userUCC;
   private UserDTO user;
