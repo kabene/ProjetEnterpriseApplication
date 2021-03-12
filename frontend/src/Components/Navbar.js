@@ -7,7 +7,9 @@ let navBar = document.querySelector("#navbar");
 const Navbar = () => {
   let navbarHtml;
   let pers = getUserSessionData();
-  var user=escapeHtml(pers.user.username);
+  if(pers !=null) {
+    var user = escapeHtml(pers.user.username);
+  }
 
   navbarHtml = `
 
