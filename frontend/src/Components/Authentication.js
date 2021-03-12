@@ -16,6 +16,11 @@ let pageHTML = `
                         <label for="passwordLogin" class="ml-5">Mot de passe</label>
                         <input class="form-control w-75 m-auto" id="passwordLogin" type="password" name="passwordLogin" placeholder="Entrez votre mot de passe"/>
                     </div>
+                    <div class="form-group">
+                      <label for="rememberMe" class="ml-5 form-check-label">
+                        <input class="form-check-input" id="rememberMe" type="checkbox" name="rememberMe"/> Se souvenir de moi
+                      </label>
+                    </div>
                     <button class="btn btn-primary w-35 m-5" id="loginButton" type="submit">Se connecter</button>
                 </div>
                 <div class="col-1" id="authenticationLine"></div>
@@ -84,14 +89,17 @@ const Authentication = () => {
 const onLogin = (e) => {
   e.preventDefault();
   console.log("on login");
-  let username = escapeHtml(document.querySelector("#usernameLogin").value);
-  let password = escapeHtml(document.querySelector("#passwordLogin").value);
+  let username = document.querySelector("#usernameLogin").value;
+  let password = document.querySelector("#passwordLogin").value;
+  let rememberMe = document.querySelector("#rememberMe").checked;
+  console.log("remember me: ", rememberMe);
   if (username === "" || password === "") {
     return;
   }
   let user = {
     username: username,
-    password: password
+    password: password,
+    rememberMe: rememberMe,
   }
   fetch("/users/login", {
     method: "POST",

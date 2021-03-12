@@ -7,9 +7,6 @@ let navBar = document.querySelector("#navbar");
 const Navbar = () => {
   let navbarHtml;
   let pers = getUserSessionData();
-  if(pers !=null) {
-    var user = escapeHtml(pers.user.username);
-  }
 
   navbarHtml = `
 
@@ -31,6 +28,7 @@ const Navbar = () => {
     <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/authentication">S'identifier</button></li>
     `;
   }else {
+    var user=escapeHtml(pers.user.username);
     navbarHtml += `
                   <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton p-0" href="#" data-uri="/visits">Mes demandes de visite</button>
                   <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>

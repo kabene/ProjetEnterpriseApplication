@@ -7,6 +7,7 @@ import be.vinci.pae.business.filters.Authorize;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.utils.Json;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
@@ -58,7 +59,7 @@ public class UserResource {
   /**
    * POST users/login - Manages login requests.
    *
-   * @param user : containing request username and password
+   * @param reqNode : containing request username, password and rememberMe flag
    * @return user information and jwt
    * @throws WebApplicationException to send a fail status
    */
@@ -66,22 +67,31 @@ public class UserResource {
   @Path("login")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response login(User user) {
-    if (user.getUsername() == null || user.getPassword() == null) { // invalid request
+  public Response login(JsonNode reqNode) {
+    String username = reqNode.get("username").asText();
+    String password = reqNode.get("password").asText();
+    boolean rememberMe = reqNode.get("rememberMe").asBoolean();
+    System.out.println("login");
+    if (username == null || password == null) { // invalid request
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
               .build());
     }
-    UserDTO userDTO = userUCC.login(user.getUsername(), user.getPassword());
+    UserDTO userDTO = userUCC.login(username, password);
     if (userDTO == null) { // user not found
       throw new WebApplicationException(
           Response.status(Status.NOT_FOUND).entity("Invalid credentials").type("text/plain")
               .build());
     }
     userDTO = Json.filterPublicJsonView(userDTO, UserDTO.class);
-    String token = authentication.createToken(userDTO);
-    ObjectNode node = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
-    return Response.ok(node, MediaType.APPLICATION_JSON).build();
+    String token;
+    if(rememberMe){
+      token = authentication.createLongToken(userDTO);
+    }else {
+      token = authentication.createToken(userDTO);
+    }
+    ObjectNode resNode = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
+    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
 
   /**

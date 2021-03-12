@@ -19,13 +19,9 @@ public class AuthenticationImpl implements Authentication {
   @Override
   public String createToken(UserDTO user) {
     String token;
-    try {
-      token =
-          JWT.create().withIssuer("auth0").withClaim("user", user.getID()).sign(this.JWTALGORITHM);
-    } catch (Exception e) {
-      throw new WebApplicationException("Unable to create token", e, Status.INTERNAL_SERVER_ERROR);
-    }
-    return token;
+    LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+    LocalDateTime end = now.plusHours(12); //expires in 12 hours -> to store as cookie on client side
+    return getTokenFromExpirationDate(user, end);
 
   }
 
@@ -33,12 +29,17 @@ public class AuthenticationImpl implements Authentication {
   public String createLongToken(UserDTO user) {
     String token;
     LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
-    LocalDateTime end = now.plusMonths(1);
+    LocalDateTime end = now.plusMonths(1); //expires in 1 month -> to store as cookie on client side
+    return getTokenFromExpirationDate(user, end);
+  }
+
+  private String getTokenFromExpirationDate(UserDTO user, LocalDateTime end) {
+    String token;
     Date date = Date.from(end.toInstant(ZoneOffset.UTC));
     try {
       token =
           JWT.create().withExpiresAt(date).withIssuer("auth0").withClaim("user", user.getID())
-              .sign(this.jwtAlgorithm); //expires in 1 mounth -> to store as cookie on client side
+              .sign(this.JWTALGORITHM);
     } catch (Exception e) {
       throw new WebApplicationException("Unable to create token", e, Status.INTERNAL_SERVER_ERROR);
     }
