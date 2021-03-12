@@ -1,6 +1,7 @@
 import {escapeHtml} from "../utils/utils.js"
 import {getUserSessionData, setUserSessionData} from "../utils/session";
 import Navbar from "./Navbar";
+import {setLayout}from "../utils/render.js"
 import {RedirectUrl} from "./Router";
 
 let pageHTML = `
@@ -114,7 +115,7 @@ const onUserLogin = (data) => {
   console.log("Logged in !!\n", data)
   const user = {...data, isAutenticated: true};
   setUserSessionData(user);
-  Navbar();
+  setLayout();
   RedirectUrl("/");
 }
 
@@ -156,7 +157,7 @@ const onUserRegistration = (userData) => {
   console.log("onUserRegistration", userData);
   const user = {...userData, isAutenticated: true};
   setUserSessionData(user);
-  Navbar();
+  setLayout();
   RedirectUrl("/");
 }
 
