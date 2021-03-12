@@ -71,7 +71,6 @@ public class UserResource {
     String username = reqNode.get("username").asText();
     String password = reqNode.get("password").asText();
     boolean rememberMe = reqNode.get("rememberMe").asBoolean();
-    System.out.println("login");
     if (username == null || password == null) { // invalid request
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
