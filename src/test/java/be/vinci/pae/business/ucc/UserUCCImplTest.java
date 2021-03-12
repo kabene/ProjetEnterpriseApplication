@@ -1,4 +1,4 @@
-package be.vinci.pae.business;
+package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.*;
 
