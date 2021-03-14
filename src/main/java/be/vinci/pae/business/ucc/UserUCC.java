@@ -1,5 +1,6 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.dto.AdresseDTO;
 import be.vinci.pae.business.dto.UserDTO;
 
 public interface UserUCC {
@@ -12,4 +13,12 @@ public interface UserUCC {
    * @return the corresponding UserDTO or null if invalid credentials
    */
   UserDTO login(String username, String password);
+
+  /**
+   * register a user into the system
+   * @param user userDTO that  describe the user.
+   * @param adress adress DTO that describe the adress of the user.
+   *
+   */
+  void register(UserDTO user, AdresseDTO adress);
 }

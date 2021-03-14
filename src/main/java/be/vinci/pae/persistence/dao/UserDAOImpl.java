@@ -1,7 +1,9 @@
 package be.vinci.pae.persistence.dao;
 
+
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
+import be.vinci.pae.exceptions.TakenException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -62,4 +64,57 @@ public class UserDAOImpl implements UserDAO {
     }
     return userFound;
   }
+
+  /**
+   * used to register a new user.
+   * @param user UserDTO that describe the user.
+   * @param adress_ID id of the adress.
+   */
+  @Override
+  public void register(UserDTO user, int adress_ID) {
+
+    String query =
+        " INSERT INTO satchoFurniture.users VALUES(DEFAULT,?,?,?,?," + adress_ID
+            + ",now(),?,?,0,0,DEFAULT)";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setString(1, user.getLast_name());
+      ps.setString(2, user.getFirst_name());
+      ps.setString(3, user.getUsername());
+      ps.setString(4, user.getEmail());
+      ps.setString(5, user.getRole());
+      ps.setString(6, user.getPassword());
+      ps.executeQuery();
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+  }
+
+  @Override
+  public boolean emailAlreadyTaken(String email) {
+    String query = "SELECT * FROM satchoFurniture.users WHERE email = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setString(1, email);
+      ResultSet rs = ps.executeQuery();
+      return rs.next();
+    } catch (SQLException exception) {
+      throw new TakenException();
+    }
+  }
+
+  @Override
+  public boolean usernameAlreadyTaken(String username) {
+    String query = "SELECT * FROM satchoFurniture.users WHERE username = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setString(1, username);
+      ResultSet rs = ps.executeQuery();
+      return rs.next();
+    } catch (SQLException throwables) {
+     throw new TakenException();
+    }
+  }
+
+
 }

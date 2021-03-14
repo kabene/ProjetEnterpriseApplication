@@ -5,6 +5,7 @@ import be.vinci.pae.business.dto.UserDTO;
 //import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.filters.Authorize;
 import be.vinci.pae.business.pojos.User;
+import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -112,7 +113,6 @@ public class UserResource {
   /**
    * POST users/signup - Manages signup requests.
    *
-   * @param user : containing request with all datas
    * @return UserDTO user information
    * @throws WebApplicationException to send a fail status
    */
@@ -120,7 +120,22 @@ public class UserResource {
   @Path("signup")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response signup(User user) {
+  public Response signup(JsonNode reqNode) {
+    //user
+    String username=reqNode.get("username").asText();
+    String last_name=reqNode.get("last_name").asText();
+    String first_name=reqNode.get("first_name").asText();
+    String email=reqNode.get("email").asText();
+    String role=reqNode.get("role").asText();
+    //adress
+    String street=reqNode.get("street").asText();
+    String building_number=reqNode.get("building_number").asText();
+    String unit_number=reqNode.get("unit_number").asText();
+    Integer postcode=reqNode.get("postcode").asInt();
+    String commune=reqNode.get("commune").asText();
+    String country=reqNode.get("country").asText();
+
+
     return null;
   }
 }
