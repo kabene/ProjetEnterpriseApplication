@@ -53,6 +53,7 @@ public class UserUCCImplTest {
     UserDTO actual = userUCC.login(username, pwd);
 
     Mockito.verify(mockUserDAO).findByUsername(username);
+    Mockito.verify(mockUser).checkPassword(pwd);
     assertNull(actual, "UserUCC.login should return null after being given a wrong password");
   }
 
@@ -65,6 +66,7 @@ public class UserUCCImplTest {
 
     UserDTO actual = userUCC.login(username, pwd);
 
+    Mockito.verify(mockUserDAO).findByUsername(username);
     assertNull(actual,
         "UserUCC.login should return null after being given"
             + " a username not present in the database");
@@ -81,6 +83,8 @@ public class UserUCCImplTest {
 
     UserDTO actual = userUCC.login(username, pwd);
 
+    Mockito.verify(mockUserDAO).findByUsername(username);
+    Mockito.verify(mockUser).checkPassword(pwd);
     assertEquals(mockUser, actual,
         "UserUCC.login should return the good UserDTO if the credentials are valid");
   }
