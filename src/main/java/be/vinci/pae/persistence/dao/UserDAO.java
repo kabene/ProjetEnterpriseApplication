@@ -1,6 +1,5 @@
 package be.vinci.pae.persistence.dao;
 
-import be.vinci.pae.business.dto.AdresseDTO;
 import be.vinci.pae.business.dto.UserDTO;
 
 public interface UserDAO {

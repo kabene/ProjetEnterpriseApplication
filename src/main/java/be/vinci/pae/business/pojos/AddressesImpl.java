@@ -6,21 +6,21 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonInclude(Include.NON_NULL)
-public class AdressesImpl implements Adresses {
+public class AddressesImpl implements Addresses {
 
   @JsonView(Views.Public.class)
   private int id;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.Internal.class)
   private String  street;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.Internal.class)
   private String building_number;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.Internal.class)
   private String unit_number;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.Internal.class)
   private int postcode;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.Internal.class)
   private String commune;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.Internal.class)
   private String country;
 
   public int getId() {

@@ -1,15 +1,15 @@
 package be.vinci.pae.persistence.dao;
 
 
-import be.vinci.pae.business.dto.AdresseDTO;
+import be.vinci.pae.business.dto.AddresseDTO;
 
-public interface AdresseDAO {
+public interface AddresseDAO {
 
   /**
    * Create a newAdress
    * @param adress AdressDTO describe the adress.
    */
-  void newAdresse(AdresseDTO adress);
+  void newAdresse(AddresseDTO adress);
 
 
 

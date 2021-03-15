@@ -1,12 +1,12 @@
 package be.vinci.pae.business.ucc;
 
 
-import be.vinci.pae.business.dto.AdresseDTO;
+import be.vinci.pae.business.dto.AddresseDTO;
 import be.vinci.pae.business.dto.UserDTO;
 //import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.exceptions.TakenException;
-import be.vinci.pae.persistence.dao.AdresseDAO;
+import be.vinci.pae.persistence.dao.AddresseDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
 
@@ -16,7 +16,7 @@ public class UserUCCImpl implements UserUCC {
   private UserDAO userDAO;
 
   @Inject
-  private AdresseDAO adresseDAO;
+  private AddresseDAO addresseDAO;
 
 
 
@@ -45,14 +45,15 @@ public class UserUCCImpl implements UserUCC {
    * @param adress id of the adress.
    */
   @Override
-  public void register(UserDTO user, AdresseDTO adress) {
+  public UserDTO register(UserDTO user, AddresseDTO adress) {
     if(userDAO.usernameAlreadyTaken(user.getUsername())){
       throw new TakenException("username already taken");
     }
     if(userDAO.emailAlreadyTaken(user.getEmail())){
       throw new TakenException("email already taken");
     }
-    adresseDAO.newAdresse(adress);
+    addresseDAO.newAdresse(adress);
     userDAO.register(user,adress.getId());
+
   }
 }
