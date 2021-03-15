@@ -9,6 +9,7 @@ import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -22,6 +23,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import java.util.List;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -122,5 +124,31 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response signup(User user) {
     return null;
+  }
+
+  @GET
+  @Path("customers")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public Response getCustomers() {
+    List<UserDTO> users = userUCC.rechercherTousLesClients();
+    ObjectNode resNode = jsonMapper.createObjectNode();
+    for (UserDTO user : users)
+      resNode.putPOJO("user", Json.filterPublicJsonView(user, UserDTO.class));
+    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
+  }
+
+  @POST
+  @Path("customers")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public Response getCustomers(JsonNode jsonNode) {
+    String filter = jsonNode.get("filter").asText();
+    List<UserDTO> users = userUCC.rechercherClients(filter);
+    ObjectNode resNode = jsonMapper.createObjectNode();
+    for (UserDTO user : users)
+      resNode.putPOJO("user", Json.filterPublicJsonView(user, UserDTO.class));
+    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
 }

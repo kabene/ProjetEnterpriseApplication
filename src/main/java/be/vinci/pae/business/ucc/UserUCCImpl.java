@@ -6,6 +6,7 @@ import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
+import java.util.List;
 
 public class UserUCCImpl implements UserUCC {
 
@@ -30,5 +31,15 @@ public class UserUCCImpl implements UserUCC {
       return null; // invalid password
     }
     return (UserDTO) userFound;
+  }
+
+  @Override
+  public List<UserDTO> rechercherTousLesClients() {
+    return userDAO.getAllClients();
+  }
+
+  @Override
+  public List<UserDTO> rechercherClients(String filter) {
+    return userDAO.findWithFilters(filter);
   }
 }

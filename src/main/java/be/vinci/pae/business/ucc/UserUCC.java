@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.UserDTO;
+import java.util.List;
 
 public interface UserUCC {
 
@@ -12,4 +13,8 @@ public interface UserUCC {
    * @return the corresponding UserDTO or null if invalid credentials
    */
   UserDTO login(String username, String password);
+
+  List<UserDTO> rechercherTousLesClients();
+
+  List<UserDTO> rechercherClients(String filtre);
 }

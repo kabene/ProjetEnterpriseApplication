@@ -1,6 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.UserDTO;
+import java.util.List;
 
 public interface UserDAO {
 
@@ -13,4 +14,8 @@ public interface UserDAO {
   UserDTO findByUsername(String username);
 
   UserDTO findById(int id);
+
+  List<UserDTO> getAllClients();
+
+  List<UserDTO> findWithFilters(String filter);
 }

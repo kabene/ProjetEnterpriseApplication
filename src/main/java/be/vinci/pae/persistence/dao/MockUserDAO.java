@@ -3,6 +3,7 @@ package be.vinci.pae.persistence.dao;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
 import jakarta.inject.Inject;
+import java.util.List;
 
 public class MockUserDAO implements UserDAO {
 
@@ -25,5 +26,15 @@ public class MockUserDAO implements UserDAO {
     res.setID(1);
     res.setPassword("$2a$04$62XdSoqyDOBZWQCk/cuh1.OY/x3mnPi2wjcmDC0HCCzc7MVcj/VmW");
     return res;
+  }
+
+  @Override
+  public List<UserDTO> getAllClients() {
+    return null;
+  }
+
+  @Override
+  public List<UserDTO> findWithFilters(String filter) {
+    return null;
   }
 }

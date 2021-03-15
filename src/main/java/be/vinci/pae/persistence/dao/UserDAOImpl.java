@@ -7,6 +7,8 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
 
@@ -61,5 +63,42 @@ public class UserDAOImpl implements UserDAO {
       userFound = null;
     }
     return userFound;
+  }
+
+  @Override
+  public List<UserDTO> getAllClients() {
+    List<UserDTO> users = new ArrayList<UserDTO>();
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        UserDTO user = userFactory.getUserDTO();
+        user.setID(rs.getInt("user_id"));
+        user.setUsername(rs.getString("username"));
+        users.add(user);
+      }
+    } catch (SQLException e) {}
+    return users;
+  }
+
+  @Override
+  public List<UserDTO> findWithFilters(String filter) {
+    List<UserDTO> users = new ArrayList<UserDTO>();
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u INNER JOIN satchofurniture.addreses a ON u.address_id=a.address_id WHERE a.commune=? OR a.postalcode=? OR u.username=?";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setString(1, filter);
+      ps.setString(2, filter);
+      ps.setString(3, filter);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        UserDTO user = userFactory.getUserDTO();
+        user.setID(rs.getInt("user_id"));
+        user.setUsername(rs.getString("username"));
+        users.add(user);
+      }
+    } catch (SQLException e) {}
+    return users;
   }
 }
