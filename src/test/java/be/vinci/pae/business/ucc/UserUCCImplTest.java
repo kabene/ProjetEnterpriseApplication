@@ -66,7 +66,8 @@ public class UserUCCImplTest {
     UserDTO actual = userUCC.login(username, pwd);
 
     assertNull(actual,
-        "UserUCC.login should return null after being given a username not present in the database");
+        "UserUCC.login should return null after being given"
+            + " a username not present in the database");
   }
 
   @DisplayName("TEST UserUCC.login : given valid credentials, should return matching UserDTO")
