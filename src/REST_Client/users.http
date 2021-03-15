@@ -28,3 +28,20 @@ Content-Type: application/json
 }
 ### /login as 'ex' (pwd : azerty) -> success
 
+POST {{baseUrl}}/users/signup
+Content-Type: application/json
+
+{
+  "username":"a",
+ "last_name": "b",
+  "first_name": "c",
+  "email": "d@gmail.com",
+  "password": "e",
+  "street": "f",
+  "building_number":"g",
+  "unit_number":"h",
+  "postcode":1,
+  "commune":"j",
+  "country":"q",
+  "role":"client"
+}
