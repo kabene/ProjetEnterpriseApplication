@@ -1,6 +1,6 @@
 package be.vinci.pae.business.ucc;
 
-import be.vinci.pae.business.dto.AddresseDTO;
+import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
 
 public interface UserUCC {
@@ -20,5 +20,5 @@ public interface UserUCC {
    * @param adress adress DTO that describe the adress of the user.
    *
    */
-  UserDTO register(UserDTO user, AddresseDTO adress);
+  UserDTO register(UserDTO user, AddressDTO adress);
 }

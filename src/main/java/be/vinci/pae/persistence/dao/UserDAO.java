@@ -26,8 +26,17 @@ public interface UserDAO {
    */
   void register(UserDTO user, int adress_ID);
 
-
+  /**
+   * verify if email is already taken.
+   * @param email string email.
+   * @return a boolean true if email is already taken and false in other case.
+   */
   boolean emailAlreadyTaken(String email);
 
+  /**
+   *  verify if the username is already taken.
+   * @param username string username.
+   * @return a boolean true if username is already taken and false in other case.
+   */
   boolean usernameAlreadyTaken(String username);
 }

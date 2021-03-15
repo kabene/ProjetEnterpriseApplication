@@ -5,7 +5,7 @@ import be.vinci.pae.business.pojos.AddressesImpl;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(as = AddressesImpl.class)
-public interface AddresseDTO {
+public interface AddressDTO {
 
   int getId();
 

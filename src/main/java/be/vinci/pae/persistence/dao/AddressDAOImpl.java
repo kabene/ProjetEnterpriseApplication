@@ -1,12 +1,12 @@
 package be.vinci.pae.persistence.dao;
 
-import be.vinci.pae.business.dto.AddresseDTO;
+import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class AddressDAOImpl implements AddresseDAO {
+public class AddressDAOImpl implements AddressDAO {
 
   @Inject
   private ConnectionDalServices dalServices;
@@ -17,7 +17,7 @@ public class AddressDAOImpl implements AddresseDAO {
    * @param adress AdressDTO describe the adress.
    */
   @Override
-  public void newAdresse(AddresseDTO adress) {
+  public void newAdresse(AddressDTO adress) {
     String query =
         " INSERT INTO satchoFurniture.addresses VALUES(DEFAULT,?,?,?,?,?,?)";
     PreparedStatement ps = dalServices.makeStatement(query);

@@ -1,11 +1,11 @@
 package be.vinci.pae.business.factories;
 
-import be.vinci.pae.business.dto.AddresseDTO;
+import be.vinci.pae.business.dto.AddressDTO;
 
 public class AddressFactoryImpl implements AddressFactory{
 
   @Override
-  public AddresseDTO getAdressDTO() {
+  public AddressDTO getAdressDTO() {
     return null;
   }
 }
