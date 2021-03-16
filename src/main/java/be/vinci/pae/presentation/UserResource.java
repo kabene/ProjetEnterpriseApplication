@@ -153,10 +153,10 @@ public class UserResource {
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
               .build());
     }
-    System.out.println(" scann succes");
+
 
     AddressDTO useadress = new AddressFactoryImpl().getAddressDTO();
-    System.out.println("useradress created " + useadress);
+
     useadress.setStreet(street);
     useadress.setBuilding_number(building_number);
     useadress.setUnit_number(unit_number);
@@ -164,7 +164,7 @@ public class UserResource {
     useadress.setCommune(commune);
     useadress.setCountry(country);
 
-    System.out.println("addressDTO generated ");
+
 
     UserDTO use = new UserFactoryImpl().getUserDTO();
     use.setUsername(username);

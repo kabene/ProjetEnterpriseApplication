@@ -88,6 +88,7 @@ public class UserDAOImpl implements UserDAO {
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
+    
   }
   /**
    * verify if email is already taken.

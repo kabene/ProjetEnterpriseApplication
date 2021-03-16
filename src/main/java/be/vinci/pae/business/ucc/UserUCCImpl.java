@@ -19,7 +19,6 @@ public class UserUCCImpl implements UserUCC {
   private AddressDAO addresseDAO;
 
 
-
   /**
    * Logs in after checking the given credentials.
    *
@@ -41,22 +40,24 @@ public class UserUCCImpl implements UserUCC {
 
   /**
    * used to register a new user.
-   * @param user UserDTO that describe the user.
+   *
+   * @param user    UserDTO that describe the user.
    * @param address id of the adress.
    */
   @Override
   public UserDTO register(UserDTO user, AddressDTO address) {
-    if(userDAO.usernameAlreadyTaken(user.getUsername())){
+    if (userDAO.usernameAlreadyTaken(user.getUsername())) {
       throw new TakenException("username already taken");
     }
-    if(userDAO.emailAlreadyTaken(user.getEmail())){
+    if (userDAO.emailAlreadyTaken(user.getEmail())) {
       throw new TakenException("email already taken");
     }
     addresseDAO.newAdresse(address);
-    User use=(User) user;
-    use.hashPassword(user.getPassword());
-    System.out.println(address);
-    userDAO.register(use,address.getId());
+    int id = addresseDAO.getId(address);
+    User use = (User) user;
+    String Hashed = use.hashPassword(user.getPassword());
+    use.setPassword(Hashed);
+    userDAO.register(use, id);
     return user;
   }
 }

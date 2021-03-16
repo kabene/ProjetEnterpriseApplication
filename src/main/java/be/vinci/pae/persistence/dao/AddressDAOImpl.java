@@ -1,10 +1,12 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.AddressDTO;
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AddressDAOImpl implements AddressDAO {
@@ -41,4 +43,35 @@ public class AddressDAOImpl implements AddressDAO {
       throwables.printStackTrace();
     }
   }
+
+  /**
+   * get the id of the address
+   *
+   * @param address AdressDTO describe the adress.
+   */
+  @Override
+  public int getId(AddressDTO address) {
+    int id = 0;
+    try {
+      String query = "SELECT COUNT(*),a.address_id FROM satchofurniture.addresses a WHERE a.street = ? AND a.building_number=? AND a.unit_number=? AND a.postcode=? AND a.commune=? AND a.country=?";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setString(1, address.getStreet());
+      ps.setString(2, address.getBuilding_number());
+      ps.setString(3, address.getUnit_number());
+      ps.setInt(4, address.getPostcode());
+      ps.setString(5, address.getCommune());
+      ps.setString(6, address.getCountry());
+      ResultSet rs = ps.executeQuery();
+      if (rs.next()) {
+        System.err.println(rs.getInt(1));
+        id = rs.getInt(2);
+      }
+      ps.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return id;
+  }
+
+
 }
