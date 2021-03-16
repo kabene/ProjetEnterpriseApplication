@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 public class FurnitureImpl implements FurnitureDTO {
 
+  private int furnitureId;
   private int buyerId;
   private int sellerId;
   private String condition;
@@ -17,6 +18,16 @@ public class FurnitureImpl implements FurnitureDTO {
   private LocalDate dateOfSale;
   private boolean toPickUp;
   private LocalDate pickUpDate;
+
+  @Override
+  public int getFurnitureId() {
+    return furnitureId;
+  }
+
+  @Override
+  public void setFurnitureId(int id) {
+    this.furnitureId = id;
+  }
 
   @Override
   public int getBuyerId() {

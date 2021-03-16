@@ -3,6 +3,9 @@ package be.vinci.pae.business.dto;
 import java.time.LocalDate;
 
 public interface FurnitureDTO {
+  int getFurnitureId();
+  void setFurnitureId(int id);
+
   int getBuyerId();
   void setBuyerId(int id);
 
