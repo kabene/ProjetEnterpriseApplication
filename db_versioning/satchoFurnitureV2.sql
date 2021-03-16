@@ -67,5 +67,5 @@ INSERT INTO satchoFurniture.addresses
 VALUES (DEFAULT, 'ez', 1, 1, 1, 'a', 'a');
 
 INSERT INTO satchoFurniture.users
-VALUES (DEFAULT, 'a', 'a', 'exkam', 'a@gmail.com', 1, now(), 'u',
+VALUES (DEFAULT, 'a', 'a', 'ex', 'a@gmail.com', 1, now(), 'u',
         '$2a$04$yS2WqRPYnf2Tb7GjbiSBSeLcKDa1ExJXzvUQpPOcJUGdJkdzbJhnC', 0, 1, 'true')
