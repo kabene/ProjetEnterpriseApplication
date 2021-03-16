@@ -1,4 +1,4 @@
-package be.vinci.pae.business.authentication;
+package be.vinci.pae.presentation.authentication;
 
 import be.vinci.pae.business.dto.UserDTO;
 import com.auth0.jwt.JWT;

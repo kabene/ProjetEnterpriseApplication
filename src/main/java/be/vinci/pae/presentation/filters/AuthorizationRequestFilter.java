@@ -1,4 +1,4 @@
-package be.vinci.pae.business.filters;
+package be.vinci.pae.presentation.filters;
 
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.utils.Configurate;
