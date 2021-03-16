@@ -51,7 +51,6 @@
     <td>GET</td>
     <td>JWT</td>
     <td>
-    TODO
     Renvoie la liste entière des clients.
     </td>
 </tr>
@@ -60,7 +59,6 @@
     <td>POST</td>
     <td>JWT</td>
     <td>
-    TODO
     Renvoie la liste des clients en fonction du filtre passé à la requête. Le filtre s'applique sur le nom du client, sa commune ainsi que sa boite postale.
     </td>
 </tr>
