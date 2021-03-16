@@ -1,5 +1,7 @@
 package be.vinci.pae.business.factories;
 
-public interface FurnitureFactory  {
+import be.vinci.pae.business.dto.FurnitureDTO;
 
+public interface FurnitureFactory  {
+  FurnitureDTO getFurnitureDTO();
 }
