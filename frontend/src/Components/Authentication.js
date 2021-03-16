@@ -1,4 +1,4 @@
-import {escapeHtml} from "../utils/utils.js"
+
 import {getUserSessionData, setUserSessionData, setUserLocalData} from "../utils/session";
 import Navbar from "./Navbar";
 import {setLayout}from "../utils/render.js"
@@ -135,15 +135,15 @@ const onSignUp = (e) => {
   console.log("on sign up");
   let user = {
     username: document.querySelector("#usernameSignup").value,
-    last_name: document.querySelector("#nameSignup").value,
-    first_name: document.querySelector("#fornameSignup").value,
+    lastName: document.querySelector("#nameSignup").value,
+    firstName: document.querySelector("#fornameSignup").value,
     email: document.querySelector("#emailSignup").value,
     password: document.querySelector("#passwordSignup").value,
     role:document.querySelector("#role").value,
     address: {
       street: document.querySelector("#streetSignup").value,
-      building_number: document.querySelector("#numSignup").value,
-      unit_number: document.querySelector("#boxSignup").value,
+      buildingNumber: document.querySelector("#numSignup").value,
+      unitNumber: document.querySelector("#boxSignup").value,
       postcode: document.querySelector("#postalSignup").value,
       commune: document.querySelector("#communeSignup").value,
       country: document.querySelector("#countrySignup").value,

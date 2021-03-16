@@ -13,10 +13,10 @@ public interface UserDAO {
   UserDTO findByUsername(String username);
 
   /**
-   * find the userById.
+   * Find a user based on his id.
    *
-   * @param id id of the user.
-   * @return return the user with the id.
+   * @param id the id of the user.
+   * @return User represented by UserDTO.
    */
   UserDTO findById(int id);
 

@@ -14,9 +14,9 @@ public class AddressesImpl implements AddressDTO {
   @JsonView(Views.Internal.class)
   private String  street;
   @JsonView(Views.Internal.class)
-  private String building_number;
+  private String buildingNumber;
   @JsonView(Views.Internal.class)
-  private String unit_number;
+  private String unitNumber;
   @JsonView(Views.Internal.class)
   private int postcode;
   @JsonView(Views.Internal.class)
@@ -43,20 +43,20 @@ public class AddressesImpl implements AddressDTO {
     this.street = street;
   }
 
-  public String getBuilding_number() {
-    return building_number;
+  public String getBuildingNumber() {
+    return buildingNumber;
   }
 
-  public void setBuilding_number(String building_number) {
-    this.building_number = building_number;
+  public void setBuildingNumber(String buildingNumber) {
+    this.buildingNumber = buildingNumber;
   }
 
-  public String getUnit_number() {
-    return unit_number;
+  public String getUnitNumber() {
+    return unitNumber;
   }
 
-  public void setUnit_number(String unit_number) {
-    this.unit_number = unit_number;
+  public void setUnitNumber(String unitNumber) {
+    this.unitNumber = unitNumber;
   }
 
   public int getPostcode() {

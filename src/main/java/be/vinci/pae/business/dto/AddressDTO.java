@@ -15,13 +15,13 @@ public interface AddressDTO {
 
   void setStreet(String street);
 
-  String getBuilding_number();
+  String getBuildingNumber();
 
-  void setBuilding_number(String building_number);
+  void setBuildingNumber(String buildingNumber);
 
-  String getUnit_number();
+  String getUnitNumber();
 
-  void setUnit_number(String unit_number);
+  void setUnitNumber(String unitNumber);
 
   int getPostcode();
 

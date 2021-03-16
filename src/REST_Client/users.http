@@ -36,15 +36,15 @@ Content-Type: application/json
 
 {
   "username": "a",
-  "last_name": "b",
-  "first_name": "c",
+  "lastName": "b",
+  "firstName": "c",
   "email": "d@gmail.com",
   "password": "e",
   "role": "client",
   "address": {
     "street": "f",
-    "building_number": "g",
-    "unit_number": "h",
+    "buildingNumber": "g",
+    "unitNumber": "h",
     "postcode": 1,
     "commune": "j",
     "country": "q"

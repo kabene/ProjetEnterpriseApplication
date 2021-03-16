@@ -18,13 +18,13 @@ public interface UserDTO {
 
   void setPassword(String password);
 
-  String getLast_name();
+  String getLastName();
 
-  void setLast_name(String last_name);
+  void setLastName(String lastName);
 
-  String getFirst_name();
+  String getFirstName();
 
-  void setFirst_name(String first_name);
+  void setFirstName(String firstName);
 
   String getEmail();
 

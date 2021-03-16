@@ -17,9 +17,9 @@ public class UserImpl implements User {
   @JsonView(Views.Internal.class)
   private String password;
   @JsonView(Views.Internal.class)
-  private String last_name;
+  private String lastName;
   @JsonView(Views.Internal.class)
-  private String first_name;
+  private String firstName;
   @JsonView(Views.Internal.class)
   private String email;
   @JsonView(Views.Internal.class)
@@ -30,35 +30,45 @@ public class UserImpl implements User {
   public UserImpl() {
   }
 
-  public UserImpl(String username, String password, String last_name, String first_name,
+  /**
+   * Constructor.
+   * @param username user.
+   * @param password user unhashed.
+   * @param lastName user.
+   * @param firstName user.
+   * @param email user.
+   * @param role user.
+   * @param add user.
+   */
+  public UserImpl(String username, String password, String lastName, String firstName,
       String email, String role, AddressDTO add) {
     this.username = username;
     this.password = password;
-    this.last_name = last_name;
-    this.first_name = first_name;
+    this.lastName = lastName;
+    this.firstName = firstName;
     this.email = email;
     this.role = role;
     this.address = add;
   }
 
   @Override
-  public String getLast_name() {
-    return last_name;
+  public String getLastName() {
+    return lastName;
   }
 
   @Override
-  public void setLast_name(String last_name) {
-    this.last_name = last_name;
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   @Override
-  public String getFirst_name() {
-    return first_name;
+  public String getFirstName() {
+    return firstName;
   }
 
   @Override
-  public void setFirst_name(String first_name) {
-    this.first_name = first_name;
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
   }
 
   @Override
