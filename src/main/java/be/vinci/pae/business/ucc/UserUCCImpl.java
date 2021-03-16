@@ -55,8 +55,8 @@ public class UserUCCImpl implements UserUCC {
     addresseDAO.newAdresse(address);
     int id = addresseDAO.getId(address);
     User use = (User) user;
-    String Hashed = use.hashPassword(user.getPassword());
-    use.setPassword(Hashed);
+    String hashed = use.hashPassword(user.getPassword());
+    use.setPassword(hashed);
     userDAO.register(use, id);
     user = userDAO.findByUsername(user.getUsername());
     return user;
