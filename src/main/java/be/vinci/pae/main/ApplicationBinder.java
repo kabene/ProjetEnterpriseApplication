@@ -18,16 +18,16 @@ public class ApplicationBinder extends AbstractBinder {
   @Override
   protected void configure() {
     try {
-      bind(Class.forName(Configurate.getConfiguration("AddressFactory"))).to(AddressFactory.class)
-          .in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("AddressDAO"))).to(AddressDAO.class)
-          .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("UserFactory"))).to(UserFactory.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("UserUCC"))).to(UserUCC.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("UserDAO"))).to(UserDAO.class)
           .in(Singleton.class);
+     /* bind(Class.forName(Configurate.getConfiguration("AddressFactory"))).to(AddressFactory.class)
+          .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("AddressDAO"))).to(AddressDAO.class)
+          .in(Singleton.class);*/
       bind(Class.forName(Configurate.getConfiguration("ConnectionDalServices")))
           .to(ConnectionDalServices.class).in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("Authentication"))).to(Authentication.class)
