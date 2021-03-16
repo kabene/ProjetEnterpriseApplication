@@ -24,10 +24,10 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("UserDAO"))).to(UserDAO.class)
           .in(Singleton.class);
-     /* bind(Class.forName(Configurate.getConfiguration("AddressFactory"))).to(AddressFactory.class)
+      bind(Class.forName(Configurate.getConfiguration("AddressFactory"))).to(AddressFactory.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("AddressDAO"))).to(AddressDAO.class)
-          .in(Singleton.class);*/
+          .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("ConnectionDalServices")))
           .to(ConnectionDalServices.class).in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("Authentication"))).to(Authentication.class)
