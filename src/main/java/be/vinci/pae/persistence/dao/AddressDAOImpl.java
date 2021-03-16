@@ -53,7 +53,7 @@ public class AddressDAOImpl implements AddressDAO {
   public int getId(AddressDTO address) {
     int id = 0;
     try {
-      String query = "SELECT COUNT(*),a.address_id FROM satchofurniture.addresses a WHERE a.street = ? AND a.building_number=? AND a.unit_number=? AND a.postcode=? AND a.commune=? AND a.country=?";
+      String query = "SELECT a.address_id FROM satchofurniture.addresses a WHERE a.street = ? AND a.building_number=? AND a.unit_number=? AND a.postcode=? AND a.commune=? AND a.country=? ";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, address.getStreet());
       ps.setString(2, address.getBuilding_number());
@@ -63,8 +63,7 @@ public class AddressDAOImpl implements AddressDAO {
       ps.setString(6, address.getCountry());
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
-        System.err.println(rs.getInt(1));
-        id = rs.getInt(2);
+        id = rs.getInt(1);
       }
       ps.close();
     } catch (SQLException e) {

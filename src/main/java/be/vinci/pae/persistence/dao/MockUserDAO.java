@@ -30,7 +30,8 @@ public class MockUserDAO implements UserDAO {
 
   /**
    * used to register a new user.
-   * @param user UserDTO that describe the user.
+   *
+   * @param user   UserDTO that describe the user.
    * @param adress id of the adress.
    */
   @Override
@@ -38,11 +39,23 @@ public class MockUserDAO implements UserDAO {
 
   }
 
+  /**
+   * verify if email is already taken.
+   *
+   * @param email string email.
+   * @return a boolean true if email is already taken and false in other case.
+   */
   @Override
   public boolean emailAlreadyTaken(String email) {
     return false;
   }
 
+  /**
+   * verify if the username is already taken.
+   *
+   * @param username string username.
+   * @return a boolean true if username is already taken and false in other case.
+   */
   @Override
   public boolean usernameAlreadyTaken(String username) {
     return false;

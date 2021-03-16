@@ -7,6 +7,8 @@ import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.AddressFactoryImpl;
 import be.vinci.pae.business.factories.UserFactoryImpl;
 import be.vinci.pae.business.filters.Authorize;
+import be.vinci.pae.business.pojos.AddressesImpl;
+import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -121,64 +123,17 @@ public class UserResource {
   @Path("signup")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response signup(JsonNode reqNode /* UserDTO use,AddressDTO useadress*/) {
-/*
-    if(use==null|| useadress==null){
+  public Response signup(UserDTO user) {
+    if (user == null) {
       throw new WebApplicationException(
-          Response.status(Status.BAD_REQUEST).entity("Lacks of mandatory info").type("text/plain").build());
-    }
-*/
-
-    //user
-
-    String username = reqNode.get("username").asText();
-    String password = reqNode.get("password").asText();
-    String last_name = reqNode.get("last_name").asText();
-    String first_name = reqNode.get("first_name").asText();
-    String email = reqNode.get("email").asText();
-    String role = reqNode.get("role").asText();
-
-    //address
-
-    String street = reqNode.get("street").asText();
-    String building_number = reqNode.get("building_number").asText();
-    String unit_number = reqNode.get("unit_number").asText();
-    int postcode = reqNode.get("postcode").asInt();
-    String commune = reqNode.get("commune").asText();
-    String country = reqNode.get("country").asText();
-
-    if (username == null || last_name == null || first_name == null || email == null || role == null
-        || password == null) {
-      throw new WebApplicationException(
-          Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
+          Response.status(Status.BAD_REQUEST).entity("Lacks of mandatory info").type("text/plain")
               .build());
     }
-
-
-    AddressDTO useadress = new AddressFactoryImpl().getAddressDTO();
-
-    useadress.setStreet(street);
-    useadress.setBuilding_number(building_number);
-    useadress.setUnit_number(unit_number);
-    useadress.setPostcode(postcode);
-    useadress.setCommune(commune);
-    useadress.setCountry(country);
-
-
-
-    UserDTO use = new UserFactoryImpl().getUserDTO();
-    use.setUsername(username);
-    use.setPassword(password);
-    use.setLast_name(last_name);
-    use.setFirst_name(first_name);
-    use.setEmail(email);
-    use.setRole(role);
-
-    UserDTO user = userUCC.register(use, useadress);
-    user = Json.filterPublicJsonView(user, UserDTO.class);
+    UserDTO userDTO = userUCC.register(user, user.getAddress());
+    userDTO = Json.filterPublicJsonView(userDTO, UserDTO.class);
     String token;
-    token = authentication.createToken(user);
-    ObjectNode resNode = jsonMapper.createObjectNode().put("token", token).putPOJO("user", user);
+    token = authentication.createToken(userDTO);
+    ObjectNode resNode = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
 
   }

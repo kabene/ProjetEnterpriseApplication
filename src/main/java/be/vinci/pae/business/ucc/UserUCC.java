@@ -15,10 +15,10 @@ public interface UserUCC {
   UserDTO login(String username, String password);
 
   /**
-   * register a user into the system
-   * @param user userDTO that  describe the user.
-   * @param adress adress DTO that describe the adress of the user.
+   * register a user into the system.
    *
+   * @param user   userDTO that  describe the user.
+   * @param adress adress DTO that describe the adress of the user.
    */
   UserDTO register(UserDTO user, AddressDTO adress);
 }

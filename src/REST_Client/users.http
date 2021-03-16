@@ -41,10 +41,12 @@ Content-Type: application/json
   "email": "d@gmail.com",
   "password": "e",
   "role": "client",
-  "street": "f",
-  "building_number": "g",
-  "unit_number": "h",
-  "postcode": 1,
-  "commune": "j",
-  "country": "q"
+  "address": {
+    "street": "f",
+    "building_number": "g",
+    "unit_number": "h",
+    "postcode": 1,
+    "commune": "j",
+    "country": "q"
+  }
 }

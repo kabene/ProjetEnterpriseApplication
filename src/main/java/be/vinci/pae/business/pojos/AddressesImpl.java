@@ -1,12 +1,13 @@
 package be.vinci.pae.business.pojos;
 
+import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonInclude(Include.NON_NULL)
-public class AddressesImpl implements Addresses {
+public class AddressesImpl implements AddressDTO {
 
   @JsonView(Views.Public.class)
   private int id;
@@ -81,4 +82,6 @@ public class AddressesImpl implements Addresses {
   public void setCountry(String country) {
     this.country = country;
   }
+
+
 }

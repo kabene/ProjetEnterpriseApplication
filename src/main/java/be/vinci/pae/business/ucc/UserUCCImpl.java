@@ -58,6 +58,7 @@ public class UserUCCImpl implements UserUCC {
     String Hashed = use.hashPassword(user.getPassword());
     use.setPassword(Hashed);
     userDAO.register(use, id);
+    user = userDAO.findByUsername(user.getUsername());
     return user;
   }
 }

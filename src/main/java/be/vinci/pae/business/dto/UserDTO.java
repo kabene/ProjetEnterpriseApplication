@@ -34,6 +34,10 @@ public interface UserDTO {
 
   void setRole(String role);
 
+  AddressDTO getAddress();
+
+  void setAddress(AddressDTO addressDTO);
+
   //implement address + other attributes
 
 

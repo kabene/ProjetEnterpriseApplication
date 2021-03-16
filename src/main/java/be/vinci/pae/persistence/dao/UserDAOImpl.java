@@ -67,7 +67,8 @@ public class UserDAOImpl implements UserDAO {
 
   /**
    * used to register a new user.
-   * @param user UserDTO that describe the user.
+   *
+   * @param user      UserDTO that describe the user.
    * @param adress_ID id of the adress.
    */
   @Override
@@ -88,10 +89,12 @@ public class UserDAOImpl implements UserDAO {
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
-    
+
   }
+
   /**
    * verify if email is already taken.
+   *
    * @param email string email.
    * @return a boolean true if email is already taken and false in other case.
    */
@@ -107,8 +110,10 @@ public class UserDAOImpl implements UserDAO {
       throw new TakenException();
     }
   }
+
   /**
-   *  verify if the username is already taken.
+   * verify if the username is already taken.
+   *
    * @param username string username.
    * @return a boolean true if username is already taken and false in other case.
    */
@@ -121,7 +126,7 @@ public class UserDAOImpl implements UserDAO {
       ResultSet rs = ps.executeQuery();
       return rs.next();
     } catch (SQLException throwables) {
-     throw new TakenException();
+      throw new TakenException();
     }
   }
 
