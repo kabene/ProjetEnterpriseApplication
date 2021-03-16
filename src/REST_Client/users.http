@@ -1,3 +1,4 @@
+// login as 'other' (pwd : azerty) -> fail (no user found)
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
@@ -5,9 +6,9 @@ Content-Type: application/json
   "username": "other",
   "password": "azerty"
 }
-### /login as 'other' (pwd : azerty) -> fail (no user found)
+###
 
-
+//login as 'ex' (pwd : qwerty) -> fail (invalid pwd)
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
@@ -15,16 +16,24 @@ Content-Type: application/json
   "username": "ex",
   "password": "qwerty"
 }
-### /login as 'ex' (pwd : qwerty) -> fail (invalid pwd)
+###
 
-
+//login as 'ex' (pwd : azerty) -> success
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "ex",
+  "username": "johndoe",
   "password": "azerty",
   "rememberMe": true
 }
-### /login as 'ex' (pwd : azerty) -> success
 
+> {%
+ client.global.set("jwt", response.body.token);
+ %}
+###
+
+GET {{baseUrl}}/users/me
+Authorization: {{jwt}}
+
+###
