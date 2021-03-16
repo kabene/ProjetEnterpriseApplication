@@ -75,7 +75,7 @@ public class UserDAOImpl implements UserDAO {
 
     String query =
         " INSERT INTO satchoFurniture.users VALUES(DEFAULT,?,?,?,?," + adress_ID
-            + ",now(),?,?,0,0,DEFAULT)";
+            + ",now(),?,?,0,0,'true')";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setString(1, user.getLast_name());
@@ -84,7 +84,7 @@ public class UserDAOImpl implements UserDAO {
       ps.setString(4, user.getEmail());
       ps.setString(5, user.getRole());
       ps.setString(6, user.getPassword());
-      ps.executeQuery();
+      ps.execute();
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }

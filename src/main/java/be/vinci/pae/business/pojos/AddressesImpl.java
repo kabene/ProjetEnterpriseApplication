@@ -23,6 +23,9 @@ public class AddressesImpl implements Addresses {
   @JsonView(Views.Internal.class)
   private String country;
 
+  public AddressesImpl() {
+  }
+
   public int getId() {
     return id;
   }

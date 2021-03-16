@@ -5,6 +5,6 @@ import be.vinci.pae.business.dto.AddressDTO;
 
 public interface AddressFactory {
 
-  AddressDTO getAdressDTO();
+  AddressDTO getAddressDTO();
 
 }

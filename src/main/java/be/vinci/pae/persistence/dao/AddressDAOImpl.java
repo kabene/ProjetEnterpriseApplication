@@ -1,6 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.AddressDTO;
+import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -10,6 +11,8 @@ public class AddressDAOImpl implements AddressDAO {
 
   @Inject
   private ConnectionDalServices dalServices;
+  @Inject
+  private AddressFactory addressFactory;
 
   /**
    * Create a newAdress
@@ -28,7 +31,12 @@ public class AddressDAOImpl implements AddressDAO {
       ps.setInt(4, adress.getPostcode());
       ps.setString(5, adress.getCommune());
       ps.setString(6, adress.getCountry());
-      ps.executeQuery();
+      ps.execute();
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+    try {
+      ps.close();
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }

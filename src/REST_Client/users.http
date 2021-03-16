@@ -5,6 +5,7 @@ Content-Type: application/json
   "username": "other",
   "password": "azerty"
 }
+
 ### /login as 'other' (pwd : azerty) -> fail (no user found)
 
 
@@ -15,6 +16,7 @@ Content-Type: application/json
   "username": "ex",
   "password": "qwerty"
 }
+
 ### /login as 'ex' (pwd : qwerty) -> fail (invalid pwd)
 
 
@@ -26,22 +28,23 @@ Content-Type: application/json
   "password": "azerty",
   "rememberMe": true
 }
-### /login as 'ex' (pwd : azerty) -> success
 
+### /login as 'ex' (pwd : azerty) -> success@@
+##should faild because =>
 POST {{baseUrl}}/users/signup
 Content-Type: application/json
 
 {
-  "username":"a",
- "last_name": "b",
+  "username": "a",
+  "last_name": "b",
   "first_name": "c",
   "email": "d@gmail.com",
   "password": "e",
+  "role": "client",
   "street": "f",
-  "building_number":"g",
-  "unit_number":"h",
-  "postcode":1,
-  "commune":"j",
-  "country":"q",
-  "role":"client"
+  "building_number": "g",
+  "unit_number": "h",
+  "postcode": 1,
+  "commune": "j",
+  "country": "q"
 }

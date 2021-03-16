@@ -139,13 +139,15 @@ const onSignUp = (e) => {
     first_name: document.querySelector("#fornameSignup").value,
     email: document.querySelector("#emailSignup").value,
     password: document.querySelector("#passwordSignup").value,
-    street: document.querySelector("#streetSignup").value,
-    building_number:document.querySelector("#numSignup").value,
-    unit_number:document.querySelector("#boxSignup").value,
-    postcode:document.querySelector("#postalSignup").value,
-    commune:document.querySelector("#communeSignup").value,
-    country:document.querySelector("#countrySignup").value,
-    role:document.querySelector("#role").value
+    role:document.querySelector("#role").value,
+    address: {
+      street: document.querySelector("#streetSignup").value,
+      building_number: document.querySelector("#numSignup").value,
+      unit_number: document.querySelector("#boxSignup").value,
+      postcode: document.querySelector("#postalSignup").value,
+      commune: document.querySelector("#communeSignup").value,
+      country: document.querySelector("#countrySignup").value,
+    }
   }
 
   fetch("/users/signup", {
