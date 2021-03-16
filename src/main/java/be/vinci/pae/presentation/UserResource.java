@@ -1,14 +1,8 @@
 package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.authentication.Authentication;
-import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
-//import be.vinci.pae.business.factories.UserFactory;
-import be.vinci.pae.business.factories.AddressFactoryImpl;
-import be.vinci.pae.business.factories.UserFactoryImpl;
 import be.vinci.pae.business.filters.Authorize;
-import be.vinci.pae.business.pojos.AddressesImpl;
-import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
