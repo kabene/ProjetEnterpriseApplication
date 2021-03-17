@@ -29,6 +29,11 @@ public class MockUserDAO implements UserDAO {
   }
 
   @Override
+  public boolean isAdmin(int id) {
+    return false;
+  }
+
+  @Override
   public List<UserDTO> getAllClients() {
     return null;
   }
@@ -37,4 +42,6 @@ public class MockUserDAO implements UserDAO {
   public List<UserDTO> findBySearch(String filter) {
     return null;
   }
+
+
 }
