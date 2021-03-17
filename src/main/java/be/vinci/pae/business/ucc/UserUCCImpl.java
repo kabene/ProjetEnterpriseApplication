@@ -34,12 +34,12 @@ public class UserUCCImpl implements UserUCC {
   }
 
   @Override
-  public List<UserDTO> rechercherTousLesClients() {
+  public List<UserDTO> showAllCustomers() {
     return userDAO.getAllClients();
   }
 
   @Override
-  public List<UserDTO> rechercherClients(String filter) {
+  public List<UserDTO> showCustomersResult(String filter) {
     return userDAO.findWithFilters(filter);
   }
 }

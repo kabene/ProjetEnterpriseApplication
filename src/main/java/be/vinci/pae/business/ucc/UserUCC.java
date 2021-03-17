@@ -14,7 +14,7 @@ public interface UserUCC {
    */
   UserDTO login(String username, String password);
 
-  List<UserDTO> rechercherTousLesClients();
+  List<UserDTO> showAllCustomers();
 
-  List<UserDTO> rechercherClients(String filtre);
+  List<UserDTO> showCustomersResult(String filtre);
 }

@@ -9,7 +9,6 @@ import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -131,7 +130,7 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response getCustomers() {
-    List<UserDTO> users = userUCC.rechercherTousLesClients();
+    List<UserDTO> users = userUCC.showAllCustomers();
     ObjectNode resNode = jsonMapper.createObjectNode();
     for (UserDTO user : users)
       resNode.putPOJO("user", Json.filterPublicJsonView(user, UserDTO.class));
@@ -145,7 +144,7 @@ public class UserResource {
   @Authorize
   public Response getCustomers(JsonNode jsonNode) {
     String filter = jsonNode.get("filter").asText();
-    List<UserDTO> users = userUCC.rechercherClients(filter);
+    List<UserDTO> users = userUCC.showCustomersResult(filter);
     ObjectNode resNode = jsonMapper.createObjectNode();
     for (UserDTO user : users)
       resNode.putPOJO("user", Json.filterPublicJsonView(user, UserDTO.class));
