@@ -53,8 +53,8 @@ public class AddressDAOImpl implements AddressDAO {
     try {
       String query = "SELECT a.address_id FROM satchofurniture.addresses a WHERE "
           + "a.street = ? "
-          + "AND a.buildingnumber=? "
-          + "AND a.unitnumber=? "
+          + "AND a.building_number=? "
+          + "AND a.unit_number=? "
           + "AND a.postcode=? "
           + "AND a.commune=? "
           + "AND a.country=? ";

@@ -129,7 +129,7 @@ public class UserResource {
     if (!user.getRole().equals("customer") && !user.getRole().equals("antique_dealer") && !user
         .getRole().equals("admin")) {
       throw new WebApplicationException(
-          Response.status(Status.BAD_REQUEST).entity("Invalid role").type("text/plain")
+          Response.status(Status.BAD_REQUEST).entity("Bad role").type("text/plain")
               .build());
     }
 
