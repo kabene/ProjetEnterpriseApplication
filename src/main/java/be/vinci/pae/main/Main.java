@@ -20,7 +20,7 @@ public class Main {
    * @return the new server.
    */
   public static HttpServer startServer() {
-    final ResourceConfig rc = new ResourceConfig().packages("be.vinci.pae")
+    final ResourceConfig rc = new ResourceConfig().packages("be.vinci.pae.presentation")
         .register(JacksonFeature.class)
         .register(ApplicationBinder.class).property("jersey.config.server.wadl.disableWadl", true);
 
