@@ -65,16 +65,19 @@ public class UserDAOImpl implements UserDAO {
     return userFound;
   }
 
+  @Override
   public boolean isAdmin(int id) {
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ? AND u.role = admin";
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ? "
+                    + "AND u.role = admin";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, id);
       ResultSet rs = ps.executeQuery();
-      if (rs.next())
+      if (rs.next()) {
         return true;
-    } catch (SQLException throwables) {
-
+      }
+    } catch (SQLException e) {
+      return false;
     }
     return false;
   }
@@ -93,6 +96,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(user);
       }
     } catch (SQLException e) {
+      return null;
     }
     return users;
   }
@@ -101,7 +105,11 @@ public class UserDAOImpl implements UserDAO {
   public List<UserDTO> findBySearch(String filter) {
     List<UserDTO> users = new ArrayList<UserDTO>();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id WHERE lower(a.commune) LIKE lower('%?%') OR lower(a.postcode) LIKE lower('%?%') OR lower(u.username) LIKE lower('%?%')";
+      String query = "SELECT u.* FROM satchofurniture.users u "
+                    + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
+                    + "WHERE lower(a.commune) LIKE lower('%?%') "
+                    + "OR lower(a.postcode) LIKE lower('%?%') "
+                    + "OR lower(u.username) LIKE lower('%?%')";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, filter);
       ps.setString(2, filter);
@@ -114,6 +122,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(user);
       }
     } catch (SQLException e) {
+      return null;
     }
     return users;
   }
