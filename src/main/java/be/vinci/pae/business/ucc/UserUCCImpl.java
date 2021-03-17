@@ -42,24 +42,24 @@ public class UserUCCImpl implements UserUCC {
   /**
    * used to register a new user.
    *
-   * @param user    UserDTO that describe the user.
+   * @param userDTO    UserDTO that describe the user.
    * @param address id of the address.
    */
   @Override
-  public UserDTO register(UserDTO user, AddressDTO address) {
-    if (userDAO.usernameAlreadyTaken(user.getUsername())) {
+  public UserDTO register(UserDTO userDTO, AddressDTO address) {
+    if (userDAO.usernameAlreadyTaken(userDTO.getUsername())) {
       throw new TakenException("username already taken");
     }
-    if (userDAO.emailAlreadyTaken(user.getEmail())) {
+    if (userDAO.emailAlreadyTaken(userDTO.getEmail())) {
       throw new TakenException("email already taken");
     }
     addressDAO.addAddress(address);
     int id = addressDAO.getId(address);
-    User use = (User) user;
-    String hashed = use.hashPassword(user.getPassword());
-    use.setPassword(hashed);
-    userDAO.register(use, id);
-    user = userDAO.findByUsername(user.getUsername());
-    return user;
+    User user = (User) userDTO;
+    String hashed = user.hashPassword(userDTO.getPassword());
+    user.setPassword(hashed);
+    userDAO.register(user, id);
+    userDTO = userDAO.findByUsername(userDTO.getUsername());
+    return userDTO;
   }
 }
