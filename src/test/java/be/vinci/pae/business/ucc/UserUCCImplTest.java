@@ -125,6 +125,7 @@ public class UserUCCImplTest {
     Mockito.when(mockAddressDAO.getId(mockAddressDTO)).thenReturn(addressId);
 
     UserDTO actual = userUCC.register(mockUser, mockAddressDTO);
+    assertEquals(mockUser, actual, "The successful register should return the UserDTO");
 
     Mockito.verify(mockUser, Mockito.atLeastOnce()).getUsername();
     Mockito.verify(mockUser, Mockito.atLeastOnce()).getEmail();
@@ -140,7 +141,7 @@ public class UserUCCImplTest {
     Mockito.verify(mockAddressDAO).addAddress(mockAddressDTO);
     Mockito.verify(mockAddressDAO).getId(mockAddressDTO);
 
-    assertEquals(mockUser, actual, "The successful register should return the UserDTO");
+
   }
 
   @DisplayName("TEST UserUCC.register : given already existing username, should throw TakenException")
