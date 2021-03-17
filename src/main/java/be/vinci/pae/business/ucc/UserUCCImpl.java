@@ -43,7 +43,7 @@ public class UserUCCImpl implements UserUCC {
    * used to register a new user.
    *
    * @param user    UserDTO that describe the user.
-   * @param address id of the adress.
+   * @param address id of the address.
    */
   @Override
   public UserDTO register(UserDTO user, AddressDTO address) {

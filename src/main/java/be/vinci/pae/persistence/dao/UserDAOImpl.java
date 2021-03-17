@@ -76,13 +76,13 @@ public class UserDAOImpl implements UserDAO {
    * used to register a new user.
    *
    * @param user      UserDTO that describe the user.
-   * @param addressID id of the adress.
+   * @param addressId id of the address.
    */
   @Override
-  public void register(UserDTO user, int addressID) {
+  public void register(UserDTO user, int addressId) {
 
     String query =
-        " INSERT INTO satchoFurniture.users VALUES(DEFAULT,?,?,?,?," + addressID
+        " INSERT INTO satchoFurniture.users VALUES(DEFAULT,?,?,?,?," + addressId
             + ",now(),?,?,0,0,'true')";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {

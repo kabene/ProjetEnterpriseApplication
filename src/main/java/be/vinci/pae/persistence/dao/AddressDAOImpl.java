@@ -17,7 +17,7 @@ public class AddressDAOImpl implements AddressDAO {
   /**
    * Create a newAdress.
    *
-   * @param address AdressDTO describe the adress.
+   * @param address AdressDTO describe the address.
    */
   @Override
   public void addAddress(AddressDTO address) {
@@ -45,7 +45,7 @@ public class AddressDAOImpl implements AddressDAO {
   /**
    * get the id of the address.
    *
-   * @param address AdressDTO describe the adress.
+   * @param address AdressDTO describe the address.
    */
   @Override
   public int getId(AddressDTO address) {
