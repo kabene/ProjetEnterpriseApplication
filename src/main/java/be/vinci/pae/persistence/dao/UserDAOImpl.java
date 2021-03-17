@@ -109,10 +109,11 @@ public class UserDAOImpl implements UserDAO {
   public boolean emailAlreadyTaken(String email) {
     String query = "SELECT * FROM satchoFurniture.users WHERE email = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
+    boolean res=false;
     try {
       ps.setString(1, StringEscapeUtils.escapeHtml4(email));
       ResultSet rs = ps.executeQuery();
-      boolean res = rs.next();
+      if(rs.next()) res=true;
       rs.close();
       ps.close();
       return res;
@@ -131,10 +132,11 @@ public class UserDAOImpl implements UserDAO {
   public boolean usernameAlreadyTaken(String username) {
     String query = "SELECT * FROM satchoFurniture.users WHERE username = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
+    boolean res=false;
     try {
       ps.setString(1, StringEscapeUtils.escapeHtml4(username));
       ResultSet rs = ps.executeQuery();
-      boolean res = rs.next();
+      if(rs.next()) res=true;
       rs.close();
       ps.close();
       return res;

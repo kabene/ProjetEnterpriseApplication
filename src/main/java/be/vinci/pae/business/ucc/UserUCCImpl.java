@@ -9,7 +9,7 @@ import be.vinci.pae.exceptions.TakenException;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
-import org.apache.commons.text.StringEscapeUtils;
+
 
 public class UserUCCImpl implements UserUCC {
 
