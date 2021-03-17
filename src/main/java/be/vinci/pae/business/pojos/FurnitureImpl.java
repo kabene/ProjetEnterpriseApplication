@@ -1,8 +1,11 @@
 package be.vinci.pae.business.pojos;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDate;
 
+@JsonInclude(Include.NON_NULL)
 public class FurnitureImpl implements FurnitureDTO {
 
   private int furnitureId;
