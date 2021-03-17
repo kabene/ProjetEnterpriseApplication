@@ -144,7 +144,8 @@ public class UserUCCImplTest {
 
   }
 
-  @DisplayName("TEST UserUCC.register : given already existing username, should throw TakenException")
+  @DisplayName("TEST UserUCC.register : given already "
+      +"existing username, should throw TakenException")
   @Test
   public void test_register_givenTakenUsername_shouldThrowTakenException() {
     String username = "takenUser";
