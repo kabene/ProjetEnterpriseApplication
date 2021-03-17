@@ -149,7 +149,9 @@ public class UserUCCImplTest {
     Mockito.when(mockUserDAO.usernameAlreadyTaken(username)).thenReturn(true);
 
     assertThrows(TakenException.class, () ->
-        userUCC.register(mockUser, mockAddressDTO), "The call to register should throw a TakenException when given a taken username");
+            userUCC.register(mockUser, mockAddressDTO),
+        "The call to register should throw a TakenException when given a taken username");
+
     Mockito.verify(mockUserDAO).usernameAlreadyTaken(username);
   }
 
@@ -165,7 +167,9 @@ public class UserUCCImplTest {
     Mockito.when(mockUserDAO.emailAlreadyTaken(email)).thenReturn(true);
 
     assertThrows(TakenException.class, () ->
-        userUCC.register(mockUser, mockAddressDTO), "The call to register should throw a TakenException when given a taken email");
+            userUCC.register(mockUser, mockAddressDTO),
+        "The call to register should throw a TakenException when given a taken email");
+
     Mockito.verify(mockUserDAO).usernameAlreadyTaken(username);
   }
 }
