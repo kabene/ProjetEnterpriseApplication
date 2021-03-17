@@ -99,5 +99,42 @@ public class UserUCCImplTest {
         "UserUCC.login should return the good UserDTO if the credentials are valid");
   }
 
+  @DisplayName("TEST UserUCC.register : given valid fields, should return matching UserDTO")
+  @Test
+  public void test_register_success() {
+    String email = "email@gmail.com";
+    String username = "username";
+    String blancPwd = "pwd";
+    String hashPwd = "hash";
+    int addressId = 0;
 
+    Mockito.when(mockUser.getEmail()).thenReturn(email);
+    Mockito.when(mockUser.getUsername()).thenReturn(username);
+    Mockito.when(mockUser.getPassword()).thenReturn(blancPwd);
+    Mockito.when(mockUser.hashPassword(blancPwd)).thenReturn(hashPwd);
+
+    Mockito.when(mockUserDAO.usernameAlreadyTaken(username)).thenReturn(false);
+    Mockito.when(mockUserDAO.emailAlreadyTaken(email)).thenReturn(false);
+    Mockito.when(mockUserDAO.findByUsername(username)).thenReturn(mockUser);
+
+    Mockito.when(mockAddressDAO.getId(mockAddressDTO)).thenReturn(addressId);
+
+    UserDTO actual = userUCC.register(mockUser, mockAddressDTO);
+
+    Mockito.verify(mockUser, Mockito.atLeastOnce()).getUsername();
+    Mockito.verify(mockUser, Mockito.atLeastOnce()).getEmail();
+    Mockito.verify(mockUser).getPassword();
+    Mockito.verify(mockUser).hashPassword(blancPwd);
+    Mockito.verify(mockUser).setPassword(hashPwd);
+
+    Mockito.verify(mockUserDAO).usernameAlreadyTaken(username);
+    Mockito.verify(mockUserDAO).emailAlreadyTaken(email);
+    Mockito.verify(mockUserDAO).register(mockUser, addressId);
+    Mockito.verify(mockUserDAO).findByUsername(username);
+
+    Mockito.verify(mockAddressDAO).addAddress(mockAddressDTO);
+    Mockito.verify(mockAddressDAO).getId(mockAddressDTO);
+
+    assertEquals(mockUser, actual);
+  }
 }
