@@ -2,9 +2,7 @@ package be.vinci.pae.presentation;
 
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.dto.UserDTO;
-//import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.presentation.filters.Authorize;
-import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,8 +26,6 @@ import org.glassfish.jersey.server.ContainerRequest;
 @Path("/users")
 public class UserResource {
 
-  //@Inject
-  //private UserFactory userFactory;
 
   @Inject
   private UserUCC userUCC;
@@ -112,15 +108,31 @@ public class UserResource {
   /**
    * POST users/signup - Manages signup requests.
    *
-   * @param user : containing request with all datas
    * @return UserDTO user information
    * @throws WebApplicationException to send a fail status
    */
   @POST
-  @Path("signup")
+  @Path("register")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response signup(User user) {
-    return null;
+  public Response register(UserDTO user) {
+    if (user == null || user.getPassword() == null || user.getAddress() == null
+        || user.getEmail() == null || user.getUsername() == null || user.getFirstName() == null
+        || user.getLastName() == null || user.getRole() == null
+        || user.getAddress().getBuildingNumber() == null
+        || user.getAddress().getCommune() == null || user.getAddress().getCountry() == null
+        || user.getAddress().getPostcode() == 0) {
+      throw new WebApplicationException(
+          Response.status(Status.BAD_REQUEST).entity("Lacks of mandatory info").type("text/plain")
+              .build());
+    }
+
+    UserDTO userDTO = userUCC.register(user, user.getAddress());
+    userDTO = Json.filterPublicJsonView(userDTO, UserDTO.class);
+    String token;
+    token = authentication.createToken(userDTO);
+    ObjectNode resNode = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
+    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
+
   }
 }

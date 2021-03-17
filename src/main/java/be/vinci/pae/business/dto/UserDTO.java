@@ -18,6 +18,27 @@ public interface UserDTO {
 
   void setPassword(String password);
 
+  String getLastName();
+
+  void setLastName(String lastName);
+
+  String getFirstName();
+
+  void setFirstName(String firstName);
+
+  String getEmail();
+
+  void setEmail(String email);
+
+  String getRole();
+
+  void setRole(String role);
+
+  AddressDTO getAddress();
+
+  void setAddress(AddressDTO addressDTO);
+
   //implement address + other attributes
+
 
 }

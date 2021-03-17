@@ -1,8 +1,10 @@
+
 import {escapeHtml} from "../utils/utils.js"
 import {getUserSessionData, setUserSessionData, setUserLocalData} from "../utils/session";
 import Navbar from "./Navbar";
 import {setLayout}from "../utils/render.js"
 import {RedirectUrl} from "./Router";
+
 
 let pageHTML = `
         <form>
@@ -58,8 +60,8 @@ let pageHTML = `
                         <input class="form-control inputSignup my-2" id="communeSignup" type="text" name="communeSignup" placeholder="commune"/>
                         <input class="form-control inputSignup my-2" id="countrySignup" type="text" name="countrySignup" placeholder="pays"/>
                     </div>
-                    <select class="selectpicker">
-                        <option selected="selected">Client</option>
+                    <select class="selectpicker" id="role">
+                        <option selected="selected" >Client</option>
                         <option>Anticaire</option>
                         <option>Administrateur</option>  
                     </select>
@@ -134,21 +136,23 @@ const onSignUp = (e) => {
   e.preventDefault();
   console.log("on sign up");
   let user = {
-    pseudo: document.getElementById("usernameSignup").value,
-    name: document.getElementById("nameSignup").value,
-    forename: document.getElementById("fornameSignup").value,
-    email: document.getElementById("emailSignup").value,
-    password: document.getElementById("passwordSignup").value,
-    street: document.getElementById("streetSignup").value,
-    streetNumber:document.getElementById("numSignup").value,
-    box:document.getElementById("boxSignup").value,
-    zip:document.getElementById("postalSignup").value,
-    commune:document.getElementById("communeSignup").value,
-    country:document.getElementById("countrySignup").value
-
+    username: document.querySelector("#usernameSignup").value,
+    lastName: document.querySelector("#nameSignup").value,
+    firstName: document.querySelector("#fornameSignup").value,
+    email: document.querySelector("#emailSignup").value,
+    password: document.querySelector("#passwordSignup").value,
+    role:document.querySelector("#role").value,
+    address: {
+      street: document.querySelector("#streetSignup").value,
+      buildingNumber: document.querySelector("#numSignup").value,
+      unitNumber: document.querySelector("#boxSignup").value,
+      postcode: document.querySelector("#postalSignup").value,
+      commune: document.querySelector("#communeSignup").value,
+      country: document.querySelector("#countrySignup").value,
+    }
   }
 
-  fetch("/users/signup", {
+  fetch("/users/register", {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     body: JSON.stringify(user), // body data type must match "Content-Type" header
     headers: {

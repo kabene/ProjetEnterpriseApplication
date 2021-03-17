@@ -8,8 +8,8 @@ CREATE TABLE satchoFurniture.addresses
 (
     address_id      SERIAL PRIMARY KEY,
     street          varchar(50) NOT NULL,
-    building_number varchar(10) NOT NULL,
-    unit_number     varchar(10) NOT NULL,
+    buildingNumber varchar(10) NOT NULL,
+    unitNumber     varchar(10) NOT NULL,
     postcode        integer     NOT NULL,
     commune         varchar(50) NOT NULL,
     country         varchar(50) NOT NULL
@@ -18,8 +18,8 @@ CREATE TABLE satchoFurniture.addresses
 CREATE TABLE satchoFurniture.users
 (
     user_id                 SERIAL PRIMARY KEY,
-    last_name               varchar(50)   NOT NULL,
-    first_name              varchar(50)   NOT NULL,
+    lastName               varchar(50)   NOT NULL,
+    firstName              varchar(50)   NOT NULL,
     username                varchar(15)   NOT NULL,
     email                   varchar(15)   NOT NULL,
     id_address              integer       NOT NULL REFERENCES satchoFurniture.addresses (address_id),

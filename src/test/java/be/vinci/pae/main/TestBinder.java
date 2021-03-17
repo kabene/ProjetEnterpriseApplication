@@ -1,5 +1,7 @@
 package be.vinci.pae.main;
 
+import be.vinci.pae.business.factories.AddressFactory;
+import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.ucc.UserUCC;
@@ -18,6 +20,10 @@ public class TestBinder extends AbstractBinder {
   @Override
   protected void configure() {
     try {
+      bind(Class.forName(Configurate.getConfiguration("AddressFactory"))).to(AddressFactory.class)
+          .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("AddressDAO"))).to(AddressDAO.class)
+          .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("UserFactory"))).to(UserFactory.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("UserUCC"))).to(UserUCC.class)
