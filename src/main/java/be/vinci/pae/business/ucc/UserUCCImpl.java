@@ -17,7 +17,7 @@ public class UserUCCImpl implements UserUCC {
   private UserDAO userDAO;
 
   @Inject
-  private AddressDAO addressDAO;
+  private AddressDAO addresseDAO;
 
 
   /**
@@ -53,8 +53,8 @@ public class UserUCCImpl implements UserUCC {
     if (userDAO.emailAlreadyTaken(user.getEmail())) {
       throw new TakenException("email already taken");
     }
-    addressDAO.addAddress(address);
-    int id = addressDAO.getId(address);
+    addresseDAO.addAddress(address);
+    int id = addresseDAO.getId(address);
     User use = (User) user;
     String hashed = use.hashPassword(user.getPassword());
     use.setPassword(hashed);

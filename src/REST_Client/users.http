@@ -40,7 +40,7 @@ Content-Type: application/json
   "firstName": "c",
   "email": "d@gmail.com",
   "password": "<p>hello</p>",
-  "role": "customer",
+  "role": "client",
   "address": {
     "street": "f",
     "buildingNumber": "g",

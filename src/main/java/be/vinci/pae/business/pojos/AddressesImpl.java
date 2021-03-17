@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonInclude(Include.NON_NULL)
-public class AddressImpl implements AddressDTO {
+public class AddressesImpl implements AddressDTO {
 
   @JsonView(Views.Public.class)
   private int id;
@@ -24,7 +24,7 @@ public class AddressImpl implements AddressDTO {
   @JsonView(Views.Internal.class)
   private String country;
 
-  public AddressImpl() {
+  public AddressesImpl() {
   }
 
   public int getId() {

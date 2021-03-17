@@ -126,12 +126,6 @@ public class UserResource {
           Response.status(Status.BAD_REQUEST).entity("Lacks of mandatory info").type("text/plain")
               .build());
     }
-    if (!user.getRole().equals("customer") && !user.getRole().equals("antique_dealer") && !user
-        .getRole().equals("admin")) {
-      throw new WebApplicationException(
-          Response.status(Status.BAD_REQUEST).entity("Invalid role").type("text/plain")
-              .build());
-    }
 
     UserDTO userDTO = userUCC.register(user, user.getAddress());
     userDTO = Json.filterPublicJsonView(userDTO, UserDTO.class);
