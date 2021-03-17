@@ -126,6 +126,12 @@ public class UserResource {
     return null;
   }
 
+  /**
+   * GET users/customers - Get all the users.
+   *
+   * @return the list of users
+   * @throws WebApplicationException to send a fail status
+   */
   @GET
   @Path("customers")
   @Produces(MediaType.APPLICATION_JSON)
@@ -138,6 +144,13 @@ public class UserResource {
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
 
+  /**
+   * POST users/signup - Get all the users with a customerSearch.
+   *
+   * @param jsonNode : containing the customerSearch
+   * @return the list of users
+   * @throws WebApplicationException to send a fail status
+   */
   @POST
   @Path("customers")
   @Consumes(MediaType.APPLICATION_JSON)
