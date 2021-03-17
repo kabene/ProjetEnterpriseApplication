@@ -32,7 +32,7 @@ public class MockUserDAO implements UserDAO {
    * used to register a new user.
    *
    * @param user   UserDTO that describe the user.
-   * @param addressID id of the adress.
+   * @param addressID id of the address.
    */
   @Override
   public void register(UserDTO user, int addressID) {
