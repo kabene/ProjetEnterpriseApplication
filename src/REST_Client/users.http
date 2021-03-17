@@ -39,8 +39,8 @@ Content-Type: application/json
   "lastName": "b",
   "firstName": "c",
   "email": "d@gmail.com",
-  "password": "<p>hello</p>",
-  "role": "client",
+  "password": "a",
+  "role": "customer",
   "address": {
     "street": "f",
     "buildingNumber": "g",
