@@ -78,7 +78,8 @@ public class UserDAOImpl implements UserDAO {
         user.setUsername(rs.getString("username"));
         users.add(user);
       }
-    } catch (SQLException e) {}
+    } catch (SQLException e) {
+    }
     return users;
   }
 
@@ -86,7 +87,7 @@ public class UserDAOImpl implements UserDAO {
   public List<UserDTO> findBySearch(String filter) {
     List<UserDTO> users = new ArrayList<UserDTO>();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u INNER JOIN satchofurniture.addreses a ON u.address_id=a.address_id WHERE a.commune=? OR a.postalcode=? OR u.username=?";
+      String query = "SELECT u.* FROM satchofurniture.users u INNER JOIN satchofurniture.addreses a ON u.address_id=a.address_id WHERE lower(a.commune) LIKE lower('%?%') OR lower(a.postalcode) LIKE lower('%?%') OR lower(u.username) LIKE lower('%?%')";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, filter);
       ps.setString(2, filter);
@@ -98,7 +99,8 @@ public class UserDAOImpl implements UserDAO {
         user.setUsername(rs.getString("username"));
         users.add(user);
       }
-    } catch (SQLException e) {}
+    } catch (SQLException e) {
+    }
     return users;
   }
 }
