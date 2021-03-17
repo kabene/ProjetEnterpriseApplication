@@ -27,10 +27,10 @@ public class AdminRequestFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    int user_id;
+    int userId;
     try {
-      user_id = Integer.parseInt(requestContext.getHeaderString("user_id"));
-      if (!this.userDAO.isAdmin(user_id))
+      userId = Integer.parseInt(requestContext.getHeaderString("user_id"));
+      if (!this.userDAO.isAdmin(userId))
         requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Unauthorized").build());
     } catch(Exception e) {
       requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Not connected").build());
