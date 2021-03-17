@@ -15,6 +15,8 @@ public interface UserDAO {
 
   UserDTO findById(int id);
 
+  boolean isAdmin(int id);
+
   List<UserDTO> getAllClients();
 
   List<UserDTO> findBySearch(String filter);
