@@ -19,7 +19,7 @@ import jakarta.ws.rs.ext.Provider;
 
 @Singleton
 @Provider
-@Authorize
+@Admin
 public class AdminRequestFilter implements ContainerRequestFilter {
 
   @Inject
