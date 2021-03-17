@@ -30,8 +30,10 @@ public class AdminRequestFilter implements ContainerRequestFilter {
     int userId;
     try {
       userId = Integer.parseInt(requestContext.getHeaderString("user_id"));
-      if (!this.userDAO.isAdmin(userId))
-        requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Unauthorized").build());
+      if (!this.userDAO.isAdmin(userId)) {
+        requestContext
+            .abortWith(Response.status(Status.UNAUTHORIZED).entity("Unauthorized").build());
+      }
     } catch (Exception e) {
       requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Not connected").build());
     }
