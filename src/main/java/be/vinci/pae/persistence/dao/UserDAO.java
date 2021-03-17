@@ -24,9 +24,9 @@ public interface UserDAO {
    * used to register a new user.
    *
    * @param user      UserDTO that describe the user.
-   * @param adressID id of the adress.
+   * @param addressID id of the adress.
    */
-  void register(UserDTO user, int adressID);
+  void register(UserDTO user, int addressID);
 
   /**
    * verify if email is already taken.
