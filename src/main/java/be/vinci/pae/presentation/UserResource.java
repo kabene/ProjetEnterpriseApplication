@@ -2,10 +2,7 @@ package be.vinci.pae.presentation;
 
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.dto.UserDTO;
-import be.vinci.pae.business.filters.Authorize;
-//import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.presentation.filters.Authorize;
-import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,8 +26,6 @@ import org.glassfish.jersey.server.ContainerRequest;
 @Path("/users")
 public class UserResource {
 
-  //@Inject
-  //private UserFactory userFactory;
 
   @Inject
   private UserUCC userUCC;
