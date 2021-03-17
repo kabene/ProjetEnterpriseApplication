@@ -34,7 +34,7 @@ public class MockUserDAO implements UserDAO {
   }
 
   @Override
-  public List<UserDTO> findWithFilters(String filter) {
+  public List<UserDTO> findBySearch(String filter) {
     return null;
   }
 }

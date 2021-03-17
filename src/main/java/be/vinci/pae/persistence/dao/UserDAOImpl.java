@@ -83,7 +83,7 @@ public class UserDAOImpl implements UserDAO {
   }
 
   @Override
-  public List<UserDTO> findWithFilters(String filter) {
+  public List<UserDTO> findBySearch(String filter) {
     List<UserDTO> users = new ArrayList<UserDTO>();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u INNER JOIN satchofurniture.addreses a ON u.address_id=a.address_id WHERE a.commune=? OR a.postalcode=? OR u.username=?";

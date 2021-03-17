@@ -17,5 +17,5 @@ public interface UserDAO {
 
   List<UserDTO> getAllClients();
 
-  List<UserDTO> findWithFilters(String filter);
+  List<UserDTO> findBySearch(String filter);
 }
