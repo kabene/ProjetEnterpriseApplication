@@ -3,10 +3,13 @@ package be.vinci.pae.business.ucc;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.pojos.AddressesImpl;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.main.TestBinder;
+import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import be.vinci.pae.utils.Configurate;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -19,9 +22,11 @@ import org.mockito.Mockito;
 
 public class UserUCCImplTest {
 
-  private static UserUCC userUCC;
   private static User mockUser;
+  private static AddressDTO mockAddressDTO;
+  private static UserUCC userUCC;
   private static UserDAO mockUserDAO;
+  private static AddressDAO mockAddressDAO;
 
   /**
    * Initialise test variable and dependency injection.
@@ -31,15 +36,20 @@ public class UserUCCImplTest {
     Configurate.load("properties/test.properties");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     userUCC = locator.getService(UserUCC.class);
-    mockUserDAO = locator.getService(UserDAO.class);
+
     mockUser = Mockito.mock(UserImpl.class);
+    mockAddressDTO = Mockito.mock(AddressesImpl.class);
+    mockUserDAO = locator.getService(UserDAO.class);
+    mockAddressDAO = locator.getService(AddressDAO.class);
   }
 
 
   @BeforeEach
   public void setUp() {
     Mockito.reset(mockUser);
+    Mockito.reset(mockAddressDTO);
     Mockito.reset(mockUserDAO);
+    Mockito.reset(mockAddressDAO);
   }
 
   @DisplayName("TEST UserUCC.login : given bad password, should return null")
