@@ -3,6 +3,7 @@ package be.vinci.pae.presentation;
 import be.vinci.pae.business.authentication.Authentication;
 import be.vinci.pae.business.dto.UserDTO;
 //import be.vinci.pae.business.factories.UserFactory;
+import be.vinci.pae.business.filters.Admin;
 import be.vinci.pae.business.filters.Authorize;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.ucc.UserUCC;
@@ -129,7 +130,7 @@ public class UserResource {
   @GET
   @Path("customers")
   @Produces(MediaType.APPLICATION_JSON)
-  @Authorize
+  @Admin
   public Response getCustomers() {
     List<UserDTO> users = userUCC.rechercherTousLesClients();
     ObjectNode resNode = jsonMapper.createObjectNode();
@@ -142,7 +143,7 @@ public class UserResource {
   @Path("customers")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  @Authorize
+  @Admin
   public Response getCustomers(JsonNode jsonNode) {
     String filter = jsonNode.get("filter").asText();
     List<UserDTO> users = userUCC.rechercherClients(filter);

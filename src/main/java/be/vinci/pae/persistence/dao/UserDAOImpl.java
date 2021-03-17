@@ -65,6 +65,20 @@ public class UserDAOImpl implements UserDAO {
     return userFound;
   }
 
+  public boolean isAdmin(int id) {
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ? AND u.role = admin";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setInt(1, id);
+      ResultSet rs = ps.executeQuery();
+      if (rs.next())
+        return true;
+    } catch (SQLException throwables) {
+
+    }
+    return false;
+  }
+
   @Override
   public List<UserDTO> getAllClients() {
     List<UserDTO> users = new ArrayList<UserDTO>();
