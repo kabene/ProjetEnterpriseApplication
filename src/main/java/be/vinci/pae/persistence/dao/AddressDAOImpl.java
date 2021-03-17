@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class AddressDAOImpl implements AddressDAO {
 
@@ -16,20 +17,20 @@ public class AddressDAOImpl implements AddressDAO {
   /**
    * Create a newAdress.
    *
-   * @param adress AdressDTO describe the adress.
+   * @param address AdressDTO describe the adress.
    */
   @Override
-  public void addAddress(AddressDTO adress) {
+  public void addAddress(AddressDTO address) {
     String query =
         " INSERT INTO satchoFurniture.addresses VALUES(DEFAULT,?,?,?,?,?,?)";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setString(1, adress.getStreet());
-      ps.setString(2, adress.getBuildingNumber());
-      ps.setString(3, adress.getUnitNumber());
-      ps.setInt(4, adress.getPostcode());
-      ps.setString(5, adress.getCommune());
-      ps.setString(6, adress.getCountry());
+      ps.setString(1, StringEscapeUtils.escapeHtml4(address.getStreet()));
+      ps.setString(2, StringEscapeUtils.escapeHtml4(address.getBuildingNumber()));
+      ps.setString(3, StringEscapeUtils.escapeHtml4(address.getUnitNumber()));
+      ps.setInt(4, address.getPostcode());
+      ps.setString(5, StringEscapeUtils.escapeHtml4(address.getCommune()));
+      ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
       ps.execute();
     } catch (SQLException throwables) {
       throwables.printStackTrace();
@@ -58,12 +59,12 @@ public class AddressDAOImpl implements AddressDAO {
           + "AND a.commune=? "
           + "AND a.country=? ";
       PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setString(1, address.getStreet());
-      ps.setString(2, address.getBuildingNumber());
-      ps.setString(3, address.getUnitNumber());
+      ps.setString(1, StringEscapeUtils.escapeHtml4(address.getStreet()));
+      ps.setString(2, StringEscapeUtils.escapeHtml4(address.getBuildingNumber()));
+      ps.setString(3, StringEscapeUtils.escapeHtml4(address.getUnitNumber()));
       ps.setInt(4, address.getPostcode());
-      ps.setString(5, address.getCommune());
-      ps.setString(6, address.getCountry());
+      ps.setString(5, StringEscapeUtils.escapeHtml4(address.getCommune()));
+      ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         id = rs.getInt(1);

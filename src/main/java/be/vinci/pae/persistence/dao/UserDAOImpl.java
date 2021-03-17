@@ -1,6 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 
+import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.exceptions.TakenException;
@@ -29,7 +30,7 @@ public class UserDAOImpl implements UserDAO {
     try {
       String query = "SELECT u.* FROM satchofurniture.users u WHERE u.username = ?";
       PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setString(1, username);
+      ps.setString(1, StringEscapeUtils.escapeHtml4(username));
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         userFound.setID(rs.getInt("user_id"));
@@ -75,22 +76,22 @@ public class UserDAOImpl implements UserDAO {
    * used to register a new user.
    *
    * @param user     UserDTO that describe the user.
-   * @param adressID id of the adress.
+   * @param addressId id of the adress.
    */
   @Override
-  public void register(UserDTO user, int adressID) {
+  public void register(UserDTO user, int addressId) {
 
     String query =
-        " INSERT INTO satchoFurniture.users VALUES(DEFAULT,?,?,?,?," + adressID
+        " INSERT INTO satchoFurniture.users VALUES(DEFAULT,?,?,?,?," + addressId
             + ",now(),?,?,0,0,'true')";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setString(1, user.getLastName());
-      ps.setString(2, user.getFirstName());
-      ps.setString(3, user.getUsername());
-      ps.setString(4, user.getEmail());
-      ps.setString(5, user.getRole());
-      ps.setString(6, user.getPassword());
+      ps.setString(1, StringEscapeUtils.escapeHtml4(user.getLastName()));
+      ps.setString(2, StringEscapeUtils.escapeHtml4(user.getFirstName()));
+      ps.setString(3, StringEscapeUtils.escapeHtml4(user.getUsername()));
+      ps.setString(4, StringEscapeUtils.escapeHtml4(user.getEmail()));
+      ps.setString(5, StringEscapeUtils.escapeHtml4(user.getRole()));
+      ps.setString(6, StringEscapeUtils.escapeHtml4(user.getPassword()));
       ps.execute();
     } catch (SQLException throwables) {
       throwables.printStackTrace();
@@ -109,7 +110,7 @@ public class UserDAOImpl implements UserDAO {
     String query = "SELECT * FROM satchoFurniture.users WHERE email = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setString(1, email);
+      ps.setString(1, StringEscapeUtils.escapeHtml4(email));
       ResultSet rs = ps.executeQuery();
       rs.close();
       ps.close();
@@ -130,7 +131,7 @@ public class UserDAOImpl implements UserDAO {
     String query = "SELECT * FROM satchoFurniture.users WHERE username = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setString(1, username);
+      ps.setString(1, StringEscapeUtils.escapeHtml4(username));
       ResultSet rs = ps.executeQuery();
       rs.close();
       ps.close();
