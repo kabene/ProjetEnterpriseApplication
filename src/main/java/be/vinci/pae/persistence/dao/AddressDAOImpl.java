@@ -19,7 +19,7 @@ public class AddressDAOImpl implements AddressDAO {
    * @param adress AdressDTO describe the adress.
    */
   @Override
-  public void newAdresse(AddressDTO adress) {
+  public void addAddress(AddressDTO adress) {
     String query =
         " INSERT INTO satchoFurniture.addresses VALUES(DEFAULT,?,?,?,?,?,?)";
     PreparedStatement ps = dalServices.makeStatement(query);
@@ -68,6 +68,7 @@ public class AddressDAOImpl implements AddressDAO {
       if (rs.next()) {
         id = rs.getInt(1);
       }
+      rs.close();
       ps.close();
     } catch (SQLException e) {
       e.printStackTrace();

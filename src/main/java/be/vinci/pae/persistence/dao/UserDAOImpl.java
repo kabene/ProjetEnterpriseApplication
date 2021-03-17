@@ -47,6 +47,7 @@ public class UserDAOImpl implements UserDAO {
 
   /**
    * find a user based on his id.
+   *
    * @param userId the id of the user.
    * @return User represented by UserDTO.
    */
@@ -73,7 +74,7 @@ public class UserDAOImpl implements UserDAO {
   /**
    * used to register a new user.
    *
-   * @param user      UserDTO that describe the user.
+   * @param user     UserDTO that describe the user.
    * @param adressID id of the adress.
    */
   @Override
@@ -110,6 +111,8 @@ public class UserDAOImpl implements UserDAO {
     try {
       ps.setString(1, email);
       ResultSet rs = ps.executeQuery();
+      rs.close();
+      ps.close();
       return rs.next();
     } catch (SQLException exception) {
       throw new TakenException();
@@ -129,6 +132,8 @@ public class UserDAOImpl implements UserDAO {
     try {
       ps.setString(1, username);
       ResultSet rs = ps.executeQuery();
+      rs.close();
+      ps.close();
       return rs.next();
     } catch (SQLException throwables) {
       throw new TakenException();

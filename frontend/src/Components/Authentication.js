@@ -1,8 +1,10 @@
 
+import {escapeHtml} from "../utils/utils.js"
 import {getUserSessionData, setUserSessionData, setUserLocalData} from "../utils/session";
 import Navbar from "./Navbar";
 import {setLayout}from "../utils/render.js"
 import {RedirectUrl} from "./Router";
+
 
 let pageHTML = `
         <form>
@@ -150,7 +152,7 @@ const onSignUp = (e) => {
     }
   }
 
-  fetch("/users/signup", {
+  fetch("/users/register", {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     body: JSON.stringify(user), // body data type must match "Content-Type" header
     headers: {

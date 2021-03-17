@@ -10,7 +10,7 @@ public interface AddressDAO {
    *
    * @param address AdressDTO describe the adress.
    */
-  void newAdresse(AddressDTO address);
+  void addAddress(AddressDTO address);
 
   /**
    * get the id of the address.

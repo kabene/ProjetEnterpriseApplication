@@ -52,7 +52,7 @@ public class UserUCCImpl implements UserUCC {
     if (userDAO.emailAlreadyTaken(user.getEmail())) {
       throw new TakenException("email already taken");
     }
-    addresseDAO.newAdresse(address);
+    addresseDAO.addAddress(address);
     int id = addresseDAO.getId(address);
     User use = (User) user;
     String hashed = use.hashPassword(user.getPassword());

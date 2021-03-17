@@ -114,11 +114,16 @@ public class UserResource {
    * @throws WebApplicationException to send a fail status
    */
   @POST
-  @Path("signup")
+  @Path("register")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response signup(UserDTO user) {
-    if (user == null) {
+  public Response register(UserDTO user) {
+    if (user == null || user.getPassword() == null || user.getAddress() == null
+        || user.getEmail() == null || user.getUsername() == null || user.getFirstName() == null
+        || user.getLastName() == null || user.getRole() == null
+        || user.getAddress().getBuildingNumber() == null
+        || user.getAddress().getUnitNumber() == null || user.getAddress().getCommune() == null
+        || user.getAddress().getCountry() == null|| user.getAddress().getPostcode()==0) {
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks of mandatory info").type("text/plain")
               .build());

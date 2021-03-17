@@ -3,7 +3,7 @@ package be.vinci.pae.exceptions;
 public class TakenException extends RuntimeException {
 
   /**
-   * Exception generated when a field is filled with some illegal content.
+   * Exception generated when a field is filled with some unavailable content.
    */
   public TakenException() {
     super();

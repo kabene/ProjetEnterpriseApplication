@@ -30,26 +30,7 @@ public class UserImpl implements User {
   public UserImpl() {
   }
 
-  /**
-   * Constructor.
-   * @param username user.
-   * @param password user unhashed.
-   * @param lastName user.
-   * @param firstName user.
-   * @param email user.
-   * @param role user.
-   * @param add user.
-   */
-  public UserImpl(String username, String password, String lastName, String firstName,
-      String email, String role, AddressDTO add) {
-    this.username = username;
-    this.password = password;
-    this.lastName = lastName;
-    this.firstName = firstName;
-    this.email = email;
-    this.role = role;
-    this.address = add;
-  }
+
 
   @Override
   public String getLastName() {
