@@ -2,12 +2,14 @@ package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.AddressesImpl;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.pojos.UserImpl;
+import be.vinci.pae.exceptions.TakenException;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
@@ -135,6 +137,35 @@ public class UserUCCImplTest {
     Mockito.verify(mockAddressDAO).addAddress(mockAddressDTO);
     Mockito.verify(mockAddressDAO).getId(mockAddressDTO);
 
-    assertEquals(mockUser, actual);
+    assertEquals(mockUser, actual, "The successful register should return the UserDTO");
+  }
+
+  @DisplayName("TEST UserUCC.register : given already existing username, should throw TakenException")
+  @Test
+  public void test_register_givenTakenUsername_shouldThrowTakenException() {
+    String username = "takenUser";
+
+    Mockito.when(mockUser.getUsername()).thenReturn(username);
+    Mockito.when(mockUserDAO.usernameAlreadyTaken(username)).thenReturn(true);
+
+    assertThrows(TakenException.class, () ->
+        userUCC.register(mockUser, mockAddressDTO), "The call to register should throw a TakenException when given a taken username");
+    Mockito.verify(mockUserDAO).usernameAlreadyTaken(username);
+  }
+
+  @DisplayName("TEST UserUCC.register : given already existing email, should throw TakenException")
+  @Test
+  public void test_register_givenTakenEmail_shouldThrowTakenException() {
+    String username = "username";
+    String email = "taken@gmail.com";
+
+    Mockito.when(mockUser.getUsername()).thenReturn(username);
+    Mockito.when(mockUser.getEmail()).thenReturn(email);
+    Mockito.when(mockUserDAO.usernameAlreadyTaken(username)).thenReturn(false);
+    Mockito.when(mockUserDAO.emailAlreadyTaken(email)).thenReturn(true);
+
+    assertThrows(TakenException.class, () ->
+        userUCC.register(mockUser, mockAddressDTO), "The call to register should throw a TakenException when given a taken email");
+    Mockito.verify(mockUserDAO).usernameAlreadyTaken(username);
   }
 }
