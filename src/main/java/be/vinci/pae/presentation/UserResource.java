@@ -139,8 +139,9 @@ public class UserResource {
   public Response getCustomers() {
     List<UserDTO> users = userUCC.showAllCustomers();
     ObjectNode resNode = jsonMapper.createObjectNode();
-    for (UserDTO user : users)
+    for (UserDTO user : users) {
       resNode.putPOJO("user", Json.filterPublicJsonView(user, UserDTO.class));
+    }
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
 
@@ -160,8 +161,9 @@ public class UserResource {
     String customerSearch = jsonNode.get("customerSearch").asText();
     List<UserDTO> users = userUCC.showCustomersResult(customerSearch);
     ObjectNode resNode = jsonMapper.createObjectNode();
-    for (UserDTO user : users)
+    for (UserDTO user : users) {
       resNode.putPOJO("user", Json.filterPublicJsonView(user, UserDTO.class));
+    }
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
 }
