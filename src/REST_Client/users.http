@@ -31,7 +31,7 @@ Content-Type: application/json
 
 ### /login as 'ex' (pwd : azerty) -> success@@
 ##should faild because =>
-POST {{baseUrl}}/users/signup
+POST {{baseUrl}}/users/register
 Content-Type: application/json
 
 {
@@ -39,7 +39,7 @@ Content-Type: application/json
   "lastName": "b",
   "firstName": "c",
   "email": "d@gmail.com",
-  "password": "e",
+  "password": "<p>hello</p>",
   "role": "client",
   "address": {
     "street": "f",

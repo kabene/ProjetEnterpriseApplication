@@ -75,7 +75,7 @@ public class UserDAOImpl implements UserDAO {
   /**
    * used to register a new user.
    *
-   * @param user     UserDTO that describe the user.
+   * @param user      UserDTO that describe the user.
    * @param addressID id of the adress.
    */
   @Override
@@ -112,9 +112,10 @@ public class UserDAOImpl implements UserDAO {
     try {
       ps.setString(1, StringEscapeUtils.escapeHtml4(email));
       ResultSet rs = ps.executeQuery();
+      boolean res = rs.next();
       rs.close();
       ps.close();
-      return rs.next();
+      return res;
     } catch (SQLException exception) {
       throw new TakenException();
     }
@@ -133,9 +134,10 @@ public class UserDAOImpl implements UserDAO {
     try {
       ps.setString(1, StringEscapeUtils.escapeHtml4(username));
       ResultSet rs = ps.executeQuery();
+      boolean res = rs.next();
       rs.close();
       ps.close();
-      return rs.next();
+      return res;
     } catch (SQLException throwables) {
       throw new TakenException();
     }
