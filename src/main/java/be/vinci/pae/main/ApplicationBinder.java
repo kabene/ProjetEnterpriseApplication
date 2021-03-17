@@ -1,6 +1,6 @@
 package be.vinci.pae.main;
 
-import be.vinci.pae.business.authentication.Authentication;
+import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.ucc.UserUCC;
