@@ -61,9 +61,9 @@ let pageHTML = `
                         <input class="form-control inputSignup my-2" id="countrySignup" type="text" name="countrySignup" placeholder="pays"/>
                     </div>
                     <select class="selectpicker" id="role">
-                        <option selected="selected" >Client</option>
-                        <option>Anticaire</option>
-                        <option>Administrateur</option>  
+                        <option selected="selected"  value="customer">Client</option>
+                        <option value="antique_dealer">Anticaire</option>
+                        <option value="admin">Administrateur </option>  
                     </select>
                     <button class="btn btn-primary w-35 ml-5 mt-4" id="signupButton" type="submit">S'inscrire</button>
                 </div>
