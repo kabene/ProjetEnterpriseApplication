@@ -22,8 +22,7 @@ public class TestBinder extends AbstractBinder {
     try {
       bind(Class.forName(Configurate.getConfiguration("AddressFactory"))).to(AddressFactory.class)
           .in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("AddressDAO"))).to(AddressDAO.class)
-          .in(Singleton.class);
+      bind(Mockito.mock(AddressDAO.class)).to(AddressDAO.class);
       bind(Class.forName(Configurate.getConfiguration("UserFactory"))).to(UserFactory.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("UserUCC"))).to(UserUCC.class)
