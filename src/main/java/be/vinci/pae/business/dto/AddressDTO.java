@@ -1,10 +1,10 @@
 package be.vinci.pae.business.dto;
 
 
-import be.vinci.pae.business.pojos.AddressesImpl;
+import be.vinci.pae.business.pojos.AddressImpl;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(as = AddressesImpl.class)
+@JsonDeserialize(as = AddressImpl.class)
 public interface AddressDTO {
 
   int getId();
