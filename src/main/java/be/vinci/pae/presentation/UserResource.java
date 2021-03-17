@@ -143,8 +143,8 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response getCustomers(JsonNode jsonNode) {
-    String filter = jsonNode.get("filter").asText();
-    List<UserDTO> users = userUCC.showCustomersResult(filter);
+    String customerSearch = jsonNode.get("customerSearch").asText();
+    List<UserDTO> users = userUCC.showCustomersResult(customerSearch);
     ObjectNode resNode = jsonMapper.createObjectNode();
     for (UserDTO user : users)
       resNode.putPOJO("user", Json.filterPublicJsonView(user, UserDTO.class));
