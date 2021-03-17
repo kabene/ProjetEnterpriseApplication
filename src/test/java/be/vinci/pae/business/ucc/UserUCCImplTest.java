@@ -46,6 +46,9 @@ public class UserUCCImplTest {
   }
 
 
+  /**
+   * Reset all mocks between tests.
+   */
   @BeforeEach
   public void setUp() {
     Mockito.reset(mockUser);
