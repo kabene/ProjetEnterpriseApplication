@@ -35,7 +35,7 @@ public class UserUCCImpl implements UserUCC {
 
   @Override
   public List<UserDTO> showAllCustomers() {
-    return userDAO.getAllClients();
+    return userDAO.getAllCustomers();
   }
 
   @Override

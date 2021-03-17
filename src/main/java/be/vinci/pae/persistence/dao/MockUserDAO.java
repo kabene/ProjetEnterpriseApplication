@@ -34,7 +34,7 @@ public class MockUserDAO implements UserDAO {
   }
 
   @Override
-  public List<UserDTO> getAllClients() {
+  public List<UserDTO> getAllCustomers() {
     return null;
   }
 

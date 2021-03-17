@@ -80,7 +80,7 @@ public class UserDAOImpl implements UserDAO {
   }
 
   @Override
-  public List<UserDTO> getAllClients() {
+  public List<UserDTO> getAllCustomers() {
     List<UserDTO> users = new ArrayList<UserDTO>();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u";
