@@ -35,7 +35,8 @@ public class AdminRequestFilter implements ContainerRequestFilter {
             .abortWith(Response.status(Status.UNAUTHORIZED).entity("Unauthorized").build());
       }
     } catch (Exception e) {
-      requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Not connected").build());
+      requestContext
+          .abortWith(Response.status(Status.UNAUTHORIZED).entity("Not connected").build());
     }
   }
 }
