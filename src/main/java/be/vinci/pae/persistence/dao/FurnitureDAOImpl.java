@@ -7,7 +7,7 @@ import jakarta.inject.Inject;
 public class FurnitureDAOImpl implements FurnitureDAO{
 
   @Inject
-  private static FurnitureFactory furnitureFactory;
+  private FurnitureFactory furnitureFactory;
 
   /**
    * Finds one piece of furniture in the db having a specific id.
@@ -19,6 +19,8 @@ public class FurnitureDAOImpl implements FurnitureDAO{
   public FurnitureDTO findById(int id) {
     FurnitureDTO res = furnitureFactory.getFurnitureDTO(); //stub
     res.setFurnitureId(id);
+    res.setDescription("desc");
+    res.setToPickUp(true);
     return res;
   }
 }

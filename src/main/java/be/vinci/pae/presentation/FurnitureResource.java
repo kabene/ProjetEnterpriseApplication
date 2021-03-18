@@ -30,7 +30,6 @@ public class FurnitureResource {
   public Response getById(@PathParam("id") int id) {
     System.out.println("get " + id);
     FurnitureDTO furnitureDTO = furnitureUCC.getOne(id);
-    furnitureDTO.setFurnitureId(id);
     return Response.ok(furnitureDTO).build();
   }
 
