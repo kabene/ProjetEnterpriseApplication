@@ -1,8 +1,11 @@
 package be.vinci.pae.business.dto;
 
+import be.vinci.pae.business.pojos.FurnitureImpl;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.LocalDate;
 
-public interface FurnitureDTO {
+@JsonDeserialize(as = FurnitureImpl.class)
+    public interface FurnitureDTO {
   int getFurnitureId();
   void setFurnitureId(int id);
 

@@ -1,7 +1,9 @@
 package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.ucc.FurnitureUCC;
+import be.vinci.pae.utils.Json;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.GET;
@@ -30,6 +32,9 @@ public class FurnitureResource {
   public Response getById(@PathParam("id") int id) {
     System.out.println("get " + id);
     FurnitureDTO furnitureDTO = furnitureUCC.getOne(id);
+
+    furnitureDTO = Json.filterPublicJsonView(furnitureDTO, FurnitureDTO.class);
+    System.out.println("over");
     return Response.ok(furnitureDTO).build();
   }
 
