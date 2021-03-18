@@ -1,7 +1,6 @@
 package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
-import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.utils.Json;
 import jakarta.inject.Inject;
@@ -24,8 +23,7 @@ public class FurnitureResource {
    * GET a specific piece of furniture's public details (no authentication required).
    *
    * @param id : the furniture id from the request path
-   * @return http response containing a piece of furniture (or relevant status code in case of
-   * error)
+   * @return http response containing a piece of furniture (or relevant status code in if error)
    */
   @GET
   @Path("/{id}")
