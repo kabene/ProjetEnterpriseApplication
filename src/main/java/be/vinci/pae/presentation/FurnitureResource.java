@@ -24,7 +24,8 @@ public class FurnitureResource {
    * GET a specific piece of furniture's public details (no authentication required).
    *
    * @param id : the furniture id from the request path
-   * @return http response containing a piece of furniture (or relevant status code in case of error)
+   * @return http response containing a piece of furniture (or relevant status code in case of
+   * error)
    */
   @GET
   @Path("/{id}")

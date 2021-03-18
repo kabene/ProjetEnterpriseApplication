@@ -4,7 +4,7 @@ import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.factories.FurnitureFactory;
 import jakarta.inject.Inject;
 
-public class FurnitureDAOImpl implements FurnitureDAO{
+public class FurnitureDAOImpl implements FurnitureDAO {
 
   @Inject
   private FurnitureFactory furnitureFactory;
