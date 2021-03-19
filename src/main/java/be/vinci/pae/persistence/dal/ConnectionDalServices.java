@@ -11,4 +11,19 @@ public interface ConnectionDalServices {
    */
   PreparedStatement makeStatement(String query);
 
+  /**
+   *
+   */
+  void startTransaction();
+
+  /**
+   *
+   */
+  void commitTransaction();
+
+  /**
+   *
+   */
+  void rollbackTransaction();
+
 }

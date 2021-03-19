@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
-import be.vinci.pae.business.pojos.AddressesImpl;
+import be.vinci.pae.business.pojos.AddressImpl;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.exceptions.TakenException;
@@ -40,7 +40,7 @@ public class UserUCCImplTest {
     userUCC = locator.getService(UserUCC.class);
 
     mockUser = Mockito.mock(UserImpl.class);
-    mockAddressDTO = Mockito.mock(AddressesImpl.class);
+    mockAddressDTO = Mockito.mock(AddressImpl.class);
     mockUserDAO = locator.getService(UserDAO.class);
     mockAddressDAO = locator.getService(AddressDAO.class);
   }
