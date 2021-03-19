@@ -5,7 +5,7 @@ public interface ConnectionDalServices {
 
 
   /**
-   * Start the transaction.
+   * Start the transaction .
    */
   void startTransaction();
 
