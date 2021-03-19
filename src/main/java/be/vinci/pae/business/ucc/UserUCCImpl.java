@@ -70,7 +70,7 @@ public class UserUCCImpl implements UserUCC {
   }
 
   @Override
-  public List<UserDTO> showCustomersResult(String filter) {
-    return userDAO.findBySearch(filter);
+  public List<UserDTO> showCustomersResult(String customerSearch) {
+    return userDAO.findBySearch(customerSearch);
   }
 }

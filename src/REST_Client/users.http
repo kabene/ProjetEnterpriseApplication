@@ -50,3 +50,18 @@ Authorization: {{jwt}}
  client.global.set("jwt", response.body.token);
  %}
 ###
+
+// showAllCustomers()
+GET {{baseUrl}}/users/customers
+Authorization: {{jwt}}
+
+###
+
+// showCustomersResult()
+POST {{baseUrl}}/users/customers
+Authorization: {{jwt}}
+
+{
+  "customerSearch": "D"
+}
+###

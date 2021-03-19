@@ -78,7 +78,7 @@ public class UserDAOImpl implements UserDAO {
   public boolean isAdmin(int id) {
     try {
       String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ? "
-                    + "AND u.role = admin";
+                    + "AND u.role = 'admin'";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, id);
       ResultSet rs = ps.executeQuery();
@@ -111,18 +111,18 @@ public class UserDAOImpl implements UserDAO {
   }
 
   @Override
-  public List<UserDTO> findBySearch(String filter) {
+  public List<UserDTO> findBySearch(String customerSearch) {
     List<UserDTO> users = new ArrayList<UserDTO>();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u "
                     + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
                     + "WHERE lower(a.commune) LIKE lower('%?%') "
                     + "OR lower(a.postcode) LIKE lower('%?%') "
-                    + "OR lower(u.username) LIKE lower('%?%')";
+                    + "OR lower(u.first_name) LIKE lower('%?%')";
       PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setString(1, filter);
-      ps.setString(2, filter);
-      ps.setString(3, filter);
+      ps.setString(1, customerSearch);
+      ps.setString(2, customerSearch);
+      ps.setString(3, customerSearch);
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
         UserDTO user = userFactory.getUserDTO();
