@@ -13,6 +13,7 @@ public class Configurate {
 
   /**
    * get configuration should give a string that contains the config file.
+   *
    * @param key string .properties.
    * @return a string who represent the value.
    */
@@ -20,7 +21,7 @@ public class Configurate {
     if (dependencies.containsKey(key)) {
       return (String) dependencies.get(key);
     }
-    String value = (String) props.getProperty(key);
+    String value = props.getProperty(key);
     dependencies.put(key, value);
     return value;
   }

@@ -1,16 +1,24 @@
 package be.vinci.pae.business.ucc;
 
 
+import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
 //import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
+import be.vinci.pae.exceptions.TakenException;
+import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
+import java.util.List;
+
 
 public class UserUCCImpl implements UserUCC {
 
   @Inject
   private UserDAO userDAO;
+
+  @Inject
+  private AddressDAO addressDAO;
 
 
   /**
@@ -29,6 +37,40 @@ public class UserUCCImpl implements UserUCC {
     if (!userFound.checkPassword(password)) {
       return null; // invalid password
     }
-    return (UserDTO) userFound;
+    return userFound;
+  }
+
+  /**
+   * used to register a new user.
+   *
+   * @param userDTO    UserDTO that describe the user.
+   * @param address id of the address.
+   */
+  @Override
+  public UserDTO register(UserDTO userDTO, AddressDTO address) {
+    if (userDAO.usernameAlreadyTaken(userDTO.getUsername())) {
+      throw new TakenException("username already taken");
+    }
+    if (userDAO.emailAlreadyTaken(userDTO.getEmail())) {
+      throw new TakenException("email already taken");
+    }
+    addressDAO.addAddress(address);
+    int id = addressDAO.getId(address);
+    User user = (User) userDTO;
+    String hashed = user.hashPassword(userDTO.getPassword());
+    user.setPassword(hashed);
+    userDAO.register(user, id);
+    userDTO = userDAO.findByUsername(userDTO.getUsername());
+    return userDTO;
+  }
+
+  @Override
+  public List<UserDTO> showAllCustomers() {
+    return userDAO.getAllCustomers();
+  }
+
+  @Override
+  public List<UserDTO> showCustomersResult(String filter) {
+    return userDAO.findBySearch(filter);
   }
 }
