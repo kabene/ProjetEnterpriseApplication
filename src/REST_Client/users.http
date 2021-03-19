@@ -1,3 +1,4 @@
+// login as 'other' (pwd : azerty) -> fail (no user found)
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
@@ -5,10 +6,10 @@ Content-Type: application/json
   "username": "other",
   "password": "azerty"
 }
+###
 
-### /login as 'other' (pwd : azerty) -> fail (no user found)
 
-
+//login as 'ex' (pwd : qwerty) -> fail (invalid pwd)
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
@@ -16,37 +17,36 @@ Content-Type: application/json
   "username": "ex",
   "password": "qwerty"
 }
+###
 
-### /login as 'ex' (pwd : qwerty) -> fail (invalid pwd)
 
-
+//login with remember me -> store jwt
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "a",
-  "password": "<p>hello</p>",
+  "username": "johndoe",
+  "password": "azerty",
   "rememberMe": true
 }
 
-### /login as 'ex' (pwd : azerty) -> success@@
-##should faild because =>
-POST {{baseUrl}}/users/register
-Content-Type: application/json
+> {%
+ client.global.set("jwt", response.body.token);
+ %}
+###
 
-{
-  "username": "a",
-  "lastName": "b",
-  "firstName": "c",
-  "email": "d@gmail.com",
-  "password": "a",
-  "role": "customer",
-  "address": {
-    "street": "f",
-    "buildingNumber": "g",
-    "unitNumber": "h",
-    "postcode": 1,
-    "commune": "j",
-    "country": "q"
-  }
-}
+
+// me -> get current user
+GET {{baseUrl}}/users/me
+Authorization: {{jwt}}
+###
+
+
+// remember me -> generate & store new jwt
+GET {{baseUrl}}/users/login
+Authorization: {{jwt}}
+
+> {%
+ client.global.set("jwt", response.body.token);
+ %}
+###
