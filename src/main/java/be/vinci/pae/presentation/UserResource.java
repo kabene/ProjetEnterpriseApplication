@@ -3,6 +3,7 @@ package be.vinci.pae.presentation;
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.presentation.filters.Authorize;
+import be.vinci.pae.business.filters.Admin;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,6 +21,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import java.util.List;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -140,5 +142,46 @@ public class UserResource {
     ObjectNode resNode = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
 
+  }
+
+  /**
+   * GET users/customers - Get all the users.
+   *
+   * @return the list of users
+   * @throws WebApplicationException to send a fail status
+   */
+  @GET
+  @Path("customers")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Admin
+  public Response getCustomers() {
+    List<UserDTO> users = userUCC.showAllCustomers();
+    ObjectNode resNode = jsonMapper.createObjectNode();
+    for (UserDTO user : users) {
+      resNode.putPOJO("user", Json.filterPublicJsonView(user, UserDTO.class));
+    }
+    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
+  }
+
+  /**
+   * POST users/signup - Get all the users with a customerSearch.
+   *
+   * @param jsonNode : containing the customerSearch
+   * @return the list of users
+   * @throws WebApplicationException to send a fail status
+   */
+  @POST
+  @Path("customers")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  @Admin
+  public Response getCustomers(JsonNode jsonNode) {
+    String customerSearch = jsonNode.get("customerSearch").asText();
+    List<UserDTO> users = userUCC.showCustomersResult(customerSearch);
+    ObjectNode resNode = jsonMapper.createObjectNode();
+    for (UserDTO user : users) {
+      resNode.putPOJO("user", Json.filterPublicJsonView(user, UserDTO.class));
+    }
+    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
 }

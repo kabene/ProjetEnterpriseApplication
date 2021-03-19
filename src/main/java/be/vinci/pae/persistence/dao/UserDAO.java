@@ -1,6 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.UserDTO;
+import java.util.List;
 
 public interface UserDAO {
 
@@ -43,4 +44,10 @@ public interface UserDAO {
    * @return a boolean true if username is already taken and false in other case.
    */
   boolean usernameAlreadyTaken(String username);
+
+  boolean isAdmin(int id);
+
+  List<UserDTO> getAllCustomers();
+
+  List<UserDTO> findBySearch(String filter);
 }
