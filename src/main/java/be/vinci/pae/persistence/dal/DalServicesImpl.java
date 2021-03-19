@@ -7,11 +7,10 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-public class DalServicesImpl implements ConnectionDalServices ,ConnectionBackendDalServices{
+public class DalServicesImpl implements ConnectionDalServices, ConnectionBackendDalServices {
 
   private DataSource ds;
   private ThreadLocal<Connection> connect;
-
 
 
   /**
@@ -42,7 +41,7 @@ public class DalServicesImpl implements ConnectionDalServices ,ConnectionBackend
   }
 
   /**
-   *
+   * startTransaction transaction.
    */
   @Override
   public void startTransaction() {
@@ -61,7 +60,7 @@ public class DalServicesImpl implements ConnectionDalServices ,ConnectionBackend
   }
 
   /**
-   *
+   * commitTransaction Transaction.
    */
   @Override
   public void commitTransaction() {
@@ -81,11 +80,11 @@ public class DalServicesImpl implements ConnectionDalServices ,ConnectionBackend
   }
 
   /**
-   *RollbackThe Transaction.
+   * RollbackThe Transaction.
    */
   @Override
   public void rollbackTransaction() {
-    Connection conn ;
+    Connection conn;
 
     if ((conn = connect.get()) == null) {
       throw new InternalError("no start");
@@ -110,7 +109,8 @@ public class DalServicesImpl implements ConnectionDalServices ,ConnectionBackend
     ds.setUrl(Configurate.getConfiguration("url"));
     ds.setUsername(Configurate.getConfiguration("user"));
     ds.setPassword(Configurate.getConfiguration("password"));
-    ds.setMaxIdle(0); // 0 for killing every idle connections to leave more place for active connections
+    ds.setMaxIdle(
+        0); // 0 for killing every idle connections to leave more place for active connections
     ds.setMaxTotal(1); // initiate only one connection for the datasource
     return ds;
   }

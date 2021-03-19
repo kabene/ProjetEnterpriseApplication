@@ -48,7 +48,7 @@ public class UserUCCImpl implements UserUCC {
       return userFound;
     } catch (Exception exception) {
       dal.rollbackTransaction();
-    //  exception.printStackTrace();
+      //  exception.printStackTrace();
       throw exception;
     }
   }
@@ -80,7 +80,7 @@ public class UserUCCImpl implements UserUCC {
       return userDTO;
     } catch (Exception exception) {
       dal.rollbackTransaction();
-     // exception.printStackTrace();
+      // exception.printStackTrace();
       throw exception;
     }
   }
