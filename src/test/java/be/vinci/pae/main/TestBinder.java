@@ -6,6 +6,7 @@ import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
+import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import be.vinci.pae.persistence.dao.UserDAO;
 import be.vinci.pae.persistence.dao.UserDAOImpl;
 import be.vinci.pae.utils.Configurate;
@@ -30,6 +31,8 @@ public class TestBinder extends AbstractBinder {
       bind(Mockito.mock(UserDAOImpl.class)).to(UserDAO.class);
       bind(Class.forName(Configurate.getConfiguration("ConnectionDalServices")))
           .to(ConnectionDalServices.class).in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("ConnectionBackendDalServices")))
+          .to(ConnectionBackendDalServices.class).in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("Authentication"))).to(Authentication.class)
           .in(Singleton.class);
     } catch (ClassNotFoundException e) {
