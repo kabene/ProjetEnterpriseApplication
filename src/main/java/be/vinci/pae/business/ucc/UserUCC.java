@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import java.util.List;
 
 public interface UserUCC {
 
@@ -21,4 +22,8 @@ public interface UserUCC {
    * @param address address DTO that describe the address of the user.
    */
   UserDTO register(UserDTO user, AddressDTO address);
+
+  List<UserDTO> showAllCustomers();
+
+  List<UserDTO> showCustomersResult(String filtre);
 }

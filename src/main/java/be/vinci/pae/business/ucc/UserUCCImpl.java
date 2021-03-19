@@ -10,6 +10,7 @@ import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
+import java.util.List;
 
 
 public class UserUCCImpl implements UserUCC {
@@ -83,5 +84,15 @@ public class UserUCCImpl implements UserUCC {
       // exception.printStackTrace();
       throw exception;
     }
+  }
+
+  @Override
+  public List<UserDTO> showAllCustomers() {
+    return userDAO.getAllCustomers();
+  }
+
+  @Override
+  public List<UserDTO> showCustomersResult(String filter) {
+    return userDAO.findBySearch(filter);
   }
 }
