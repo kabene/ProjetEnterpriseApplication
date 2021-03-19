@@ -37,16 +37,18 @@ public class UserUCCImpl implements UserUCC {
       dal.startTransaction();
       User userFound = (User) userDAO.findByUsername(username);
       if (userFound == null) {
+        dal.rollbackTransaction();
         return null; // invalid username
       }
       if (!userFound.checkPassword(password)) {
+        dal.rollbackTransaction();
         return null; // invalid password
       }
       dal.commitTransaction();
       return userFound;
     } catch (Exception exception) {
       dal.rollbackTransaction();
-      exception.printStackTrace();
+    //  exception.printStackTrace();
       throw exception;
     }
   }
@@ -78,7 +80,7 @@ public class UserUCCImpl implements UserUCC {
       return userDTO;
     } catch (Exception exception) {
       dal.rollbackTransaction();
-      exception.printStackTrace();
+     // exception.printStackTrace();
       throw exception;
     }
   }
