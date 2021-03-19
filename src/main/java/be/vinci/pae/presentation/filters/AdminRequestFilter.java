@@ -1,4 +1,4 @@
-package be.vinci.pae.business.filters;
+package be.vinci.pae.presentation.filters;
 
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
