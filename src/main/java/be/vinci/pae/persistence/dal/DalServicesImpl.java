@@ -13,6 +13,7 @@ public class DalServicesImpl implements ConnectionDalServices {
   private ThreadLocal<Connection> connect;
 
 
+
   /**
    * establish a connection between postgresql database and the system first.
    */
@@ -80,7 +81,7 @@ public class DalServicesImpl implements ConnectionDalServices {
   }
 
   /**
-   *
+   *RollbackThe Transaction.
    */
   @Override
   public void rollbackTransaction() {
@@ -109,6 +110,8 @@ public class DalServicesImpl implements ConnectionDalServices {
     ds.setUrl(Configurate.getConfiguration("url"));
     ds.setUsername(Configurate.getConfiguration("user"));
     ds.setPassword(Configurate.getConfiguration("password"));
+    ds.setMaxIdle(0); // 0 for killing every idle connections to leave more place for active connections
+    ds.setMaxTotal(1); // initiate only one connection for the datasource
     return ds;
   }
 

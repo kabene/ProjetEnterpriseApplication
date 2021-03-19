@@ -12,17 +12,18 @@ public interface ConnectionDalServices {
   PreparedStatement makeStatement(String query);
 
   /**
+   * Start the transaction.
    *
    */
   void startTransaction();
 
   /**
-   *
+   *Commit the transaction.
    */
   void commitTransaction();
 
   /**
-   *
+   *RollbackThe Transaction.
    */
   void rollbackTransaction();
 
