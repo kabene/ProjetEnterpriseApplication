@@ -118,8 +118,8 @@ public class UserUCCImplTest {
         "UserUCC.login should return the good UserDTO if the credentials are valid");
 
     Mockito.verify(mockDal).startTransaction();
-    Mockito.verify(mockDal).rollbackTransaction();
-    Mockito.verify(mockDal,Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal,Mockito.never()).rollbackTransaction();
   }
 
   @DisplayName("TEST UserUCC.register : given valid fields, should return matching UserDTO")
