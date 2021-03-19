@@ -1,11 +1,11 @@
 package be.vinci.pae.persistence.dao;
 
 
+import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.exceptions.TakenException;
-import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +18,7 @@ public class UserDAOImpl implements UserDAO {
   @Inject
   private UserFactory userFactory;
   @Inject
-  private ConnectionDalServices dalServices;
+  private ConnectionBackendDalServices dalServices;
 
   /**
    * Executes a query to find a user having a specific username.

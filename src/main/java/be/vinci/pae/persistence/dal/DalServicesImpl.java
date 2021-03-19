@@ -7,22 +7,19 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-public class DalServicesImpl implements ConnectionDalServices {
+public class DalServicesImpl implements ConnectionDalServices, ConnectionBackendDalServices {
 
   private DataSource ds;
-  private Connection conn = null;
+  private ThreadLocal<Connection> connect;
+
 
   /**
    * establish a connection between postgresql database and the system first.
    */
   public DalServicesImpl() {
-    try {
-      this.ds = setupDataSource();
-      conn = ds.getConnection(); // find an alternative because  it's running on dual task
-    } catch (SQLException e) {
-      System.out.println("Impossible de joindre le server !");
-      System.exit(1);
-    }
+    connect = new ThreadLocal<>();
+    this.ds = setupDataSource();
+    // connect = ds.getConnection(); // find an alternative because  it's running on dual task
   }
 
   /**
@@ -34,7 +31,7 @@ public class DalServicesImpl implements ConnectionDalServices {
   @Override
   public PreparedStatement makeStatement(String query) {
     PreparedStatement prep = null;
-    Connection co = conn;
+    Connection co = connect.get();
     try {
       prep = co.prepareStatement(query);
     } catch (SQLException throwables) {
@@ -44,7 +41,66 @@ public class DalServicesImpl implements ConnectionDalServices {
   }
 
   /**
+   * startTransaction transaction.
+   */
+  @Override
+  public void startTransaction() {
+    try {
+      if (connect.get() != null) {
+        throw new InternalError("startTransaction already started ");
+      }
+      Connection conn = ds.getConnection();
+      connect.set(conn);
+      conn.setAutoCommit(false);
+
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+
+  }
+
+  /**
+   * commitTransaction Transaction.
+   */
+  @Override
+  public void commitTransaction() {
+
+    Connection conn;
+    if ((conn = connect.get()) == null) {
+      throw new InternalError("no connection");
+    }
+    try {
+      conn.commit();
+      conn.close();
+      this.connect.set(null);
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+
+  }
+
+  /**
+   * RollbackThe Transaction.
+   */
+  @Override
+  public void rollbackTransaction() {
+    Connection conn;
+
+    if ((conn = connect.get()) == null) {
+      throw new InternalError("no start");
+    }
+    try {
+      conn.rollback();
+      conn.close();
+      this.connect.set(null);
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+  }
+
+  /**
    * set the data structure and source of the Db connection 42.
+   *
    * @return DataSource filled with structure of data.
    */
   private DataSource setupDataSource() {
@@ -53,6 +109,9 @@ public class DalServicesImpl implements ConnectionDalServices {
     ds.setUrl(Configurate.getConfiguration("url"));
     ds.setUsername(Configurate.getConfiguration("user"));
     ds.setPassword(Configurate.getConfiguration("password"));
+    ds.setMaxIdle(
+        0); // 0 for killing every idle connections to leave more place for active connections
+    ds.setMaxTotal(1); // initiate only one connection for the datasource
     return ds;
   }
 
