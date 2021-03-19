@@ -22,32 +22,18 @@ import jakarta.ws.rs.ext.Provider;
 @Authorize
 public class AuthorizationRequestFilter implements ContainerRequestFilter {
 
-  private final Algorithm jwtAlgorithm = Algorithm
-      .HMAC256(Configurate.getConfiguration("JWTSecret"));
-  private final JWTVerifier jwtVerifier = JWT.require(this.jwtAlgorithm).withIssuer("auth0")
-      .build();
-
   @Inject
   UserDAO userDAO;
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    String token = requestContext.getHeaderString("Authorization");
-    if (token == null) {
-      requestContext
-          .abortWith(Response.status(Status.UNAUTHORIZED).entity("Missing token").build());
-    } else {
-      DecodedJWT decodedToken;
-      try {
-        decodedToken = this.jwtVerifier.verify(token);
-      } catch (Exception e) {
-        throw new WebApplicationException("Malformed token", e, Status.UNAUTHORIZED);
-      }
+      DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
       UserDTO user = this.userDAO.findById(decodedToken.getClaim("user").asInt());
       if (user == null) {
         throw new WebApplicationException("Malformed token", Status.UNAUTHORIZED);
       }
       requestContext.setProperty("user", user);
-    }
   }
 }
+
+
