@@ -1,5 +1,6 @@
 package be.vinci.pae.persistence.dal;
 
+import be.vinci.pae.exceptions.DeadlyException;
 import be.vinci.pae.utils.Configurate;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,12 +31,15 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
    */
   @Override
   public PreparedStatement makeStatement(String query) {
-    PreparedStatement prep = null;
-    Connection co = connect.get();
+    PreparedStatement prep;
+    Connection co = connect
+        .get();//Returns the value in the current thread's copy of this thread-local variable.
+    System.out.println(co);
     try {
       prep = co.prepareStatement(query);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
+      throw new DeadlyException();
     }
     return prep;
   }
@@ -47,14 +51,16 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
   public void startTransaction() {
     try {
       if (connect.get() != null) {
+        connect.remove();
         throw new InternalError("startTransaction already started ");
       }
       Connection conn = ds.getConnection();
-      connect.set(conn);
       conn.setAutoCommit(false);
-
+      connect.set(
+          conn); // Sets the current thread's copy of this thread-local variable to the specified value.
     } catch (SQLException throwables) {
       throwables.printStackTrace();
+      throw new DeadlyException(throwables.getMessage());
     }
 
   }
@@ -64,17 +70,17 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
    */
   @Override
   public void commitTransaction() {
-
-    Connection conn;
-    if ((conn = connect.get()) == null) {
-      throw new InternalError("no connection");
-    }
     try {
+      Connection conn;
+      if ((conn = connect.get()) == null) {
+        throw new DeadlyException("no connection");
+      }
       conn.commit();
       conn.close();
       this.connect.set(null);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
+      throw new DeadlyException(throwables.getMessage());
     }
 
   }
@@ -84,17 +90,17 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
    */
   @Override
   public void rollbackTransaction() {
-    Connection conn;
-
-    if ((conn = connect.get()) == null) {
-      throw new InternalError("no start");
-    }
     try {
+      Connection conn;
+      if ((conn = connect.get()) == null) {
+        throw new DeadlyException("no start");
+      }
       conn.rollback();
       conn.close();
       this.connect.set(null);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
+      throw new DeadlyException(throwables.getMessage());
     }
   }
 

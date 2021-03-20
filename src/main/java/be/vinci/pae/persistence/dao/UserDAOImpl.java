@@ -1,6 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 
+import be.vinci.pae.exceptions.DeadlyException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
@@ -28,10 +29,10 @@ public class UserDAOImpl implements UserDAO {
    */
   @Override
   public UserDTO findByUsername(String username) {
+    String query = "SELECT u.* FROM satchofurniture.users u WHERE u.username = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
     UserDTO userFound = userFactory.getUserDTO();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.username = ?";
-      PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, StringEscapeUtils.escapeHtml4(username));
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
@@ -41,11 +42,11 @@ public class UserDAOImpl implements UserDAO {
       } else {
         userFound = null;
       }
+      return userFound;
     } catch (SQLException e) {
       e.printStackTrace();
-      userFound = null;
+      throw new DeadlyException();
     }
-    return userFound;
   }
 
   /**
@@ -93,7 +94,7 @@ public class UserDAOImpl implements UserDAO {
 
   @Override
   public List<UserDTO> getAllCustomers() {
-    List<UserDTO> users = new ArrayList<UserDTO>();
+    List<UserDTO> users = new ArrayList<>();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u";
       PreparedStatement ps = dalServices.makeStatement(query);
@@ -112,7 +113,7 @@ public class UserDAOImpl implements UserDAO {
 
   @Override
   public List<UserDTO> findBySearch(String filter) {
-    List<UserDTO> users = new ArrayList<UserDTO>();
+    List<UserDTO> users = new ArrayList<>();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u "
                     + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "

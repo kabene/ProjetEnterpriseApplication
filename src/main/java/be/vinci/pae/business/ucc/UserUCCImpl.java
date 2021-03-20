@@ -36,6 +36,7 @@ public class UserUCCImpl implements UserUCC {
   public UserDTO login(String username, String password) {
     try {
       dal.startTransaction();
+
       User userFound = (User) userDAO.findByUsername(username);
       if (userFound == null) {
         dal.rollbackTransaction();
