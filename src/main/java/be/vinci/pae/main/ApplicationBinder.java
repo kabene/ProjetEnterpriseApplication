@@ -33,17 +33,15 @@ public class ApplicationBinder extends AbstractBinder {
       bind(Class.forName(Configurate.getConfiguration("AddressDAO"))).to(AddressDAO.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("ConnectionDalServices")))
-          .to(ConnectionDalServices.class).in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("ConnectionBackendDalServices")))
-          .to(ConnectionBackendDalServices.class).in(Singleton.class);
+          .to(ConnectionDalServices.class).to(ConnectionBackendDalServices.class).in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("Authentication"))).to(Authentication.class)
           .in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("FurnitureFactory")))
-          .to(FurnitureFactory.class).in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("FurnitureUCC"))).to(FurnitureUCC.class)
-          .in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("FurnitureDAO"))).to(FurnitureDAO.class)
-          .in(Singleton.class);
+      //bind(Class.forName(Configurate.getConfiguration("FurnitureFactory")))
+      //    .to(FurnitureFactory.class).in(Singleton.class);
+     // bind(Class.forName(Configurate.getConfiguration("FurnitureUCC"))).to(FurnitureUCC.class)
+      //    .in(Singleton.class);
+     // bind(Class.forName(Configurate.getConfiguration("FurnitureDAO"))).to(FurnitureDAO.class)
+      //    .in(Singleton.class);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
