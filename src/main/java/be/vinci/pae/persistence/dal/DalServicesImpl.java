@@ -32,7 +32,8 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
   @Override
   public PreparedStatement makeStatement(String query) {
     PreparedStatement prep;
-    Connection co = connect.get();//Returns the value in the current thread's copy of this thread-local variable.
+    Connection co = connect
+        .get();//Returns the value in the current thread's copy of this thread-local variable.
     System.out.println(co);
     try {
       prep = co.prepareStatement(query);
@@ -55,7 +56,8 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
       }
       Connection conn = ds.getConnection();
       conn.setAutoCommit(false);
-      connect.set(conn); // Sets the current thread's copy of this thread-local variable to the specified value.
+      connect.set(
+          conn); // Sets the current thread's copy of this thread-local variable to the specified value.
     } catch (SQLException throwables) {
       throwables.printStackTrace();
       throw new DeadlyException(throwables.getMessage());
@@ -113,7 +115,8 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
     ds.setUrl(Configurate.getConfiguration("url"));
     ds.setUsername(Configurate.getConfiguration("user"));
     ds.setPassword(Configurate.getConfiguration("password"));
-    ds.setMaxIdle(0); // 0 for killing every idle connections to leave more place for active connections
+    ds.setMaxIdle(
+        0); // 0 for killing every idle connections to leave more place for active connections
     ds.setMaxTotal(1); // initiate only one connection for the datasource
     return ds;
   }
