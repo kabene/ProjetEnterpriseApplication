@@ -9,6 +9,7 @@ import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 //import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
+import be.vinci.pae.persistence.dao.PhotoDAO;
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.UserFactory;
@@ -49,6 +50,8 @@ public class ApplicationBinder extends AbstractBinder {
       bind(Class.forName(Configurate.getConfiguration("FurnitureDAO"))).to(FurnitureDAO.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("PhotoFactory"))).to(PhotoFactory.class)
+          .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("PhotoDAO"))).to(PhotoDAO.class)
           .in(Singleton.class);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
