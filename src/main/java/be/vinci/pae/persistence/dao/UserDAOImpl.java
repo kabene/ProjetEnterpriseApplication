@@ -37,11 +37,17 @@ public class UserDAOImpl implements UserDAO {
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         userFound.setID(rs.getInt("user_id"));
+        userFound.setLastName(rs.getString("last_name"));
+        userFound.setFirstName(rs.getString("first_name"));
         userFound.setUsername(rs.getString("username"));
+        userFound.setEmail(rs.getString("email"));
+        userFound.setRole(rs.getString("role"));
         userFound.setPassword(rs.getString("password"));
       } else {
         userFound = null;
       }
+      rs.close();
+      ps.close();
       return userFound;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -65,10 +71,17 @@ public class UserDAOImpl implements UserDAO {
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         userFound.setID(rs.getInt("user_id"));
+        userFound.setLastName(rs.getString("last_name"));
+        userFound.setFirstName(rs.getString("first_name"));
         userFound.setUsername(rs.getString("username"));
+        userFound.setEmail(rs.getString("email"));
+        userFound.setRole(rs.getString("role"));
+        userFound.setPassword(rs.getString("password"));
       } else {
         userFound = null;
       }
+      rs.close();
+      ps.close();
     } catch (SQLException throwables) {
       userFound = null;
     }
