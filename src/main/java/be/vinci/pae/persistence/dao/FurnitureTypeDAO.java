@@ -1,5 +1,5 @@
 package be.vinci.pae.persistence.dao;
 
-public interface FurnitureTypeDTO {
+public interface FurnitureTypeDAO {
   String findById(int id);
 }
