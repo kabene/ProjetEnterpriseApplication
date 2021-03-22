@@ -26,7 +26,7 @@ public class FurnitureImpl implements FurnitureDTO {
   private UserDTO seller;
   @JsonView(Views.Internal.class)
   private String condition;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.Internal.class)
   private String saleWithdrawalDate;
   @JsonView(Views.Public.class)
   private String description;
