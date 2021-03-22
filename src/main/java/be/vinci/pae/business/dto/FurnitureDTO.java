@@ -2,6 +2,7 @@ package be.vinci.pae.business.dto;
 
 import be.vinci.pae.business.pojos.FurnitureImpl;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.List;
 
 @JsonDeserialize(as = FurnitureImpl.class)
 public interface FurnitureDTO {
@@ -45,6 +46,10 @@ public interface FurnitureDTO {
   int getFavouritePhotoId();
 
   void setFavouritePhotoId(int id);
+
+  List<PhotoDTO> getPhotos();
+
+  void setPhotos(List<PhotoDTO> photos);
 
   double getSellingPrice();
 

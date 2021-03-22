@@ -1,12 +1,15 @@
 package be.vinci.pae.business.pojos;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
+import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
 public class FurnitureImpl implements FurnitureDTO {
@@ -33,6 +36,8 @@ public class FurnitureImpl implements FurnitureDTO {
   private String type;
   @JsonView(Views.Public.class)
   private int favouritePhotoId;
+  @JsonView(Views.Public.class)
+  private List<PhotoDTO> photos;
   @JsonView(Views.Public.class)
   private double sellingPrice;
   @JsonView(Views.Internal.class)
@@ -142,6 +147,16 @@ public class FurnitureImpl implements FurnitureDTO {
   @Override
   public void setFavouritePhotoId(int id) {
     this.favouritePhotoId = id;
+  }
+
+  @Override
+  public List<PhotoDTO> getPhotos() {
+    return new ArrayList<>(photos);
+  }
+
+  @Override
+  public void setPhotos(List<PhotoDTO> photos) {
+    this.photos = new ArrayList<>(photos);
   }
 
   @Override
