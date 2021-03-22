@@ -24,7 +24,6 @@ public class AdminRequestFilter implements ContainerRequestFilter {
   public void filter(ContainerRequestContext requestContext) {
     DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
     int userId = decodedToken.getClaim("user").asInt();
-    System.out.println("DEBUG: " + userId);
 
     if (!this.userDAO.isAdmin(userId)) {
       requestContext

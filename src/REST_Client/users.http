@@ -62,6 +62,6 @@ POST {{baseUrl}}/users/customers
 Authorization: {{jwt}}
 
 {
-  "customerSearch": "D"
+  "customerSearch": "john"
 }
 ###
