@@ -22,7 +22,7 @@ public class UserImpl implements User {
   private String firstName;
   @JsonView(Views.Internal.class)
   private String email;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.Public.class)
   private String role;
   @JsonView(Views.Internal.class)
   private AddressDTO address;
