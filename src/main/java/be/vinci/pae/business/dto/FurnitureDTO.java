@@ -43,9 +43,17 @@ public interface FurnitureDTO {
 
   void setTypeId(int id);
 
+  String getType();
+
+  void setType(String type);
+
   int getFavouritePhotoId();
 
   void setFavouritePhotoId(int id);
+
+  PhotoDTO getFavouritePhoto();
+
+  void setFavouritePhoto(PhotoDTO favPhoto);
 
   List<PhotoDTO> getPhotos();
 

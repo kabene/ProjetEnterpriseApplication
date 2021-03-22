@@ -38,12 +38,12 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     }
     if(res.getFavouritePhotoId() != 0) {
       PhotoDTO favPhoto = photoDAO.getPhotoById(res.getFavouritePhotoId());
-      //TODO: implement attr. for fav photo + set here
+      res.setFavouritePhoto(favPhoto);
     }
     List<PhotoDTO> photos = photoDAO.getPhotosByFurnitureId(res.getFurnitureId());
     res.setPhotos(photos);
     String type = furnitureTypeDAO.findById(res.getTypeId());
-    //TODO: implement attr. for type + set here
+    res.setType(type);
     dalServices.commitTransaction();
     return res;
   }

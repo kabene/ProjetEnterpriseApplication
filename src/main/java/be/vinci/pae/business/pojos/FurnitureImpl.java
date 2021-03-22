@@ -37,6 +37,8 @@ public class FurnitureImpl implements FurnitureDTO {
   @JsonView(Views.Public.class)
   private int favouritePhotoId;
   @JsonView(Views.Public.class)
+  private PhotoDTO favouritePhoto;
+  @JsonView(Views.Public.class)
   private List<PhotoDTO> photos;
   @JsonView(Views.Public.class)
   private double sellingPrice;
@@ -140,6 +142,16 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
+  public String getType() {
+    return type;
+  }
+
+  @Override
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  @Override
   public int getFavouritePhotoId() {
     return favouritePhotoId;
   }
@@ -147,6 +159,16 @@ public class FurnitureImpl implements FurnitureDTO {
   @Override
   public void setFavouritePhotoId(int id) {
     this.favouritePhotoId = id;
+  }
+
+  @Override
+  public PhotoDTO getFavouritePhoto() {
+    return this.favouritePhoto;
+  }
+
+  @Override
+  public void setFavouritePhoto(PhotoDTO favPhoto) {
+    this.favouritePhoto = favPhoto;
   }
 
   @Override
