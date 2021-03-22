@@ -7,10 +7,6 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.sql.Date;
 
 public class FurnitureDAOImpl implements FurnitureDAO {
@@ -64,7 +60,6 @@ public class FurnitureDAOImpl implements FurnitureDAO {
     } catch (SQLException e) {
       e.printStackTrace();
     }
-
 
     return res;
   }
