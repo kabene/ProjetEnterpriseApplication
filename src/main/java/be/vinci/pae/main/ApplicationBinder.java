@@ -3,8 +3,11 @@ package be.vinci.pae.main;
 //import be.vinci.pae.business.factories.FurnitureFactory;
 //import be.vinci.pae.business.ucc.FurnitureUCC;
 
+import be.vinci.pae.business.factories.FurnitureFactory;
+import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 //import be.vinci.pae.persistence.dao.FurnitureDAO;
+import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.UserFactory;
@@ -38,12 +41,12 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("Authentication"))).to(Authentication.class)
           .in(Singleton.class);
-      //bind(Class.forName(Configurate.getConfiguration("FurnitureFactory")))
-      //    .to(FurnitureFactory.class).in(Singleton.class);
-      // bind(Class.forName(Configurate.getConfiguration("FurnitureUCC"))).to(FurnitureUCC.class)
-      //    .in(Singleton.class);
-      // bind(Class.forName(Configurate.getConfiguration("FurnitureDAO"))).to(FurnitureDAO.class)
-      //    .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("FurnitureFactory")))
+          .to(FurnitureFactory.class).in(Singleton.class);
+       bind(Class.forName(Configurate.getConfiguration("FurnitureUCC"))).to(FurnitureUCC.class)
+          .in(Singleton.class);
+       bind(Class.forName(Configurate.getConfiguration("FurnitureDAO"))).to(FurnitureDAO.class)
+          .in(Singleton.class);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }

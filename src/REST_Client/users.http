@@ -27,7 +27,7 @@ Content-Type: application/json
 {
   "username": "a",
   "password": "azerty",
-  "rememberMe": true
+  "rememberMe": false
 }
 
 > {%

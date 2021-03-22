@@ -2,7 +2,6 @@ package be.vinci.pae.business.dto;
 
 import be.vinci.pae.business.pojos.FurnitureImpl;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.time.LocalDate;
 
 @JsonDeserialize(as = FurnitureImpl.class)
 public interface FurnitureDTO {
@@ -15,17 +14,25 @@ public interface FurnitureDTO {
 
   void setBuyerId(int id);
 
+  UserDTO getBuyer();
+
+  void setBuyer(UserDTO buyer);
+
   int getSellerId();
 
   void setSellerId(int id);
+
+  UserDTO getSeller();
+
+  void setSeller(UserDTO buyer);
 
   String getCondition();
 
   void setCondition(String cond);
 
-  LocalDate getSaleWithdrawalDate();
+  String getSaleWithdrawalDate();
 
-  void setSaleWithdrawalDate(LocalDate date);
+  void setSaleWithdrawalDate(String date);
 
   String getDescription();
 
@@ -47,15 +54,15 @@ public interface FurnitureDTO {
 
   void setSpecialSalePrice(double price);
 
-  LocalDate getDateOfSale();
+  String getDateOfSale();
 
-  void setDateOfSale(LocalDate date);
+  void setDateOfSale(String date);
 
   boolean isToPickUp();
 
   void setToPickUp(boolean b);
 
-  LocalDate getPickUpDate();
+  String getPickUpDate();
 
-  void setPickUpDate(LocalDate date);
+  void setPickUpDate(String date);
 }
