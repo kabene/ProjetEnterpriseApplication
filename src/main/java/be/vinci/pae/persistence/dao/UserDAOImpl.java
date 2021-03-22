@@ -1,11 +1,12 @@
 package be.vinci.pae.persistence.dao;
 
 
+import be.vinci.pae.exceptions.DeadlyException;
+import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.exceptions.TakenException;
-import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +19,7 @@ public class UserDAOImpl implements UserDAO {
   @Inject
   private UserFactory userFactory;
   @Inject
-  private ConnectionDalServices dalServices;
+  private ConnectionBackendDalServices dalServices;
 
   /**
    * Executes a query to find a user having a specific username.
@@ -28,10 +29,10 @@ public class UserDAOImpl implements UserDAO {
    */
   @Override
   public UserDTO findByUsername(String username) {
+    String query = "SELECT u.* FROM satchofurniture.users u WHERE u.username = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
     UserDTO userFound = userFactory.getUserDTO();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.username = ?";
-      PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, StringEscapeUtils.escapeHtml4(username));
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
@@ -41,11 +42,11 @@ public class UserDAOImpl implements UserDAO {
       } else {
         userFound = null;
       }
+      return userFound;
     } catch (SQLException e) {
       e.printStackTrace();
-      userFound = null;
+      throw new DeadlyException();
     }
-    return userFound;
   }
 
   /**
@@ -93,7 +94,7 @@ public class UserDAOImpl implements UserDAO {
 
   @Override
   public List<UserDTO> getAllCustomers() {
-    List<UserDTO> users = new ArrayList<UserDTO>();
+    List<UserDTO> users = new ArrayList<>();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u";
       PreparedStatement ps = dalServices.makeStatement(query);

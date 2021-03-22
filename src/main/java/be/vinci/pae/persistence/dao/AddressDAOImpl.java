@@ -1,7 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.AddressDTO;
-import be.vinci.pae.persistence.dal.ConnectionDalServices;
+import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +11,7 @@ import org.apache.commons.text.StringEscapeUtils;
 public class AddressDAOImpl implements AddressDAO {
 
   @Inject
-  private ConnectionDalServices dalServices;
+  private ConnectionBackendDalServices dalServices;
 
 
   /**
