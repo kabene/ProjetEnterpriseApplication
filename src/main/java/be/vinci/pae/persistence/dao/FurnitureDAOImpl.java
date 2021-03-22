@@ -59,9 +59,12 @@ public class FurnitureDAOImpl implements FurnitureDAO {
           res.setPickUpDate(pickUpDate.toString());
         }
       }
+      rs.close();
+      ps.close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
+
 
     return res;
   }

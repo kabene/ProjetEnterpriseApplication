@@ -171,6 +171,7 @@ public class UserDAOImpl implements UserDAO {
       ps.setString(5, StringEscapeUtils.escapeHtml4(user.getRole()));
       ps.setString(6, StringEscapeUtils.escapeHtml4(user.getPassword()));
       ps.execute();
+      ps.close();
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
