@@ -4,6 +4,7 @@ package be.vinci.pae.main;
 //import be.vinci.pae.business.ucc.FurnitureUCC;
 
 import be.vinci.pae.business.factories.FurnitureFactory;
+import be.vinci.pae.business.factories.PhotoFactory;
 import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 //import be.vinci.pae.persistence.dao.FurnitureDAO;
@@ -43,9 +44,11 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("FurnitureFactory")))
           .to(FurnitureFactory.class).in(Singleton.class);
-       bind(Class.forName(Configurate.getConfiguration("FurnitureUCC"))).to(FurnitureUCC.class)
+      bind(Class.forName(Configurate.getConfiguration("FurnitureUCC"))).to(FurnitureUCC.class)
           .in(Singleton.class);
-       bind(Class.forName(Configurate.getConfiguration("FurnitureDAO"))).to(FurnitureDAO.class)
+      bind(Class.forName(Configurate.getConfiguration("FurnitureDAO"))).to(FurnitureDAO.class)
+          .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("PhotoFactory"))).to(PhotoFactory.class)
           .in(Singleton.class);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
