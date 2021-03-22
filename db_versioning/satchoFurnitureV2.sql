@@ -71,10 +71,8 @@ VALUES (DEFAULT, 'a', 'a', 'ex', 'a@gmail.com', 1, now(), 'customer',
         '$2a$04$yS2WqRPYnf2Tb7GjbiSBSeLcKDa1ExJXzvUQpPOcJUGdJkdzbJhnC', 0, 1, 'true')
 
 
-    INSERT INTO satchofurniture.addresses (address_id, street, building_number, unit_number, postcode, commune, country)
+INSERT INTO satchofurniture.addresses (address_id, street, building_number, unit_number, postcode, commune, country)
 VALUES (2, 'johndoe street', '4', '1',  '1567', 'Beijing','Germany');
-
-
 
 INSERT INTO satchofurniture.users (user_id, last_name, first_name, username, email, address_id, registration_date, role, password, purchased_furniture_nbr, sold_furniture_nbr, waiting)
 VALUES (2, 'doe', 'john', 'johndoe', 'john@gmail.com', 2, '02/02/2021', 'admin', '$2a$04$62XdSoqyDOBZWQCk/cuh1.OY/x3mnPi2wjcmDC0HCCzc7MVcj/VmW', 0, 0, false);
