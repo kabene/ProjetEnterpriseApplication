@@ -24,10 +24,12 @@ public class AdminRequestFilter implements ContainerRequestFilter {
   public void filter(ContainerRequestContext requestContext) {
     DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
     int userId = decodedToken.getClaim("user").asInt();
+    UserDTO user = this.userDAO.findById(userId);
 
     if (!this.userDAO.isAdmin(userId)) {
       requestContext
           .abortWith(Response.status(Status.UNAUTHORIZED).entity("Unauthorized").build());
     }
+    requestContext.setProperty("user", user);
   }
 }

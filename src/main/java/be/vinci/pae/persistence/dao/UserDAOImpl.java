@@ -116,14 +116,14 @@ public class UserDAOImpl implements UserDAO {
     try {
       String query = "SELECT u.* FROM satchofurniture.users u "
                     + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
-                    + "WHERE lower(a.commune) LIKE lower('%?%') "
-                    + "OR lower(a.postcode) LIKE lower('%?%') "
-                    + "OR lower(u.first_name) LIKE lower('%?%')"
-                    + "OR lower(u.last_name) LIKE lower('%?%')";
+                    + "WHERE lower(a.commune) LIKE lower(?) "
+                    + "OR lower(u.first_name) LIKE lower(?)"
+                    + "OR lower(u.last_name) LIKE lower(?)"
+                    ;
       PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setString(1, customerSearch);
-      ps.setString(2, customerSearch);
-      ps.setString(3, customerSearch);
+      ps.setString(1, "%" + customerSearch + "%");
+      ps.setString(2, "%" + customerSearch + "%");
+      ps.setString(3, "%" + customerSearch + "%");
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
         UserDTO user = userFactory.getUserDTO();

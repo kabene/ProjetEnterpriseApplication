@@ -59,9 +59,10 @@ Authorization: {{jwt}}
 
 // showCustomersResult()
 POST {{baseUrl}}/users/customers
+Content-Type: application/json
 Authorization: {{jwt}}
 
 {
-  "customerSearch": "john"
+  "customerSearch": "a"
 }
 ###
