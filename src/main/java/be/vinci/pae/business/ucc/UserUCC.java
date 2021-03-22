@@ -25,5 +25,5 @@ public interface UserUCC {
 
   List<UserDTO> showAllCustomers();
 
-  List<UserDTO> showCustomersResult(String filtre);
+  List<UserDTO> showCustomersResult(String customerSearch);
 }
