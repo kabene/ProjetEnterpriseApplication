@@ -6,5 +6,5 @@ import java.util.List;
 public interface PhotoDAO {
   List<PhotoDTO> getPhotosByFurnitureId(int FurnitureId);
 
-  PhotoDTO getPhotoByid(int photoId);
+  PhotoDTO getPhotoById(int photoId);
 }
