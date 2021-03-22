@@ -22,12 +22,12 @@ public class AuthorizationRequestFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-      DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
-      UserDTO user = this.userDAO.findById(decodedToken.getClaim("user").asInt());
-      if (user == null) {
-        throw new WebApplicationException("Malformed token", Status.UNAUTHORIZED);
-      }
-      requestContext.setProperty("user", user);
+    DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
+    UserDTO user = this.userDAO.findById(decodedToken.getClaim("user").asInt());
+    if (user == null) {
+      throw new WebApplicationException("Malformed token", Status.UNAUTHORIZED);
+    }
+    requestContext.setProperty("user", user);
   }
 }
 
