@@ -54,7 +54,8 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("PhotoDAO"))).to(PhotoDAO.class)
           .in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("FurnitureTypeDAO"))).to(FurnitureTypeDAO.class)
+      bind(Class.forName(Configurate.getConfiguration("FurnitureTypeDAO")))
+          .to(FurnitureTypeDAO.class)
           .in(Singleton.class);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();

@@ -28,15 +28,15 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   public FurnitureDTO getOne(int id) {
     dalServices.startTransaction();
     FurnitureDTO res = furnitureDAO.findById(id);
-    if(res.getBuyerId() != 0) {
+    if (res.getBuyerId() != 0) {
       UserDTO u = userDAO.findById(res.getBuyerId());
       res.setBuyer(u);
     }
-    if(res.getSellerId() != 0) {
+    if (res.getSellerId() != 0) {
       UserDTO u = userDAO.findById(res.getSellerId());
       res.setSeller(u);
     }
-    if(res.getFavouritePhotoId() != 0) {
+    if (res.getFavouritePhotoId() != 0) {
       PhotoDTO favPhoto = photoDAO.getPhotoById(res.getFavouritePhotoId());
       res.setFavouritePhoto(favPhoto);
     }

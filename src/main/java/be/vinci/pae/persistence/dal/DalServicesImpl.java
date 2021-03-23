@@ -55,8 +55,8 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
       }
       Connection conn = ds.getConnection();
       conn.setAutoCommit(false);
-      connect.set(
-          conn); // Sets the current thread's copy of this thread-local variable to the specified value.
+      // Sets the current thread's copy of this thread-local variable to the specified value.
+      connect.set(conn);
     } catch (SQLException throwables) {
       //throwables.printStackTrace();
       throw new DeadlyException(throwables.getMessage());

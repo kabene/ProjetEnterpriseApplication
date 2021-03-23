@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class FurnitureTypeDAOImpl implements FurnitureTypeDAO{
+public class FurnitureTypeDAOImpl implements FurnitureTypeDAO {
 
   @Inject
   ConnectionBackendDalServices dalServices;
@@ -19,7 +19,7 @@ public class FurnitureTypeDAOImpl implements FurnitureTypeDAO{
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, id);
       ResultSet rs = ps.executeQuery();
-      if(rs.next()) {
+      if (rs.next()) {
         res = rs.getString("type_name");
       }
       rs.close();

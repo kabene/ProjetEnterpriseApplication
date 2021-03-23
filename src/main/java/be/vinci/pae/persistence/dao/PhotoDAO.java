@@ -4,7 +4,8 @@ import be.vinci.pae.business.dto.PhotoDTO;
 import java.util.List;
 
 public interface PhotoDAO {
-  List<PhotoDTO> getPhotosByFurnitureId(int FurnitureId);
+
+  List<PhotoDTO> getPhotosByFurnitureId(int furnitureId);
 
   PhotoDTO getPhotoById(int photoId);
 }
