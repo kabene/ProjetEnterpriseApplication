@@ -2,6 +2,7 @@ package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.ucc.FurnitureUCC;
+import be.vinci.pae.presentation.filters.Admin;
 import be.vinci.pae.utils.Json;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -11,6 +12,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.List;
 
 @Singleton
 @Path("/furniture")
@@ -35,4 +37,14 @@ public class FurnitureResource {
     return Response.ok(furnitureDTO).build();
   }
 
+  @GET
+  @Path("/detail")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getDetailAll() {
+    List<FurnitureDTO> furnitureDTOs = furnitureUCC.getDetailAll();
+
+    //TODO: 2nd view admin
+    return Response.ok(furnitureDTOs).build();
+  }
 }

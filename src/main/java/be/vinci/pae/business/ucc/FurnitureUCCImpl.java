@@ -9,6 +9,7 @@ import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FurnitureUCCImpl implements FurnitureUCC {
@@ -46,5 +47,10 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     res.setType(type);
     dalServices.commitTransaction();
     return res;
+  }
+
+  @Override
+  public List<FurnitureDTO> getDetailAll() {
+    return new ArrayList<>(); //TODO: implement
   }
 }
