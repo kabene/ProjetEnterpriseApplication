@@ -24,8 +24,8 @@ public class FurnitureTypeDAOImpl implements FurnitureTypeDAO{
       }
       rs.close();
       ps.close();
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
     return res;
   }
