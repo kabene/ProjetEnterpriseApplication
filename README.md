@@ -38,18 +38,17 @@
     </td>
 </tr>
 <tr>
-    <td>users/signup</td>
+    <td>users/register</td>
     <td>POST</td>
     <td>Non</td>
     <td>
-    TODO
     Créé un utilisateur et le renvoie ces informations public ainsi que son JWT
     </td>
 </tr>
 <tr>
     <td>users/customers</td>
     <td>GET</td>
-    <td>JWT</td>
+    <td>Admin</td>
     <td>
     Renvoie la liste entière des clients.
     </td>
@@ -57,9 +56,9 @@
 <tr>
     <td>users/customers</td>
     <td>POST</td>
-    <td>JWT</td>
+    <td>Admin</td>
     <td>
-    Renvoie la liste des clients en fonction du filtre passé à la requête. Le filtre s'applique sur le nom du client, sa commune ainsi que sa boite postale.
+    Renvoie la liste des clients en fonction du filtre passé à la requête. Le filtre s'applique sur le nom du client, son prénom, sa commune ainsi que sur le numéro de sa boite postale.
     </td>
 </tr>
 
