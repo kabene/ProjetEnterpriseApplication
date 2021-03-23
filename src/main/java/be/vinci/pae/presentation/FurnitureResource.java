@@ -46,7 +46,7 @@ public class FurnitureResource {
     List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
 
     List<FurnitureDTO> res = new ArrayList<>();
-    for(FurnitureDTO dto : furnitureDTOs) {
+    for (FurnitureDTO dto : furnitureDTOs) {
       FurnitureDTO filteredDTO = Json.filterAdminOnlyJsonView(dto, FurnitureDTO.class);
       res.add(filteredDTO);
     }

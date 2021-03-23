@@ -38,7 +38,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   public List<FurnitureDTO> getAll() {
     dalServices.startTransaction();
     List<FurnitureDTO> dtos = furnitureDAO.findAll();
-    for(FurnitureDTO dto : dtos) {
+    for (FurnitureDTO dto : dtos) {
       completeFurnitureDTO(dto);
     }
     dalServices.commitTransaction();

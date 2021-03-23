@@ -52,7 +52,7 @@ public class FurnitureDAOImpl implements FurnitureDAO {
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
-      while(rs.next()) {
+      while (rs.next()) {
         res.add(toDTO(rs));
       }
       rs.close();
