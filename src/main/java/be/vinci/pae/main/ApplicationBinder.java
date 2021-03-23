@@ -1,13 +1,10 @@
 package be.vinci.pae.main;
 
-//import be.vinci.pae.business.factories.FurnitureFactory;
-//import be.vinci.pae.business.ucc.FurnitureUCC;
 
 import be.vinci.pae.business.factories.FurnitureFactory;
 import be.vinci.pae.business.factories.PhotoFactory;
 import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
-//import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
