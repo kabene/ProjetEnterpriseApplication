@@ -9,7 +9,7 @@
 <tr>
     <th>URI</th>
     <th>Methode</th>
-    <th>Auths?</th>
+    <th>Droit(s) requit(s)</th>
     <th>Operation</th>
 </tr>
 
@@ -18,15 +18,15 @@
     <td>GET</td>
     <td>JWT</td>
     <td>
-    Connecte l utilisateur si il a fournit un JWT valide et renvoie ce token ainsi que les info public du user.
+    Connecte l utilisateur si il a fournit un JWT valide et renvoie ce token ainsi que ces informations publiques.
     </td>
 </tr>
 <tr>
     <td>users/login</td>
     <td>POST</td>
-    <td>Non</td>
+    <td>Aucun</td>
     <td>
-    Connecte l'utilisateur si il a fournit une combinaison username-password valide et renvoie un token JWT ainsi que les infos public du user.
+    Connecte l'utilisateur si il a fournit une combinaison username-password valide et renvoie un token JWT ainsi que ces informations publiques.
     </td>
 </tr>
 <tr>
@@ -34,32 +34,60 @@
     <td>GET</td>
     <td>JWT</td>
     <td>
-    Renvoie les informations public de l utilisateur si il a fournit un JWT correct.
+    Renvoie les informations publique de l utilisateur si il a fournit un JWT correct.
     </td>
 </tr>
 <tr>
-    <td>users/signup</td>
+    <td>users/register</td>
     <td>POST</td>
-    <td>Non</td>
+    <td>Aucun</td>
     <td>
-    TODO
-    Créé un utilisateur et le renvoie ces informations public ainsi que son JWT
+    Créé une ressource de type "user" et renvoie ces informations publique ainsi que son JWT
     </td>
 </tr>
 <tr>
     <td>users/customers</td>
     <td>GET</td>
-    <td>JWT</td>
+    <td>Admin</td>
     <td>
-    Renvoie la liste entière des clients.
+    Renvoie la liste entière des ressources de type "user".
     </td>
 </tr>
 <tr>
     <td>users/customers</td>
     <td>POST</td>
-    <td>JWT</td>
+    <td>Admin</td>
     <td>
-    Renvoie la liste des clients en fonction du filtre passé à la requête. Le filtre s'applique sur le nom du client, sa commune ainsi que sa boite postale.
+    Renvoie la liste des clients en fonction du filtre passé à la requête. Le filtre s'applique sur le nom du client, son prénom, sa commune ainsi que sur le numéro de sa boite postale.
+    </td>
+</tr>
+
+</table>
+
+<table style="caption-side: top">
+<caption>Operations sur les ressources de type "Furniture"</caption>
+<tr>
+    <th>URI</th>
+    <th>Methode</th>
+    <th>Droit(s) requit(s)</th>
+    <th>Operation</th>
+</tr>
+
+<tr>
+    <td>furniture/{id}</td>
+    <td>GET</td>
+    <td>Aucun</td>
+    <td>
+    Renvoie les informations publiques d'une ressource de type "furniture".
+    </td>
+</tr>
+
+<tr>
+    <td>furniture/detail</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>
+    Renvoie une liste contenant les informations reservees aux admins de toutes les ressources de type "furniture".
     </td>
 </tr>
 
