@@ -28,7 +28,7 @@ public class AddressDAOImpl implements AddressDAO {
       ps.setString(1, StringEscapeUtils.escapeHtml4(address.getStreet()));
       ps.setString(2, StringEscapeUtils.escapeHtml4(address.getBuildingNumber()));
       ps.setString(3, StringEscapeUtils.escapeHtml4(address.getUnitNumber()));
-      ps.setInt(4, address.getPostcode());
+      ps.setString(4, String.valueOf(address.getPostcode()));
       ps.setString(5, StringEscapeUtils.escapeHtml4(address.getCommune()));
       ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
       ps.execute();
@@ -62,7 +62,7 @@ public class AddressDAOImpl implements AddressDAO {
       ps.setString(1, StringEscapeUtils.escapeHtml4(address.getStreet()));
       ps.setString(2, StringEscapeUtils.escapeHtml4(address.getBuildingNumber()));
       ps.setString(3, StringEscapeUtils.escapeHtml4(address.getUnitNumber()));
-      ps.setInt(4, address.getPostcode());
+      ps.setString(4, String.valueOf(address.getPostcode()));
       ps.setString(5, StringEscapeUtils.escapeHtml4(address.getCommune()));
       ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
       ResultSet rs = ps.executeQuery();
