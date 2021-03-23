@@ -86,6 +86,24 @@
 </tr>
 
 <tr>
+    <td>furniture/detail/{id}</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>
+    Renvoie les informations reservees aux admins d'une ressource de type "furniture".
+    </td>
+</tr>
+
+<tr>
+    <td>furniture/</td>
+    <td>GET</td>
+    <td>Aucun</td>
+    <td>
+    Renvoie une liste contenant les informations publiques de toutes les ressources de type "furniture".
+    </td>
+</tr>
+
+<tr>
     <td>furniture/detail</td>
     <td>GET</td>
     <td>Admin</td>

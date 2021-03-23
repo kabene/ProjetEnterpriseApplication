@@ -10,53 +10,53 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class PhotoImpl implements PhotoDTO {
 
   @JsonView(Views.Public.class)
-  private int photoId;
+  private Integer photoId;
   @JsonView(Views.Public.class)
-  private int furnitureId;
+  private Integer furnitureId;
   @JsonView(Views.Public.class)
-  private boolean onHomePage;
+  private Boolean onHomePage;
   @JsonView(Views.Public.class)
-  private boolean visible;
+  private Boolean visible;
   @JsonView(Views.Public.class)
   private String source;
 
   @Override
-  public int getPhotoId() {
+  public Integer getPhotoId() {
     return photoId;
   }
 
   @Override
-  public void setPhotoId(int id) {
+  public void setPhotoId(Integer id) {
     this.photoId = id;
   }
 
   @Override
-  public int getFurnitureId() {
+  public Integer getFurnitureId() {
     return furnitureId;
   }
 
   @Override
-  public void setFurnitureId(int id) {
+  public void setFurnitureId(Integer id) {
     furnitureId = id;
   }
 
   @Override
-  public boolean isOnHomePage() {
+  public Boolean isOnHomePage() {
     return onHomePage;
   }
 
   @Override
-  public void setOnHomePage(boolean onHomePage) {
+  public void setOnHomePage(Boolean onHomePage) {
     this.onHomePage = onHomePage;
   }
 
   @Override
-  public boolean isVisible() {
+  public Boolean isVisible() {
     return visible;
   }
 
   @Override
-  public void setVisible(boolean visible) {
+  public void setVisible(Boolean visible) {
     this.visible = visible;
   }
 
