@@ -15,15 +15,7 @@ public class Json {
    * @return the filtered pojo.
    */
   public static <T> T filterPublicJsonView(T item, Class<T> targetClass) {
-    try {
-      String publicItemAsString = jsonMapper.writerWithView(Views.Public.class)
-          .writeValueAsString(item);
-      return jsonMapper.readerWithView(Views.Public.class).forType(targetClass)
-          .readValue(publicItemAsString);
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-      return null;
-    }
+    return filterUsingView(item, targetClass, Views.Public.class);
   }
 
   /**
@@ -34,10 +26,15 @@ public class Json {
    * @return the filtered pojo.
    */
   public static <T> T filterAdminOnlyJsonView(T item, Class<T> targetClass) {
+    return filterUsingView(item, targetClass, Views.AdminOnly.class);
+  }
+
+
+  private static <T> T filterUsingView(T item, Class<T> targetClass, Class view) {
     try {
-      String adminOnlyItemAsString = jsonMapper.writerWithView(Views.AdminOnly.class)
+      String adminOnlyItemAsString = jsonMapper.writerWithView(view)
           .writeValueAsString(item);
-      T res =  jsonMapper.readerWithView(Views.AdminOnly.class).forType(targetClass)
+      T res =  jsonMapper.readerWithView(view).forType(targetClass)
           .readValue(adminOnlyItemAsString);
       return res;
     } catch (JsonProcessingException e) {
