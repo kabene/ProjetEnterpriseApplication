@@ -217,10 +217,10 @@ public class UserDAOImpl implements UserDAO {
   }
 
   /**
-   * Creates and fills a UserDTO object using a ResultSet
+   * Creates and fills a UserDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information
-   * @throws SQLException
+   * @throws SQLException in case of problem during access to the ResultSet
    */
   private UserDTO toDTO(ResultSet rs) throws SQLException {
     UserDTO userFound = userFactory.getUserDTO();
