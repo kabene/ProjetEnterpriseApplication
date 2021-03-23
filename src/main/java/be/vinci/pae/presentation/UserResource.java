@@ -157,12 +157,7 @@ public class UserResource {
   @Admin
   public Response getCustomers() {
     List<UserDTO> users = userUCC.showAllCustomers();
-    ObjectNode resNode = jsonMapper.createObjectNode();
-    ArrayNode arrayNode = resNode.putArray("users");
-    for (UserDTO user : users) {
-      arrayNode.addPOJO(user);
-    }
-    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
+    return createNodeFromUserList(users);
   }
 
   /**
@@ -180,9 +175,14 @@ public class UserResource {
   public Response getCustomers(JsonNode jsonNode) {
     String customerSearch = jsonNode.get("customerSearch").asText();
     List<UserDTO> users = userUCC.showCustomersResult(customerSearch);
+    return createNodeFromUserList(users);
+  }
+
+  private Response createNodeFromUserList(List<UserDTO> users) {
     ObjectNode resNode = jsonMapper.createObjectNode();
     ArrayNode arrayNode = resNode.putArray("users");
     for (UserDTO user : users) {
+      user = Json.filterAdminOnlyJsonView(user, UserDTO.class);
       arrayNode.addPOJO(user);
     }
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();

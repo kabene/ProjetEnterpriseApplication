@@ -102,10 +102,7 @@ public class UserDAOImpl implements UserDAO {
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
-        UserDTO user = userFactory.getUserDTO();
-        user.setID(rs.getInt("user_id"));
-        user.setUsername(rs.getString("username"));
-        users.add(user);
+        users.add(toDTO(rs));
       }
     } catch (SQLException e) {
       throw new DeadlyException();
@@ -130,10 +127,7 @@ public class UserDAOImpl implements UserDAO {
       ps.setString(4, "%" + customerSearch + "%");
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
-        UserDTO user = userFactory.getUserDTO();
-        user.setID(rs.getInt("user_id"));
-        user.setUsername(rs.getString("username"));
-        users.add(user);
+        users.add(toDTO(rs));
       }
     } catch (SQLException e) {
       throw new DeadlyException();
