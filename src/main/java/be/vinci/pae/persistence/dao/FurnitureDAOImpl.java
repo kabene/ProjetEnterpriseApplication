@@ -74,14 +74,14 @@ public class FurnitureDAOImpl implements FurnitureDAO {
     FurnitureDTO res = furnitureFactory.getFurnitureDTO();
     res.setFurnitureId(rs.getInt("furniture_id"));
 
-    int bId = rs.getInt("buyer_id");
-    if (bId != 0) {
-      res.setBuyerId(bId);
+    int buyerId = rs.getInt("buyer_id");
+    if (buyerId != 0) {
+      res.setBuyerId(buyerId);
     }
 
-    int sId = rs.getInt("seller_id");
-    if (sId != 0) {
-      res.setSellerId(sId);
+    int sellerId = rs.getInt("seller_id");
+    if (sellerId != 0) {
+      res.setSellerId(sellerId);
     }
 
     res.setCondition(rs.getString("condition"));
@@ -93,9 +93,9 @@ public class FurnitureDAOImpl implements FurnitureDAO {
 
     res.setDescription(rs.getString("description"));
 
-    int tId = rs.getInt("type_id");
-    if (tId != 0) {
-      res.setTypeId(tId);
+    int typeId = rs.getInt("type_id");
+    if (typeId != 0) {
+      res.setTypeId(typeId);
     }
 
     int favouritePhotoId = rs.getInt("favourite_photo_id");
