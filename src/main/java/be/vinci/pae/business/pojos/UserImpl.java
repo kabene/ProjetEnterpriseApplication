@@ -11,7 +11,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class UserImpl implements User {
 
   @JsonView(Views.Public.class)
-  private int id;
+  private Integer id;
   @JsonView(Views.Public.class)
   private String username;
   @JsonView(Views.Internal.class)
@@ -26,9 +26,6 @@ public class UserImpl implements User {
   private String role;
   @JsonView(Views.AdminOnly.class)
   private AddressDTO address;
-
-  public UserImpl() {
-  }
 
 
 
@@ -74,12 +71,12 @@ public class UserImpl implements User {
 
 
   @Override
-  public int getID() {
+  public Integer getID() {
     return id;
   }
 
   @Override
-  public void setID(int id) {
+  public void setID(Integer id) {
     this.id = id;
   }
 

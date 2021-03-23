@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = AddressImpl.class)
 public interface AddressDTO {
 
-  int getId();
+  Integer getId();
 
-  void setId(int id);
+  void setId(Integer id);
 
   String getStreet();
 
@@ -23,9 +23,9 @@ public interface AddressDTO {
 
   void setUnitNumber(String unitNumber);
 
-  int getPostcode();
+  Integer getPostcode();
 
-  void setPostcode(int postcode);
+  void setPostcode(Integer postcode);
 
   String getCommune();
 

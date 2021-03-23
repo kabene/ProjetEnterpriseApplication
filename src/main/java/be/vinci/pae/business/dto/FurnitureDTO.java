@@ -7,21 +7,21 @@ import java.util.List;
 @JsonDeserialize(as = FurnitureImpl.class)
 public interface FurnitureDTO {
 
-  int getFurnitureId();
+  Integer getFurnitureId();
 
-  void setFurnitureId(int id);
+  void setFurnitureId(Integer id);
 
-  int getBuyerId();
+  Integer getBuyerId();
 
-  void setBuyerId(int id);
+  void setBuyerId(Integer id);
 
   UserDTO getBuyer();
 
   void setBuyer(UserDTO buyer);
 
-  int getSellerId();
+  Integer getSellerId();
 
-  void setSellerId(int id);
+  void setSellerId(Integer id);
 
   UserDTO getSeller();
 
@@ -39,17 +39,17 @@ public interface FurnitureDTO {
 
   void setDescription(String desc);
 
-  int getTypeId();
+  Integer getTypeId();
 
-  void setTypeId(int id);
+  void setTypeId(Integer id);
 
   String getType();
 
   void setType(String type);
 
-  int getFavouritePhotoId();
+  Integer getFavouritePhotoId();
 
-  void setFavouritePhotoId(int id);
+  void setFavouritePhotoId(Integer id);
 
   PhotoDTO getFavouritePhoto();
 
@@ -59,21 +59,21 @@ public interface FurnitureDTO {
 
   void setPhotos(List<PhotoDTO> photos);
 
-  double getSellingPrice();
+  Double getSellingPrice();
 
-  void setSellingPrice(double price);
+  void setSellingPrice(Double price);
 
-  double getSpecialSalePrice();
+  Double getSpecialSalePrice();
 
-  void setSpecialSalePrice(double price);
+  void setSpecialSalePrice(Double price);
 
   String getDateOfSale();
 
   void setDateOfSale(String date);
 
-  boolean isToPickUp();
+  Boolean isToPickUp();
 
-  void setToPickUp(boolean b);
+  void setToPickUp(Boolean b);
 
   String getPickUpDate();
 

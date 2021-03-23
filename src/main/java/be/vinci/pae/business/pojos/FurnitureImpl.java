@@ -14,13 +14,13 @@ import java.util.List;
 public class FurnitureImpl implements FurnitureDTO {
 
   @JsonView(Views.Public.class)
-  private int furnitureId;
+  private Integer furnitureId;
   @JsonView(Views.AdminOnly.class)
-  private int buyerId;
+  private Integer buyerId;
   @JsonView(Views.AdminOnly.class)
   private UserDTO buyer;
   @JsonView(Views.AdminOnly.class)
-  private int sellerId;
+  private Integer sellerId;
   @JsonView(Views.AdminOnly.class)
   private UserDTO seller;
   @JsonView(Views.AdminOnly.class)
@@ -30,43 +30,43 @@ public class FurnitureImpl implements FurnitureDTO {
   @JsonView(Views.Public.class)
   private String description;
   @JsonView(Views.Public.class)
-  private int typeId;
+  private Integer typeId;
   @JsonView(Views.Public.class)
   private String type;
   @JsonView(Views.Public.class)
-  private int favouritePhotoId;
+  private Integer favouritePhotoId;
   @JsonView(Views.Public.class)
   private PhotoDTO favouritePhoto;
   @JsonView(Views.Public.class)
   private List<PhotoDTO> photos;
   @JsonView(Views.Public.class)
-  private double sellingPrice;
+  private Double sellingPrice;
   @JsonView(Views.AdminOnly.class)
-  private double specialSalePrice;
+  private Double specialSalePrice;
   @JsonView(Views.AdminOnly.class)
   private String dateOfSale;
   @JsonView(Views.AdminOnly.class)
-  private boolean toPickUp;
+  private Boolean toPickUp;
   @JsonView(Views.AdminOnly.class)
   private String pickUpDate;
 
   @Override
-  public int getFurnitureId() {
+  public Integer getFurnitureId() {
     return furnitureId;
   }
 
   @Override
-  public void setFurnitureId(int id) {
+  public void setFurnitureId(Integer id) {
     this.furnitureId = id;
   }
 
   @Override
-  public int getBuyerId() {
+  public Integer getBuyerId() {
     return buyerId;
   }
 
   @Override
-  public void setBuyerId(int id) {
+  public void setBuyerId(Integer id) {
     this.buyerId = id;
   }
 
@@ -81,12 +81,12 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public int getSellerId() {
+  public Integer getSellerId() {
     return sellerId;
   }
 
   @Override
-  public void setSellerId(int id) {
+  public void setSellerId(Integer id) {
     this.sellerId = id;
   }
 
@@ -131,12 +131,12 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public int getTypeId() {
+  public Integer getTypeId() {
     return typeId;
   }
 
   @Override
-  public void setTypeId(int id) {
+  public void setTypeId(Integer id) {
     this.typeId = id;
   }
 
@@ -151,12 +151,12 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public int getFavouritePhotoId() {
+  public Integer getFavouritePhotoId() {
     return favouritePhotoId;
   }
 
   @Override
-  public void setFavouritePhotoId(int id) {
+  public void setFavouritePhotoId(Integer id) {
     this.favouritePhotoId = id;
   }
 
@@ -181,22 +181,22 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public double getSellingPrice() {
+  public Double getSellingPrice() {
     return sellingPrice;
   }
 
   @Override
-  public void setSellingPrice(double price) {
+  public void setSellingPrice(Double price) {
     this.sellingPrice = price;
   }
 
   @Override
-  public double getSpecialSalePrice() {
+  public Double getSpecialSalePrice() {
     return specialSalePrice;
   }
 
   @Override
-  public void setSpecialSalePrice(double price) {
+  public void setSpecialSalePrice(Double price) {
     this.specialSalePrice = price;
   }
 
@@ -211,12 +211,12 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public boolean isToPickUp() {
+  public Boolean isToPickUp() {
     return toPickUp;
   }
 
   @Override
-  public void setToPickUp(boolean b) {
+  public void setToPickUp(Boolean b) {
     this.toPickUp = b;
   }
 

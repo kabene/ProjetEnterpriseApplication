@@ -12,7 +12,7 @@ public class AddressImpl implements AddressDTO {
   @JsonView(Views.Public.class)
   private int id;
   @JsonView(Views.AdminOnly.class)
-  private String  street;
+  private String street;
   @JsonView(Views.AdminOnly.class)
   private String buildingNumber;
   @JsonView(Views.AdminOnly.class)
@@ -24,61 +24,73 @@ public class AddressImpl implements AddressDTO {
   @JsonView(Views.AdminOnly.class)
   private String country;
 
-  public AddressImpl() {
-  }
 
-  public int getId() {
+  @Override
+  public Integer getId() {
     return id;
   }
 
-  public void setId(int id) {
+  @Override
+  public void setId(Integer id) {
     this.id = id;
   }
 
+  @Override
   public String getStreet() {
     return street;
   }
 
+  @Override
   public void setStreet(String street) {
     this.street = street;
   }
 
+  @Override
   public String getBuildingNumber() {
     return buildingNumber;
   }
 
+  @Override
   public void setBuildingNumber(String buildingNumber) {
     this.buildingNumber = buildingNumber;
   }
 
+  @Override
   public String getUnitNumber() {
     return unitNumber;
   }
 
+  @Override
   public void setUnitNumber(String unitNumber) {
     this.unitNumber = unitNumber;
   }
 
-  public int getPostcode() {
+  @Override
+  public Integer getPostcode() {
     return postcode;
   }
 
-  public void setPostcode(int postcode) {
+  @Override
+  public void setPostcode(Integer postcode) {
     this.postcode = postcode;
   }
 
+  @Override
   public String getCommune() {
     return commune;
   }
 
+  @Override
   public void setCommune(String commune) {
     this.commune = commune;
   }
 
+  @Override
   public String getCountry() {
     return country;
   }
 
+  @Override
   public void setCountry(String country) {
     this.country = country;
   }
