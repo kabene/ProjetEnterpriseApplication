@@ -18,7 +18,7 @@
     <td>GET</td>
     <td>JWT</td>
     <td>
-    Connecte l utilisateur si il a fournit un JWT valide et renvoie ce token ainsi que ces info public.
+    Connecte l utilisateur si il a fournit un JWT valide et renvoie ce token ainsi que ces informations publiques.
     </td>
 </tr>
 <tr>
@@ -26,7 +26,7 @@
     <td>POST</td>
     <td>Aucun</td>
     <td>
-    Connecte l'utilisateur si il a fournit une combinaison username-password valide et renvoie un token JWT ainsi que ces infos public.
+    Connecte l'utilisateur si il a fournit une combinaison username-password valide et renvoie un token JWT ainsi que ces informations publiques.
     </td>
 </tr>
 <tr>
@@ -34,7 +34,7 @@
     <td>GET</td>
     <td>JWT</td>
     <td>
-    Renvoie les informations public de l utilisateur si il a fournit un JWT correct.
+    Renvoie les informations publique de l utilisateur si il a fournit un JWT correct.
     </td>
 </tr>
 <tr>
@@ -42,7 +42,7 @@
     <td>POST</td>
     <td>Aucun</td>
     <td>
-    Créé une ressource de type "user" et renvoie ces informations public ainsi que son JWT
+    Créé une ressource de type "user" et renvoie ces informations publique ainsi que son JWT
     </td>
 </tr>
 <tr>
@@ -78,7 +78,7 @@
     <td>GET</td>
     <td>Aucun</td>
     <td>
-    Renvoie les informations publics d'une ressource de type "furniture".
+    Renvoie les informations publiques d'une ressource de type "furniture".
     </td>
 </tr>
 
