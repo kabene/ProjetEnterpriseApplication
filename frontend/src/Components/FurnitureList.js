@@ -33,7 +33,7 @@ const FurnitureList = async () => {
     });
 
 
-    pageHTML = `<div class="mx-5"><h1>Furniture list:</h1>`;
+    pageHTML = `<div class="mx-5"><h1>Liste des meubles:</h1>`;
     pageHTML += generateTable();
     page.innerHTML = pageHTML;
 }
