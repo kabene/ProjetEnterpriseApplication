@@ -6,7 +6,7 @@ let page = document.querySelector("#page");
 
 const FurnitureList = async () => {
 
-    if (!verifyAdmin()) {
+    if ( await !verifyAdmin()) {
         Navbar();
         RedirectUrl("/");
         return;

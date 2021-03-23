@@ -8,7 +8,7 @@ let page = document.querySelector("#page");
 
 const Customer =async () => {
 
-    if (!verifyAdmin()) {
+    if (await !verifyAdmin()) {
         Navbar();
         RedirectUrl("/");
         return;
