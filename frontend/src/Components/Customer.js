@@ -8,11 +8,6 @@ let page = document.querySelector("#page");
 
 const Customer =async () => {
 
-    if (await !verifyAdmin()) {
-        Navbar();
-        RedirectUrl("/");
-        return;
-    }
 
     let pageHTML = `<h1>Page de gestion des clients du site (admins)</h1>`;
     page.innerHTML = pageHTML;
