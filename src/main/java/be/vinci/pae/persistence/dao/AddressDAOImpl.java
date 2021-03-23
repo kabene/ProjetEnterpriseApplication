@@ -25,12 +25,7 @@ public class AddressDAOImpl implements AddressDAO {
         " INSERT INTO satchoFurniture.addresses VALUES(DEFAULT,?,?,?,?,?,?)";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setString(1, StringEscapeUtils.escapeHtml4(address.getStreet()));
-      ps.setString(2, StringEscapeUtils.escapeHtml4(address.getBuildingNumber()));
-      ps.setString(3, StringEscapeUtils.escapeHtml4(address.getUnitNumber()));
-      ps.setInt(4, address.getPostcode());
-      ps.setString(5, StringEscapeUtils.escapeHtml4(address.getCommune()));
-      ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
+      addressToRequest(address, ps);
       ps.execute();
     } catch (SQLException throwables) {
       throwables.printStackTrace();
@@ -59,12 +54,7 @@ public class AddressDAOImpl implements AddressDAO {
           + "AND a.commune=? "
           + "AND a.country=? ";
       PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setString(1, StringEscapeUtils.escapeHtml4(address.getStreet()));
-      ps.setString(2, StringEscapeUtils.escapeHtml4(address.getBuildingNumber()));
-      ps.setString(3, StringEscapeUtils.escapeHtml4(address.getUnitNumber()));
-      ps.setInt(4, address.getPostcode());
-      ps.setString(5, StringEscapeUtils.escapeHtml4(address.getCommune()));
-      ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
+      addressToRequest(address, ps);
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         id = rs.getInt(1);
@@ -75,6 +65,15 @@ public class AddressDAOImpl implements AddressDAO {
       e.printStackTrace();
     }
     return id;
+  }
+
+  private void addressToRequest(AddressDTO address, PreparedStatement ps) throws SQLException {
+    ps.setString(1, StringEscapeUtils.escapeHtml4(address.getStreet()));
+    ps.setString(2, StringEscapeUtils.escapeHtml4(address.getBuildingNumber()));
+    ps.setString(3, StringEscapeUtils.escapeHtml4(address.getUnitNumber()));
+    ps.setString(4, String.valueOf(address.getPostcode()));
+    ps.setString(5, StringEscapeUtils.escapeHtml4(address.getCommune()));
+    ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
   }
 
 

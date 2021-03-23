@@ -8,6 +8,7 @@ import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.exceptions.TakenException;
 import jakarta.inject.Inject;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -107,7 +108,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(user);
       }
     } catch (SQLException e) {
-      return null;
+      throw new DeadlyException();
     }
     return users;
   }
@@ -120,11 +121,13 @@ public class UserDAOImpl implements UserDAO {
           + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
           + "WHERE lower(a.commune) LIKE lower(?) "
           + "OR lower(u.first_name) LIKE lower(?)"
-          + "OR lower(u.last_name) LIKE lower(?)";
+          + "OR lower(u.last_name) LIKE lower(?)"
+          + "OR lower(a.postcode) LIKE lower(?)";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, "%" + customerSearch + "%");
       ps.setString(2, "%" + customerSearch + "%");
       ps.setString(3, "%" + customerSearch + "%");
+      ps.setString(4, "%" + customerSearch + "%");
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
         UserDTO user = userFactory.getUserDTO();
@@ -133,7 +136,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(user);
       }
     } catch (SQLException e) {
-      return null;
+      throw new DeadlyException();
     }
     return users;
   }
