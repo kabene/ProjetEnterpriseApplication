@@ -11,17 +11,17 @@ public class AddressImpl implements AddressDTO {
 
   @JsonView(Views.Public.class)
   private int id;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String  street;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String buildingNumber;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String unitNumber;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private int postcode;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String commune;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String country;
 
   public AddressImpl() {

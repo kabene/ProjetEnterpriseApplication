@@ -25,7 +25,7 @@ public class FurnitureImpl implements FurnitureDTO {
   private UserDTO seller;
   @JsonView(Views.AdminOnly.class)
   private String condition;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String saleWithdrawalDate;
   @JsonView(Views.Public.class)
   private String description;
@@ -41,13 +41,13 @@ public class FurnitureImpl implements FurnitureDTO {
   private List<PhotoDTO> photos;
   @JsonView(Views.Public.class)
   private double sellingPrice;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private double specialSalePrice;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String dateOfSale;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private boolean toPickUp;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String pickUpDate;
 
   @Override

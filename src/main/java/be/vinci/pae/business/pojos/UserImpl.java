@@ -16,15 +16,15 @@ public class UserImpl implements User {
   private String username;
   @JsonView(Views.Internal.class)
   private String password;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String lastName;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String firstName;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private String email;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.AdminOnly.class)
   private String role;
-  @JsonView(Views.Internal.class)
+  @JsonView(Views.AdminOnly.class)
   private AddressDTO address;
 
   public UserImpl() {
