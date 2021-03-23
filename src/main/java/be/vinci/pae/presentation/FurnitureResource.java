@@ -27,8 +27,7 @@ public class FurnitureResource {
    * GET a specific piece of furniture's public details (no authentication required).
    *
    * @param id : the furniture id from the request path
-   * @return http response containing a piece of furniture in json format
-   * (or relevant status code in if error)
+   * @return http response containing a piece of furniture in json format (or relevant status code in if error)
    */
   @GET
   @Path("/{id}")
@@ -43,8 +42,7 @@ public class FurnitureResource {
   /**
    * GET all pieces of furniture with admin-only details.
    *
-   * @return http response containing a list of pieces of
-   * furniture in json format (or relevant status code in if error)
+   * @return http response containing a list of pieces of furniture in json format (or relevant status code in if error)
    */
   @GET
   @Path("/detail")
