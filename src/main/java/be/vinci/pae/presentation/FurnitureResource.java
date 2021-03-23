@@ -12,6 +12,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class FurnitureResource {
    *
    * @param id : the furniture id from the request path
    * @return http response containing a piece of furniture in json format
-   *  (or relevant status code in if error)
+   * (or relevant status code in if error)
    */
   @GET
   @Path("/{id}")
@@ -43,7 +44,7 @@ public class FurnitureResource {
    * GET all pieces of furniture with admin-only details.
    *
    * @return http response containing a list of pieces of
-   *  furniture in json format (or relevant status code in if error)
+   * furniture in json format (or relevant status code in if error)
    */
   @GET
   @Path("/detail")
