@@ -12,6 +12,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
@@ -44,7 +45,11 @@ public class FurnitureResource {
   public Response getDetailAll() {
     List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
 
-    //TODO: 2nd view admin
-    return Response.ok(furnitureDTOs).build();
+    List<FurnitureDTO> res = new ArrayList<>();
+    for(FurnitureDTO dto : furnitureDTOs) {
+      FurnitureDTO filteredDTO = Json.filterAdminOnlyJsonView(dto, FurnitureDTO.class);
+      res.add(filteredDTO);
+    }
+    return Response.ok(res).build();
   }
 }

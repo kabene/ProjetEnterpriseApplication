@@ -25,4 +25,18 @@ public class Json {
       return null;
     }
   }
+
+  public static <T> T filterAdminOnlyJsonView(T item, Class<T> targetClass) {
+    try {
+      String adminOnlyItemAsString = jsonMapper.writerWithView(Views.AdminOnly.class)
+          .writeValueAsString(item);
+      System.out.println(adminOnlyItemAsString);
+      T res =  jsonMapper.readerWithView(Views.AdminOnly.class).forType(targetClass)
+          .readValue(adminOnlyItemAsString);
+      return res;
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
 }
