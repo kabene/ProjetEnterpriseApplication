@@ -1,6 +1,7 @@
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
-import {getUserSessionData} from "../utils/session";
+import {verifyAdmin} from "../utils/utils.js";
+
 
 
 let page = document.querySelector("#page");
@@ -17,34 +18,6 @@ const Customer =async () => {
     page.innerHTML = pageHTML;
 }
 
-
-const verifyAdmin = async () => {
-    let token = getUserSessionData().token;
-    let res = false;
-    let result;
-    await fetch("/users/me", {
-        method: "GET",
-        headers: {
-            "Authorization": token,
-            "Content-Type": "application/json",
-        },
-    }).then((response) => {
-        if (!response.ok) {
-            res = false;
-        }
-        return response.json();
-    })
-    .then((data) => {
-        result = data.role;
-        if (result === "admin") {
-            res = true;
-        }
-    })
-    .catch((err) => {
-        console.log("Erreur de fetch !! :´\n" + err);
-    });
-    return res;
-}
 
 
 
