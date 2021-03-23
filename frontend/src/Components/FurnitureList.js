@@ -65,7 +65,11 @@ const generateTable = () => {
 
 const generateRow = (furniture) => {
     let res = `
-    <th>img TODO</th>
+    <th>`;
+    if(furniture.favouritePhoto) {
+        res += `<img src="` + furniture.favouritePhoto.source +`" alt="thumbnail photoId=` + furniture.favouritePhoto.photoId + `"/>`;
+    }
+    res += `</th>
     <th><p>` + furniture.description + `</p></th>
     <th><p>` + furniture.type + `</p></th>
     <th>` + generateColoredState(furniture) +`</th>
