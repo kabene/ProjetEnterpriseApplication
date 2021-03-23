@@ -2,10 +2,9 @@ import logo from "../img/logoAE_v2.png";
 import {getUserSessionData} from "../utils/session.js";
 import {escapeHtml} from "../utils/utils.js";
 
-
 let navBar = document.querySelector("#navbar");
+const Navbar = async () => {
 
-const Navbar = () => {
   let navbarHtml;
   let pers = getUserSessionData();
 //class=navbar navbar-expand-md navbar-light py-0"
@@ -29,42 +28,65 @@ const Navbar = () => {
     <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/authentication">S'identifier</button></li>
     `;
   } else {
-    var user = escapeHtml(pers.user.username);
-    navbarHtml += `
-                  <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton p-0" href="#" data-uri="/visits">Mes demandes de visite</button>
-                  <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>
-                  <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
-                  <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
-                  <li class="my-auto font-weight-bold"> ${user}</li>
-                  `;
-  }
+    var userPrintable = escapeHtml(pers.user.username);
 
-  //if client
-  /*
-  navbarHtml += `
+    if (await verifyAdmin(pers)) {
+
+      navbarHtml += `
+                      <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/furnitureList">Rechercher un meuble</button>
+                      <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visits">Demandes de visite</button>
+                      <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/customers">Gestion des clients</button>
+                      <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
+                      <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
+                      <li class="my-auto font-weight-bold">${userPrintable}</li>
+      `;
+
+    } else {
+
+      navbarHtml += `
                   <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton p-0" href="#" data-uri="/visits">Mes demandes de visite</button>
                   <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>
                   <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
                   <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
-                  <li class="my-auto font-weight-bold">utilisateurs.pseudo</li>
-  `;
-  */
-  //if admin
-  /*navbarHtml += `
-                  <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/furnitureList">Rechercher un meuble</button>
-                  <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visits">Demandes de visite</button>
-                  <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/customers">Gestion des clients</button>
-                  <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
-                  <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
-                  <li class="my-auto font-weight-bold">utilisateurs.pseudo</li>
-  `;
-   */
+                  <li class="my-auto font-weight-bold"> ${userPrintable}</li>
+                  `;
+
+    }
+  }
   navbarHtml += `
                 </ul> 
             </div>
         </nav>
     `;
   navBar.innerHTML = navbarHtml;
+}
+
+const verifyAdmin = async (pers) => {
+  let token = pers.token;
+  let res = false;
+  let result;
+  await fetch("/users/me", {
+    method: "GET",
+    headers: {
+      "Authorization": token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      res = false;
+    }
+    return response.json();
+  })
+  .then((data) => {
+    result = data.role;
+    if (result === "admin") {
+      res = true;
+    }
+  })
+  .catch((err) => {
+    console.log("Erreur de fetch !! :´\n" + err);
+  });
+  return res;
 }
 
 export default Navbar;

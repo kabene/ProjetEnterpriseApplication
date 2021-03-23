@@ -2,10 +2,10 @@ import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
 import {getUserSessionData} from "../utils/session";
 
-let user = getUserSessionData();
+
 let page = document.querySelector("#page");
 
-const Customer = () => {
+const Customer =async () => {
 
     if (!verifyAdmin()) {
         Navbar();
@@ -17,24 +17,35 @@ const Customer = () => {
     page.innerHTML = pageHTML;
 }
 
-const verifyAdmin = () => {
-    let res;
-    fetch("/users/me", {
+
+const verifyAdmin = async () => {
+    let token = getUserSessionData().token;
+    let res = false;
+    let result;
+    await fetch("/users/me", {
         method: "GET",
-        body: JSON.stringify(user),
         headers: {
+            "Authorization": token,
             "Content-Type": "application/json",
-        }
+        },
     }).then((response) => {
-        if (!response.ok) res=false;
+        if (!response.ok) {
+            res = false;
+        }
         return response.json();
     })
     .then((data) => {
-        res = data.role === "admin";
+        result = data.role;
+        if (result === "admin") {
+            res = true;
+        }
     })
-    .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
+    .catch((err) => {
+        console.log("Erreur de fetch !! :´\n" + err);
+    });
     return res;
 }
+
 
 
 export default Customer;
