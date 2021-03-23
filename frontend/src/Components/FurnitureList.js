@@ -11,11 +11,6 @@ let pageHTML;
 
 
 const FurnitureList = async () => {
-    if ( await !verifyAdmin()) {
-        Navbar();
-        RedirectUrl("/");
-        return;
-    }
     currentUser = getUserSessionData();
 
     pageHTML = `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
