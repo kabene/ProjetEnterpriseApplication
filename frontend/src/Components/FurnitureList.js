@@ -41,7 +41,7 @@ const FurnitureList = async () => {
 
     console.log(furnitureList);
 
-    pageHTML = `<h1>Furniture list:</h1>`;
+    pageHTML = `<div class="mx-5"><h1>Furniture list:</h1>`;
     pageHTML += generateTable();
     page.innerHTML = pageHTML;
 }
@@ -49,7 +49,7 @@ const FurnitureList = async () => {
 const generateTable = () => {
     let res = `
     <table class="table table-bordered table-hover">
-        <thead><tr>
+        <thead class="table-secondary"><tr>
             <th></th>
             <th>Description</th>
             <th>Type</th>
@@ -64,7 +64,7 @@ const generateTable = () => {
         res += generateRow(furniture);
     });
     res = res + `</tbody>
-    </table>`;
+    </table></div>`;
     return res;
 } 
 
