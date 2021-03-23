@@ -14,7 +14,7 @@ public interface PhotoDTO {
 
   void setFurnitureId(int id);
 
-  boolean isOnHomepage();
+  boolean isOnHomePage();
 
   void setOnHomePage(boolean onHomePage);
 

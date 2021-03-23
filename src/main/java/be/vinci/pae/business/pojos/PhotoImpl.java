@@ -41,7 +41,7 @@ public class PhotoImpl implements PhotoDTO {
   }
 
   @Override
-  public boolean isOnHomepage() {
+  public boolean isOnHomePage() {
     return onHomePage;
   }
 
