@@ -37,6 +37,12 @@ public class FurnitureResource {
     return Response.ok(furnitureDTO).build();
   }
 
+  /**
+   * GET a specific piece of furniture's admin only details.
+   *
+   * @param id : the furniture id from the request path
+   * @return http response containing a piece of furniture in json format
+   */
   @GET
   @Path("/detail/{id}")
   @Admin
@@ -47,7 +53,11 @@ public class FurnitureResource {
     return Response.ok(furnitureDTO).build();
   }
 
-
+  /**
+   * GET all pieces of furniture with public details.
+   *
+   * @return http response containing a list of pieces of furniture in json format
+   */
   @GET
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
