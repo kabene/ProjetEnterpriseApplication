@@ -69,3 +69,8 @@ VALUES (DEFAULT, 'ez', 1, 1, 1, 'a', 'a');
 INSERT INTO satchoFurniture.users
 VALUES (DEFAULT, 'a', 'a', 'ex', 'a@gmail.com', 1, now(), 'customer',
         '$2a$04$yS2WqRPYnf2Tb7GjbiSBSeLcKDa1ExJXzvUQpPOcJUGdJkdzbJhnC', 0, 1, 'true')
+
+INSERT INTO satchoFurniture.furniture_types (type_name) VALUES ('example type')
+
+INSERT INTO satchoFurniture.furniture (seller_id, condition, description, type_id, selling_price)
+VALUES (1, 'available for sale', 'description', 1, 149.90)
