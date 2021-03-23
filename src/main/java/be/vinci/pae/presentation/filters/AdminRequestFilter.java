@@ -1,5 +1,6 @@
 package be.vinci.pae.presentation.filters;
 
+import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -19,17 +20,27 @@ public class AdminRequestFilter implements ContainerRequestFilter {
 
   @Inject
   UserDAO userDAO;
+  @Inject
+  ConnectionDalServices dalServices;
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
-    int userId = decodedToken.getClaim("user").asInt();
-    UserDTO user = this.userDAO.findById(userId);
-
-    if (!this.userDAO.isAdmin(userId)) {
+    UserDTO user = null;
+    try {
+      DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
+      dalServices.startTransaction();
+      int userId = decodedToken.getClaim("user").asInt();
+      user = this.userDAO.findById(userId);
+      boolean isAdmin = this.userDAO.isAdmin(userId);
+      dalServices.commitTransaction();
+      if (!isAdmin) {
+        requestContext
+            .abortWith(Response.status(Status.UNAUTHORIZED).entity("Unauthorized").build());
+      }
+      requestContext.setProperty("user", user);
+    } catch (Exception e) {
       requestContext
-          .abortWith(Response.status(Status.UNAUTHORIZED).entity("Unauthorized").build());
+          .abortWith(Response.status(Status.UNAUTHORIZED).entity("Not connected").build());
     }
-    requestContext.setProperty("user", user);
   }
 }

@@ -1,11 +1,14 @@
 package be.vinci.pae.business.pojos;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
+import be.vinci.pae.business.dto.PhotoDTO;
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
 public class FurnitureImpl implements FurnitureDTO {
@@ -15,27 +18,37 @@ public class FurnitureImpl implements FurnitureDTO {
   @JsonView(Views.Internal.class)
   private int buyerId;
   @JsonView(Views.Internal.class)
+  private UserDTO buyer;
+  @JsonView(Views.Internal.class)
   private int sellerId;
+  @JsonView(Views.Internal.class)
+  private UserDTO seller;
   @JsonView(Views.Internal.class)
   private String condition;
   @JsonView(Views.Internal.class)
-  private LocalDate saleWithdrawalDate;
+  private String saleWithdrawalDate;
   @JsonView(Views.Public.class)
   private String description;
   @JsonView(Views.Public.class)
   private int typeId;
   @JsonView(Views.Public.class)
+  private String type;
+  @JsonView(Views.Public.class)
   private int favouritePhotoId;
+  @JsonView(Views.Public.class)
+  private PhotoDTO favouritePhoto;
+  @JsonView(Views.Public.class)
+  private List<PhotoDTO> photos;
   @JsonView(Views.Public.class)
   private double sellingPrice;
   @JsonView(Views.Internal.class)
   private double specialSalePrice;
   @JsonView(Views.Internal.class)
-  private LocalDate dateOfSale;
+  private String dateOfSale;
   @JsonView(Views.Internal.class)
   private boolean toPickUp;
   @JsonView(Views.Internal.class)
-  private LocalDate pickUpDate;
+  private String pickUpDate;
 
   @Override
   public int getFurnitureId() {
@@ -58,6 +71,16 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
+  public UserDTO getBuyer() {
+    return buyer;
+  }
+
+  @Override
+  public void setBuyer(UserDTO buyer) {
+    this.buyer = buyer;
+  }
+
+  @Override
   public int getSellerId() {
     return sellerId;
   }
@@ -65,6 +88,16 @@ public class FurnitureImpl implements FurnitureDTO {
   @Override
   public void setSellerId(int id) {
     this.sellerId = id;
+  }
+
+  @Override
+  public UserDTO getSeller() {
+    return seller;
+  }
+
+  @Override
+  public void setSeller(UserDTO seller) {
+    this.seller = seller;
   }
 
   @Override
@@ -78,12 +111,12 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public LocalDate getSaleWithdrawalDate() {
+  public String getSaleWithdrawalDate() {
     return saleWithdrawalDate;
   }
 
   @Override
-  public void setSaleWithdrawalDate(LocalDate date) {
+  public void setSaleWithdrawalDate(String date) {
     this.saleWithdrawalDate = date;
   }
 
@@ -108,6 +141,16 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
+  public String getType() {
+    return type;
+  }
+
+  @Override
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  @Override
   public int getFavouritePhotoId() {
     return favouritePhotoId;
   }
@@ -115,6 +158,26 @@ public class FurnitureImpl implements FurnitureDTO {
   @Override
   public void setFavouritePhotoId(int id) {
     this.favouritePhotoId = id;
+  }
+
+  @Override
+  public PhotoDTO getFavouritePhoto() {
+    return this.favouritePhoto;
+  }
+
+  @Override
+  public void setFavouritePhoto(PhotoDTO favPhoto) {
+    this.favouritePhoto = favPhoto;
+  }
+
+  @Override
+  public List<PhotoDTO> getPhotos() {
+    return new ArrayList<>(photos);
+  }
+
+  @Override
+  public void setPhotos(List<PhotoDTO> photos) {
+    this.photos = new ArrayList<>(photos);
   }
 
   @Override
@@ -138,12 +201,12 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public LocalDate getDateOfSale() {
+  public String getDateOfSale() {
     return dateOfSale;
   }
 
   @Override
-  public void setDateOfSale(LocalDate date) {
+  public void setDateOfSale(String date) {
     this.dateOfSale = date;
   }
 
@@ -158,12 +221,12 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public LocalDate getPickUpDate() {
+  public String getPickUpDate() {
     return pickUpDate;
   }
 
   @Override
-  public void setPickUpDate(LocalDate date) {
+  public void setPickUpDate(String date) {
     this.pickUpDate = date;
   }
 }

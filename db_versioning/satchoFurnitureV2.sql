@@ -38,7 +38,7 @@ CREATE TABLE satchofurniture.furniture (
                                            furniture_id SERIAL PRIMARY KEY,
                                            buyer_id integer NULL REFERENCES satchofurniture.users(user_id),
                                            seller_id integer NOT NULL REFERENCES satchofurniture.users(user_id),
-                                           condition cond NOT NULL,
+                                           condition varchar(50) NOT NULL,
                                            sale_withdrawal_date date NULL,
                                            description varchar(200) NOT NULL,
                                            type_id integer NOT NULL REFERENCES satchofurniture.furniture_types(type_id),
@@ -76,3 +76,10 @@ VALUES (2, 'johndoe street', '4', '1',  '1567', 'Beijing','Germany');
 
 INSERT INTO satchofurniture.users (user_id, last_name, first_name, username, email, address_id, registration_date, role, password, purchased_furniture_nbr, sold_furniture_nbr, waiting)
 VALUES (2, 'doe', 'john', 'johndoe', 'john@gmail.com', 2, '02/02/2021', 'admin', '$2a$04$62XdSoqyDOBZWQCk/cuh1.OY/x3mnPi2wjcmDC0HCCzc7MVcj/VmW', 0, 0, false);
+
+
+
+INSERT INTO satchoFurniture.furniture_types (type_name) VALUES ('example type')
+
+INSERT INTO satchoFurniture.furniture (seller_id, condition, description, type_id, selling_price)
+VALUES (1, 'available for sale', 'description', 1, 149.90)

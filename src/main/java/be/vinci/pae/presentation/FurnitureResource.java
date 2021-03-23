@@ -29,11 +29,9 @@ public class FurnitureResource {
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getById(@PathParam("id") int id) {
-    System.out.println("get " + id);
     FurnitureDTO furnitureDTO = furnitureUCC.getOne(id);
 
     furnitureDTO = Json.filterPublicJsonView(furnitureDTO, FurnitureDTO.class);
-    System.out.println("over");
     return Response.ok(furnitureDTO).build();
   }
 
