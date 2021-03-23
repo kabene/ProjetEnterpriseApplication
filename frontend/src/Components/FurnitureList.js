@@ -23,18 +23,15 @@ const FurnitureList = async () => {
             "Content-Type": "application/json",
         },
     }).then((response) => {
-        console.log(response);
         if (!response.ok) 
             throw error();
         return response.json();
     }).then((data) => {
-        console.log(data);
         furnitureList = data;
     }).catch((err) => {
         console.log("Erreur de fetch !! :´\n" + err);
     });
 
-    console.log(furnitureList);
 
     pageHTML = `<div class="mx-5"><h1>Furniture list:</h1>`;
     pageHTML += generateTable();
