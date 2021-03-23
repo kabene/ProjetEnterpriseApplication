@@ -7,7 +7,6 @@ import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
