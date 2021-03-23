@@ -8,7 +8,7 @@ public class Json {
   private static final ObjectMapper jsonMapper = new ObjectMapper();
 
   /**
-   * Filters a pojo to send as a response using views.
+   * Filters a pojo to send as a response using public json view.
    * @param item : pojo to filter
    * @param targetClass : class to filter as.
    * @param <T> : class to filter as
@@ -26,6 +26,13 @@ public class Json {
     }
   }
 
+  /**
+   * Filters a pojo to send as a response using admin only json view.
+   * @param item : pojo to filter
+   * @param targetClass : class to filter as.
+   * @param <T> : class to filter as
+   * @return the filtered pojo.
+   */
   public static <T> T filterAdminOnlyJsonView(T item, Class<T> targetClass) {
     try {
       String adminOnlyItemAsString = jsonMapper.writerWithView(Views.AdminOnly.class)
