@@ -108,7 +108,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(user);
       }
     } catch (SQLException e) {
-      return null;
+      throw new DeadlyException();
     }
     return users;
   }
@@ -136,7 +136,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(user);
       }
     } catch (SQLException e) {
-      return null;
+      throw new DeadlyException();
     }
     return users;
   }
