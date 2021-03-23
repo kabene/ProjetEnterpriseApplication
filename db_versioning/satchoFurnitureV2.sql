@@ -38,7 +38,7 @@ CREATE TABLE satchofurniture.furniture (
                                            furniture_id SERIAL PRIMARY KEY,
                                            buyer_id integer NULL REFERENCES satchofurniture.users(user_id),
                                            seller_id integer NOT NULL REFERENCES satchofurniture.users(user_id),
-                                           condition cond NOT NULL,
+                                           condition varchar(50) NOT NULL,
                                            sale_withdrawal_date date NULL,
                                            description varchar(200) NOT NULL,
                                            type_id integer NOT NULL REFERENCES satchofurniture.furniture_types(type_id),
