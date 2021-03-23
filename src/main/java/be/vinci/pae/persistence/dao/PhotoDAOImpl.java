@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoDAOImpl implements PhotoDAO{
+public class PhotoDAOImpl implements PhotoDAO {
 
   @Inject
   private ConnectionBackendDalServices dalServices;
@@ -26,7 +26,7 @@ public class PhotoDAOImpl implements PhotoDAO{
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, furnitureId);
       ResultSet rs = ps.executeQuery();
-      while(rs.next()) {
+      while (rs.next()) {
         PhotoDTO photoDTO = photoFactory.getPhotoDTO();
         photoDTO.setPhotoId(rs.getInt("photo_id"));
         photoDTO.setFurnitureId(rs.getInt("furniture_id"));
@@ -51,7 +51,7 @@ public class PhotoDAOImpl implements PhotoDAO{
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, photoId);
       ResultSet rs = ps.executeQuery();
-      if(rs.next()) {
+      if (rs.next()) {
         res.setPhotoId(rs.getInt("photo_id"));
         res.setFurnitureId(rs.getInt("furniture_id"));
         res.setOnHomePage(rs.getBoolean("is_on_home_page"));
