@@ -73,8 +73,17 @@ public class FurnitureDAOImpl implements FurnitureDAO {
   private FurnitureDTO toDTO(ResultSet rs) throws SQLException {
     FurnitureDTO res = furnitureFactory.getFurnitureDTO();
     res.setFurnitureId(rs.getInt("furniture_id"));
-    res.setBuyerId(rs.getInt("buyer_id"));
-    res.setSellerId(rs.getInt("seller_id"));
+
+    int buyerId = rs.getInt("buyer_id");
+    if (buyerId != 0) {
+      res.setBuyerId(buyerId);
+    }
+
+    int sellerId = rs.getInt("seller_id");
+    if (sellerId != 0) {
+      res.setSellerId(sellerId);
+    }
+
     res.setCondition(rs.getString("condition"));
 
     Date saleWithdrawalDate = rs.getDate("sale_withdrawal_date");
@@ -83,10 +92,26 @@ public class FurnitureDAOImpl implements FurnitureDAO {
     }
 
     res.setDescription(rs.getString("description"));
-    res.setTypeId(rs.getInt("type_id"));
-    res.setFavouritePhotoId(rs.getInt("favourite_photo_id"));
-    res.setSellingPrice(rs.getDouble("selling_price"));
-    res.setSpecialSalePrice(rs.getDouble("special_sale_price"));
+
+    int typeId = rs.getInt("type_id");
+    if (typeId != 0) {
+      res.setTypeId(typeId);
+    }
+
+    int favouritePhotoId = rs.getInt("favourite_photo_id");
+    if (favouritePhotoId != 0) {
+      res.setFavouritePhotoId(favouritePhotoId);
+    }
+
+    double sellingPrice = rs.getInt("selling_price");
+    if (sellingPrice != 0) {
+      res.setSellingPrice(sellingPrice);
+    }
+
+    double specialSalePrice = rs.getInt("special_sale_price");
+    if (specialSalePrice != 0) {
+      res.setSellingPrice(specialSalePrice);
+    }
 
     Date dateOfSale = rs.getDate("date_of_sale");
     if (dateOfSale != null) {
@@ -94,8 +119,8 @@ public class FurnitureDAOImpl implements FurnitureDAO {
     }
 
     res.setToPickUp(rs.getBoolean("is_to_pick_up"));
-    Date pickUpDate = rs.getDate("pick_up_date");
 
+    Date pickUpDate = rs.getDate("pick_up_date");
     if (pickUpDate != null) {
       res.setPickUpDate(pickUpDate.toString());
     }

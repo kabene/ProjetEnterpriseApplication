@@ -33,9 +33,42 @@ public class FurnitureResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getById(@PathParam("id") int id) {
     FurnitureDTO furnitureDTO = furnitureUCC.getOne(id);
-
     furnitureDTO = Json.filterPublicJsonView(furnitureDTO, FurnitureDTO.class);
     return Response.ok(furnitureDTO).build();
+  }
+
+  /**
+   * GET a specific piece of furniture's admin only details.
+   *
+   * @param id : the furniture id from the request path
+   * @return http response containing a piece of furniture in json format
+   */
+  @GET
+  @Path("/detail/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getDetailById(@PathParam("id") int id) {
+    FurnitureDTO furnitureDTO = furnitureUCC.getOne(id);
+    furnitureDTO = Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class);
+    return Response.ok(furnitureDTO).build();
+  }
+
+  /**
+   * GET all pieces of furniture with public details.
+   *
+   * @return http response containing a list of pieces of furniture in json format
+   */
+  @GET
+  @Path("/")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getAll() {
+    List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
+    List<FurnitureDTO> res = new ArrayList<>();
+    for (FurnitureDTO dto : furnitureDTOs) {
+      FurnitureDTO filteredDTO = Json.filterPublicJsonView(dto, FurnitureDTO.class);
+      res.add(filteredDTO);
+    }
+    return Response.ok(res).build();
   }
 
   /**
@@ -49,7 +82,6 @@ public class FurnitureResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getDetailAll() {
     List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
-
     List<FurnitureDTO> res = new ArrayList<>();
     for (FurnitureDTO dto : furnitureDTOs) {
       FurnitureDTO filteredDTO = Json.filterAdminOnlyJsonView(dto, FurnitureDTO.class);

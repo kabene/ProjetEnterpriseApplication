@@ -6,21 +6,21 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = PhotoImpl.class)
 public interface PhotoDTO {
 
-  int getPhotoId();
+  Integer getPhotoId();
 
-  void setPhotoId(int id);
+  void setPhotoId(Integer id);
 
-  int getFurnitureId();
+  Integer getFurnitureId();
 
-  void setFurnitureId(int id);
+  void setFurnitureId(Integer id);
 
-  boolean isOnHomePage();
+  Boolean isOnHomePage();
 
-  void setOnHomePage(boolean onHomePage);
+  void setOnHomePage(Boolean onHomePage);
 
-  boolean isVisible();
+  Boolean isVisible();
 
-  void setVisible(boolean visible);
+  void setVisible(Boolean visible);
 
   String getSource();
 
