@@ -1,5 +1,3 @@
---@author AGRO lucas, GERARD Thibaut
-
 DROP SCHEMA IF EXISTS satchoFurniture CASCADE;
 
 CREATE SCHEMA satchoFurniture;
@@ -25,7 +23,7 @@ CREATE TABLE satchoFurniture.users(
                                       role varchar(10) NOT NULL,
                                       password character(60) NOT NULL,
                                       purchased_furniture_nbr integer NOT NULL DEFAULT 0,
-                                      solded_furniture_nbr integer NOT NULL DEFAULT 0,
+                                      sold_furniture_nbr integer NOT NULL DEFAULT 0,
                                       waiting boolean NOT NULL
 );
 
@@ -41,7 +39,7 @@ CREATE TABLE satchofurniture.furniture (
                                            buyer_id integer NULL REFERENCES satchofurniture.users(user_id),
                                            seller_id integer NOT NULL REFERENCES satchofurniture.users(user_id),
                                            condition cond NOT NULL,
-                                           sale_withdrawal_date date NOT NULL,
+                                           sale_withdrawal_date date NULL,
                                            description varchar(200) NOT NULL,
                                            type_id integer NOT NULL REFERENCES satchofurniture.furniture_types(type_id),
                                            favourite_photo_id integer NULL,
@@ -63,12 +61,23 @@ CREATE TABLE satchofurniture.photos (
 ALTER TABLE satchofurniture.furniture ADD FOREIGN KEY (favourite_photo_id) REFERENCES satchofurniture.photos(photo_id);
 
 
+
+
 INSERT INTO satchoFurniture.addresses
 VALUES (DEFAULT, 'ez', 1, 1, 1, 'a', 'a');
 
 INSERT INTO satchoFurniture.users
 VALUES (DEFAULT, 'a', 'a', 'ex', 'a@gmail.com', 1, now(), 'customer',
         '$2a$04$yS2WqRPYnf2Tb7GjbiSBSeLcKDa1ExJXzvUQpPOcJUGdJkdzbJhnC', 0, 1, 'true')
+
+
+INSERT INTO satchofurniture.addresses (address_id, street, building_number, unit_number, postcode, commune, country)
+VALUES (2, 'johndoe street', '4', '1',  '1567', 'Beijing','Germany');
+
+INSERT INTO satchofurniture.users (user_id, last_name, first_name, username, email, address_id, registration_date, role, password, purchased_furniture_nbr, sold_furniture_nbr, waiting)
+VALUES (2, 'doe', 'john', 'johndoe', 'john@gmail.com', 2, '02/02/2021', 'admin', '$2a$04$62XdSoqyDOBZWQCk/cuh1.OY/x3mnPi2wjcmDC0HCCzc7MVcj/VmW', 0, 0, false);
+
+
 
 INSERT INTO satchoFurniture.furniture_types (type_name) VALUES ('example type')
 

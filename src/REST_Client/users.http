@@ -51,11 +51,18 @@ Authorization: {{jwt}}
  %}
 ###
 
-POST {{baseUrl}}/users/login
+// showAllCustomers()
+GET {{baseUrl}}/users/customers
+Authorization: {{jwt}}
+
+###
+
+// showCustomersResult()
+POST {{baseUrl}}/users/customers
 Content-Type: application/json
+Authorization: {{jwt}}
 
 {
-  "username": "johndoe",
-  "password": "azerty",
-  "rememberMe": true
+  "customerSearch": "a"
 }
+###

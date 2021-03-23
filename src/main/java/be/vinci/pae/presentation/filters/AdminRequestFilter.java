@@ -1,7 +1,9 @@
 package be.vinci.pae.presentation.filters;
 
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.persistence.dao.UserDAO;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -23,16 +25,19 @@ public class AdminRequestFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    int userId;
+    UserDTO user = null;
     try {
-      userId = Integer.parseInt(requestContext.getHeaderString("user_id"));
       dalServices.startTransaction();
-      if (!this.userDAO.isAdmin(userId)) {
-        dalServices.commitTransaction();
+      DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
+      int userId = decodedToken.getClaim("user").asInt();
+      user = this.userDAO.findById(userId);
+      boolean isAdmin = this.userDAO.isAdmin(userId);
+      dalServices.commitTransaction();
+      if (!isAdmin) {
         requestContext
             .abortWith(Response.status(Status.UNAUTHORIZED).entity("Unauthorized").build());
       }
-      dalServices.commitTransaction();
+      requestContext.setProperty("user", user);
     } catch (Exception e) {
       requestContext
           .abortWith(Response.status(Status.UNAUTHORIZED).entity("Not connected").build());
