@@ -50,7 +50,7 @@
     <td>GET</td>
     <td>Admin</td>
     <td>
-    Renvoie la liste entière des ressources de type "user".
+    Renvoie une liste des informations reservees aux admins des ressources de type "user".
     </td>
 </tr>
 <tr>
@@ -58,7 +58,10 @@
     <td>POST</td>
     <td>Admin</td>
     <td>
-    Renvoie la liste des clients en fonction du filtre passé à la requête. Le filtre s'applique sur le nom du client, son prénom, sa commune ainsi que sur le numéro de sa boite postale.
+    Renvoie une liste des informations reservees aux admins des ressources de type "user" en fonction du filtre passé
+    à la requête.
+    Le filtre s'applique sur le nom des users, leurs prénoms, leurs communes ainsi que sur les numéros de leur boites
+    postale.
     </td>
 </tr>
 
