@@ -89,11 +89,17 @@ public class UserUCCImpl implements UserUCC {
 
   @Override
   public List<UserDTO> showAllCustomers() {
-    return userDAO.getAllCustomers();
+    dal.startTransaction();
+    List<UserDTO> list = userDAO.getAllCustomers();
+    dal.commitTransaction();
+    return list;
   }
 
   @Override
   public List<UserDTO> showCustomersResult(String customerSearch) {
-    return userDAO.findBySearch(customerSearch);
+    dal.startTransaction();
+    List<UserDTO> list = userDAO.findBySearch(customerSearch);
+    dal.commitTransaction();
+    return list;
   }
 }
