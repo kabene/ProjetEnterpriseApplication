@@ -31,18 +31,12 @@ public class UserDAOImpl implements UserDAO {
   public UserDTO findByUsername(String username) {
     String query = "SELECT u.* FROM satchofurniture.users u WHERE u.username = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
-    UserDTO userFound = userFactory.getUserDTO();
+    UserDTO userFound;
     try {
       ps.setString(1, StringEscapeUtils.escapeHtml4(username));
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
-        userFound.setID(rs.getInt("user_id"));
-        userFound.setLastName(rs.getString("last_name"));
-        userFound.setFirstName(rs.getString("first_name"));
-        userFound.setUsername(rs.getString("username"));
-        userFound.setEmail(rs.getString("email"));
-        userFound.setRole(rs.getString("role"));
-        userFound.setPassword(rs.getString("password"));
+        userFound = toDTO(rs);
       } else {
         userFound = null;
       }
@@ -63,20 +57,14 @@ public class UserDAOImpl implements UserDAO {
    */
   @Override
   public UserDTO findById(int userId) {
-    UserDTO userFound = userFactory.getUserDTO();
+    UserDTO userFound;
     try {
       String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ?";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, userId);
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
-        userFound.setID(rs.getInt("user_id"));
-        userFound.setLastName(rs.getString("last_name"));
-        userFound.setFirstName(rs.getString("first_name"));
-        userFound.setUsername(rs.getString("username"));
-        userFound.setEmail(rs.getString("email"));
-        userFound.setRole(rs.getString("role"));
-        userFound.setPassword(rs.getString("password"));
+        userFound = toDTO(rs);
       } else {
         userFound = null;
       }
@@ -92,7 +80,7 @@ public class UserDAOImpl implements UserDAO {
   public boolean isAdmin(int id) {
     try {
       String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ? "
-                    + "AND u.role = 'admin'";
+          + "AND u.role = 'admin'";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, id);
       ResultSet rs = ps.executeQuery();
@@ -129,11 +117,10 @@ public class UserDAOImpl implements UserDAO {
     List<UserDTO> users = new ArrayList<UserDTO>();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u "
-                    + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
-                    + "WHERE lower(a.commune) LIKE lower(?) "
-                    + "OR lower(u.first_name) LIKE lower(?)"
-                    + "OR lower(u.last_name) LIKE lower(?)"
-                    ;
+          + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
+          + "WHERE lower(a.commune) LIKE lower(?) "
+          + "OR lower(u.first_name) LIKE lower(?)"
+          + "OR lower(u.last_name) LIKE lower(?)";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, "%" + customerSearch + "%");
       ps.setString(2, "%" + customerSearch + "%");
@@ -229,5 +216,22 @@ public class UserDAOImpl implements UserDAO {
     }
   }
 
+  /**
+   * Creates and fills a UserDTO object using a ResultSet
+   *
+   * @param rs : the ResultSet containing the information
+   * @throws SQLException
+   */
+  private UserDTO toDTO(ResultSet rs) throws SQLException {
+    UserDTO userFound = userFactory.getUserDTO();
+    userFound.setID(rs.getInt("user_id"));
+    userFound.setLastName(rs.getString("last_name"));
+    userFound.setFirstName(rs.getString("first_name"));
+    userFound.setUsername(rs.getString("username"));
+    userFound.setEmail(rs.getString("email"));
+    userFound.setRole(rs.getString("role"));
+    userFound.setPassword(rs.getString("password"));
+    return userFound;
+  }
 
 }
