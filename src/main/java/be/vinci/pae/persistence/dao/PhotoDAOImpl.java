@@ -17,7 +17,6 @@ public class PhotoDAOImpl implements PhotoDAO {
   @Inject
   private PhotoFactory photoFactory;
 
-  //TODO: implement functions
   @Override
   public List<PhotoDTO> getPhotosByFurnitureId(int furnitureId) {
     List<PhotoDTO> res = new ArrayList<>();
