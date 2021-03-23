@@ -6,5 +6,5 @@ import java.util.List;
 public interface FurnitureUCC {
   FurnitureDTO getOne(int id);
 
-  List<FurnitureDTO> getDetailAll();
+  List<FurnitureDTO> getAll();
 }

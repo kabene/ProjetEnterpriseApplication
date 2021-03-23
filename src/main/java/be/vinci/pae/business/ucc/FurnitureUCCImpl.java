@@ -29,28 +29,43 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   public FurnitureDTO getOne(int id) {
     dalServices.startTransaction();
     FurnitureDTO res = furnitureDAO.findById(id);
-    if (res.getBuyerId() != 0) {
-      UserDTO u = userDAO.findById(res.getBuyerId());
-      res.setBuyer(u);
-    }
-    if (res.getSellerId() != 0) {
-      UserDTO u = userDAO.findById(res.getSellerId());
-      res.setSeller(u);
-    }
-    if (res.getFavouritePhotoId() != 0) {
-      PhotoDTO favPhoto = photoDAO.getPhotoById(res.getFavouritePhotoId());
-      res.setFavouritePhoto(favPhoto);
-    }
-    List<PhotoDTO> photos = photoDAO.getPhotosByFurnitureId(res.getFurnitureId());
-    res.setPhotos(photos);
-    String type = furnitureTypeDAO.findById(res.getTypeId());
-    res.setType(type);
+    completeFurnitureDTO(res);
     dalServices.commitTransaction();
     return res;
   }
 
   @Override
-  public List<FurnitureDTO> getDetailAll() {
-    return new ArrayList<>(); //TODO: implement
+  public List<FurnitureDTO> getAll() {
+    dalServices.startTransaction();
+    List<FurnitureDTO> dtos = furnitureDAO.findAll();
+    for(FurnitureDTO dto : dtos) {
+      completeFurnitureDTO(dto);
+    }
+    dalServices.commitTransaction();
+    return dtos;
+  }
+
+  /**
+   * Completes the FurnitureDTO given as an argument with it's references in the db.
+   *
+   * @param dto : the FurnitureDTO to complete
+   */
+  private void completeFurnitureDTO(FurnitureDTO dto) {
+    if (dto.getBuyerId() != 0) {
+      UserDTO u = userDAO.findById(dto.getBuyerId());
+      dto.setBuyer(u);
+    }
+    if (dto.getSellerId() != 0) {
+      UserDTO u = userDAO.findById(dto.getSellerId());
+      dto.setSeller(u);
+    }
+    if (dto.getFavouritePhotoId() != 0) {
+      PhotoDTO favPhoto = photoDAO.getPhotoById(dto.getFavouritePhotoId());
+      dto.setFavouritePhoto(favPhoto);
+    }
+    List<PhotoDTO> photos = photoDAO.getPhotosByFurnitureId(dto.getFurnitureId());
+    dto.setPhotos(photos);
+    String type = furnitureTypeDAO.findById(dto.getTypeId());
+    dto.setType(type);
   }
 }

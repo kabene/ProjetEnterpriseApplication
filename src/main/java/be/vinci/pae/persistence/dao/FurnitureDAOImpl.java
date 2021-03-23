@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FurnitureDAOImpl implements FurnitureDAO {
 
@@ -62,5 +64,10 @@ public class FurnitureDAOImpl implements FurnitureDAO {
     }
 
     return res;
+  }
+
+  @Override
+  public List<FurnitureDTO> findAll() {
+    return new ArrayList<>();
   }
 }

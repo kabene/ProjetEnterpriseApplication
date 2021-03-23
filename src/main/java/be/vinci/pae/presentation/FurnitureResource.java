@@ -42,7 +42,7 @@ public class FurnitureResource {
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
   public Response getDetailAll() {
-    List<FurnitureDTO> furnitureDTOs = furnitureUCC.getDetailAll();
+    List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
 
     //TODO: 2nd view admin
     return Response.ok(furnitureDTOs).build();
