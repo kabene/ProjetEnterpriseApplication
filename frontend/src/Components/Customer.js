@@ -1,13 +1,14 @@
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
-import {getUserSessionData} from "../utils/session";
+import {verifyAdmin} from "../utils/utils.js";
 
-let user = getUserSessionData();
+
+
 let page = document.querySelector("#page");
 
-const Customer = () => {
+const Customer =async () => {
 
-    if (!verifyAdmin()) {
+    if (await !verifyAdmin()) {
         Navbar();
         RedirectUrl("/");
         return;
@@ -17,24 +18,7 @@ const Customer = () => {
     page.innerHTML = pageHTML;
 }
 
-const verifyAdmin = () => {
-    let res;
-    fetch("/users/me", {
-        method: "GET",
-        body: JSON.stringify(user),
-        headers: {
-            "Content-Type": "application/json",
-        }
-    }).then((response) => {
-        if (!response.ok) res=false;
-        return response.json();
-    })
-    .then((data) => {
-        res = data.role === "admin";
-    })
-    .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
-    return res;
-}
+
 
 
 export default Customer;

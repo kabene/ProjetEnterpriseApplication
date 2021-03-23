@@ -1,5 +1,7 @@
 "use strict";
 
+import {getUserSessionData} from "./session";
+
 /**
  * Escape the dangerous characters than can lead to an XSS attack or an SQL injection
  * @author Kip from https://stackoverflow.com/questions/1787322/htmlspecialchars-equivalent-in-javascript
@@ -15,5 +17,36 @@ function escapeHtml(text) {
         .replace(/'/g, "&#039;")
         .replace(/\//g, "&#047;");
 }
+
+export async function verifyAdmin (){
+    let token = getUserSessionData().token;
+    let res = false;
+    let result;
+    await fetch("/users/me", {
+        method: "GET",
+        headers: {
+            "Authorization": token,
+            "Content-Type": "application/json",
+        },
+    }).then((response) => {
+        if (!response.ok) {
+            res = false;
+        }
+        return response.json();
+    })
+    .then((data) => {
+        result = data.role;
+        if (result === "admin") {
+            res = true;
+        }
+    })
+    .catch((err) => {
+        console.log("Erreur de fetch !! :´\n" + err);
+    });
+    return res;
+}
+
+
+
 
 export {escapeHtml};
