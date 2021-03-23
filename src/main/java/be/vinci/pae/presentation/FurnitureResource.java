@@ -47,6 +47,20 @@ public class FurnitureResource {
     return Response.ok(furnitureDTO).build();
   }
 
+
+  @GET
+  @Path("/")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getAll() {
+    List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
+    List<FurnitureDTO> res = new ArrayList<>();
+    for (FurnitureDTO dto : furnitureDTOs) {
+      FurnitureDTO filteredDTO = Json.filterPublicJsonView(dto, FurnitureDTO.class);
+      res.add(filteredDTO);
+    }
+    return Response.ok(res).build();
+  }
+
   /**
    * GET all pieces of furniture with admin-only details.
    *
@@ -58,7 +72,6 @@ public class FurnitureResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getDetailAll() {
     List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
-
     List<FurnitureDTO> res = new ArrayList<>();
     for (FurnitureDTO dto : furnitureDTOs) {
       FurnitureDTO filteredDTO = Json.filterAdminOnlyJsonView(dto, FurnitureDTO.class);
