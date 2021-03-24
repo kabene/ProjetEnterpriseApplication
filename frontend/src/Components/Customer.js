@@ -32,14 +32,15 @@ const Customer = async () => {
     });
 
 
-    pageHTML = `<div class="mx-5"><h1>Liste des clients:</h1>`;
+    pageHTML = `<div class="mx-5 bmd-layout-container"><h1>Liste des clients:</h1>`;
+    pageHTML += generateShortTable()
     pageHTML += generateLargeTable();
     page.innerHTML = pageHTML;
 }
 
 const generateLargeTable = () => {
     let res = `
-    <table class="table table-bordered table-hover">
+    <table id="largeTable" class="table table-bordered table-hover bmd-layout-content">
         <thead class="table-secondary">
             <tr>
                 <th>Nom</th>
@@ -62,7 +63,7 @@ const generateLargeTable = () => {
 
 const generateShortTable = () => {
     let res = `
-    <table class="table table-bordered table-hover">
+    <table id="shortTable" class="table table-bordered table-hover bmd-layout-drawer">
         <thead class="table-secondary">
             <tr>
                 <th>Nom</th>
@@ -80,7 +81,7 @@ const generateShortTable = () => {
 
 const generateLargeRow = (user) => {
     return ` 
-    <tr>
+    <tr data-toggle="drawer" data-target="#shortTabme">
         <th><p>` + user.lastName + `</p></th>
         <th><p>` + user.firstName + `</p></th>
         <th><p>` + user.username + `</p></th>
