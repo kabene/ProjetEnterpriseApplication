@@ -9,7 +9,7 @@ let currentUser;
 let pageHTML;
 
 
-const Customer = async () => {
+const Customers = async () => {
     currentUser = getUserSessionData();
 
     pageHTML = `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
@@ -101,4 +101,4 @@ const generateShortRow = (user) => {
    </tr>`;
 }
 
-export default Customer;
+export default Customers;
