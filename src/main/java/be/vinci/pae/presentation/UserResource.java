@@ -103,8 +103,9 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response getUser(@Context ContainerRequest request) {
-    UserDTO currentUser = Json
-        .filterAdminOnlyJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
+    Integer userId = (Integer) request.getProperty("userId");
+    UserDTO userFound = userUCC.getOne(userId);
+    UserDTO currentUser = Json.filterAdminOnlyJsonView(userFound, UserDTO.class);
     return Response.ok(currentUser, MediaType.APPLICATION_JSON).build();
   }
 

@@ -26,12 +26,7 @@ public class AuthorizationRequestFilter implements ContainerRequestFilter {
   @Override
   public void filter(ContainerRequestContext requestContext) {
     DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
-    dalServices.startTransaction();
-    UserDTO user = this.userDAO.findById(decodedToken.getClaim("user").asInt());
-    dalServices.commitTransaction();
-    if (user == null) {
-      throw new WebApplicationException("Malformed token", Status.UNAUTHORIZED);
-    }
-    requestContext.setProperty("user", user);
+    int userId = decodedToken.getClaim("user").asInt();
+    requestContext.setProperty("userId", userId);
   }
 }

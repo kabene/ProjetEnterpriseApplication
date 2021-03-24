@@ -226,8 +226,13 @@ public class UserDAOImpl implements UserDAO {
     userFound.setFirstName(rs.getString("first_name"));
     userFound.setUsername(rs.getString("username"));
     userFound.setEmail(rs.getString("email"));
+    userFound.setAddressId(rs.getInt("address_id"));
+    userFound.setRegistrationDate(rs.getString("registration_date"));
     userFound.setRole(rs.getString("role"));
     userFound.setPassword(rs.getString("password"));
+    userFound.setPurchasedFurnitureNbr(rs.getInt("purchased_furniture_nbr"));
+    userFound.setSoldFurnitureNbr(rs.getInt("sold_furniture_nbr"));
+    userFound.setWaiting(rs.getBoolean("waiting"));
     return userFound;
   }
 
