@@ -192,7 +192,8 @@ class FurnitureUCCImplTest {
 
     List<FurnitureDTO> expected = furnitureDTOS;
     List<FurnitureDTO> actual = furnitureUCC.getAll();
-    assertEquals(expected, actual, "Calling getAll with a non-empty db should return a corresponding list of DTOs.");
+    assertEquals(expected, actual,
+        "Calling getAll with a non-empty db should return a corresponding list of DTOs.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
@@ -219,7 +220,8 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockFurnitureDTO2).setType(type2);
   }
 
-  @DisplayName("TEST FurnitureUCC.getAll : with empty furniture table in db, should return empty list of dto")
+  @DisplayName("TEST FurnitureUCC.getAll : with empty furniture table in db,"
+      + " should return empty list of dto")
   @Test
   public void test_getAll_emptyDB_shouldReturnEmptyListOfFurnitureDTOs() {
     List<FurnitureDTO> emptyList = new ArrayList<FurnitureDTO>();
@@ -227,7 +229,8 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDAO.findAll()).thenReturn(emptyList);
 
     List<FurnitureDTO> actual = furnitureUCC.getAll();
-    assertEquals(emptyList, actual, "Calling the getAll method without pieces of furniture in db should return an empty list.");
+    assertEquals(emptyList, actual, "Calling the getAll method without pieces"
+        + " of furniture in db should return an empty list.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();

@@ -28,10 +28,10 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   public FurnitureDTO getOne(int id) {
     dalServices.startTransaction();
     FurnitureDTO res = furnitureDAO.findById(id);
-    if(res != null) {
+    if (res != null) {
       completeFurnitureDTO(res);
       dalServices.commitTransaction();
-    }else {
+    } else {
       dalServices.rollbackTransaction();
     }
     return res;
