@@ -70,7 +70,6 @@ public class UserUCCImplTest {
     Mockito.when(mockUserDAO.findByUsername(username)).thenReturn(mockUser);
     Mockito.when(mockUser.checkPassword(pwd)).thenReturn(false);
 
-
     UserDTO actual = userUCC.login(username, pwd);
 
     Mockito.verify(mockUserDAO).findByUsername(username);
