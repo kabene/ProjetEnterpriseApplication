@@ -106,7 +106,7 @@ public class UserUCCImplTest {
     String username = "goodUsername";
     String pwd = "goodPwd";
     Mockito.when(mockUserDAO.findByUsername(username)).thenReturn(mockUser);
-    Mockito.when(mockUser.getID()).thenReturn(0);
+    Mockito.when(mockUser.getId()).thenReturn(0);
     Mockito.when(mockUser.checkPassword(pwd)).thenReturn(true);
 
     UserDTO actual = userUCC.login(username, pwd);

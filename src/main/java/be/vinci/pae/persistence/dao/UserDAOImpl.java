@@ -221,7 +221,7 @@ public class UserDAOImpl implements UserDAO {
    */
   private UserDTO toDTO(ResultSet rs) throws SQLException {
     UserDTO userFound = userFactory.getUserDTO();
-    userFound.setID(rs.getInt("user_id"));
+    userFound.setId(rs.getInt("user_id"));
     userFound.setLastName(rs.getString("last_name"));
     userFound.setFirstName(rs.getString("first_name"));
     userFound.setUsername(rs.getString("username"));
