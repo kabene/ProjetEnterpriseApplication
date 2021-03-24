@@ -33,11 +33,11 @@ const Customer = async () => {
 
 
     pageHTML = `<div class="mx-5"><h1>Liste des clients:</h1>`;
-    pageHTML += generateTable();
+    pageHTML += generateLargeTable();
     page.innerHTML = pageHTML;
 }
 
-const generateTable = () => {
+const generateLargeTable = () => {
     let res = `
     <table class="table table-bordered table-hover">
         <thead class="table-secondary">
@@ -53,14 +53,32 @@ const generateTable = () => {
         </thead>
         <tbody>`;
             usersList.users.forEach(user => {
-                res += generateRow(user);
+                res += generateLargeRow(user);
             });
             res = res + `</tbody>
     </table></div>`;
     return res;
-} 
+}
 
-const generateRow = (user) => {
+const generateShortTable = () => {
+    let res = `
+    <table class="table table-bordered table-hover">
+        <thead class="table-secondary">
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+            </tr>
+        </thead>
+        <tbody>`;
+    usersList.users.forEach(user => {
+        res += generateShortRow(user);
+    });
+    res = res + `</tbody>
+    </table></div>`;
+    return res;
+}
+
+const generateLargeRow = (user) => {
     return ` 
     <tr>
         <th><p>` + user.lastName + `</p></th>
@@ -70,6 +88,15 @@ const generateRow = (user) => {
         <th><p>0 (STUB)</p></th>
         <th><p>0 (STUB)</p></th>
         <th><p>` + user.role + `</p></th>
+   </tr>`;
+}
+
+
+const generateShortRow = (user) => {
+    return ` 
+    <tr>
+        <th><p>` + user.lastName + `</p></th>
+        <th><p>` + user.firstName + `</p></th>
    </tr>`;
 }
 
