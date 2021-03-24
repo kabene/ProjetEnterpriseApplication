@@ -79,7 +79,7 @@ public class AddressDAOImpl implements AddressDAO {
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, addressId);
       ResultSet rs = ps.executeQuery();
-      if(rs.next()) {
+      if (rs.next()) {
         res = toDTO(rs);
       }
     } catch (SQLException e) {
