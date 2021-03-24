@@ -35,14 +35,17 @@ const Customers = async () => {
     pageHTML = `
     <h1>Liste des clients:</h1>
     <div class="mx-5 row">
-        <div id="collapsedDiv" class="col-4 collapse">
-            <input type="text" placeholder="Rechercher" class="mb-2">
-            <button type="button" class="btn btn-dark mb-2" data-toggle="collapse" data-target="#collapsedDiv">Retour à la liste</button>` 
-            + generateShortTable() + 
-        `</div>
         <div class="col-12">
         <input type="text" placeholder="Rechercher par nom, prénom, code postal ou ville" class="w-50 mb-2">`
             + generateLargeTable() + 
+        `</div>
+        <div id="shortTable" class="col-4 collapse collapsedDiv">
+            <input type="text" placeholder="Rechercher" class="mb-2">
+            <button type="button" class="btn btn-dark mb-2" data-toggle="collapse" data-target=".collapsedDiv">Retour à la liste</button>`
+            + generateShortTable() +
+        `</div>
+        <div class="col-8 collapse collapsedDiv">`
+            + generateCustomerCard() +
         `</div>
     </div>`;
     page.innerHTML = pageHTML;
@@ -93,7 +96,7 @@ const generateShortTable = () => {
 
 const generateLargeRow = (user) => {
     return ` 
-    <tr data-toggle="collapse" data-target="#collapsedDiv">
+    <tr data-toggle="collapse" data-target=".collapsedDiv">
         <th><p>` + user.lastName + `</p></th>
         <th><p>` + user.firstName + `</p></th>
         <th><p>` + user.username + `</p></th>
@@ -111,6 +114,14 @@ const generateShortRow = (user) => {
         <th><p>` + user.lastName + `</p></th>
         <th><p>` + user.firstName + `</p></th>
    </tr>`;
+}
+
+const generateCustomerCard = () => {
+    return `
+    <div  id="customerCard" class="w-50 h-50 border">
+      <a>Fiche Client</a>
+    </div>
+    `;
 }
 
 export default Customers;
