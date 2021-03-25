@@ -64,6 +64,14 @@
     postale.
     </td>
 </tr>
+<tr>
+    <td>users/detail/waiting (non-implémentée)</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>
+    Renvoie une liste des informations reservees aux admins des ressources de type "user" en attente de confirmation d'inscription.
+    </td>
+</tr>
 
 </table>
 
