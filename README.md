@@ -46,7 +46,7 @@
     </td>
 </tr>
 <tr>
-    <td>users/customers</td>
+    <td>users/detail</td>
     <td>GET</td>
     <td>Admin</td>
     <td>
@@ -54,13 +54,13 @@
     </td>
 </tr>
 <tr>
-    <td>users/customers</td>
+    <td>users/detail/search</td>
     <td>POST</td>
     <td>Admin</td>
     <td>
-    Renvoie une liste des informations reservees aux admins des ressources de type "user" en fonction du filtre passé
+    Renvoie une liste des informations reservees aux admins des ressources de type "user" en fonction de la recherche passée
     à la requête.
-    Le filtre s'applique sur le nom des users, leurs prénoms, leurs communes ainsi que sur les numéros de leur boites
+    La recherche s'applique sur le nom des users, leurs prénoms, leurs communes ainsi que sur les numéros de leur boites
     postale.
     </td>
 </tr>
