@@ -4,8 +4,6 @@ import be.vinci.pae.business.dto.UserDTO;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import be.vinci.pae.utils.Configurate;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Response.Status;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
