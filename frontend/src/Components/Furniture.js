@@ -19,22 +19,38 @@ const Furniture = async () => {
 
 
 const generateTable = () => {
-    return `<div class="row mx-5 p-5 border">` + getAllItems() + `</div>`;
+    return `<div class="row mx-5 p-5 border">` + generateAllItemsAndModals() + `</div>`;
 }
 
-const getAllItems = () => {
+const generateAllItemsAndModals = () => {
     let res = "";
-    furnitureList.forEach(furniture => res += generateItem(furniture));
+    furnitureList.forEach(furniture => res += generateItemAndModal(furniture));
     return res;
 }
 
-const generateItem = (furniture) => {
-    return`
-        <div class="col-4 px-0">
+const generateItemAndModal = (furniture) => {
+    let item = `
+        <div class="col-4 px-0" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`">
             <img class="w-50" src="` + imageStub /*furniture.favouritePhoto.source*/ +`" alt="thumbnail"/>
             <p>` + furniture.description + `</p>`
             + getOptionButton(furniture) +
         `</div>`;
+
+
+    let modal = `
+        <div class="modal fade" id="modal_` + furniture.furnitureId + `">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header"></div>
+                    <!-- Modal Body -->
+                    <div class="modal-body">
+                    
+                    </div>
+                </div>
+            </div>                         
+        </div>`;
+    return item + modal;
 }
 
 const getOptionButton = (furniture) => {
