@@ -25,7 +25,7 @@ public interface UserUCC {
 
   List<UserDTO> getAll();
 
-  List<UserDTO> getSearchResult(String customerSearch);
+  List<UserDTO> getSearchResult(String userSearch);
 
   UserDTO getOne(int userId);
 }

@@ -95,7 +95,7 @@ public class UserDAOImpl implements UserDAO {
   }
 
   @Override
-  public List<UserDTO> getAllCustomers() {
+  public List<UserDTO> getAllUsers() {
     List<UserDTO> users = new ArrayList<>();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u";
@@ -111,7 +111,7 @@ public class UserDAOImpl implements UserDAO {
   }
 
   @Override
-  public List<UserDTO> findBySearch(String customerSearch) {
+  public List<UserDTO> findBySearch(String userSearch) {
     List<UserDTO> users = new ArrayList<UserDTO>();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u "
@@ -121,10 +121,10 @@ public class UserDAOImpl implements UserDAO {
           + "OR lower(u.last_name) LIKE lower(?)"
           + "OR lower(a.postcode) LIKE lower(?)";
       PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setString(1, "%" + customerSearch + "%");
-      ps.setString(2, "%" + customerSearch + "%");
-      ps.setString(3, "%" + customerSearch + "%");
-      ps.setString(4, "%" + customerSearch + "%");
+      ps.setString(1, "%" + userSearch + "%");
+      ps.setString(2, "%" + userSearch + "%");
+      ps.setString(3, "%" + userSearch + "%");
+      ps.setString(4, "%" + userSearch + "%");
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
         users.add(toDTO(rs));
