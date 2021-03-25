@@ -53,7 +53,8 @@ const Customers = async () => {
         `</div>
     </div>`;
     page.innerHTML = pageHTML;
-    await map();
+    //
+    await AddressToGeo("roodebeek 52");
 }
 
 const generateLargeTable = () => {
@@ -199,9 +200,9 @@ const generateCustomerCard = (userDetail) => {
                                                 <p id="waiting">   </p>
                                             </div>
                                         </div>
-                                         <div class="col-md-2"style="display: flex"> 
-                        <input type="submit" class="profile-edit-btn" name="btnAddMore"  id="approuver" value="approuver" style="color: #0062cc"/>
-                        <input type="submit" class="profile-edit-btn" name="btnAddMore" id="refuser" value="refuser" style="color: red"/>
+                                         <div class="col-md-2" style="display: flex"> 
+                        <input type="submit" class="profile-edit-btn" name="btnAddMore"  id="approuver" value="approuver" style="color: #0062cc; margin:5px" />
+                        <input type="submit" class="profile-edit-btn" name="btnAddMore" id="refuser" value="refuser" style="color: red; margin:5px"/>
                     </div>
                             </div>
                     
@@ -251,21 +252,44 @@ const clientDetail=async (id)=>{
 }
 
 
-const map=async () => {
-    console.log(document.getElementById("map"));
+const map=(latitude,lngitude) => {
+    console.log(latitude,lngitude);
     let map;
-    const additionalOptions = {}
+    const additionalOptions = {};
+    const place ={lat: latitude, lng: lngitude };
     const loader = new Loader({
         apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
         version: "weekly",
         ...additionalOptions,
     });
+    console.log(place);
     loader.load().then(() => {
         map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: -34.397, lng: 150.644 },
-            zoom: 8,
+            center: place,
+            zoom: 13,
         });
+        new google.maps.Marker({
+            position: place,
+            map:map,
+        })
     });
+}
+
+
+const AddressToGeo=async (address)=>{
+
+    var platform = new H.service.Platform({
+        'apikey': 'QHZv6jItrBmW0n3fXSO5HbZzbBpxzunbSXquM_ap6o0'
+    });
+
+    var service = platform.getSearchService();
+
+    await service.geocode({
+        q: address
+    }, (result) => {
+        console.log(result.items[0].position)
+        map(result.items[0].position.lat,result.items[0].position.lng);
+    }, alert)
 }
 
 export default Customers;
