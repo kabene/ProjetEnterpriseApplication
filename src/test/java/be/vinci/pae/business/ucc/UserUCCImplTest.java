@@ -184,7 +184,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST UserUCC.register : given already existing email, should throw ConflictException")
+  @DisplayName("TEST UserUCC.register : given already existing email,"
+      + " should throw ConflictException")
   @Test
   public void test_register_givenTakenEmail_shouldThrowTakenException() {
     String username = "username";

@@ -84,7 +84,7 @@ public class AddressDAOImpl implements AddressDAO {
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         res = toDTO(rs);
-      }else {
+      } else {
         throw new NotFoundException("Error: address not found");
       }
     } catch (SQLException e) {

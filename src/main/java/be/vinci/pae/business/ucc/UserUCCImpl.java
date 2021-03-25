@@ -47,7 +47,8 @@ public class UserUCCImpl implements UserUCC {
       return userFound;
     } catch (NotFoundException e) {
       dalServices.rollbackTransaction();
-      throw new ForbiddenException("Error: invalid credentials"); // no user found with given username
+      throw new ForbiddenException("Error: invalid credentials");
+      // no user found with given username
     } catch (Exception exception) {
       dalServices.rollbackTransaction();
       throw exception;

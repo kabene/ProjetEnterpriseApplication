@@ -36,7 +36,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       } else {
         dalServices.rollbackTransaction();
       }
-    }catch (Exception e) {
+    } catch (Exception e) {
       dalServices.rollbackTransaction();
       throw e;
     }
@@ -53,7 +53,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
         completeFurnitureDTO(dto);
       }
       dalServices.commitTransaction();
-    } catch(Exception e) {
+    } catch (Exception e) {
       dalServices.rollbackTransaction();
       throw e;
     }
