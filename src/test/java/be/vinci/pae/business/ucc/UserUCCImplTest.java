@@ -1,7 +1,6 @@
 package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.business.dto.AddressDTO;
@@ -10,6 +9,8 @@ import be.vinci.pae.business.pojos.AddressImpl;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.exceptions.ConflictException;
+import be.vinci.pae.exceptions.ForbiddenException;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
@@ -62,41 +63,41 @@ public class UserUCCImplTest {
     Mockito.reset(mockDal);
   }
 
-  @DisplayName("TEST UserUCC.login : given bad password, should return null")
+  @DisplayName("TEST UserUCC.login : given bad password, should throw ForbiddenException")
   @Test
-  public void test_login_givenBadPassword_shouldReturnNull() {
+  public void test_login_givenBadPassword_shouldThrowForbidden() {
     String username = "ex";
     String pwd = "badPwd";
     Mockito.when(mockUserDAO.findByUsername(username)).thenReturn(mockUser);
     Mockito.when(mockUser.checkPassword(pwd)).thenReturn(false);
 
-    UserDTO actual = userUCC.login(username, pwd);
+    assertThrows(ForbiddenException.class,
+        () -> userUCC.login(username, pwd),
+        "UserUCC.login should throw ForbiddenException after being given a wrong password");
 
     Mockito.verify(mockUserDAO).findByUsername(username);
     Mockito.verify(mockUser).checkPassword(pwd);
-    assertNull(actual, "UserUCC.login should return null after being given a wrong password");
-
     Mockito.verify(mockDal).startTransaction();
-    Mockito.verify(mockDal,Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.login : given bad username, should return null")
+  @DisplayName("TEST UserUCC.login : given bad username, should throw ForbiddenException")
   @Test
   public void test_login_givenBadUsername_shouldReturnNull() {
     String username = "other";
     String pwd = "azerty";
-    Mockito.when(mockUserDAO.findByUsername(username)).thenReturn(null);
+    Mockito.when(mockUserDAO.findByUsername(username)).thenThrow(NotFoundException.class);
 
-    UserDTO actual = userUCC.login(username, pwd);
-
-    Mockito.verify(mockUserDAO).findByUsername(username);
-    assertNull(actual,
-        "UserUCC.login should return null after being given"
+    assertThrows(ForbiddenException.class,
+        () -> userUCC.login(username, pwd),
+        "UserUCC.login should throw ForbiddenException after being given"
             + " a username not present in the database");
 
+    Mockito.verify(mockUserDAO).findByUsername(username);
+
     Mockito.verify(mockDal).startTransaction();
-    Mockito.verify(mockDal,Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
@@ -118,7 +119,7 @@ public class UserUCCImplTest {
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
-    Mockito.verify(mockDal,Mockito.never()).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
   @DisplayName("TEST UserUCC.register : given valid fields, should return matching UserDTO")
@@ -160,11 +161,11 @@ public class UserUCCImplTest {
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
-    Mockito.verify(mockDal,Mockito.never()).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
   @DisplayName("TEST UserUCC.register : given already "
-      + "existing username, should throw TakenException")
+      + "existing username, should throw ConflictException")
   @Test
   public void test_register_givenTakenUsername_shouldThrowTakenException() {
     String username = "takenUser";
@@ -174,16 +175,16 @@ public class UserUCCImplTest {
 
     assertThrows(ConflictException.class, () ->
             userUCC.register(mockUser, mockAddressDTO),
-        "The call to register should throw a TakenException when given a taken username");
+        "The call to register should throw a ConflictException when given a taken username");
 
     Mockito.verify(mockUserDAO).usernameAlreadyTaken(username);
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
-    Mockito.verify(mockDal,Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST UserUCC.register : given already existing email, should throw TakenException")
+  @DisplayName("TEST UserUCC.register : given already existing email, should throw ConflictException")
   @Test
   public void test_register_givenTakenEmail_shouldThrowTakenException() {
     String username = "username";
@@ -193,10 +194,9 @@ public class UserUCCImplTest {
     Mockito.when(mockUserDAO.usernameAlreadyTaken(username)).thenReturn(false);
     Mockito.when(mockUserDAO.emailAlreadyTaken(email)).thenReturn(true);
 
-
     assertThrows(ConflictException.class, () ->
             userUCC.register(mockUser, mockAddressDTO),
-        "The call to register should throw a TakenException when given a taken email");
+        "The call to register should throw a ConflictException when given a taken email");
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockUserDAO).usernameAlreadyTaken(username);
     Mockito.verify(mockUserDAO).emailAlreadyTaken(email);

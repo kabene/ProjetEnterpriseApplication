@@ -38,7 +38,6 @@ public class UserUCCImpl implements UserUCC {
   public UserDTO login(String username, String password) {
     try {
       dalServices.startTransaction();
-
       User userFound = (User) userDAO.findByUsername(username);
       if (!userFound.checkPassword(password)) {
         throw new ForbiddenException("Error: invalid credentials");
