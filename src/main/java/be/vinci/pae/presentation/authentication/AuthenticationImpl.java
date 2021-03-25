@@ -40,7 +40,7 @@ public class AuthenticationImpl implements Authentication {
           JWT.create().withExpiresAt(date).withIssuer("auth0").withClaim("user", user.getId())
               .sign(this.jwtAlgorithm);
     } catch (Exception e) {
-      throw new WebApplicationException("Unable to create token", e, Status.INTERNAL_SERVER_ERROR);
+      throw new InternalError("Error: Unable to create token");
     }
     return token;
   }

@@ -1,6 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
@@ -25,7 +26,7 @@ public class UserDAOImpl implements UserDAO {
    * Executes a query to find a user having a specific username.
    *
    * @param username : the username to look for.
-   * @return a UserDTO corresponding to the user found or null if no user has the given username.
+   * @return a UserDTO corresponding to the user found
    */
   @Override
   public UserDTO findByUsername(String username) {
@@ -38,14 +39,13 @@ public class UserDAOImpl implements UserDAO {
       if (rs.next()) {
         userFound = toDTO(rs);
       } else {
-        userFound = null;
+        throw new NotFoundException("Error: user not found");
       }
       rs.close();
       ps.close();
       return userFound;
     } catch (SQLException e) {
-      e.printStackTrace();
-      throw new InternalError();
+      throw new InternalError(e.getMessage());
     }
   }
 
@@ -66,12 +66,12 @@ public class UserDAOImpl implements UserDAO {
       if (rs.next()) {
         userFound = toDTO(rs);
       } else {
-        userFound = null;
+        throw new NotFoundException("Error: user not found");
       }
       rs.close();
       ps.close();
-    } catch (SQLException throwables) {
-      userFound = null;
+    } catch (SQLException e) {
+      throw new InternalError(e.getMessage());
     }
     return userFound;
   }
@@ -88,7 +88,7 @@ public class UserDAOImpl implements UserDAO {
         return true;
       }
     } catch (SQLException e) {
-      return false;
+      throw new InternalError(e.getMessage());
     }
     return false;
   }
@@ -104,7 +104,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(toDTO(rs));
       }
     } catch (SQLException e) {
-      throw new InternalError();
+      throw new InternalError(e.getMessage());
     }
     return users;
   }
@@ -129,7 +129,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(toDTO(rs));
       }
     } catch (SQLException e) {
-      throw new InternalError();
+      throw new InternalError(e.getMessage());
     }
     return users;
   }
@@ -156,8 +156,8 @@ public class UserDAOImpl implements UserDAO {
       ps.setString(6, StringEscapeUtils.escapeHtml4(user.getPassword()));
       ps.execute();
       ps.close();
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException e) {
+      throw new InternalError(e.getMessage());
     }
 
   }
@@ -182,8 +182,8 @@ public class UserDAOImpl implements UserDAO {
       rs.close();
       ps.close();
       return res;
-    } catch (SQLException exception) {
-      throw new ConflictException();
+    } catch (SQLException e) {
+      throw new InternalError(e.getMessage());
     }
   }
 
@@ -207,8 +207,8 @@ public class UserDAOImpl implements UserDAO {
       rs.close();
       ps.close();
       return res;
-    } catch (SQLException throwables) {
-      throw new ConflictException();
+    } catch (SQLException e) {
+      throw new InternalError(e.getMessage());
     }
   }
 

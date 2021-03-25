@@ -2,6 +2,7 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.factories.PhotoFactory;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -37,7 +38,7 @@ public class PhotoDAOImpl implements PhotoDAO {
       rs.close();
       ps.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new InternalError(e.getMessage());
     }
     return res;
   }
@@ -56,11 +57,13 @@ public class PhotoDAOImpl implements PhotoDAO {
         res.setOnHomePage(rs.getBoolean("is_on_home_page"));
         res.setVisible(rs.getBoolean("is_visible"));
         res.setSource(rs.getString("source"));
+      }else {
+        throw new NotFoundException("Error: photo not found");
       }
       rs.close();
       ps.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new InternalError(e.getMessage());
     }
     return res;
   }

@@ -1,6 +1,7 @@
 package be.vinci.pae.presentation;
 
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.BusinessException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.ConflictException;
@@ -37,6 +38,9 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
   }
 
   private Object getEntity(Throwable e) {
-    return e.getMessage();
+    if(e instanceof BusinessException)
+      return e.getMessage();
+    // internal error -> hide message
+    return "Server Internal Error";
   }
 }

@@ -2,6 +2,7 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.factories.AddressFactory;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -36,8 +37,8 @@ public class AddressDAOImpl implements AddressDAO {
     }
     try {
       ps.close();
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException e) {
+      throw new InternalError(e.getMessage());
     }
   }
 
@@ -62,11 +63,13 @@ public class AddressDAOImpl implements AddressDAO {
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         id = rs.getInt(1);
+      } else {
+        throw new NotFoundException("Error: address not found");
       }
       rs.close();
       ps.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new InternalError(e.getMessage());
     }
     return id;
   }
@@ -81,9 +84,11 @@ public class AddressDAOImpl implements AddressDAO {
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         res = toDTO(rs);
+      }else {
+        throw new NotFoundException("Error: address not found");
       }
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new InternalError(e.getMessage());
     }
     return res;
   }

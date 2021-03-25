@@ -5,7 +5,7 @@ public class BadRequestException extends BusinessException{
   /**
    * Exception generated if a client sends a malformed request
    */
-  BadRequestException() {
+  public BadRequestException() {
     super();
   }
 
@@ -16,7 +16,7 @@ public class BadRequestException extends BusinessException{
    * @param message the detail message. The detail message is saved for later retrieval by the
    *                {@link #getMessage()} method.
    */
-  BadRequestException(String message) {
+  public BadRequestException(String message) {
     super(message);
   }
 

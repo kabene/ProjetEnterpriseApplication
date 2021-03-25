@@ -6,7 +6,7 @@ public class UnauthorizedException extends BusinessException {
    * Exception generated if the user is trying to access resources without the required
    * authentication level.
    */
-  UnauthorizedException() {
+  public UnauthorizedException() {
     super();
   }
 
@@ -17,7 +17,7 @@ public class UnauthorizedException extends BusinessException {
    * @param message the detail message. The detail message is saved for later retrieval by the
    *                {@link #getMessage()} method.
    */
-  UnauthorizedException(String message) {
+  public UnauthorizedException(String message) {
     super(message);
   }
 

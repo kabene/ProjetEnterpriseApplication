@@ -19,6 +19,14 @@ Content-Type: application/json
 }
 ###
 
+//login as 'ex' (pwd : qwerty) -> fail (invalid pwd)
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "username": "ex"
+}
+###
 
 //login with remember me -> store jwt
 POST {{baseUrl}}/users/login
