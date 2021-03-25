@@ -48,6 +48,7 @@ const onNavigateHandler = (e) => {
     let uri;
     e.preventDefault();
     uri = e.target.dataset.uri;
+    removeModals();
     if(uri) {
         console.log("onNavigate : ", uri);
         window.history.pushState({}, uri, window.location.origin + uri);
@@ -63,6 +64,7 @@ const onNavigateHandler = (e) => {
 //onHistoryHandler (arrows <- -> )
 const onHistoryHandler = (e) => {
     console.log("onHistory : ", window.location.pathname);
+    removeModals();
     componentToRender = routes[window.location.pathname];
     if(!componentToRender){
         ErrorPage(window.location.pathname);
@@ -74,6 +76,7 @@ const onHistoryHandler = (e) => {
 const RedirectUrl = (uri, data) => {
     window.history.pushState({}, uri, window.location.origin + uri); 
     console.log(window.location.pathname);
+    removeModals();
     componentToRender = routes[uri];  
     if(!componentToRender){
         ErrorPage(uri);
@@ -117,6 +120,15 @@ const onUserLogin = (data) => {
     setUserSessionData(user);
     setUserLocalData(data.token);
     setLayout();
-  }
+}
+
+const removeModals = () => {
+    let modalArray = document.querySelectorAll(".modal-backdrop");
+    for (let i = 0; i < modalArray.length; i++) {
+        let m = modalArray[i];
+        m.parentNode.removeChild(m);
+    }
+}
+
 
 export {Router, RedirectUrl};
