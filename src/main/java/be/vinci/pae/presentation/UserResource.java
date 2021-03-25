@@ -1,5 +1,6 @@
 package be.vinci.pae.presentation;
 
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.presentation.filters.Authorize;
@@ -16,6 +17,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
@@ -107,6 +109,24 @@ public class UserResource {
     UserDTO userFound = (UserDTO) request.getProperty("user");
     UserDTO currentUser = Json.filterAdminOnlyJsonView(userFound, UserDTO.class);
     return Response.ok(currentUser, MediaType.APPLICATION_JSON).build();
+  }
+
+
+
+  /**
+   * GET a specific piece of furniture's admin only details.
+   *
+   * @param id : the furniture id from the request path
+   * @return http response containing a piece of furniture in json format
+   */
+  @GET
+  @Path("/detail/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getDetailById(@PathParam("id") int id) {
+    UserDTO userDTO = userUCC.getOne(id);
+    userDTO= Json.filterAdminOnlyJsonView(userDTO,UserDTO.class);
+    return Response.ok(userDTO).build();
   }
 
   /**
