@@ -14,7 +14,7 @@ const routes = {
     "/": HomePage,
     "/authentication": Authentication,
     "/furnitures": Furnitures,
-    "/customers": Users,
+    "/users": Users,
     "/visits": Visits,
     "/furnitureList": FurnitureList,
     "/visitRequest": VisitRequest,

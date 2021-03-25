@@ -15,7 +15,7 @@ const Users = async () => {
     pageHTML = `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
     page.innerHTML = pageHTML;
 
-    await fetch("/users/users", {
+    await fetch("/users/detail", {
         method: "GET",
         headers: {
             "Authorization": currentUser.token,
