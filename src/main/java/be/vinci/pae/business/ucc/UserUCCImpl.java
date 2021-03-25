@@ -22,7 +22,7 @@ public class UserUCCImpl implements UserUCC {
   private AddressDAO addressDAO;
 
   @Inject
-  private ConnectionDalServices dal;
+  private ConnectionDalServices dalServices;
 
 
   /**
@@ -35,21 +35,22 @@ public class UserUCCImpl implements UserUCC {
   @Override
   public UserDTO login(String username, String password) {
     try {
-      dal.startTransaction();
+      dalServices.startTransaction();
 
       User userFound = (User) userDAO.findByUsername(username);
       if (userFound == null) {
-        dal.rollbackTransaction();
+        dalServices.rollbackTransaction();
         return null; // invalid username
       }
       if (!userFound.checkPassword(password)) {
-        dal.rollbackTransaction();
+        dalServices.rollbackTransaction();
         return null; // invalid password
       }
-      dal.commitTransaction();
+      userFound.setAddress(addressDAO.findById(userFound.getAddressId()));
+      dalServices.commitTransaction();
       return userFound;
     } catch (Exception exception) {
-      dal.rollbackTransaction();
+      dalServices.rollbackTransaction();
       //  exception.printStackTrace();
       throw exception;
     }
@@ -64,7 +65,7 @@ public class UserUCCImpl implements UserUCC {
   @Override
   public UserDTO register(UserDTO userDTO, AddressDTO address) {
     try {
-      dal.startTransaction();
+      dalServices.startTransaction();
       if (userDAO.usernameAlreadyTaken(userDTO.getUsername())) {
         throw new TakenException("username already taken");
       }
@@ -78,10 +79,10 @@ public class UserUCCImpl implements UserUCC {
       user.setPassword(hashed);
       userDAO.register(user, id);
       userDTO = userDAO.findByUsername(userDTO.getUsername());
-      dal.commitTransaction();
+      dalServices.commitTransaction();
       return userDTO;
     } catch (Exception exception) {
-      dal.rollbackTransaction();
+      dalServices.rollbackTransaction();
       // exception.printStackTrace();
       throw exception;
     }
@@ -91,11 +92,11 @@ public class UserUCCImpl implements UserUCC {
   public List<UserDTO> showAllCustomers() {
     List<UserDTO> list;
     try {
-      dal.startTransaction();
-      list = userDAO.getAllCustomers();
-      dal.commitTransaction();
+      dalServices.startTransaction();
+      list = userDAO.getAllCustomers(); //todo: get addresses ?
+      dalServices.commitTransaction();
     } catch (Exception exception) {
-      dal.rollbackTransaction();
+      dalServices.rollbackTransaction();
       throw exception;
     }
     return list;
@@ -105,13 +106,30 @@ public class UserUCCImpl implements UserUCC {
   public List<UserDTO> showCustomersResult(String customerSearch) {
     List<UserDTO> list;
     try {
-      dal.startTransaction();
+      dalServices.startTransaction();
       list = userDAO.findBySearch(customerSearch);
-      dal.commitTransaction();
+      dalServices.commitTransaction();
     } catch (Exception exception) {
-      dal.rollbackTransaction();
+      dalServices.rollbackTransaction();
       throw exception;
     }
     return list;
   }
+
+  @Override
+  public UserDTO getOne(int userId) {
+    UserDTO res = null;
+    try {
+      dalServices.startTransaction();
+      res = userDAO.findById(userId);
+      res.setAddress(addressDAO.findById(res.getAddressId()));
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      e.printStackTrace();
+      dalServices.rollbackTransaction();
+    }
+    return res;
+  }
+
+
 }

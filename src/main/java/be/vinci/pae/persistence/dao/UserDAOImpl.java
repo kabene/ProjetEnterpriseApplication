@@ -221,13 +221,18 @@ public class UserDAOImpl implements UserDAO {
    */
   private UserDTO toDTO(ResultSet rs) throws SQLException {
     UserDTO userFound = userFactory.getUserDTO();
-    userFound.setID(rs.getInt("user_id"));
+    userFound.setId(rs.getInt("user_id"));
     userFound.setLastName(rs.getString("last_name"));
     userFound.setFirstName(rs.getString("first_name"));
     userFound.setUsername(rs.getString("username"));
     userFound.setEmail(rs.getString("email"));
+    userFound.setAddressId(rs.getInt("address_id"));
+    userFound.setRegistrationDate(rs.getString("registration_date"));
     userFound.setRole(rs.getString("role"));
     userFound.setPassword(rs.getString("password"));
+    userFound.setPurchasedFurnitureNbr(rs.getInt("purchased_furniture_nbr"));
+    userFound.setSoldFurnitureNbr(rs.getInt("sold_furniture_nbr"));
+    userFound.setWaiting(rs.getBoolean("waiting"));
     return userFound;
   }
 

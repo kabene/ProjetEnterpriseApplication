@@ -37,7 +37,7 @@ public class AuthenticationImpl implements Authentication {
     Date date = Date.from(end.toInstant(ZoneOffset.UTC));
     try {
       token =
-          JWT.create().withExpiresAt(date).withIssuer("auth0").withClaim("user", user.getID())
+          JWT.create().withExpiresAt(date).withIssuer("auth0").withClaim("user", user.getId())
               .sign(this.jwtAlgorithm);
     } catch (Exception e) {
       throw new WebApplicationException("Unable to create token", e, Status.INTERNAL_SERVER_ERROR);

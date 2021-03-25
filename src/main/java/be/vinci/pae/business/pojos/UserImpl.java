@@ -25,9 +25,27 @@ public class UserImpl implements User {
   @JsonView(Views.AdminOnly.class)
   private String role;
   @JsonView(Views.AdminOnly.class)
+  private Integer addressId;
+  @JsonView(Views.AdminOnly.class)
   private AddressDTO address;
+  @JsonView(Views.AdminOnly.class)
+  private String registrationDate;
+  @JsonView(Views.AdminOnly.class)
+  private Integer purchasedFurnitureNbr;
+  @JsonView(Views.AdminOnly.class)
+  private Integer soldFurnitureNbr;
+  @JsonView(Views.AdminOnly.class)
+  private Boolean waiting;
 
+  @Override
+  public Integer getId() {
+    return id;
+  }
 
+  @Override
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
   @Override
   public String getLastName() {
@@ -69,17 +87,6 @@ public class UserImpl implements User {
     this.role = role;
   }
 
-
-  @Override
-  public Integer getID() {
-    return id;
-  }
-
-  @Override
-  public void setID(Integer id) {
-    this.id = id;
-  }
-
   @Override
   public String getUsername() {
     return username;
@@ -101,8 +108,13 @@ public class UserImpl implements User {
   }
 
   @Override
-  public boolean checkPassword(String plainText) {
-    return BCrypt.checkpw(plainText, this.password);
+  public Integer getAddressId() {
+    return this.addressId;
+  }
+
+  @Override
+  public void setAddressId(Integer addressId) {
+    this.addressId = addressId;
   }
 
   @Override
@@ -113,6 +125,53 @@ public class UserImpl implements User {
   @Override
   public void setAddress(AddressDTO addressDTO) {
     this.address = addressDTO;
+  }
+
+
+  @Override
+  public String getRegistrationDate() {
+    return registrationDate;
+  }
+
+  @Override
+  public void setRegistrationDate(String registrationDate) {
+    this.registrationDate = registrationDate;
+  }
+
+  @Override
+  public Integer getPurchasedFurnitureNbr() {
+    return purchasedFurnitureNbr;
+  }
+
+  @Override
+  public void setPurchasedFurnitureNbr(Integer purchasedFurnitureNbr) {
+    this.purchasedFurnitureNbr = purchasedFurnitureNbr;
+  }
+
+  @Override
+  public Integer getSoldFurnitureNbr() {
+    return soldFurnitureNbr;
+  }
+
+  @Override
+  public void setSoldFurnitureNbr(Integer soldFurnitureNbr) {
+    this.soldFurnitureNbr = soldFurnitureNbr;
+  }
+
+  @Override
+  public Boolean isWaiting() {
+    return waiting;
+  }
+
+  @Override
+  public void setWaiting(Boolean waiting) {
+    this.waiting = waiting;
+  }
+
+
+  @Override
+  public boolean checkPassword(String plainText) {
+    return BCrypt.checkpw(plainText, this.password);
   }
 
   @Override

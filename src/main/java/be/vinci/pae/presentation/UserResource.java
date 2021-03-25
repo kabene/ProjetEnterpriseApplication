@@ -47,8 +47,9 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response rememberMe(@Context ContainerRequest request) {
+    UserDTO user = (UserDTO) request.getProperty("user");
     UserDTO currentUser = Json
-        .filterPublicJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
+        .filterPublicJsonView(user, UserDTO.class);
     String token = authentication.createLongToken(currentUser);
     ObjectNode node = jsonMapper.createObjectNode().put("token", token)
         .putPOJO("user", currentUser);
@@ -103,8 +104,8 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response getUser(@Context ContainerRequest request) {
-    UserDTO currentUser = Json
-        .filterAdminOnlyJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
+    UserDTO userFound = (UserDTO) request.getProperty("user");
+    UserDTO currentUser = Json.filterAdminOnlyJsonView(userFound, UserDTO.class);
     return Response.ok(currentUser, MediaType.APPLICATION_JSON).build();
   }
 
