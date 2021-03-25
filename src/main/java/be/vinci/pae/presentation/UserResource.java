@@ -147,35 +147,35 @@ public class UserResource {
   }
 
   /**
-   * GET users/customers - Get all the users.
+   * GET users/detail - Get all users.
    *
    * @return the list of users
    * @throws WebApplicationException to send a fail status
    */
   @GET
-  @Path("customers")
+  @Path("/detail")
   @Produces(MediaType.APPLICATION_JSON)
   @Admin
-  public Response getCustomers() {
-    List<UserDTO> users = userUCC.showAllCustomers();
+  public Response getUsers() {
+    List<UserDTO> users = userUCC.getAll();
     return createNodeFromUserList(users);
   }
 
   /**
-   * POST users/signup - Get all the users with a customerSearch.
+   * POST users/detail/search - Get all users with a userSearch.
    *
-   * @param jsonNode : containing the customerSearch
+   * @param jsonNode : containing the userSearch
    * @return the list of users
    * @throws WebApplicationException to send a fail status
    */
   @POST
-  @Path("customers")
+  @Path("/detail/search")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Admin
-  public Response getCustomers(JsonNode jsonNode) {
-    String customerSearch = jsonNode.get("customerSearch").asText();
-    List<UserDTO> users = userUCC.showCustomersResult(customerSearch);
+  public Response getUsers(JsonNode jsonNode) {
+    String userSearch = jsonNode.get("userSearch").asText();
+    List<UserDTO> users = userUCC.getSearchResult(userSearch);
     return createNodeFromUserList(users);
   }
 

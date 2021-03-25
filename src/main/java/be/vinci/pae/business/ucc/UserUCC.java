@@ -23,9 +23,9 @@ public interface UserUCC {
    */
   UserDTO register(UserDTO user, AddressDTO address);
 
-  List<UserDTO> showAllCustomers();
+  List<UserDTO> getAll();
 
-  List<UserDTO> showCustomersResult(String customerSearch);
+  List<UserDTO> getSearchResult(String userSearch);
 
   UserDTO getOne(int userId);
 }

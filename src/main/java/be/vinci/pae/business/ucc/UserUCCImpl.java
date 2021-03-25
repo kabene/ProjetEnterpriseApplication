@@ -89,11 +89,11 @@ public class UserUCCImpl implements UserUCC {
   }
 
   @Override
-  public List<UserDTO> showAllCustomers() {
+  public List<UserDTO> getAll() {
     List<UserDTO> list;
     try {
       dalServices.startTransaction();
-      list = userDAO.getAllCustomers(); //todo: get addresses ?
+      list = userDAO.getAllUsers(); //todo: get addresses ?
       dalServices.commitTransaction();
     } catch (Exception exception) {
       dalServices.rollbackTransaction();
@@ -103,11 +103,11 @@ public class UserUCCImpl implements UserUCC {
   }
 
   @Override
-  public List<UserDTO> showCustomersResult(String customerSearch) {
+  public List<UserDTO> getSearchResult(String userSearch) {
     List<UserDTO> list;
     try {
       dalServices.startTransaction();
-      list = userDAO.findBySearch(customerSearch);
+      list = userDAO.findBySearch(userSearch);
       dalServices.commitTransaction();
     } catch (Exception exception) {
       dalServices.rollbackTransaction();

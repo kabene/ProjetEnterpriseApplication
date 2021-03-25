@@ -1,7 +1,7 @@
 import HomePage from "./HomePage.js";
 import Authentication from "./Authentication.js";
 import Furnitures from "./Furnitures.js";
-import Customers from "./Customers.js";
+import Users from "./Users.js";
 import Visits from "./Visits.js";
 import ErrorPage from "./ErrorPage.js";
 import FurnitureList from "./FurnitureList.js";
@@ -14,7 +14,7 @@ const routes = {
     "/": HomePage,
     "/authentication": Authentication,
     "/furnitures": Furnitures,
-    "/customers": Customers,
+    "/users": Users,
     "/visits": Visits,
     "/furnitureList": FurnitureList,
     "/visitRequest": VisitRequest,
