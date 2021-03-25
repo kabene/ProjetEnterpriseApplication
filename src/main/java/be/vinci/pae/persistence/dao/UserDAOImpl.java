@@ -6,7 +6,6 @@ import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
-import be.vinci.pae.exceptions.ConflictException;
 import jakarta.inject.Inject;
 
 import java.sql.PreparedStatement;
