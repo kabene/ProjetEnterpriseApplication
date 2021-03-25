@@ -36,6 +36,9 @@ const generateItemAndModal = (furniture) => {
             + getOptionButton(furniture) +
         `</div>`;
 
+    let tabPhotoToRender = getTabPhotoToRender(furniture);
+    console.log(tabPhotoToRender)
+
 
     let modal = `
         <div class="modal fade" id="modal_` + furniture.furnitureId + `">
@@ -48,21 +51,20 @@ const generateItemAndModal = (furniture) => {
                         <div class="row mx-0 pt-5">
                             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                                 <ol class="carousel-indicators bg-secondary">
-                                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                                </ol>
-                                <div class="carousel-inner">
-                                    <div class="carousel-item active">
-                                        <img class="w-75 m-auto" src="` + imageStub + `" alt="Meuble 1">
-                                    </div>
-                                    <div class="carousel-item">
-                                            <img class="w-75 m-auto" src="` + imageStub + `" alt="Meuble 2">
-                                    </div>
-                                    <div class="carousel-item justify-content-center">
-                                        <img class="w-75 m-auto" src="` + imageStub + `" alt="Meuble 3">
-                                    </div>
-                                </div>
+                                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
+                                    for (let i = 1; i < tabPhotoToRender.length; i++)
+                                        modal += `<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>`;
+    modal+=
+                                `</ol>
+                                <div class="carousel-inner">`;
+                                    for (let i = 0; i < tabPhotoToRender.length; i++) {
+                                        modal += `
+                                        <div class="carousel-item active text-center">
+                                            <img class="w-75" src="` + imageStub + `" alt="Photo meuble">
+                                        </div>`;
+                                    }
+    modal+=
+                                `</div>
                                 <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                                     <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
                                     <span class="sr-only">Previous</span>
@@ -78,6 +80,17 @@ const generateItemAndModal = (furniture) => {
             </div>                         
         </div>`;
     return item + modal;
+}
+
+const getTabPhotoToRender = (furniture) => {
+    let photos = furniture.photos;
+    let photosToRender = [furniture.favouritePhoto];
+    let favId = furniture.favouritePhotoId;
+    photos.forEach(p => {
+        if (p.visible && p.photoId != favId)
+            photosToRender.push(p);
+    })
+    return photosToRender;
 }
 
 const getOptionButton = (furniture) => {
