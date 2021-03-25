@@ -52,13 +52,13 @@ Authorization: {{jwt}}
 ###
 
 // showAllCustomers()
-GET {{baseUrl}}/users/customers
+GET {{baseUrl}}/users/users
 Authorization: {{jwt}}
 
 ###
 
 // showCustomersResult()
-POST {{baseUrl}}/users/customers
+POST {{baseUrl}}/users/users
 Content-Type: application/json
 Authorization: {{jwt}}
 
