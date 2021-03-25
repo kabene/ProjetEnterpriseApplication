@@ -1,6 +1,5 @@
 package be.vinci.pae.persistence.dal;
 
-import be.vinci.pae.exceptions.DeadlyException;
 import be.vinci.pae.utils.Configurate;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,7 +37,7 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
       prep = co.prepareStatement(query);
     } catch (SQLException throwables) {
       //throwables.printStackTrace();
-      throw new DeadlyException();
+      throw new InternalError();
     }
     return prep;
   }
@@ -59,7 +58,7 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
       connect.set(conn);
     } catch (SQLException throwables) {
       //throwables.printStackTrace();
-      throw new DeadlyException(throwables.getMessage());
+      throw new InternalError(throwables.getMessage());
     }
 
   }
@@ -72,14 +71,14 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
     try {
       Connection conn;
       if ((conn = connect.get()) == null) {
-        throw new DeadlyException("no connection");
+        throw new InternalError("no connection");
       }
       conn.commit();
       conn.close();
       this.connect.set(null);
     } catch (SQLException throwables) {
       //throwables.printStackTrace();
-      throw new DeadlyException(throwables.getMessage());
+      throw new InternalError(throwables.getMessage());
     }
 
   }
@@ -92,14 +91,14 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
     try {
       Connection conn;
       if ((conn = connect.get()) == null) {
-        throw new DeadlyException("no start");
+        throw new InternalError("no start");
       }
       conn.rollback();
       conn.close();
       this.connect.set(null);
     } catch (SQLException throwables) {
       //throwables.printStackTrace();
-      throw new DeadlyException(throwables.getMessage());
+      throw new InternalError(throwables.getMessage());
     }
   }
 

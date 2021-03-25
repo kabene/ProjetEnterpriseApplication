@@ -26,25 +26,37 @@ public class FurnitureUCCImpl implements FurnitureUCC {
 
   @Override
   public FurnitureDTO getOne(int id) {
+    FurnitureDTO res;
     dalServices.startTransaction();
-    FurnitureDTO res = furnitureDAO.findById(id);
-    if (res != null) {
-      completeFurnitureDTO(res);
-      dalServices.commitTransaction();
-    } else {
+    try {
+      res = furnitureDAO.findById(id);
+      if (res != null) {
+        completeFurnitureDTO(res);
+        dalServices.commitTransaction();
+      } else {
+        dalServices.rollbackTransaction();
+      }
+    } catch (Exception e) {
       dalServices.rollbackTransaction();
+      throw e;
     }
     return res;
   }
 
   @Override
   public List<FurnitureDTO> getAll() {
+    List<FurnitureDTO> dtos;
     dalServices.startTransaction();
-    List<FurnitureDTO> dtos = furnitureDAO.findAll();
-    for (FurnitureDTO dto : dtos) {
-      completeFurnitureDTO(dto);
+    try {
+      dtos = furnitureDAO.findAll();
+      for (FurnitureDTO dto : dtos) {
+        completeFurnitureDTO(dto);
+      }
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      dalServices.rollbackTransaction();
+      throw e;
     }
-    dalServices.commitTransaction();
     return dtos;
   }
 

@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
@@ -8,6 +9,7 @@ import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.FurnitureImpl;
 import be.vinci.pae.business.pojos.PhotoImpl;
 import be.vinci.pae.business.pojos.UserImpl;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
@@ -134,15 +136,16 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockFurnitureDTO1).setType(type);
   }
 
-  @DisplayName("TEST FurnitureUCC.getOne : given invalid id, should return null")
+  @DisplayName("TEST FurnitureUCC.getOne : given invalid id, should throw NotFoundException")
   @Test
   public void test_getOne_givenInvalidId_shouldReturnNull() {
     int furnitureId = 1;
 
-    Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(null);
+    Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(NotFoundException.class);
 
-    FurnitureDTO actual = furnitureUCC.getOne(furnitureId);
-    assertEquals(null, actual, "Calling getOne with an invalid id should return null.");
+    assertThrows(NotFoundException.class,
+        () -> furnitureUCC.getOne(furnitureId),
+        "Calling getOne with an invalid id should throw NotFoundException.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
@@ -228,12 +231,11 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockFurnitureDAO.findAll()).thenReturn(emptyList);
 
-    List<FurnitureDTO> actual = furnitureUCC.getAll();
-    assertEquals(emptyList, actual, "Calling the getAll method without pieces"
-        + " of furniture in db should return an empty list.");
+    assertEquals(emptyList, furnitureUCC.getAll());
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
 
     Mockito.verify(mockFurnitureDAO).findAll();
   }

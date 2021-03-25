@@ -2,6 +2,7 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.factories.FurnitureFactory;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -35,11 +36,13 @@ public class FurnitureDAOImpl implements FurnitureDAO {
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         res = toDTO(rs);
+      } else {
+        throw new NotFoundException("Error: piece of furniture not found");
       }
       rs.close();
       ps.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new InternalError(e.getMessage());
     }
 
     return res;
@@ -58,7 +61,7 @@ public class FurnitureDAOImpl implements FurnitureDAO {
       rs.close();
       ps.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new InternalError(e.getMessage());
     }
     return res;
   }

@@ -5,7 +5,9 @@ import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
 //import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
-import be.vinci.pae.exceptions.TakenException;
+import be.vinci.pae.exceptions.ConflictException;
+import be.vinci.pae.exceptions.ForbiddenException;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
@@ -36,22 +38,19 @@ public class UserUCCImpl implements UserUCC {
   public UserDTO login(String username, String password) {
     try {
       dalServices.startTransaction();
-
       User userFound = (User) userDAO.findByUsername(username);
-      if (userFound == null) {
-        dalServices.rollbackTransaction();
-        return null; // invalid username
-      }
       if (!userFound.checkPassword(password)) {
-        dalServices.rollbackTransaction();
-        return null; // invalid password
+        throw new ForbiddenException("Error: invalid credentials");
       }
       userFound.setAddress(addressDAO.findById(userFound.getAddressId()));
       dalServices.commitTransaction();
       return userFound;
+    } catch (NotFoundException e) {
+      dalServices.rollbackTransaction();
+      throw new ForbiddenException("Error: invalid credentials");
+      // no user found with given username
     } catch (Exception exception) {
       dalServices.rollbackTransaction();
-      //  exception.printStackTrace();
       throw exception;
     }
   }
@@ -67,10 +66,10 @@ public class UserUCCImpl implements UserUCC {
     try {
       dalServices.startTransaction();
       if (userDAO.usernameAlreadyTaken(userDTO.getUsername())) {
-        throw new TakenException("username already taken");
+        throw new ConflictException("Error: username already taken");
       }
       if (userDAO.emailAlreadyTaken(userDTO.getEmail())) {
-        throw new TakenException("email already taken");
+        throw new ConflictException("Error: email already taken");
       }
       addressDAO.addAddress(address);
       int id = addressDAO.getId(address);
@@ -83,7 +82,6 @@ public class UserUCCImpl implements UserUCC {
       return userDTO;
     } catch (Exception exception) {
       dalServices.rollbackTransaction();
-      // exception.printStackTrace();
       throw exception;
     }
   }
