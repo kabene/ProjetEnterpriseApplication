@@ -1,5 +1,6 @@
 package be.vinci.pae.presentation.filters;
 
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.ucc.UserUCC;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.inject.Inject;
@@ -25,12 +26,13 @@ public class AdminRequestFilter implements ContainerRequestFilter {
       DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
 
       int userId = decodedToken.getClaim("user").asInt();
-      boolean isAdmin = userUCC.getOne(userId).getRole().equals("admin");
+      UserDTO currentUser = userUCC.getOne(userId);
+      boolean isAdmin = currentUser.getRole().equals("admin");
       if (!isAdmin) {
         requestContext
             .abortWith(Response.status(Status.UNAUTHORIZED).entity("Unauthorized").build());
       }
-      requestContext.setProperty("userId", userId);
+      requestContext.setProperty("user", currentUser);
     } catch (Exception e) {
       requestContext
           .abortWith(Response.status(Status.UNAUTHORIZED).entity("Not connected").build());
