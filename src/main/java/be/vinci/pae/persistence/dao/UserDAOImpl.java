@@ -1,12 +1,11 @@
 package be.vinci.pae.persistence.dao;
 
 
-import be.vinci.pae.exceptions.DeadlyException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
-import be.vinci.pae.exceptions.TakenException;
+import be.vinci.pae.exceptions.ConflictException;
 import jakarta.inject.Inject;
 
 import java.sql.PreparedStatement;
@@ -46,7 +45,7 @@ public class UserDAOImpl implements UserDAO {
       return userFound;
     } catch (SQLException e) {
       e.printStackTrace();
-      throw new DeadlyException();
+      throw new InternalError();
     }
   }
 
@@ -105,7 +104,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(toDTO(rs));
       }
     } catch (SQLException e) {
-      throw new DeadlyException();
+      throw new InternalError();
     }
     return users;
   }
@@ -130,7 +129,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(toDTO(rs));
       }
     } catch (SQLException e) {
-      throw new DeadlyException();
+      throw new InternalError();
     }
     return users;
   }
@@ -184,7 +183,7 @@ public class UserDAOImpl implements UserDAO {
       ps.close();
       return res;
     } catch (SQLException exception) {
-      throw new TakenException();
+      throw new ConflictException();
     }
   }
 
@@ -209,7 +208,7 @@ public class UserDAOImpl implements UserDAO {
       ps.close();
       return res;
     } catch (SQLException throwables) {
-      throw new TakenException();
+      throw new ConflictException();
     }
   }
 

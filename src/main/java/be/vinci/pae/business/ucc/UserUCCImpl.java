@@ -5,7 +5,7 @@ import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
 //import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
-import be.vinci.pae.exceptions.TakenException;
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
@@ -67,10 +67,10 @@ public class UserUCCImpl implements UserUCC {
     try {
       dalServices.startTransaction();
       if (userDAO.usernameAlreadyTaken(userDTO.getUsername())) {
-        throw new TakenException("username already taken");
+        throw new ConflictException("username already taken");
       }
       if (userDAO.emailAlreadyTaken(userDTO.getEmail())) {
-        throw new TakenException("email already taken");
+        throw new ConflictException("email already taken");
       }
       addressDAO.addAddress(address);
       int id = addressDAO.getId(address);

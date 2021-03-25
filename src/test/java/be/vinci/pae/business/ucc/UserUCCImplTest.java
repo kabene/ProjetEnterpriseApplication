@@ -9,7 +9,7 @@ import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.AddressImpl;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.business.pojos.UserImpl;
-import be.vinci.pae.exceptions.TakenException;
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
@@ -172,7 +172,7 @@ public class UserUCCImplTest {
     Mockito.when(mockUser.getUsername()).thenReturn(username);
     Mockito.when(mockUserDAO.usernameAlreadyTaken(username)).thenReturn(true);
 
-    assertThrows(TakenException.class, () ->
+    assertThrows(ConflictException.class, () ->
             userUCC.register(mockUser, mockAddressDTO),
         "The call to register should throw a TakenException when given a taken username");
 
@@ -194,7 +194,7 @@ public class UserUCCImplTest {
     Mockito.when(mockUserDAO.emailAlreadyTaken(email)).thenReturn(true);
 
 
-    assertThrows(TakenException.class, () ->
+    assertThrows(ConflictException.class, () ->
             userUCC.register(mockUser, mockAddressDTO),
         "The call to register should throw a TakenException when given a taken email");
     Mockito.verify(mockDal).startTransaction();
