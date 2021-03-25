@@ -1,7 +1,7 @@
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
 import {verifyAdmin} from "../utils/utils.js";
-import { getUserSessionData } from "../utils/session";
+import {getUserSessionData} from "../utils/session";
 import {Loader} from "@googlemaps/js-api-loader";
 
 let page = document.querySelector("#page");
@@ -10,55 +10,54 @@ let userDetail;
 let currentUser;
 let pageHTML;
 
-
 const Users = async () => {
-    currentUser = getUserSessionData();
+  currentUser = getUserSessionData();
 
-    pageHTML = `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
-    page.innerHTML = pageHTML;
+  pageHTML = `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
+  page.innerHTML = pageHTML;
 
-    await fetch("/users/detail", {
-        method: "GET",
-        headers: {
-            "Authorization": currentUser.token,
-            "Content-Type": "application/json",
-        },
-    }).then((response) => {
-        if (!response.ok) 
-            throw new Error(
-                "Error code : " + response.status + " : " + response.statusText
-            );
-        return response.json();
-    }).then((data) => {
-        usersList = data;
-    }).catch((err) => {
-        console.error(err);
-    });
+  await fetch("/users/detail", {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    usersList = data;
+  }).catch((err) => {
+    console.error(err);
+  });
 
-
-    pageHTML = `
+  pageHTML = `
     <h1>Liste des utilisateurs:</h1>
     <div class="mx-5 row">
         <div class="col-12">
         <input type="text" placeholder="Rechercher par nom, prénom, code postal ou ville" class="w-50 mb-2">`
-            + generateLargeTable() + 
-        `</div>
+      + generateLargeTable() +
+      `</div>
         <div id="shortTable" class="col-4 collapse collapsedDiv">
             <input type="text" placeholder="Rechercher" class="mb-2">
             <button type="button" class="btn btn-dark mb-2" data-toggle="collapse" data-target=".collapsedDiv">Retour à la liste</button>`
-            + generateShortTable() +
-        `</div>
+      + generateShortTable() +
+      `</div>
         <div class="col-8 collapse collapsedDiv">`
-            + generateUserCard() +
-        `</div>
+      + generateUserCard() +
+      `</div>
     </div>`;
-    page.innerHTML = pageHTML;
-    //
-    await AddressToGeo("roodebeek 52");
+  page.innerHTML = pageHTML;
+  //
+  await AddressToGeo("Clos Chapelle-aux-Champs 43, 1200 Woluwe-Saint-Lambert");
 }
 
 const generateLargeTable = () => {
-    let res = `
+  let res = `
     <table id="largeTable" class="table table-bordered table-hover">
         <thead class="table-secondary">
             <tr>
@@ -72,17 +71,17 @@ const generateLargeTable = () => {
             </tr>
         </thead>
         <tbody>`;
-            usersList.users.forEach(user => {
-                res += generateLargeRow(user);
-            });
-            res = res + `
+  usersList.users.forEach(user => {
+    res += generateLargeRow(user);
+  });
+  res = res + `
         </tbody>
     </table>`;
-    return res;
+  return res;
 }
 
 const generateShortTable = () => {
-    let res = `
+  let res = `
     <table class="table table-bordered table-hover">
         <thead class="table-secondary">
             <tr>
@@ -91,17 +90,17 @@ const generateShortTable = () => {
             </tr>
         </thead>
         <tbody>`;
-            usersList.users.forEach(user => {
-                res += generateShortRow(user);
-            });
-            res = res + `
+  usersList.users.forEach(user => {
+    res += generateShortRow(user);
+  });
+  res = res + `
         </tbody>
     </table>`;
-    return res;
+  return res;
 }
 
 const generateLargeRow = (user) => {
-    return ` 
+  return ` 
     <tr class="toBeClicked" data-toggle="collapse" data-target=".collapsedDiv">
         <th><p>` + user.lastName + `</p></th>
         <th><p>` + user.firstName + `</p></th>
@@ -113,9 +112,8 @@ const generateLargeRow = (user) => {
    </tr>`;
 }
 
-
 const generateShortRow = (user) => {
-    return ` 
+  return ` 
     <tr class="toBeClicked">
         <th><p>` + user.lastName + `</p></th>
         <th><p>` + user.firstName + `</p></th>
@@ -123,7 +121,7 @@ const generateShortRow = (user) => {
 }
 
 const generateUserCard = (userDetail) => {
-    return `
+  return `
    <div class="container emp-profile">
             <form>
                 <div class="row">
@@ -230,66 +228,87 @@ const generateUserCard = (userDetail) => {
     `;
 }
 
-const clientDetail=async (id)=>{
-    await fetch(`/users/detail/${id}`, {
-        method: "GET",
-        headers: {
-            "Authorization": currentUser.token,
-            "Content-Type": "application/json",
-        },
-    }).then((response) => {
-        if (!response.ok)
-            throw new Error(
-                "Error code : " + response.status + " : " + response.statusText
-            );
-        return response.json();
-    }).then((data) => {
-        userDetail= data;
-    }).catch((err) => {
-        console.error(err);
-    });
+const clientDetail = async (id) => {
+  await fetch(`/users/detail/${id}`, {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    userDetail = data;
+  }).catch((err) => {
+    console.error(err);
+  });
 
 }
 
-
-const map=(latitude,lngitude) => {
-    console.log(latitude,lngitude);
+const map = (latitude, lngitude) => {
+  if (latitude != null && lngitude != null) {
+    console.log(latitude, lngitude);
     let map;
     const additionalOptions = {};
-    const place ={lat: latitude, lng: lngitude };
+    const place = {lat: latitude, lng: lngitude};
     const loader = new Loader({
-        apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
-        version: "weekly",
-        ...additionalOptions,
+      apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
+      version: "weekly",
+      ...additionalOptions,
     });
-    console.log(place);
     loader.load().then(() => {
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: place,
-            zoom: 13,
-        });
-        new google.maps.Marker({
-            position: place,
-            map:map,
-        })
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: place,
+        zoom: 13,
+      });
+      new google.maps.Marker({
+        position: place,
+        map: map,
+      })
     });
+  } else {
+    console.log("adresse not found");
+    const additionalOptions = {};
+    let map;
+    let  place={lat: 41.726931, lng: -49.948253};
+    const loader = new Loader({
+      apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
+      version: "weekly",
+      ...additionalOptions,
+    });
+    loader.load().then(() => {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: place,
+        zoom: 13,
+      });
+      new google.maps.Marker({
+        position: place,
+        map: map,
+      })
+    });
+  }
 }
 
+const AddressToGeo = async (address) => {
 
-const AddressToGeo=async (address)=>{
+  var platform = new H.service.Platform({
+    'apikey': 'NZvpPwfeFjJCoj1o5y3l3woYrq8ZComP7MGitc2-FRw'
+  });
 
-    var platform = new H.service.Platform({
-        'apikey': 'QHZv6jItrBmW0n3fXSO5HbZzbBpxzunbSXquM_ap6o0'
-    });
+  var service = platform.getSearchService();
 
-    var service = platform.getSearchService();
-
-    await service.geocode({
+  await service.geocode({
         q: address
-    }, (result) => {
+      }, (result) => {
         console.log(result.items[0].position)
-        map(result.items[0].position.lat,result.items[0].position.lng);
-    }, alert)
+        map(result.items[0].position.lat, result.items[0].position.lng);
+      },
+      map(null, null))
 }
 
 export default Users;
