@@ -1,5 +1,6 @@
 package be.vinci.pae.presentation;
 
+import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.UnauthorizedException;
@@ -20,6 +21,8 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
   }
 
   private int getStatusCode(Throwable e) {
+    if(e instanceof BadRequestException)
+      return 400;
     if(e instanceof UnauthorizedException)
       return 401;
     if(e instanceof NotFoundException)
