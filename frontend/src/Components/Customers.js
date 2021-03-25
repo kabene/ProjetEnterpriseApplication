@@ -130,7 +130,7 @@ const generateCustomerCard = (userDetail) => {
                     <div class="col-md-6">
                         <div class="profile-head">
                                     <h5 id="Name&Firstname">
-                                      Kshiti Ghelani
+                                      Doe John
                                     </h5>
                                     <p class="proile-rating" >ROLE : <span id="role"><p>     </p> </span></p>
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -165,7 +165,7 @@ const generateCustomerCard = (userDetail) => {
                                                 <label>Nom et prénom:</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p id="Name&Firstname" >Kshiti Ghelani</p>
+                                                <p id="Name&Firstname" >Doe John</p>
                                             </div>
                                         </div>
                                         <div class="row">
