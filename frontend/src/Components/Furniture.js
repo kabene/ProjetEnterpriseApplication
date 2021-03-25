@@ -1,6 +1,3 @@
-import Navbar from "./Navbar";
-import {RedirectUrl} from "./Router";
-import {verifyAdmin} from "../utils/utils.js";
 import { getUserSessionData } from "../utils/session";
 import imageStub from "../img/furnitures/Bureau_1.png"
 
