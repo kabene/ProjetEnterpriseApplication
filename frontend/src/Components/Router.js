@@ -1,6 +1,6 @@
 import HomePage from "./HomePage.js";
 import Authentication from "./Authentication.js";
-import Furnitures from "./Furnitures.js";
+import Furniture from "./Furniture.js";
 import Customer from "./Customer.js";
 import Visits from "./Visits.js";
 import ErrorPage from "./ErrorPage.js";
@@ -13,7 +13,7 @@ import { setLayout } from "../utils/render.js";
 const routes = {
     "/": HomePage,
     "/authentication": Authentication,
-    "/furnitures": Furnitures,
+    "/furniture": Furniture,
     "/customers": Customer,
     "/visits": Visits,
     "/furnitureList": FurnitureList,
