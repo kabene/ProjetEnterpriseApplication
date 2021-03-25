@@ -1,11 +1,11 @@
 package be.vinci.pae.exceptions;
 
-public class TakenException extends BusinessException {
+public class BusinessException extends RuntimeException {
 
   /**
    * Exception generated when a field is filled with some unavailable content.
    */
-  public TakenException() {
+  public BusinessException() {
     super();
   }
 
@@ -16,7 +16,8 @@ public class TakenException extends BusinessException {
    * @param message the detail message. The detail message is saved for later retrieval by the
    *                {@link #getMessage()} method.
    */
-  public TakenException(String message) {
+  public BusinessException(String message) {
     super(message);
   }
+
 }

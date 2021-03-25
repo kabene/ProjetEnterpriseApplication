@@ -1,11 +1,10 @@
 package be.vinci.pae.exceptions;
 
-public class TakenException extends BusinessException {
-
+public class NotFoundException extends BusinessException{
   /**
-   * Exception generated when a field is filled with some unavailable content.
+   * Exception generated when accessing an non existing resource.
    */
-  public TakenException() {
+  public NotFoundException() {
     super();
   }
 
@@ -16,7 +15,7 @@ public class TakenException extends BusinessException {
    * @param message the detail message. The detail message is saved for later retrieval by the
    *                {@link #getMessage()} method.
    */
-  public TakenException(String message) {
+  public NotFoundException(String message) {
     super(message);
   }
 }
