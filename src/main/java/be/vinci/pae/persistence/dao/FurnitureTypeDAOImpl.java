@@ -22,7 +22,7 @@ public class FurnitureTypeDAOImpl implements FurnitureTypeDAO {
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         res = rs.getString("type_name");
-      }else {
+      } else {
         throw new NotFoundException("Error: furniture type not found");
       }
       rs.close();

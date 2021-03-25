@@ -1,9 +1,9 @@
 package be.vinci.pae.exceptions;
 
-public class BadRequestException extends BusinessException{
+public class BadRequestException extends BusinessException {
 
   /**
-   * Exception generated if a client sends a malformed request
+   * Exception generated if a client sends a malformed request.
    */
   public BadRequestException() {
     super();

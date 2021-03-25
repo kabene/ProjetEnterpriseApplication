@@ -23,23 +23,29 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
   }
 
   private int getStatusCode(Throwable e) {
-    if(e instanceof BadRequestException)
+    if (e instanceof BadRequestException) {
       return 400;
-    if(e instanceof UnauthorizedException)
+    }
+    if (e instanceof UnauthorizedException) {
       return 401;
-    if(e instanceof ForbiddenException)
+    }
+    if (e instanceof ForbiddenException) {
       return 403;
-    if(e instanceof NotFoundException)
+    }
+    if (e instanceof NotFoundException) {
       return 404;
-    if(e instanceof ConflictException)
+    }
+    if (e instanceof ConflictException) {
       return 409;
+    }
 
     return 500;
   }
 
   private Object getEntity(Throwable e) {
-    if(e instanceof BusinessException)
+    if (e instanceof BusinessException) {
       return e.getMessage();
+    }
     // internal error -> hide message
     return "Server Internal Error";
   }

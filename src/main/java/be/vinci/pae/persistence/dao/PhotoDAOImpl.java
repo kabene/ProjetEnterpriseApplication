@@ -57,7 +57,7 @@ public class PhotoDAOImpl implements PhotoDAO {
         res.setOnHomePage(rs.getBoolean("is_on_home_page"));
         res.setVisible(rs.getBoolean("is_visible"));
         res.setSource(rs.getString("source"));
-      }else {
+      } else {
         throw new NotFoundException("Error: photo not found");
       }
       rs.close();

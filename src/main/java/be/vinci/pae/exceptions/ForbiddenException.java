@@ -1,6 +1,6 @@
 package be.vinci.pae.exceptions;
 
-public class ForbiddenException extends BusinessException{
+public class ForbiddenException extends BusinessException {
 
   /**
    * Exception generated if the client asks to be granted access using invalid credentials.
