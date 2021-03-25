@@ -11,6 +11,7 @@
   "dependencies": {
     "@babel/core": "^7.12.7",
     "@babel/preset-env": "^7.12.7",
+    "@googlemaps/js-api-loader": "^1.11.3",
     "babel-loader": "^8.2.1",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",

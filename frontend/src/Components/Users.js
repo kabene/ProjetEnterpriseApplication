@@ -1,60 +1,63 @@
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
 import {verifyAdmin} from "../utils/utils.js";
-import { getUserSessionData } from "../utils/session";
+import {getUserSessionData} from "../utils/session";
+import {Loader} from "@googlemaps/js-api-loader";
 
 let page = document.querySelector("#page");
 let usersList;
+let userDetail;
 let currentUser;
 let pageHTML;
 
-
 const Users = async () => {
-    currentUser = getUserSessionData();
+  currentUser = getUserSessionData();
 
-    pageHTML = `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
-    page.innerHTML = pageHTML;
+  pageHTML = `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
+  page.innerHTML = pageHTML;
 
-    await fetch("/users/detail", {
-        method: "GET",
-        headers: {
-            "Authorization": currentUser.token,
-            "Content-Type": "application/json",
-        },
-    }).then((response) => {
-        if (!response.ok) 
-            throw new Error(
-                "Error code : " + response.status + " : " + response.statusText
-            );
-        return response.json();
-    }).then((data) => {
-        usersList = data;
-    }).catch((err) => {
-        console.error(err);
-    });
+  await fetch("/users/detail", {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    usersList = data;
+  }).catch((err) => {
+    console.error(err);
+  });
 
-
-    pageHTML = `
+  pageHTML = `
     <h1>Liste des utilisateurs:</h1>
     <div class="mx-5 row">
         <div class="col-12">
         <input type="text" placeholder="Rechercher par nom, prénom, code postal ou ville" class="w-50 mb-2">`
-            + generateLargeTable() + 
-        `</div>
+      + generateLargeTable() +
+      `</div>
         <div id="shortTable" class="col-4 collapse collapsedDiv">
             <input type="text" placeholder="Rechercher" class="mb-2">
             <button type="button" class="btn btn-dark mb-2" data-toggle="collapse" data-target=".collapsedDiv">Retour à la liste</button>`
-            + generateShortTable() +
-        `</div>
+      + generateShortTable() +
+      `</div>
         <div class="col-8 collapse collapsedDiv">`
-            + generateUserCard() +
-        `</div>
+      + generateUserCard() +
+      `</div>
     </div>`;
-    page.innerHTML = pageHTML;
+  page.innerHTML = pageHTML;
+  //
+  await AddressToGeo("Clos Chapelle-aux-Champs 43, 1200 Woluwe-Saint-Lambert");
 }
 
 const generateLargeTable = () => {
-    let res = `
+  let res = `
     <table id="largeTable" class="table table-bordered table-hover">
         <thead class="table-secondary">
             <tr>
@@ -68,17 +71,17 @@ const generateLargeTable = () => {
             </tr>
         </thead>
         <tbody>`;
-            usersList.users.forEach(user => {
-                res += generateLargeRow(user);
-            });
-            res = res + `
+  usersList.users.forEach(user => {
+    res += generateLargeRow(user);
+  });
+  res = res + `
         </tbody>
     </table>`;
-    return res;
+  return res;
 }
 
 const generateShortTable = () => {
-    let res = `
+  let res = `
     <table class="table table-bordered table-hover">
         <thead class="table-secondary">
             <tr>
@@ -87,18 +90,18 @@ const generateShortTable = () => {
             </tr>
         </thead>
         <tbody>`;
-            usersList.users.forEach(user => {
-                res += generateShortRow(user);
-            });
-            res = res + `
+  usersList.users.forEach(user => {
+    res += generateShortRow(user);
+  });
+  res = res + `
         </tbody>
     </table>`;
-    return res;
+  return res;
 }
 
 const generateLargeRow = (user) => {
-    return ` 
-    <tr data-toggle="collapse" data-target=".collapsedDiv">
+  return ` 
+    <tr class="toBeClicked" data-toggle="collapse" data-target=".collapsedDiv">
         <th><p>` + user.lastName + `</p></th>
         <th><p>` + user.firstName + `</p></th>
         <th><p>` + user.username + `</p></th>
@@ -109,21 +112,203 @@ const generateLargeRow = (user) => {
    </tr>`;
 }
 
-
 const generateShortRow = (user) => {
-    return ` 
-    <tr>
+  return ` 
+    <tr class="toBeClicked">
         <th><p>` + user.lastName + `</p></th>
         <th><p>` + user.firstName + `</p></th>
    </tr>`;
 }
 
-const generateUserCard = () => {
-    return `
-    <div  id="userCard" class="w-50 h-50 border">
-      <a>Fiche Client</a>
-    </div>
+const generateUserCard = (userDetail) => {
+  return `
+   <div class="container emp-profile">
+            <form>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="profile-head">
+                                    <h5 id="Name&Firstname">
+                                      Doe John
+                                    </h5>
+                                    <p class="proile-rating" >ROLE : <span id="role"><p>     </p> </span></p>
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">informations personneles</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">adresses et plan</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="submit" class="profile-edit-btn" name="btnAddMore" value="prendre le controle"/>
+                    </div>
+                </div>
+                <div class="row">
+            
+                    <div class="col-md-8">
+                        <div class="tab-content profile-tab" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>username</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p id="username"> </p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Nom et prénom:</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p id="Name&Firstname" >Doe John</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Email</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p id="email" >   </p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>nombre d'achat</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p id="purchased_furniture_nbr">   </p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>nombre de ventes</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p id="sold_furniture_nbr">   </p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>status</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p id="waiting">   </p>
+                                            </div>
+                                        </div>
+                                         <div class="col-md-2" style="display: flex"> 
+                        <input type="submit" class="profile-edit-btn" name="btnAddMore"  id="approuver" value="approuver" style="color: #0062cc; margin:5px" />
+                        <input type="submit" class="profile-edit-btn" name="btnAddMore" id="refuser" value="refuser" style="color: red; margin:5px"/>
+                    </div>
+                            </div>
+                    
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label> Adresse </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p> adresse concat</p>
+                                            </div>
+                                        </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Map</label><br/>
+                                        <div id="map" ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>           
+        </div>
     `;
+}
+
+const clientDetail = async (id) => {
+  await fetch(`/users/detail/${id}`, {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    userDetail = data;
+  }).catch((err) => {
+    console.error(err);
+  });
+
+}
+
+const map = (latitude, lngitude) => {
+  if (latitude != null && lngitude != null) {
+    console.log(latitude, lngitude);
+    let map;
+    const additionalOptions = {};
+    const place = {lat: latitude, lng: lngitude};
+    const loader = new Loader({
+      apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
+      version: "weekly",
+      ...additionalOptions,
+    });
+    loader.load().then(() => {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: place,
+        zoom: 13,
+      });
+      new google.maps.Marker({
+        position: place,
+        map: map,
+      })
+    });
+  } else {
+    console.log("adresse not found");
+    const additionalOptions = {};
+    let map;
+    let  place={lat: 41.726931, lng: -49.948253};
+    const loader = new Loader({
+      apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
+      version: "weekly",
+      ...additionalOptions,
+    });
+    loader.load().then(() => {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: place,
+        zoom: 13,
+      });
+      new google.maps.Marker({
+        position: place,
+        map: map,
+      })
+    });
+  }
+}
+
+const AddressToGeo = async (address) => {
+
+  var platform = new H.service.Platform({
+    'apikey': 'NZvpPwfeFjJCoj1o5y3l3woYrq8ZComP7MGitc2-FRw'
+  });
+
+  var service = platform.getSearchService();
+
+  await service.geocode({
+        q: address
+      }, (result) => {
+        console.log(result.items[0].position)
+        map(result.items[0].position.lat, result.items[0].position.lng);
+      },
+      map(null, null))
 }
 
 export default Users;
