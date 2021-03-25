@@ -23,12 +23,14 @@ const Customers = async () => {
         },
     }).then((response) => {
         if (!response.ok) 
-            throw error();
+            throw new Error(
+                "Error code : " + response.status + " : " + response.statusText
+            );
         return response.json();
     }).then((data) => {
         usersList = data;
     }).catch((err) => {
-        console.log("Erreur de fetch !! :´\n" + err);
+        console.error(err);
     });
 
 
