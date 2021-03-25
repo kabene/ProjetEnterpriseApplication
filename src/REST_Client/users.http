@@ -51,19 +51,19 @@ Authorization: {{jwt}}
  %}
 ###
 
-// showAllCustomers()
-GET {{baseUrl}}/users/users
+// getAll()
+GET {{baseUrl}}/users/detail
 Authorization: {{jwt}}
 
 ###
 
-// showCustomersResult()
-POST {{baseUrl}}/users/users
+// getSearchResult()
+POST {{baseUrl}}/users/detail/search
 Content-Type: application/json
 Authorization: {{jwt}}
 
 {
-  "customerSearch": "a"
+  "userSearch": "a"
 }
 ###
 
