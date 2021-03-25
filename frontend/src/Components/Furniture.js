@@ -19,22 +19,32 @@ const Furniture = async () => {
 
 
 const generateTable = () => {
-    let res = `<div class="row mx-5 p-5 border">`;
+    return `<div class="row mx-5 p-5 border">` + getAllItems() + `</div>`;
+}
+
+const getAllItems = () => {
+    let res = "";
     furnitureList.forEach(furniture => res += generateItem(furniture));
-    res += `</div>`;
     return res;
 }
 
 const generateItem = (furniture) => {
-    let res = `
+    return`
         <div class="col-4 px-0">
             <img class="w-50" src="` + imageStub /*furniture.favouritePhoto.source*/ +`" alt="thumbnail"/>
-            <p> ` + furniture.description + ` </p>`;
-    if (furniture.condition === "available for sale")
-        res += `<button type="button" class="btn btn-sm btn-primary">Introduire une option</button>`;
-    //TODO add 'annuler option button + events when clicking on buttons
-    res += `</div>`;
-    return res;
+            <p>` + furniture.description + `</p>`
+            + getOptionButton(furniture) +
+        `</div>`;
+}
+
+const getOptionButton = (furniture) => {
+    if (furniture.condition === "available for sale" && currentUser !== null /*TODO check if the user is a simple customer*/) {
+        //TODO add events when clicking on button
+        return `<button type="button" class="btn btn-sm btn-primary">Introduire une option</button>`;
+    } else {
+        //TODO add 'annuler option' button + event when clicking on it if the user has booked the furniture
+    }
+    return "";
 }
 
 
