@@ -19,6 +19,14 @@ Content-Type: application/json
 }
 ###
 
+//login as 'ex' (pwd : qwerty) -> fail (invalid pwd)
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "username": "ex"
+}
+###
 
 //login with remember me -> store jwt
 POST {{baseUrl}}/users/login
@@ -51,19 +59,19 @@ Authorization: {{jwt}}
  %}
 ###
 
-// showAllCustomers()
-GET {{baseUrl}}/users/customers
+// getAll()
+GET {{baseUrl}}/users/detail
 Authorization: {{jwt}}
 
 ###
 
-// showCustomersResult()
-POST {{baseUrl}}/users/customers
+// getSearchResult()
+POST {{baseUrl}}/users/detail/search
 Content-Type: application/json
 Authorization: {{jwt}}
 
 {
-  "customerSearch": "a"
+  "userSearch": "a"
 }
 ###
 

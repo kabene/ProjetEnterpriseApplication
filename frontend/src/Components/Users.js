@@ -11,13 +11,13 @@ let currentUser;
 let pageHTML;
 
 
-const Customers = async () => {
+const Users = async () => {
     currentUser = getUserSessionData();
 
     pageHTML = `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
     page.innerHTML = pageHTML;
 
-    await fetch("/users/customers", {
+    await fetch("/users/detail", {
         method: "GET",
         headers: {
             "Authorization": currentUser.token,
@@ -37,7 +37,7 @@ const Customers = async () => {
 
 
     pageHTML = `
-    <h1>Liste des clients:</h1>
+    <h1>Liste des utilisateurs:</h1>
     <div class="mx-5 row">
         <div class="col-12">
         <input type="text" placeholder="Rechercher par nom, prénom, code postal ou ville" class="w-50 mb-2">`
@@ -49,7 +49,7 @@ const Customers = async () => {
             + generateShortTable() +
         `</div>
         <div class="col-8 collapse collapsedDiv">`
-            + generateCustomerCard() +
+            + generateUserCard() +
         `</div>
     </div>`;
     page.innerHTML = pageHTML;
@@ -122,7 +122,7 @@ const generateShortRow = (user) => {
    </tr>`;
 }
 
-const generateCustomerCard = (userDetail) => {
+const generateUserCard = (userDetail) => {
     return `
    <div class="container emp-profile">
             <form>
@@ -292,4 +292,4 @@ const AddressToGeo=async (address)=>{
     }, alert)
 }
 
-export default Customers;
+export default Users;
