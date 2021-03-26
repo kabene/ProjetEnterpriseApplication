@@ -217,5 +217,8 @@ public class UserUCCImplTest {
   public void test_getAll_givenNothing_shouldReturnAllUsers() {
     List<UserDTO> allUsers = Arrays.asList(mockUser1, mockUser2);
     Mockito.when(mockUserDAO.getAllUsers()).thenReturn(allUsers);
+    assertEquals(allUsers, mockUserDAO.getAllUsers(),
+        "UserUCC.getAll should return a List<UserDTO> of all users");
+    Mockito.verify(mockUserDAO).getAllUsers();
   }
 }
