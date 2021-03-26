@@ -72,6 +72,22 @@
     Renvoie une liste des informations reservees aux admins des ressources de type "user" en attente de confirmation d'inscription.
     </td>
 </tr>
+<tr>
+    <td>users/detail/{id}</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>
+    Renvoie les détails d'un user précis.
+    </td>
+</tr>
+<tr>
+    <td>users/validate/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+    Renvoie le user DTO et set le waiting du user précis à false et si la validation est positive il le garde son role si non il set le role à customer.
+    </td>
+</tr>
 
 </table>
 

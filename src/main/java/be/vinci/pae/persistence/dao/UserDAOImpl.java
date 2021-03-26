@@ -76,23 +76,6 @@ public class UserDAOImpl implements UserDAO {
   }
 
   @Override
-  public boolean isAdmin(int id) {
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ? "
-          + "AND u.role = 'admin'";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, id);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        return true;
-      }
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-    return false;
-  }
-
-  @Override
   public List<UserDTO> getAllUsers() {
     List<UserDTO> users = new ArrayList<>();
     try {
@@ -110,7 +93,7 @@ public class UserDAOImpl implements UserDAO {
 
   @Override
   public List<UserDTO> findBySearch(String userSearch) {
-    List<UserDTO> users = new ArrayList<UserDTO>();
+    List<UserDTO> users = new ArrayList<>();
     try {
       String query = "SELECT u.* FROM satchofurniture.users u "
           + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
@@ -212,6 +195,30 @@ public class UserDAOImpl implements UserDAO {
   }
 
   /**
+   * Set the role and  set wait
+   *
+   * @param id    userId.
+   * @param value value if the user is confirmed.
+   */
+  @Override
+  public void setRole(int id, boolean value) {
+    String query;
+    if (value) {
+      query = "UPDATE  satchoFurniture.users u SET waiting = false WHERE  u.user_id  = ?";
+    } else {
+      query = "UPDATE satchoFurniture.users u SET  role = customer, waiting = false WHERE u.user_id =?";
+    }
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, id);
+      ps.executeQuery();
+      ps.close();
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+  }
+
+  /**
    * Creates and fills a UserDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information
@@ -233,5 +240,6 @@ public class UserDAOImpl implements UserDAO {
     userFound.setWaiting(rs.getBoolean("waiting"));
     return userFound;
   }
+
 
 }
