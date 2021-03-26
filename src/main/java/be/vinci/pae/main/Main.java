@@ -4,7 +4,11 @@ package be.vinci.pae.main;
 import be.vinci.pae.utils.Configurate;
 import java.io.IOException;
 import java.net.URI;
-import java.util.logging.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.util.logging.Handler;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
