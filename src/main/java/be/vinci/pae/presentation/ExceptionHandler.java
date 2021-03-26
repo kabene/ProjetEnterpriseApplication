@@ -6,22 +6,19 @@ import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.UnauthorizedException;
+import be.vinci.pae.main.Main;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Provider
 public class ExceptionHandler implements ExceptionMapper<Throwable> {
-
-  public static final String LOGGER_NAME = "be.pae.vinci";
-  private static Logger logger = Logger.getLogger(LOGGER_NAME);
-
-  static {
-      //logger.addHandler(...)
-  }
 
   @Override
   public Response toResponse(Throwable exception) {
@@ -58,6 +55,7 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
   }
 
   private void logThrowable(Throwable e) {
+    Logger logger = Logger.getLogger(Main.LOGGER_NAME);
     if (e instanceof InternalError) {
       logger.log(Level.SEVERE, "InternalError: {0}", e.getStackTrace());
     } else {
