@@ -54,9 +54,9 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
   private void logThrowable(Throwable e) {
     Logger logger = Logger.getLogger(Main.CONSOLE_LOGGER_NAME);
     if (e instanceof InternalError) {
-      logger.log(Level.SEVERE, "InternalError: {0}", e.getStackTrace());
+      logger.log(Level.SEVERE, "InternalError", e);
     } else {
-      logger.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage());
+      logger.log(Level.WARNING, e.getMessage(), e);
     }
   }
 }
