@@ -14,18 +14,19 @@ const Users = async () => {
   
   page.innerHTML = generateUsersPage();
 
-  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", addUserCard));
+  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", displayShortElements));
   document.getElementById("buttonReturn").addEventListener("click", displayLargeTable);
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
 
   await AddressToGeo("Clos Chapelle-aux-Champs 43, 1200 Woluwe-Saint-Lambert");
 }
 
-const addUserCard = async (e) => {
-  
+const displayShortElements = async (e) => {
+  //display the elements
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
   let userCardDiv = document.getElementById("userCardDiv");
   userCardDiv.innerHTML = generateLoadingAnimation();
+
   //if the long is not hidden then hide it
   let largeTableContainer = document.getElementById("largeTableContainer");
   if (largeTableContainer.style.display !== "none")
@@ -39,6 +40,7 @@ const addUserCard = async (e) => {
       break;
     }
   }
+
   //generate the user card
   let userDetail = await clientDetail(element["userId"].value);
   userCardDiv.innerHTML = generateUserCard(userDetail);
@@ -101,8 +103,8 @@ const generateLargeRow = (user) => {
         <th><p>` + user.firstName + `</p></th>
         <th><p>` + user.username + `</p></th>
         <th><p>` + user.email + `</p></th>
-        <th><p>0 (STUB)</p></th>
-        <th><p>0 (STUB)</p></th>
+        <th><p>` + user.purchasedFurnitureNbr + `</p></th>
+        <th><p>` + user.soldFurnitureNbr + `</p></th>
         <th><p>` + user.role + `</p></th>
    </tr>`;
 }
