@@ -217,8 +217,21 @@ public class UserUCCImplTest {
   public void test_getAll_givenNothing_shouldReturnAllUsers() {
     List<UserDTO> allUsers = Arrays.asList(mockUser1, mockUser2);
     Mockito.when(mockUserDAO.getAllUsers()).thenReturn(allUsers);
-    assertEquals(allUsers, mockUserDAO.getAllUsers(),
+    assertEquals(allUsers, userUCC.getAll(),
         "UserUCC.getAll should return a List<UserDTO> of all users");
     Mockito.verify(mockUserDAO).getAllUsers();
+  }
+
+  @DisplayName("TEST UserUCC.getSearchResult : given an existing username,"
+      + " should return respective user")
+  @Test
+  public void test_getSearchResult_givenExistingUsername_shouldReturnUser() {
+    String username = "existingUsername";
+    List<UserDTO> allSearchResults = Arrays.asList(mockUser1);
+
+    Mockito.when(mockUserDAO.findBySearch(username)).thenReturn(allSearchResults);
+    assertEquals(allSearchResults, userUCC.getSearchResult(username),
+        "UserUCC.getSearchResult should return a List<UserDTO> with respective user");
+    Mockito.verify(mockUserDAO).findBySearch(username);
   }
 }
