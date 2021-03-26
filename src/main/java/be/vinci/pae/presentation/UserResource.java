@@ -53,7 +53,7 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response rememberMe(@Context ContainerRequest request) {
-    Logger.getLogger(Main.LOGGER_NAME).log(Level.INFO, "GET /users/login");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/login");
     UserDTO user = (UserDTO) request.getProperty("user");
     UserDTO currentUser = Json
         .filterPublicJsonView(user, UserDTO.class);
@@ -75,7 +75,7 @@ public class UserResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response login(JsonNode reqNode) {
-    Logger.getLogger(Main.LOGGER_NAME).log(Level.INFO, "POST /users/login");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/login");
     JsonNode usernameNode = reqNode.get("username");//.asText();
     JsonNode passwordNode = reqNode.get("password");
     if (usernameNode == null || passwordNode == null) { // invalid request
@@ -83,6 +83,7 @@ public class UserResource {
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
               .build());
     }
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.FINE, "Valid request body");
     String username = usernameNode.asText();
     String password = passwordNode.asText();
     UserDTO userDTO = userUCC.login(username, password);
@@ -114,7 +115,7 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response getUser(@Context ContainerRequest request) {
-    Logger.getLogger(Main.LOGGER_NAME).log(Level.INFO, "GET /users/me");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/me");
     UserDTO userFound = (UserDTO) request.getProperty("user");
     UserDTO currentUser = Json.filterAdminOnlyJsonView(userFound, UserDTO.class);
     return Response.ok(currentUser, MediaType.APPLICATION_JSON).build();
@@ -133,7 +134,7 @@ public class UserResource {
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
   public Response getDetailById(@PathParam("id") int id) {
-    Logger.getLogger(Main.LOGGER_NAME).log(Level.INFO, "GET /users/detail/"+id);
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/detail/"+id);
     UserDTO userDTO = userUCC.getOne(id);
     userDTO= Json.filterAdminOnlyJsonView(userDTO,UserDTO.class);
     return Response.ok(userDTO).build();
@@ -150,7 +151,7 @@ public class UserResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response register(UserDTO user) {
-    Logger.getLogger(Main.LOGGER_NAME).log(Level.INFO, "POST /users/register");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/register");
     if (user == null || user.getPassword() == null || user.getAddress() == null
         || user.getEmail() == null || user.getUsername() == null || user.getFirstName() == null
         || user.getLastName() == null || user.getRole() == null
@@ -184,7 +185,7 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Admin
   public Response getUsers() {
-    Logger.getLogger(Main.LOGGER_NAME).log(Level.INFO, "POST /users/detail");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/detail");
     List<UserDTO> users = userUCC.getAll();
     return createNodeFromUserList(users);
   }
@@ -202,7 +203,7 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Admin
   public Response getUsers(JsonNode jsonNode) {
-    Logger.getLogger(Main.LOGGER_NAME).log(Level.INFO, "POST /users/detail/search");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/detail/search");
     JsonNode node = jsonNode.get("userSearch");
     if(node == null) {
       throw new BadRequestException("Error: malformed request");
