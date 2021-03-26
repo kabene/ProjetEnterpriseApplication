@@ -25,6 +25,11 @@ const Users = async () => {
 }
 
 const addUserCard = async (e) => {
+  let userCardDiv = document.getElementById("userCardDiv");
+  userCardDiv.innerHTML = generateLoadingAnimation();
+  //if the long is not hidden then hide it
+  
+  //get the correct element
   let element;
   for (let i = 0; i < e.path.length; i++) {
     if ((e.path[i].className + "").includes("toBeClicked")) {
@@ -32,10 +37,8 @@ const addUserCard = async (e) => {
       break;
     }
   }
-  let id = element["userId"].value
-  let userDetail = await clientDetail(id);
-
-  let userCardDiv = document.getElementById("userCardDiv");
+  //generate the user card
+  let userDetail = await clientDetail(element["userId"].value);
   userCardDiv.innerHTML = generateUserCard(userDetail);
 }
 
@@ -130,8 +133,6 @@ const generateShortRow = (user) => {
 }
 
 const generateUserCard = (userDetail) => {
-  console.log(userDetail);
-  console.log(userDetail.address);
   return `
    <div class="container emp-profile">
     <form>
