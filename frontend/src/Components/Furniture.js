@@ -19,7 +19,24 @@ const Furniture = async () => {
 
 
 const generateTable = () => {
-    return `<div class="row mx-5 p-5 border">` + generateAllItemsAndModals() + `</div>`;
+    return `
+    <div class="wrapperFurniturePage">
+        <div></div>
+        <div>
+            <!-- @author Milan Raring
+                https://freefrontend.com/css-search-boxes/ -->
+            <form action="" class="search-bar">
+                <input type="search" name="search" pattern=".*\S.*" required>
+                <button class="search-btn" type="submit">
+                    <span>Search</span>
+                </button>
+            </form>
+        </div>
+        <div></div>
+        <div></div>
+        <div class="contentFurniturePage">` + generateAllItemsAndModals() + `</div>
+        <div></div>
+    </div>`;
 }
 
 const generateAllItemsAndModals = () => {
@@ -30,8 +47,8 @@ const generateAllItemsAndModals = () => {
 
 const generateItemAndModal = (furniture) => {
     let item = `
-        <div class="col-4 px-0">
-            <img class="w-50" src="` + imageStub /*furniture.favouritePhoto.source*/ +`" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
+        <div>
+            <img class="imageFurniturePage" src="` + imageStub /*furniture.favouritePhoto.source*/ +`" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
             <p>` + furniture.description + `</p>`
             + getOptionButton(furniture) +
         `</div>`;
@@ -96,7 +113,7 @@ const getTabPhotoToRender = (furniture) => {
 const getOptionButton = (furniture) => {
     if (furniture.condition === "available for sale" && currentUser !== null /*TODO check if the user is a simple customer*/) {
         //TODO add events when clicking on button
-        return `<button type="button" class="btn btn-sm btn-primary">Introduire une option</button>`;
+        return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">Introduire une option</button>`;
     } else {
         //TODO add 'annuler option' button + event when clicking on it if the user has booked the furniture
     }
