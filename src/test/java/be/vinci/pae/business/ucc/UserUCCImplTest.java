@@ -27,7 +27,8 @@ import org.mockito.Mockito;
 public class UserUCCImplTest {
 
   private static User mockUser;
-  private static AddressDTO mockAddressDTO;
+  private static AddressDTO mockAddressDTO1;
+  private static AddressDTO mockAddressDTO2;
   private static UserUCC userUCC;
   private static UserDAO mockUserDAO;
   private static AddressDAO mockAddressDAO;
@@ -43,7 +44,8 @@ public class UserUCCImplTest {
     userUCC = locator.getService(UserUCC.class);
 
     mockUser = Mockito.mock(UserImpl.class);
-    mockAddressDTO = Mockito.mock(AddressImpl.class);
+    mockAddressDTO1 = Mockito.mock(AddressImpl.class);
+    mockAddressDTO2 = Mockito.mock(AddressImpl.class);
     mockUserDAO = locator.getService(UserDAO.class);
     mockAddressDAO = locator.getService(AddressDAO.class);
     mockDal = locator.getService(ConnectionDalServices.class);
@@ -57,7 +59,8 @@ public class UserUCCImplTest {
   @BeforeEach
   public void setUp() {
     Mockito.reset(mockUser);
-    Mockito.reset(mockAddressDTO);
+    Mockito.reset(mockAddressDTO1);
+    Mockito.reset(mockAddressDTO2);
     Mockito.reset(mockUserDAO);
     Mockito.reset(mockAddressDAO);
     Mockito.reset(mockDal);
@@ -140,9 +143,9 @@ public class UserUCCImplTest {
     Mockito.when(mockUserDAO.emailAlreadyTaken(email)).thenReturn(false);
     Mockito.when(mockUserDAO.findByUsername(username)).thenReturn(mockUser);
 
-    Mockito.when(mockAddressDAO.getId(mockAddressDTO)).thenReturn(addressId);
+    Mockito.when(mockAddressDAO.getId(mockAddressDTO1)).thenReturn(addressId);
 
-    UserDTO actual = userUCC.register(mockUser, mockAddressDTO);
+    UserDTO actual = userUCC.register(mockUser, mockAddressDTO1);
     assertEquals(mockUser, actual, "The successful register should return the UserDTO");
 
     Mockito.verify(mockUser, Mockito.atLeastOnce()).getUsername();
@@ -156,8 +159,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockUserDAO).register(mockUser, addressId);
     Mockito.verify(mockUserDAO).findByUsername(username);
 
-    Mockito.verify(mockAddressDAO).addAddress(mockAddressDTO);
-    Mockito.verify(mockAddressDAO).getId(mockAddressDTO);
+    Mockito.verify(mockAddressDAO).addAddress(mockAddressDTO1);
+    Mockito.verify(mockAddressDAO).getId(mockAddressDTO1);
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
@@ -174,7 +177,7 @@ public class UserUCCImplTest {
     Mockito.when(mockUserDAO.usernameAlreadyTaken(username)).thenReturn(true);
 
     assertThrows(ConflictException.class, () ->
-            userUCC.register(mockUser, mockAddressDTO),
+            userUCC.register(mockUser, mockAddressDTO1),
         "The call to register should throw a ConflictException when given a taken username");
 
     Mockito.verify(mockUserDAO).usernameAlreadyTaken(username);
@@ -196,13 +199,20 @@ public class UserUCCImplTest {
     Mockito.when(mockUserDAO.emailAlreadyTaken(email)).thenReturn(true);
 
     assertThrows(ConflictException.class, () ->
-            userUCC.register(mockUser, mockAddressDTO),
+            userUCC.register(mockUser, mockAddressDTO1),
         "The call to register should throw a ConflictException when given a taken email");
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockUserDAO).usernameAlreadyTaken(username);
     Mockito.verify(mockUserDAO).emailAlreadyTaken(email);
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+
+  }
+
+  @DisplayName("TEST UserUCC.getAll : given nothing,"
+      + " should return all Users")
+  @Test
+  public void test_getAll_givenNothing_shouldReturnAllUsers() {
 
   }
 }
