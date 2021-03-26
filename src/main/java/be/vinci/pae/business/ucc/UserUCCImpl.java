@@ -91,7 +91,7 @@ public class UserUCCImpl implements UserUCC {
     List<UserDTO> list;
     try {
       dalServices.startTransaction();
-      list = userDAO.getAllUsers(); //todo: get addresses ?
+      list = userDAO.getAllUsers();
       dalServices.commitTransaction();
     } catch (Exception exception) {
       dalServices.rollbackTransaction();
@@ -122,9 +122,9 @@ public class UserUCCImpl implements UserUCC {
       res = userDAO.findById(userId);
       res.setAddress(addressDAO.findById(res.getAddressId()));
       dalServices.commitTransaction();
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Exception exception) {
       dalServices.rollbackTransaction();
+      throw exception;
     }
     return res;
   }
