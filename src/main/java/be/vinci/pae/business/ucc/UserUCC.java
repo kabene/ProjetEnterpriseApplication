@@ -28,4 +28,11 @@ public interface UserUCC {
   List<UserDTO> getSearchResult(String userSearch);
 
   UserDTO getOne(int userId);
+
+  /**
+   * validate or refuse the user status and set the waiting flag.
+   * @param userId id of the user.
+   * @param value boolean value if the user is validate or refused.
+   */
+  UserDTO validateUser(int userId, boolean value);
 }

@@ -53,7 +53,25 @@ const Users = async () => {
     </div>`;
   page.innerHTML = pageHTML;
   //
+
+
   await AddressToGeo("Clos Chapelle-aux-Champs 43, 1200 Woluwe-Saint-Lambert");
+
+  if(document.getElementById('validate')!=null){
+    let val=document.querySelector("#val").value;
+    document.onclick(document.getElementById('val'),(val)=>{
+      fetch(`/users/validate/${id}`,{
+        method: "POST",
+            body: JSON.stringify(id),
+            headers: {
+          "Content-Type": "application/json",
+              "value":val, //TODO
+        }
+      }).then((response) => {
+
+      }).catch((err)=>console.log("Erreur de fetch !! :\n" + err));
+    });
+  }
 }
 
 const generateLargeTable = () => {
@@ -112,6 +130,7 @@ const generateLargeRow = (user) => {
    </tr>`;
 }
 
+
 const generateShortRow = (user) => {
   return ` 
     <tr class="toBeClicked">
@@ -120,8 +139,10 @@ const generateShortRow = (user) => {
    </tr>`;
 }
 
+
+
 const generateUserCard = (userDetail) => {
-  return `
+  let userPage = `
    <div class="container emp-profile">
             <form>
                 <div class="row">
@@ -146,7 +167,6 @@ const generateUserCard = (userDetail) => {
                     </div>
                 </div>
                 <div class="row">
-            
                     <div class="col-md-8">
                         <div class="tab-content profile-tab" id="myTabContent">
                             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -198,10 +218,16 @@ const generateUserCard = (userDetail) => {
                                                 <p id="waiting">   </p>
                                             </div>
                                         </div>
-                                         <div class="col-md-2" style="display: flex"> 
-                        <input type="submit" class="profile-edit-btn" name="btnAddMore"  id="approuver" value="approuver" style="color: #0062cc; margin:5px" />
-                        <input type="submit" class="profile-edit-btn" name="btnAddMore" id="refuser" value="refuser" style="color: red; margin:5px"/>
-                    </div>
+                                         <div class="col-md-2" style="display: flex"> `;
+
+  if (userDetail.waiting) {
+
+    userPage += ` <input type="submit" class="profile-edit-btn" ame="btnAddMore"  id="validate" value="approuver" style="color: #0062cc; margin:5px" />
+                        <input type="submit" class="profile-edit-btn" name="btnAddMore" id="validate" value="refuser" style="color: red; margin:5px"/>`;
+
+  }
+
+  userPage += ` </div>
                             </div>
                     
                             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -228,7 +254,9 @@ const generateUserCard = (userDetail) => {
     `;
 }
 
-const clientDetail = async (id) => {
+
+
+const userDetails = async (id) => {
   await fetch(`/users/detail/${id}`, {
     method: "GET",
     headers: {
@@ -249,6 +277,8 @@ const clientDetail = async (id) => {
   });
 
 }
+
+
 
 const map = (latitude, lngitude) => {
   if (latitude != null && lngitude != null) {
@@ -275,7 +305,7 @@ const map = (latitude, lngitude) => {
     console.log("adresse not found");
     const additionalOptions = {};
     let map;
-    let  place={lat: 41.726931, lng: -49.948253};
+    let place = {lat: 41.726931, lng: -49.948253};
     const loader = new Loader({
       apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
       version: "weekly",
@@ -293,6 +323,9 @@ const map = (latitude, lngitude) => {
     });
   }
 }
+
+
+
 
 const AddressToGeo = async (address) => {
 

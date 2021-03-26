@@ -15,6 +15,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -197,6 +198,35 @@ public class UserResource {
     return createNodeFromUserList(users);
   }
 
+
+  /**
+   * GET a specific user's ,admin only details.
+   *
+   * @param id : the user id from the request path
+   * @return http response containing a user in json format
+   */
+  @PATCH
+  @Path("/validate/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response validateUser(@PathParam("id") int id,JsonNode reqNode) {
+    JsonNode valueNode = reqNode.get("value");
+    if(valueNode == null){
+      throw new WebApplicationException(
+          Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
+              .build());
+    }
+    boolean value=valueNode.asBoolean();
+    UserDTO userDTO = userUCC.validateUser(id,value);
+    userDTO= Json.filterAdminOnlyJsonView(userDTO,UserDTO.class);
+    return Response.ok(userDTO).build();
+  }
+
+  /**
+   * create a Node from the userList.
+   * @param users list user.
+   * @return response.
+   */
   private Response createNodeFromUserList(List<UserDTO> users) {
     ObjectNode resNode = jsonMapper.createObjectNode();
     ArrayNode arrayNode = resNode.putArray("users");
@@ -206,4 +236,5 @@ public class UserResource {
     }
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
+
 }
