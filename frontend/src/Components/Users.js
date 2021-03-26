@@ -1,14 +1,9 @@
-import Navbar from "./Navbar";
-import {RedirectUrl} from "./Router";
-import {verifyAdmin} from "../utils/utils.js";
 import {getUserSessionData} from "../utils/session";
 import {Loader} from "@googlemaps/js-api-loader";
 
 let page = document.querySelector("#page");
 let usersList;
-let userDetail;
 let currentUser;
-let pageHTML;
 
 const Users = async () => {
   currentUser = getUserSessionData();
@@ -28,7 +23,11 @@ const addUserCard = async (e) => {
   let userCardDiv = document.getElementById("userCardDiv");
   userCardDiv.innerHTML = generateLoadingAnimation();
   //if the long is not hidden then hide it
-  
+  let largeTable = document.getElementById("largeTableContainer");
+  console.log(largeTable.style);
+  if (largeTable.style.visibility !== "hidden")
+    largeTable.style.visibility = "hidden";
+    
   //get the correct element
   let element;
   for (let i = 0; i < e.path.length; i++) {
@@ -46,9 +45,9 @@ const generateUsersPage = () => {
   return `
         <h1>Liste des utilisateurs:</h1>
         <div class="mx-5 row">
-            <div class="col-12">
+          <div class="col-12 largeTableContainer">
             <input type="text" placeholder="Rechercher par nom, prénom, code postal ou ville" class="w-50 mb-2">`
-          + generateLargeTable() +
+            + generateLargeTable() +
           `</div>
             <div id="shortTable" class="col-4 collapse collapsedDiv">
                 <input type="text" placeholder="Rechercher" class="mb-2">
