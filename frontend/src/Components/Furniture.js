@@ -30,8 +30,8 @@ const generateAllItemsAndModals = () => {
 
 const generateItemAndModal = (furniture) => {
     let item = `
-        <div class="col-4 px-0" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`">
-            <img class="w-50" src="` + imageStub /*furniture.favouritePhoto.source*/ +`" alt="thumbnail"/>
+        <div class="col-4 px-0">
+            <img class="w-50" src="` + imageStub /*furniture.favouritePhoto.source*/ +`" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
             <p>` + furniture.description + `</p>`
             + getOptionButton(furniture) +
         `</div>`;
