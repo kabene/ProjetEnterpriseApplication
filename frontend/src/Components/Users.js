@@ -210,7 +210,7 @@ const generateUserCard = (userDetail) => {
                                                 <label> Adresse </label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p> adresse concat</p>
+                                                <p> Clos Chapelle-aux-Champs 43, 1200 Woluwe-Saint-Lambert</p>
                                             </div>
                                         </div>
                                 <div class="row">
@@ -297,7 +297,7 @@ const map = (latitude, lngitude) => {
 const AddressToGeo = async (address) => {
 
   var platform = new H.service.Platform({
-    'apikey': 'NZvpPwfeFjJCoj1o5y3l3woYrq8ZComP7MGitc2-FRw'
+    'apikey': 's4UWDeMzmG-UyPMvL1e41P24GWrJk2AvNahLgtZ4eio'
   });
 
   var service = platform.getSearchService();
