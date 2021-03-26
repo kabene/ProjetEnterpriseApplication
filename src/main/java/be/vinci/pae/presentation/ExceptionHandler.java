@@ -11,9 +11,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-import java.io.IOException;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,7 +52,7 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
   }
 
   private void logThrowable(Throwable e) {
-    Logger logger = Logger.getLogger(Main.LOGGER_NAME);
+    Logger logger = Logger.getLogger(Main.CONSOLE_LOGGER_NAME);
     if (e instanceof InternalError) {
       logger.log(Level.SEVERE, "InternalError: {0}", e.getStackTrace());
     } else {
