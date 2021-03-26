@@ -219,6 +219,30 @@ public class UserDAOImpl implements UserDAO {
   }
 
   /**
+   * Set the role and  set wait
+   *
+   * @param id    userId.
+   * @param value value if the user is confirmed.
+   */
+  @Override
+  public void setRole(int id, boolean value) {
+    String query;
+    if (value) {
+      query = "UPDATE  satchoFurniture.users u SET waiting = false WHERE  u.user_id  = ?";
+    } else {
+      query = "UPDATE satchoFurniture.users u SET  role = customer, waiting = false WHERE u.user_id =?";
+    }
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, id);
+      ps.executeQuery();
+      ps.close();
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+  }
+
+  /**
    * Creates and fills a UserDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information
