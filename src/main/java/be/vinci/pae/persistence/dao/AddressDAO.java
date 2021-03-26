@@ -19,5 +19,6 @@ public interface AddressDAO {
    */
   int getId(AddressDTO address);
 
+  AddressDTO findById(int addressId);
 
 }

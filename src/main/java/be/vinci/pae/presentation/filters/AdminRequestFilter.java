@@ -1,15 +1,13 @@
 package be.vinci.pae.presentation.filters;
 
-import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.business.dto.UserDTO;
-import be.vinci.pae.persistence.dao.UserDAO;
+import be.vinci.pae.business.ucc.UserUCC;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.ext.Provider;
 
 
@@ -19,28 +17,18 @@ import jakarta.ws.rs.ext.Provider;
 public class AdminRequestFilter implements ContainerRequestFilter {
 
   @Inject
-  UserDAO userDAO;
-  @Inject
-  ConnectionDalServices dalServices;
+  private UserUCC userUCC;
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    UserDTO user = null;
-    try {
-      DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
-      dalServices.startTransaction();
-      int userId = decodedToken.getClaim("user").asInt();
-      user = this.userDAO.findById(userId);
-      boolean isAdmin = this.userDAO.isAdmin(userId);
-      dalServices.commitTransaction();
-      if (!isAdmin) {
-        requestContext
-            .abortWith(Response.status(Status.UNAUTHORIZED).entity("Unauthorized").build());
-      }
-      requestContext.setProperty("user", user);
-    } catch (Exception e) {
-      requestContext
-          .abortWith(Response.status(Status.UNAUTHORIZED).entity("Not connected").build());
+    DecodedJWT decodedToken = UtilsFilters.getDecodedToken(requestContext);
+
+    int userId = decodedToken.getClaim("user").asInt();
+    UserDTO currentUser = userUCC.getOne(userId);
+    boolean isAdmin = currentUser.getRole().equals("admin");
+    if (!isAdmin) {
+      throw new UnauthorizedException("Error: Authorisation refused");
     }
+    requestContext.setProperty("user", currentUser);
   }
 }

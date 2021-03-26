@@ -1,5 +1,6 @@
 package be.vinci.pae.presentation;
 
+import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.presentation.filters.Authorize;
@@ -16,6 +17,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
@@ -47,8 +49,9 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response rememberMe(@Context ContainerRequest request) {
+    UserDTO user = (UserDTO) request.getProperty("user");
     UserDTO currentUser = Json
-        .filterPublicJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
+        .filterPublicJsonView(user, UserDTO.class);
     String token = authentication.createLongToken(currentUser);
     ObjectNode node = jsonMapper.createObjectNode().put("token", token)
         .putPOJO("user", currentUser);
@@ -67,13 +70,15 @@ public class UserResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response login(JsonNode reqNode) {
-    String username = reqNode.get("username").asText();
-    String password = reqNode.get("password").asText();
-    if (username == null || password == null) { // invalid request
+    JsonNode usernameNode = reqNode.get("username");//.asText();
+    JsonNode passwordNode = reqNode.get("password");
+    if (usernameNode == null || passwordNode == null) { // invalid request
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
               .build());
     }
+    String username = usernameNode.asText();
+    String password = passwordNode.asText();
     UserDTO userDTO = userUCC.login(username, password);
     if (userDTO == null) { // user not found
       throw new WebApplicationException(
@@ -103,9 +108,27 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response getUser(@Context ContainerRequest request) {
-    UserDTO currentUser = Json
-        .filterAdminOnlyJsonView((UserDTO) request.getProperty("user"), UserDTO.class);
+    UserDTO userFound = (UserDTO) request.getProperty("user");
+    UserDTO currentUser = Json.filterAdminOnlyJsonView(userFound, UserDTO.class);
     return Response.ok(currentUser, MediaType.APPLICATION_JSON).build();
+  }
+
+
+
+  /**
+   * GET a specific user's ,admin only details.
+   *
+   * @param id : the user id from the request path
+   * @return http response containing a user in json format
+   */
+  @GET
+  @Path("/detail/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getDetailById(@PathParam("id") int id) {
+    UserDTO userDTO = userUCC.getOne(id);
+    userDTO= Json.filterAdminOnlyJsonView(userDTO,UserDTO.class);
+    return Response.ok(userDTO).build();
   }
 
   /**
@@ -125,15 +148,11 @@ public class UserResource {
         || user.getAddress().getBuildingNumber() == null
         || user.getAddress().getCommune() == null || user.getAddress().getCountry() == null
         || user.getAddress().getPostcode() == 0) {
-      throw new WebApplicationException(
-          Response.status(Status.BAD_REQUEST).entity("Lacks of mandatory info").type("text/plain")
-              .build());
+      throw new BadRequestException("Error: Malformed request");
     }
     if (!user.getRole().equals("customer") && !user.getRole().equals("antique_dealer") && !user
         .getRole().equals("admin")) {
-      throw new WebApplicationException(
-          Response.status(Status.BAD_REQUEST).entity("Bad role").type("text/plain")
-              .build());
+      throw new BadRequestException("Error: Malformed request (unrecognized role)");
     }
 
     UserDTO userDTO = userUCC.register(user, user.getAddress());
@@ -146,35 +165,35 @@ public class UserResource {
   }
 
   /**
-   * GET users/customers - Get all the users.
+   * GET users/detail - Get all users.
    *
    * @return the list of users
    * @throws WebApplicationException to send a fail status
    */
   @GET
-  @Path("customers")
+  @Path("/detail")
   @Produces(MediaType.APPLICATION_JSON)
   @Admin
-  public Response getCustomers() {
-    List<UserDTO> users = userUCC.showAllCustomers();
+  public Response getUsers() {
+    List<UserDTO> users = userUCC.getAll();
     return createNodeFromUserList(users);
   }
 
   /**
-   * POST users/signup - Get all the users with a customerSearch.
+   * POST users/detail/search - Get all users with a userSearch.
    *
-   * @param jsonNode : containing the customerSearch
+   * @param jsonNode : containing the userSearch
    * @return the list of users
    * @throws WebApplicationException to send a fail status
    */
   @POST
-  @Path("customers")
+  @Path("/detail/search")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Admin
-  public Response getCustomers(JsonNode jsonNode) {
-    String customerSearch = jsonNode.get("customerSearch").asText();
-    List<UserDTO> users = userUCC.showCustomersResult(customerSearch);
+  public Response getUsers(JsonNode jsonNode) {
+    String userSearch = jsonNode.get("userSearch").asText();
+    List<UserDTO> users = userUCC.getSearchResult(userSearch);
     return createNodeFromUserList(users);
   }
 

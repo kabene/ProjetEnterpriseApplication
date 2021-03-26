@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = UserImpl.class)
 public interface UserDTO {
 
-  Integer getID();
+  Integer getId();
 
-  void setID(Integer id);
+  void setId(Integer id);
 
   String getUsername();
 
@@ -34,11 +34,27 @@ public interface UserDTO {
 
   void setRole(String role);
 
+  Integer getAddressId();
+
+  void setAddressId(Integer addressId);
+
   AddressDTO getAddress();
 
   void setAddress(AddressDTO addressDTO);
 
-  //implement address + other attributes
+  String getRegistrationDate();
 
+  void setRegistrationDate(String registrationDate);
 
+  Integer getPurchasedFurnitureNbr();
+
+  void setPurchasedFurnitureNbr(Integer purchasedFurnitureNbr);
+
+  Integer getSoldFurnitureNbr();
+
+  void setSoldFurnitureNbr(Integer soldFurnitureNbr);
+
+  Boolean isWaiting();
+
+  void setWaiting(Boolean waiting);
 }
