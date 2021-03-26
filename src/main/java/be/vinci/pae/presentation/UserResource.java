@@ -202,7 +202,11 @@ public class UserResource {
   @Admin
   public Response getUsers(JsonNode jsonNode) {
     Logger.getLogger(ExceptionHandler.LOGGER_NAME).log(Level.INFO, "POST /users/detail/search");
-    String userSearch = jsonNode.get("userSearch").asText();
+    JsonNode node = jsonNode.get("userSearch");
+    if(node == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    String userSearch = node.asText();
     List<UserDTO> users = userUCC.getSearchResult(userSearch);
     return createNodeFromUserList(users);
   }
