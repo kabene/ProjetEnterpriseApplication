@@ -44,7 +44,7 @@ public class UserDAOImpl implements UserDAO {
       ps.close();
       return userFound;
     } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
+      throw new InternalError(e);
     }
   }
 
@@ -70,7 +70,7 @@ public class UserDAOImpl implements UserDAO {
       rs.close();
       ps.close();
     } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
+      throw new InternalError(e);
     }
     return userFound;
   }
@@ -103,7 +103,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(toDTO(rs));
       }
     } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
+      throw new InternalError(e);
     }
     return users;
   }
@@ -128,7 +128,7 @@ public class UserDAOImpl implements UserDAO {
         users.add(toDTO(rs));
       }
     } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
+      throw new InternalError(e);
     }
     return users;
   }
@@ -156,7 +156,7 @@ public class UserDAOImpl implements UserDAO {
       ps.execute();
       ps.close();
     } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
+      throw new InternalError(e);
     }
 
   }
@@ -182,7 +182,7 @@ public class UserDAOImpl implements UserDAO {
       ps.close();
       return res;
     } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
+      throw new InternalError(e);
     }
   }
 
@@ -207,7 +207,7 @@ public class UserDAOImpl implements UserDAO {
       ps.close();
       return res;
     } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
+      throw new InternalError(e);
     }
   }
 
