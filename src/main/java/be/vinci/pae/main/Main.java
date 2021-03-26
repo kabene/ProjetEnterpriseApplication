@@ -57,7 +57,6 @@ public class Main {
     fileHandler.setLevel(Level.WARNING);
     consoleHandler.setLevel(Level.ALL);
 
-
     fileLogger.addHandler(fileHandler);
     fileLogger.setUseParentHandlers(false);
 
@@ -73,7 +72,7 @@ public class Main {
       System.out.println("Hit a key to stop it...");
       System.in.read();
       server.shutdown();
-    }finally {
+    } finally {
       fileHandler.flush();
       fileHandler.close();
     }
