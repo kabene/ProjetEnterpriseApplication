@@ -35,7 +35,7 @@ public class FurnitureResource {
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getById(@PathParam("id") int id) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/"+id);
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/" + id);
     FurnitureDTO furnitureDTO = furnitureUCC.getOne(id);
     furnitureDTO = Json.filterPublicJsonView(furnitureDTO, FurnitureDTO.class);
     return Response.ok(furnitureDTO).build();
@@ -52,7 +52,7 @@ public class FurnitureResource {
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
   public Response getDetailById(@PathParam("id") int id) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/detail/"+id);
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/detail/" + id);
     FurnitureDTO furnitureDTO = furnitureUCC.getOne(id);
     furnitureDTO = Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class);
     return Response.ok(furnitureDTO).build();
