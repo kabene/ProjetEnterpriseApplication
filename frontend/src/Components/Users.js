@@ -41,8 +41,9 @@ const displayShortElements = async (e) => {
 
   //generate the user card
   let userDetail = await clientDetail(element["userId"].value);
-  console.log(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune);
-  await AddressToGeo(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune);
+  //TODO what to do when the address is wrong ?
+  await AddressToGeo(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune)
+                      .catch((err) => console.error(err));
   userCardDiv.innerHTML = generateUserCard(userDetail);
 }
 
