@@ -17,8 +17,6 @@ const Users = async () => {
   document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", displayShortElements));
   document.getElementById("buttonReturn").addEventListener("click", displayLargeTable);
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
-
-  await AddressToGeo("Clos Chapelle-aux-Champs 43, 1200 Woluwe-Saint-Lambert");
 }
 
 const displayShortElements = async (e) => {
@@ -43,6 +41,8 @@ const displayShortElements = async (e) => {
 
   //generate the user card
   let userDetail = await clientDetail(element["userId"].value);
+  console.log(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune);
+  await AddressToGeo(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune);
   userCardDiv.innerHTML = generateUserCard(userDetail);
 }
 
