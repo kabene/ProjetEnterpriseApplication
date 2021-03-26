@@ -122,7 +122,6 @@ public class UserResource {
   }
 
 
-
   /**
    * GET a specific user's ,admin only details.
    *
@@ -134,9 +133,9 @@ public class UserResource {
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
   public Response getDetailById(@PathParam("id") int id) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/detail/"+id);
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/detail/" + id);
     UserDTO userDTO = userUCC.getOne(id);
-    userDTO= Json.filterAdminOnlyJsonView(userDTO,UserDTO.class);
+    userDTO = Json.filterAdminOnlyJsonView(userDTO, UserDTO.class);
     return Response.ok(userDTO).build();
   }
 
@@ -205,7 +204,7 @@ public class UserResource {
   public Response getUsers(JsonNode jsonNode) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/detail/search");
     JsonNode node = jsonNode.get("userSearch");
-    if(node == null) {
+    if (node == null) {
       throw new BadRequestException("Error: malformed request");
     }
     String userSearch = node.asText();
