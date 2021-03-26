@@ -5,7 +5,9 @@ import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
 //import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.pojos.User;
-import be.vinci.pae.exceptions.TakenException;
+import be.vinci.pae.exceptions.ConflictException;
+import be.vinci.pae.exceptions.ForbiddenException;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
@@ -22,7 +24,7 @@ public class UserUCCImpl implements UserUCC {
   private AddressDAO addressDAO;
 
   @Inject
-  private ConnectionDalServices dal;
+  private ConnectionDalServices dalServices;
 
 
   /**
@@ -35,22 +37,20 @@ public class UserUCCImpl implements UserUCC {
   @Override
   public UserDTO login(String username, String password) {
     try {
-      dal.startTransaction();
-
+      dalServices.startTransaction();
       User userFound = (User) userDAO.findByUsername(username);
-      if (userFound == null) {
-        dal.rollbackTransaction();
-        return null; // invalid username
-      }
       if (!userFound.checkPassword(password)) {
-        dal.rollbackTransaction();
-        return null; // invalid password
+        throw new ForbiddenException("Error: invalid credentials");
       }
-      dal.commitTransaction();
+      userFound.setAddress(addressDAO.findById(userFound.getAddressId()));
+      dalServices.commitTransaction();
       return userFound;
+    } catch (NotFoundException e) {
+      dalServices.rollbackTransaction();
+      throw new ForbiddenException("Error: invalid credentials");
+      // no user found with given username
     } catch (Exception exception) {
-      dal.rollbackTransaction();
-      //  exception.printStackTrace();
+      dalServices.rollbackTransaction();
       throw exception;
     }
   }
@@ -64,12 +64,12 @@ public class UserUCCImpl implements UserUCC {
   @Override
   public UserDTO register(UserDTO userDTO, AddressDTO address) {
     try {
-      dal.startTransaction();
+      dalServices.startTransaction();
       if (userDAO.usernameAlreadyTaken(userDTO.getUsername())) {
-        throw new TakenException("username already taken");
+        throw new ConflictException("Error: username already taken");
       }
       if (userDAO.emailAlreadyTaken(userDTO.getEmail())) {
-        throw new TakenException("email already taken");
+        throw new ConflictException("Error: email already taken");
       }
       addressDAO.addAddress(address);
       int id = addressDAO.getId(address);
@@ -78,40 +78,56 @@ public class UserUCCImpl implements UserUCC {
       user.setPassword(hashed);
       userDAO.register(user, id);
       userDTO = userDAO.findByUsername(userDTO.getUsername());
-      dal.commitTransaction();
+      dalServices.commitTransaction();
       return userDTO;
     } catch (Exception exception) {
-      dal.rollbackTransaction();
-      // exception.printStackTrace();
+      dalServices.rollbackTransaction();
       throw exception;
     }
   }
 
   @Override
-  public List<UserDTO> showAllCustomers() {
+  public List<UserDTO> getAll() {
     List<UserDTO> list;
     try {
-      dal.startTransaction();
-      list = userDAO.getAllCustomers();
-      dal.commitTransaction();
+      dalServices.startTransaction();
+      list = userDAO.getAllUsers(); //todo: get addresses ?
+      dalServices.commitTransaction();
     } catch (Exception exception) {
-      dal.rollbackTransaction();
+      dalServices.rollbackTransaction();
       throw exception;
     }
     return list;
   }
 
   @Override
-  public List<UserDTO> showCustomersResult(String customerSearch) {
+  public List<UserDTO> getSearchResult(String userSearch) {
     List<UserDTO> list;
     try {
-      dal.startTransaction();
-      list = userDAO.findBySearch(customerSearch);
-      dal.commitTransaction();
+      dalServices.startTransaction();
+      list = userDAO.findBySearch(userSearch);
+      dalServices.commitTransaction();
     } catch (Exception exception) {
-      dal.rollbackTransaction();
+      dalServices.rollbackTransaction();
       throw exception;
     }
     return list;
   }
+
+  @Override
+  public UserDTO getOne(int userId) {
+    UserDTO res = null;
+    try {
+      dalServices.startTransaction();
+      res = userDAO.findById(userId);
+      res.setAddress(addressDAO.findById(res.getAddressId()));
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      e.printStackTrace();
+      dalServices.rollbackTransaction();
+    }
+    return res;
+  }
+
+
 }

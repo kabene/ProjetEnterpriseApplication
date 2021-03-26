@@ -1,5 +1,6 @@
 package be.vinci.pae.persistence.dao;
 
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -21,11 +22,13 @@ public class FurnitureTypeDAOImpl implements FurnitureTypeDAO {
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         res = rs.getString("type_name");
+      } else {
+        throw new NotFoundException("Error: furniture type not found");
       }
       rs.close();
       ps.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new InternalError(e.getMessage());
     }
     return res;
   }

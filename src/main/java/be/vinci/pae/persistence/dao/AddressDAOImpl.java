@@ -1,6 +1,8 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.AddressDTO;
+import be.vinci.pae.business.factories.AddressFactory;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -12,6 +14,9 @@ public class AddressDAOImpl implements AddressDAO {
 
   @Inject
   private ConnectionBackendDalServices dalServices;
+
+  @Inject
+  private AddressFactory addressFactory;
 
 
   /**
@@ -32,8 +37,8 @@ public class AddressDAOImpl implements AddressDAO {
     }
     try {
       ps.close();
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException e) {
+      throw new InternalError(e.getMessage());
     }
   }
 
@@ -58,13 +63,34 @@ public class AddressDAOImpl implements AddressDAO {
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         id = rs.getInt(1);
+      } else {
+        throw new NotFoundException("Error: address not found");
       }
       rs.close();
       ps.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new InternalError(e.getMessage());
     }
     return id;
+  }
+
+  @Override
+  public AddressDTO findById(int addressId) {
+    AddressDTO res = null;
+    String query = "SELECT a.* FROM satchoFurniture.addresses a WHERE a.address_id = ?";
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setInt(1, addressId);
+      ResultSet rs = ps.executeQuery();
+      if (rs.next()) {
+        res = toDTO(rs);
+      } else {
+        throw new NotFoundException("Error: address not found");
+      }
+    } catch (SQLException e) {
+      throw new InternalError(e.getMessage());
+    }
+    return res;
   }
 
   private void addressToRequest(AddressDTO address, PreparedStatement ps) throws SQLException {
@@ -76,5 +102,16 @@ public class AddressDAOImpl implements AddressDAO {
     ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
   }
 
+  private AddressDTO toDTO(ResultSet rs) throws SQLException {
+    AddressDTO res = addressFactory.getAddressDTO();
+    res.setId(rs.getInt("address_id"));
+    res.setStreet(rs.getString("street"));
+    res.setBuildingNumber(rs.getString("building_number"));
+    res.setUnitNumber(rs.getString("unit_number"));
+    res.setPostcode(rs.getInt("postcode"));
+    res.setCommune(rs.getString("commune"));
+    res.setCountry(rs.getString("country"));
+    return res;
+  }
 
 }
