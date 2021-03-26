@@ -54,6 +54,8 @@ public class Main {
 
     Handler fileHandler = new FileHandler("logs/log%g.xml", 1000000, 3, true);
     Handler consoleHandler = new ConsoleHandler();
+    fileHandler.setLevel(Level.WARNING);
+    consoleHandler.setLevel(Level.ALL);
 
 
     fileLogger.addHandler(fileHandler);
