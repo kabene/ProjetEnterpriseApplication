@@ -87,3 +87,11 @@ Content-Type: application/json
 > {%
  client.global.set("jwt", response.body.token);
  %}
+
+
+####
+GET {{baseUrl}}/users/detail/1
+Authorization: {{jwt}}
+###
+
+
