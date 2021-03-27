@@ -21,7 +21,9 @@ const Users = async () => {
 
 const displayShortElements = async (e) => {
   //display / hide the needed elements
-  document.querySelector('#largeTable').id = "shortTable";
+  let largeTable = document.querySelector('#largeTable');
+  if (largeTable !== null)
+    largeTable.id = "shortTable";
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
   setTimeout(changeContainerId, 1000);
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
@@ -104,7 +106,6 @@ const getAllUsersLargeRows = () => {
   return res;
 }
 
-
 const generateLargeRow = (user) => {
   return ` 
     <tr class="toBeClicked" userId="` + user.id + `">
@@ -119,6 +120,11 @@ const generateLargeRow = (user) => {
 }
 
 const generateUserCard = (userDetail) => {
+  let status;
+  if (userDetail.waiting)
+    status = 'En attente';
+  else 
+  status = "Accepté";
   return `
    <div class="container emp-profile">
     <form>
@@ -201,7 +207,7 @@ const generateUserCard = (userDetail) => {
                 <label>status</label>
               </div>
               <div class="col-md-6">
-                <p id="waiting">` + userDetail.waiting + `</p>
+                <p id="waiting">` + status + `</p>
               </div>
             </div>
 
