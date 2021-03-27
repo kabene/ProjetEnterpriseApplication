@@ -20,16 +20,14 @@ const Users = async () => {
 }
 
 const displayShortElements = async (e) => {
-  //display the elements
+  //display / hide the needed elements
+  document.querySelector('#largeTable').id = "shortTable";
+  document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
+  setTimeout(changeContainerId, 1000);
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
   let userCardDiv = document.getElementById("userCardDiv");
   userCardDiv.innerHTML = generateLoadingAnimation();
 
-  //if the long is not hidden then hide it
-  let largeTableContainer = document.getElementById("largeTableContainer");
-  if (largeTableContainer.style.display !== "none")
-    largeTableContainer.style.display = "none";
-    
   //get the correct element
   let element;
   for (let i = 0; i < e.path.length; i++) {
@@ -47,25 +45,35 @@ const displayShortElements = async (e) => {
   userCardDiv.innerHTML = generateUserCard(userDetail);
 }
 
+const changeContainerId = () => {
+  document.querySelector('#largeTableContainer').id = "shortTableContainer";
+}
+
 const displayLargeTable = () => {
-  document.getElementById("largeTableContainer").style.display = "block";
+  console.log(document.querySelectorAll('.notNeeded'));
+  document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "");
+  document.querySelector('#shortTableContainer').id = "largeTableContainer";
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
+  document.querySelector('#shortTable').id = "largeTable";
 }
 
 const generateUsersPage = () => {
   return `
         <h1>Liste des utilisateurs:</h1>
-        <div class="mx-5 row">
-          <div id="largeTableContainer" class="col-12">
-            <input type="text" placeholder="Rechercher par nom, prénom, code postal ou ville" class="w-50 mb-2">`
+        <div id="largeTableContainer">
+          <div>
+            <!-- @author Milan Raring
+            https://freefrontend.com/css-search-boxes/ -->
+            <form action="" class="search-bar">
+                <input type="search" name="search" pattern=".*\S.*" required>
+                <button class="search-btn" type="submit">
+                    <span>Search</span>
+                </button>
+            </form>
+            <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>`
             + generateLargeTable() +
           `</div>
-          <div id="shortTable" class="col-4 shortElement">
-            <input type="text" placeholder="Rechercher" class="mb-2">
-            <button type="button" id="buttonReturn" class="btn btn-dark mb-2">Retour à la liste</button>`
-              + generateShortTable() +
-          `</div>
-          <div class="col-8 shortElement" id="userCardDiv"></div>
+          <div class="shortElement" id="userCardDiv"></div>
         </div>`;
 }
 
@@ -74,13 +82,13 @@ const generateLargeTable = () => {
     <table id="largeTable" class="table table-bordered table-hover">
         <thead class="table-secondary">
             <tr>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Pseudo</th>
-                <th>Email</th>
-                <th>Nombre de meubles achetés</th>
-                <th>Nombre de meubles vendus</th>
-                <th>Rôle</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th class="notNeeded">Pseudo</th>
+              <th class="notNeeded">Email</th>
+              <th class="notNeeded">Nombre de meubles achetés</th>
+              <th class="notNeeded">Nombre de meubles vendus</th>
+              <th class="notNeeded">Rôle</th>
             </tr>
         </thead>
         <tbody>`
@@ -102,41 +110,11 @@ const generateLargeRow = (user) => {
     <tr class="toBeClicked" userId="` + user.id + `">
         <th><p>` + user.lastName + `</p></th>
         <th><p>` + user.firstName + `</p></th>
-        <th><p>` + user.username + `</p></th>
-        <th><p>` + user.email + `</p></th>
-        <th><p>` + user.purchasedFurnitureNbr + `</p></th>
-        <th><p>` + user.soldFurnitureNbr + `</p></th>
-        <th><p>` + user.role + `</p></th>
-   </tr>`;
-}
-
-const generateShortTable = () => {
-  let res = `
-    <table class="table table-bordered table-hover">
-        <thead class="table-secondary">
-            <tr>
-                <th>Nom</th>
-                <th>Prénom</th>
-            </tr>
-        </thead>
-        <tbody>`
-          + generateAllUsersShortRows() +
-        `</tbody>
-    </table>`;
-  return res;
-}
-
-const generateAllUsersShortRows = () => {
-  let res = "";
-  usersList.users.forEach(user => res += generateShortRow(user));
-  return res;
-}
-
-const generateShortRow = (user) => {
-  return ` 
-    <tr class="toBeClicked" userId="` + user.id + `">
-        <th><p>` + user.lastName + `</p></th>
-        <th><p>` + user.firstName + `</p></th>
+        <th class="notNeeded"><p>` + user.username + `</p></th>
+        <th class="notNeeded"><p>` + user.email + `</p></th>
+        <th class="notNeeded"><p>` + user.purchasedFurnitureNbr + `</p></th>
+        <th class="notNeeded"><p>` + user.soldFurnitureNbr + `</p></th>
+        <th class="notNeeded"><p>` + user.role + `</p></th>
    </tr>`;
 }
 
