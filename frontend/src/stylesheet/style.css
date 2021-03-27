@@ -374,3 +374,25 @@ body, .search-bar {
 		background: #f1f1f1;
 	}
 }
+
+/********************************User**********************************/
+#shortTableContainer {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    grid-gap: 5em;
+    text-align: -webkit-center;
+}
+#shortTable {
+    width: 15em;
+    transition: 1s;
+}
+
+@media (max-width: 800px) {
+    #shortTable {
+        width: 90%;
+        margin: auto;
+    }
+    #shortTableContainer {
+        grid-template-columns: 1fr;
+    }
+}
