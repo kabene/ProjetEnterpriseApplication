@@ -61,7 +61,6 @@ const displayLargeTable = () => {
 
 const generateUsersPage = () => {
   return `
-        <h1>Liste des utilisateurs:</h1>
         <div id="largeTableContainer">
           <div>
             <!-- @author Milan Raring
