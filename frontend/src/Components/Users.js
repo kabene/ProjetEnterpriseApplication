@@ -72,13 +72,13 @@ const generateUsersPage = () => {
                 </button>
             </form>
             <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>`
-            + generateLargeTable() +
+            + generateTable() +
           `</div>
           <div class="shortElement" id="userCardDiv"></div>
         </div>`;
 }
 
-const generateLargeTable = () => {
+const generateTable = () => {
   let res = `
     <table id="largeTable" class="table table-bordered table-hover">
         <thead class="table-secondary">
@@ -93,19 +93,19 @@ const generateLargeTable = () => {
             </tr>
         </thead>
         <tbody>`
-          + getAllUsersLargeRows() + `
+          + getAllUsersRows() + `
         </tbody>
     </table>`;
   return res;
 }
 
-const getAllUsersLargeRows = () => {
+const getAllUsersRows = () => {
   let res = "";
-  usersList.users.forEach(user => res += generateLargeRow(user));
+  usersList.users.forEach(user => res += generateRow(user));
   return res;
 }
 
-const generateLargeRow = (user) => {
+const generateRow = (user) => {
   return ` 
     <tr class="toBeClicked" userId="` + user.id + `">
         <th><p>` + user.lastName + `</p></th>
