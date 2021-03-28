@@ -83,4 +83,9 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     String type = furnitureTypeDAO.findById(dto.getTypeId());
     dto.setType(type);
   }
+
+  @Override
+  public FurnitureDTO toRestoration(int furnitureId) {
+    return null;
+  }
 }
