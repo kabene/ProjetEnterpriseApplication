@@ -248,8 +248,8 @@ class FurnitureUCCImplTest {
   @Test
   public void test_toRestoration_givenValidId_shouldReturnDTO() {
     int id = 1;
-    String startingCondition = "accepted";
-    String expectedEndingCondition = "in_restoration";
+    final String startingCondition = "accepted";
+    final String expectedEndingCondition = "in_restoration";
     int sellerId = 1;
     List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
 
@@ -325,11 +325,11 @@ class FurnitureUCCImplTest {
   @ParameterizedTest
   @ValueSource(strings = {"accepted", "in_restoration"})
   public void test_toAvailable_givenValidId_shouldReturnDTO(String startingCondition) {
-    int id = 1;
-    String expectedEndingCondition = "available_for_sale";
-    double sellingPrice = 149.99;
-    int sellerId = 1;
-    List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
+    final int id = 1;
+    final String expectedEndingCondition = "available_for_sale";
+    final double sellingPrice = 149.99;
+    final int sellerId = 1;
+    final List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDAO.updateToAvailable(mockFurnitureDTO1))
@@ -367,8 +367,8 @@ class FurnitureUCCImplTest {
   @ValueSource(strings = {"requested_for_visit", "refused", "available_for_sale",
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_toAvailable_givenInvalidStates_shouldThrowConflict(String startingCondition) {
-    int id = 1;
-    double sellingPrice = 149.99;
+    final int id = 1;
+    final double sellingPrice = 149.99;
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
@@ -387,8 +387,8 @@ class FurnitureUCCImplTest {
       + " should throw NotFoundException")
   @Test
   public void test_toAvailable_givenInvalidId_shouldThrowNotFound() {
-    int id = 1;
-    double sellingPrice = 149.99;
+    final int id = 1;
+    final double sellingPrice = 149.99;
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
 
@@ -406,10 +406,10 @@ class FurnitureUCCImplTest {
   @ParameterizedTest
   @ValueSource(strings = {"in_restoration", "available_for_sale"})
   public void test_withdraw_givenValidId_shouldReturnDTO(String startingCondition) {
-    int id = 1;
-    String expectedEndingCondition = "withdrawn";
-    int sellerId = 1;
-    List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
+    final int id = 1;
+    final String expectedEndingCondition = "withdrawn";
+    final int sellerId = 1;
+    final List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDAO.updateToWithdrawn(mockFurnitureDTO1))
@@ -446,7 +446,7 @@ class FurnitureUCCImplTest {
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted",
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_withdraw_givenInvalidStates_shouldThrowConflict(String startingCondition) {
-    int id = 1;
+    final int id = 1;
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
@@ -465,7 +465,7 @@ class FurnitureUCCImplTest {
       + " should throw NotFoundException")
   @Test
   public void test_withdraw_givenInvalidId_shouldThrowNotFound() {
-    int id = 1;
+    final int id = 1;
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
 
