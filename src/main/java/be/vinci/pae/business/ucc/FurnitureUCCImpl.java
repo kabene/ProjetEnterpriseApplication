@@ -31,12 +31,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     dalServices.startTransaction();
     try {
       res = furnitureDAO.findById(id);
-      if (res != null) {
-        completeFurnitureDTO(res);
-        dalServices.commitTransaction();
-      } else {
-        dalServices.rollbackTransaction();
-      }
+      completeFurnitureDTO(res);
+      dalServices.commitTransaction();
     } catch (Exception e) {
       dalServices.rollbackTransaction();
       throw e;

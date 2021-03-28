@@ -243,6 +243,23 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockFurnitureDAO).findAll();
   }
 
+  @DisplayName("TEST FurnitureUCC.getAll : db throwing InternalError,"
+      + " should rollback + throw InternalError")
+  @Test
+  public void test_getAll_InternalError_shouldThrowInternalError() {
+    Mockito.when(mockFurnitureDAO.findAll()).thenThrow(InternalError.class);
+
+    assertThrows(InternalError.class, () -> {
+      furnitureUCC.getAll();
+    });
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+
+    Mockito.verify(mockFurnitureDAO).findAll();
+  }
+
   @DisplayName("TEST FurnitureUCC.toRestoration : given valid id, should return dto")
   @Test
   public void test_toRestoration_givenValidId_shouldReturnDTO() {
