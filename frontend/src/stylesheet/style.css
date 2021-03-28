@@ -374,3 +374,35 @@ body, .search-bar {
 		background: #f1f1f1;
 	}
 }
+
+/********************************User**********************************/
+#shortTableContainer {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    grid-gap: 5em;
+    text-align: -webkit-center;
+    overflow-x: auto;
+}
+#shortTable {
+    width: 15em;
+    transition: 1s;
+}
+
+#largeTable {
+    width: 100%;
+    transition: 1s;
+}
+
+#largeTableContainer {
+    overflow-x: auto;
+}
+
+@media (max-width: 800px) {
+    #shortTable {
+        width: 90%;
+        margin: auto;
+    }
+    #shortTableContainer {
+        grid-template-columns: 1fr;
+    }
+}

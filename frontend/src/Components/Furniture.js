@@ -18,6 +18,34 @@ const Furniture = async () => {
 }
 
 
+
+const generateLoadingAnimation = () => {
+    return `
+        <div class="text-center">
+            <h2>Loading <div class="spinner-border"></div></h2>
+        </div>`
+}
+
+const getFurnitureList = async () => {
+    let ret = [];
+    await fetch("/furniture/", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then((response) => {
+        if (!response.ok)
+            throw new Error("Error code : " + response.status + " : " + response.statusText);
+        return response.json();
+    }).then((data) => {
+         ret = data;
+    }).catch((err) => {
+        console.error(err);
+    });
+    return ret;
+}
+
+
 const generateTable = () => {
     return `
     <div class="wrapperFurniturePage">
@@ -54,8 +82,6 @@ const generateItemAndModal = (furniture) => {
         `</div>`;
 
     let tabPhotoToRender = getTabPhotoToRender(furniture);
-    console.log(tabPhotoToRender)
-
 
     let modal = `
         <div class="modal fade" id="modal_` + furniture.furnitureId + `">
@@ -99,16 +125,7 @@ const generateItemAndModal = (furniture) => {
     return item + modal;
 }
 
-const getTabPhotoToRender = (furniture) => {
-    let photos = furniture.photos;
-    let photosToRender = [furniture.favouritePhoto];
-    let favId = furniture.favouritePhotoId;
-    photos.forEach(p => {
-        if (p.visible && p.photoId != favId)
-            photosToRender.push(p);
-    })
-    return photosToRender;
-}
+
 
 const getOptionButton = (furniture) => {
     if (furniture.condition === "available for sale" && currentUser !== null /*TODO check if the user is a simple customer*/) {
@@ -120,31 +137,16 @@ const getOptionButton = (furniture) => {
     return "";
 }
 
-
-const generateLoadingAnimation = () => {
-    return `
-        <div class="text-center">
-            <h2>Loading <div class="spinner-border"></div></h2>
-        </div>`
+const getTabPhotoToRender = (furniture) => {
+    let photos = furniture.photos;
+    let photosToRender = [furniture.favouritePhoto];
+    let favId = furniture.favouritePhotoId;
+    photos.forEach(p => {
+        if (p.visible && p.photoId != favId)
+            photosToRender.push(p);
+    })
+    return photosToRender;
 }
 
-const getFurnitureList = async () => {
-    let ret = [];
-    await fetch("/furniture/", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    }).then((response) => {
-        if (!response.ok)
-            throw new Error("Error code : " + response.status + " : " + response.statusText);
-        return response.json();
-    }).then((data) => {
-         ret = data;
-    }).catch((err) => {
-        console.error(err);
-    });
-    return ret;
-}
 
 export default Furniture;
