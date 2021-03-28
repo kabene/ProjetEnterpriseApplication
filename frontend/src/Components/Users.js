@@ -4,6 +4,7 @@ import {Loader} from "@googlemaps/js-api-loader";
 let page = document.querySelector("#page");
 let usersList;
 let currentUser;
+let timeouts = [];
 
 const Users = async () => {
   currentUser = getUserSessionData();
@@ -20,12 +21,13 @@ const Users = async () => {
 }
 
 const displayShortElements = async (e) => {
+  removeTimeouts();
   //display / hide the needed elements
   let largeTable = document.querySelector('#largeTable');
   if (largeTable !== null)
     largeTable.id = "shortTable";
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
-  setTimeout(changeContainerId, 1000);
+  timeouts.push(setTimeout(changeContainerId, 1000));
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
   let userCardDiv = document.getElementById("userCardDiv");
   userCardDiv.innerHTML = generateLoadingAnimation();
@@ -50,7 +52,7 @@ const changeContainerId = () => {
 
 const displayLargeTable = () => {
   document.querySelector('#shortTableContainer').id = "largeTableContainer";
-  setTimeout(displayLargeElements, 750);
+  timeouts.push(setTimeout(displayLargeElements, 750));
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
   document.querySelector('#shortTable').id = "largeTable";
 }
@@ -351,6 +353,12 @@ const AddressToGeo = async (address) => {
         map(result.items[0].position.lat, result.items[0].position.lng);
       },
       map(null, null))
+}
+
+const removeTimeouts = () => {
+  timeouts.forEach(timeout => {
+      clearTimeout(timeout);
+  })
 }
 
 export default Users;
