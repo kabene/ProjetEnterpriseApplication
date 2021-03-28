@@ -41,9 +41,10 @@ const displayShortElements = async (e) => {
 
   //generate the user card
   let userDetail = await clientDetail(attributesTab["userId"].value);
+  userCardDiv.innerHTML = generateUserCard(userDetail);
   await AddressToGeo(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune)
                       .catch((err) => console.error(err));
-  userCardDiv.innerHTML = generateUserCard(userDetail);
+
 }
 
 const changeContainerId = () => {
@@ -264,7 +265,7 @@ const clientDetail = async (id) => {
   return userDetails;
 }
 
-const map = (latitude, lngitude) => {
+const map = async (latitude, lngitude) => {
   if (latitude != null && lngitude != null) {
     console.log(latitude, lngitude);
     let map;
@@ -341,18 +342,19 @@ const getUserList = async () => {
 const AddressToGeo = async (address) => {
 
   var platform = new H.service.Platform({
-    'apikey': 's4UWDeMzmG-UyPMvL1e41P24GWrJk2AvNahLgtZ4eio'
+    'apikey': 'lork4RxfbCvij9rrt-YAdXwViqsyXrHaxgdhP5cfRJs'
   });
 
   var service = platform.getSearchService();
 
   await service.geocode({
         q: address
-      }, (result) => {
-        console.log(result.items[0].position)
-        map(result.items[0].position.lat, result.items[0].position.lng);
+      },  (result) => {
+       if(result.items[0]!=null) {
+         map(result.items[0].position.lat, result.items[0].position.lng);
+       }
       },
-      map(null, null))
+     await map(null, null))
 }
 
 const removeTimeouts = () => {
