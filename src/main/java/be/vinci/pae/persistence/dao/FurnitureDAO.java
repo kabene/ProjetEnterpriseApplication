@@ -1,6 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
+import java.sql.Date;
 import java.util.List;
 
 public interface FurnitureDAO {
@@ -21,9 +22,9 @@ public interface FurnitureDAO {
    */
   List<FurnitureDTO> findAll();
 
-  void updateToRestoration(FurnitureDTO furnitureDTO);
+  FurnitureDTO updateToRestoration(FurnitureDTO furnitureDTO);
 
-  void updateToAvailable(FurnitureDTO furnitureDTO);
+  FurnitureDTO updateToAvailable(FurnitureDTO furnitureDTO);
 
-  void updateToWithdrawn(FurnitureDTO furnitureDTO);
+  FurnitureDTO updateToWithdrawn(FurnitureDTO furnitureDTO);
 }
