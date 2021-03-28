@@ -97,6 +97,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       furnitureDTO.setSellingPrice(sellingPrice);
       furnitureDAO.updateToAvailable(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
+      dalServices.commitTransaction();
     } catch (Exception e) {
       dalServices.rollbackTransaction();
       throw e;
