@@ -116,3 +116,5 @@ frontend/dist/
 frontend/package-lock.json
 
 projet-ae-boilerplate.iml
+
+logs/log*

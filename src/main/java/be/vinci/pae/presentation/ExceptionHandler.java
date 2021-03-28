@@ -6,19 +6,20 @@ import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.UnauthorizedException;
+import be.vinci.pae.main.Main;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Provider
 public class ExceptionHandler implements ExceptionMapper<Throwable> {
 
   @Override
   public Response toResponse(Throwable exception) {
-    //TODO: Log
-    System.err.println(exception.getMessage());
-    exception.printStackTrace();
-
+    logThrowable(exception);
     return Response.status(getStatusCode(exception)).entity(getEntity(exception)).build();
   }
 
@@ -48,5 +49,14 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
     }
     // internal error -> hide message
     return "Server Internal Error";
+  }
+
+  private void logThrowable(Throwable e) {
+    Logger logger = Logger.getLogger(Main.CONSOLE_LOGGER_NAME);
+    if (e instanceof InternalError) {
+      logger.log(Level.SEVERE, "InternalError", e);
+    } else {
+      logger.log(Level.WARNING, e.getMessage(), e);
+    }
   }
 }
