@@ -27,3 +27,7 @@ Content-Type: application/json
   "selling_price": 150.0
 }
 ###
+
+PATCH {{baseUrl}}/furniture/withdraw/1
+Authorization: {{jwt}}
+###
