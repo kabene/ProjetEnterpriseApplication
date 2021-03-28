@@ -125,12 +125,22 @@ public class FurnitureResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response toAvailable(@PathParam("id") int id, JsonNode reqNode) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /funiture/available/" + id);
-    if(reqNode == null || reqNode.get("selling_price") == null) {
+    if (reqNode == null || reqNode.get("selling_price") == null) {
       throw new BadRequestException("Error: malformed request");
     }
     double sellingPrice = reqNode.get("selling_price").asDouble();
     FurnitureDTO furnitureDTO = furnitureUCC.toAvailable(id, sellingPrice);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
+  }
+
+  @PATCH
+  @Path("/withdraw/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response withdraw(@PathParam("id") int id) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /furniture/withdraw/" + id);
+    FurnitureDTO furnitureDTO = null; // TODO
+    return Response.ok(furnitureDTO).build();
   }
 }
 
