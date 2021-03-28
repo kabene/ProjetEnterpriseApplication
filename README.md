@@ -139,4 +139,13 @@
     </td>
 </tr>
 
+<tr>
+    <td>furniture/withdraw/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+    Modifie l'état d'une ressource de type 'furniture' vers 'withdrawn', et renvoie les informations mises à jour.
+    </td>
+</tr>
+
 </table>
