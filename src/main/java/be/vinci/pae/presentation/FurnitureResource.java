@@ -101,6 +101,12 @@ public class FurnitureResource {
   // split state transitions into multiple requests for authentication level management
   // (some are admin only, others are not)
 
+  /**
+   * PATCH one piece of furniture to the 'in_restoration' state.
+   *
+   * @param id : the furniture id
+   * @return : the updated piece of furniture
+   */
   @PATCH
   @Path("/restoration/{id}")
   @Admin
