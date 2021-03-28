@@ -469,9 +469,7 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
 
-    assertThrows(NotFoundException.class, () -> {
-          furnitureUCC.withdraw(id);
-        },
+    assertThrows(NotFoundException.class, () -> furnitureUCC.withdraw(id),
         "The withdraw method should throw a NotFoundException "
             + "if it is called with an id that isn't present in the database");
 
