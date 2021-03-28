@@ -395,7 +395,7 @@ class FurnitureUCCImplTest {
     assertThrows(NotFoundException.class, () -> {
       furnitureUCC.toAvailable(id, sellingPrice);
     }, "The toAvailable method should throw a NotFoundException "
-      + "if it is called with an id that isn't present in the database");
+        + "if it is called with an id that isn't present in the database");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
