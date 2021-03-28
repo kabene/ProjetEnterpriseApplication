@@ -336,7 +336,7 @@ const getUserList = async () => {
 const AddressToGeo = async (address) => {
 
   var platform = new H.service.Platform({
-    'apikey': 's4UWDeMzmG-UyPMvL1e41P24GWrJk2AvNahLgtZ4eio'
+    'apikey': 'lork4RxfbCvij9rrt-YAdXwViqsyXrHaxgdhP5cfRJs'
   });
 
   var service = platform.getSearchService();
