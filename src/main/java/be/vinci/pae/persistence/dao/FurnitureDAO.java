@@ -24,4 +24,6 @@ public interface FurnitureDAO {
   void updateToRestoration(FurnitureDTO furnitureDTO);
 
   void updateToAvailable(FurnitureDTO furnitureDTO);
+
+  void updateToWithdrawn(FurnitureDTO furnitureDTO);
 }

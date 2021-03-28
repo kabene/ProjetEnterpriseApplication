@@ -5,11 +5,13 @@ import java.util.List;
 
 public interface FurnitureUCC {
 
-  FurnitureDTO toRestoration(int furnitureId);
-
   FurnitureDTO getOne(int id);
 
   List<FurnitureDTO> getAll();
 
+  FurnitureDTO toRestoration(int furnitureId);
+
   FurnitureDTO toAvailable(int id, double sellingPrice);
+
+  FurnitureDTO withdraw(int furnitureId);
 }

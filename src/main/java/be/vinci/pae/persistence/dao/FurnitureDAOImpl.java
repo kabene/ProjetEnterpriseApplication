@@ -102,6 +102,11 @@ public class FurnitureDAOImpl implements FurnitureDAO {
     }
   }
 
+  @Override
+  public void updateToWithdrawn(FurnitureDTO furnitureDTO) {
+    return; // TODO
+  }
+
   /**
    * transfers ONE furniture entry from a result set to a dto.
    *

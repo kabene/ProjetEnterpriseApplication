@@ -105,6 +105,28 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     return furnitureDTO;
   }
 
+  @Override
+  public FurnitureDTO withdraw(int furnitureId) {
+    FurnitureDTO furnitureDTO;
+    dalServices.startTransaction();
+    try {
+      furnitureDTO = furnitureDAO.findById(furnitureId);
+      if (!furnitureDTO.getCondition().equals("available_for_sale") && !furnitureDTO.getCondition()
+          .equals("in_restoration")) {
+        throw new ConflictException(
+            "The resource isn't in a withdrawable state");
+      }
+      furnitureDTO.setCondition("withdrawn");
+      furnitureDAO.updateToWithdrawn(furnitureDTO);
+      completeFurnitureDTO(furnitureDTO);
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return furnitureDTO;
+  }
+
   /**
    * Completes the FurnitureDTO given as an argument with it's references in the db.
    *
