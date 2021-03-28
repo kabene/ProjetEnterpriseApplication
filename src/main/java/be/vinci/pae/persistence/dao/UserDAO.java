@@ -51,6 +51,4 @@ public interface UserDAO {
   List<UserDTO> getAllUsers();
 
   List<UserDTO> findBySearch(String customerSearch);
-
-  void updateToRestoration(FurnitureDTO furnitureDTO);
 }

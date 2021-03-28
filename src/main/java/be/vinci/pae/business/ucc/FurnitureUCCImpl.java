@@ -67,14 +67,36 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     dalServices.startTransaction();
     try {
       furnitureDTO = furnitureDAO.findById(furnitureId);
-      completeFurnitureDTO(furnitureDTO);
       if (!furnitureDTO.getCondition().equals("accepted")) {
         throw new ConflictException(
             "The resource cannot change from its current state to the 'in_restoration' state");
       }
       furnitureDTO.setCondition("in_restoration");
-      userDAO.updateToRestoration(furnitureDTO);
+      furnitureDAO.updateToRestoration(furnitureDTO);
+      completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
+    } catch (Exception e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return furnitureDTO;
+  }
+
+  @Override
+  public FurnitureDTO toAvailable(int furnitureId, double sellingPrice) {
+    FurnitureDTO furnitureDTO;
+    dalServices.startTransaction();
+    try {
+      furnitureDTO = furnitureDAO.findById(furnitureId);
+      if (!furnitureDTO.getCondition().equals("accepted") && !furnitureDTO.getCondition()
+          .equals("in_restoration")) {
+        throw new ConflictException(
+            "The resource cannot change from its current state to the 'available_for_sale' state");
+      }
+      furnitureDTO.setCondition("available_for_sale");
+      furnitureDTO.setSellingPrice(sellingPrice);
+      furnitureDAO.updateToAvailable(furnitureDTO);
+      completeFurnitureDTO(furnitureDTO);
     } catch (Exception e) {
       dalServices.rollbackTransaction();
       throw e;

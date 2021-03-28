@@ -2,9 +2,11 @@ package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.ucc.FurnitureUCC;
+import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.filters.Admin;
 import be.vinci.pae.utils.Json;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.GET;
@@ -114,6 +116,21 @@ public class FurnitureResource {
   public Response toRestoration(@PathParam("id") int id) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /funiture/restoration/" + id);
     FurnitureDTO furnitureDTO = furnitureUCC.toRestoration(id);
+    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
+  }
+
+  @PATCH
+  @Path("/available/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response toAvailable(@PathParam("id") int id, JsonNode reqNode) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /funiture/available/" + id);
+    JsonNode priceNode = reqNode.get("selling_price");
+    if(priceNode == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    double sellingPrice = priceNode.asDouble();
+    FurnitureDTO furnitureDTO = furnitureUCC.toAvailable(id, sellingPrice);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 }

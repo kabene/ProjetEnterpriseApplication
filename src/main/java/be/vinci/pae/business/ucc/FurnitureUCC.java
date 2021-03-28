@@ -10,4 +10,6 @@ public interface FurnitureUCC {
   FurnitureDTO getOne(int id);
 
   List<FurnitureDTO> getAll();
+
+  FurnitureDTO toAvailable(int id, double sellingPrice);
 }
