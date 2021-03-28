@@ -1,6 +1,5 @@
 package be.vinci.pae.persistence.dao;
 
-import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import java.util.List;
 

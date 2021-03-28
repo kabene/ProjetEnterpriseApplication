@@ -109,7 +109,7 @@ public class FurnitureDAOImpl implements FurnitureDAO {
         + "sale_withdrawal_date = ? "
         + "WHERE furniture_id = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
-    java.sql.Date saleWithdrawalDate = new java.sql.Date(new java.util.Date().getTime()); //now
+    Date saleWithdrawalDate = new Date(new java.util.Date().getTime()); //now
     try {
       ps.setString(1, furnitureDTO.getCondition());
       ps.setDate(2, saleWithdrawalDate);
