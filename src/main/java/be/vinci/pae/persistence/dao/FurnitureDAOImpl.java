@@ -61,7 +61,7 @@ public class FurnitureDAOImpl implements FurnitureDAO {
       rs.close();
       ps.close();
     } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
+      throw new InternalError(e);
     }
     return res;
   }

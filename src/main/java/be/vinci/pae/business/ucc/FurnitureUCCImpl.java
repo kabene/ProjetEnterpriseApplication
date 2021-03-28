@@ -43,8 +43,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   @Override
   public List<FurnitureDTO> getAll() {
     List<FurnitureDTO> dtos;
-    dalServices.startTransaction();
     try {
+      dalServices.startTransaction();
       dtos = furnitureDAO.findAll();
       for (FurnitureDTO dto : dtos) {
         completeFurnitureDTO(dto);
