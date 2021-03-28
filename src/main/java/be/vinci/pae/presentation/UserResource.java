@@ -191,21 +191,22 @@ public class UserResource {
   @Path("/validate/{id}")
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
-  public Response validateUser(@PathParam("id") int id,JsonNode reqNode) {
+  public Response validateUser(@PathParam("id") int id, JsonNode reqNode) {
     JsonNode valueNode = reqNode.get("value");
-    if(valueNode == null){
+    if (valueNode == null) {
       throw new WebApplicationException(
           Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
               .build());
     }
-    boolean value=valueNode.asBoolean();
-    UserDTO userDTO = userUCC.validateUser(id,value);
-    userDTO= Json.filterAdminOnlyJsonView(userDTO,UserDTO.class);
+    boolean value = valueNode.asBoolean();
+    UserDTO userDTO = userUCC.validateUser(id, value);
+    userDTO = Json.filterAdminOnlyJsonView(userDTO, UserDTO.class);
     return Response.ok(userDTO).build();
   }
 
   /**
    * create a Node from the userList.
+   *
    * @param users list user.
    * @return response.
    */
