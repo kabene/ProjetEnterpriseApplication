@@ -32,6 +32,7 @@ const displayShortElements = async (e) => {
 
   //get the correct element
   let element;
+  console.log(e.path);
   for (let i = 0; i < e.path.length; i++) {
     if ((e.path[i].className + "").includes("toBeClicked")) {
       element = e.path[i].attributes
@@ -339,7 +340,7 @@ const getUserList = async () => {
 const AddressToGeo = async (address) => {
 
   var platform = new H.service.Platform({
-    'apikey': 's4UWDeMzmG-UyPMvL1e41P24GWrJk2AvNahLgtZ4eio'
+    'apikey': 'lork4RxfbCvij9rrt-YAdXwViqsyXrHaxgdhP5cfRJs'
   });
 
   var service = platform.getSearchService();

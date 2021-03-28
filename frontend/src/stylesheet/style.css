@@ -1,237 +1,237 @@
 /*********************************On Navbar*********************************/
 
 .navbar {
-    background-color: rgb(180, 173, 173);
+  background-color: rgb(180, 173, 173);
 }
 
 #logoNavbar {
-    width: 4.5em;
-    cursor: pointer;
+  width: 4.5em;
+  cursor: pointer;
 }
 
 @media (min-width: 359px) and (max-width: 1132px) {
-    #logoNavbar {
-        margin-left: 2.5em;
-    }
+  #logoNavbar {
+    margin-left: 2.5em;
+  }
 }
 
 #storeName {
-    margin-left: 0.7em;
-    font-weight: bold;
-    font-size: 1.3em;
-    font-family: Arial, Helvetica, sans-serif;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
+  margin-left: 0.7em;
+  font-weight: bold;
+  font-size: 1.3em;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 @media (max-width: 173px) {
-    #storeName {
-        white-space: normal;
-    }
+  #storeName {
+    white-space: normal;
+  }
 }
 
 .navbarButton {
-    width: 7em;
-    height: 4em;
-    margin-right: 1.5em;
-    margin-top: 1em;
-    margin-bottom: 1em;
+  width: 7em;
+  height: 4em;
+  margin-right: 1.5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
 #seeFurnitureButton {
-    margin-right: 10em;
+  margin-right: 10em;
 }
 
 @media (max-width: 443px) {
-    #seeFurnitureButton {
-        margin-right: 1.5em;
-    }
+  #seeFurnitureButton {
+    margin-right: 1.5em;
+  }
 }
 
 
 /********************************On Authentication**********************************/
 
 #authenticationLine {
-    border-right: solid;
+  border-right: solid;
 }
 
 .inputSignup {
-    width: 7em;
-    display: inline;
-    margin-left: 1.5em;
+  width: 7em;
+  display: inline;
+  margin-left: 1.5em;
 }
 
 /********************************On HomePage**********************************/
 
 .badgeSold {
-    transform: rotateZ(-25deg);
-    margin-top: 2em;
-    margin-left: 5em;
-    color: red;
-    background-color: lightgray;
-    height: 2em;
+  transform: rotateZ(-25deg);
+  margin-top: 2em;
+  margin-left: 5em;
+  color: red;
+  background-color: lightgray;
+  height: 2em;
 }
 
 
 /********************************On Footer**********************************/
 
 footer {
-    background-color: rgb(180, 173, 173);
+  background-color: rgb(180, 173, 173);
 }
 
 #logoFooter {
-    width: 2em;
+  width: 2em;
 }
 
 
 /********************************User**********************************/
 .emp-profile{
-    padding: 3%;
-    margin-top: 3%;
-    margin-bottom: 3%;
-    border-radius: 0.5rem;
-    background: #fff;
+  padding: 3%;
+  margin-top: 3%;
+  margin-bottom: 3%;
+  border-radius: 0.5rem;
+  background: #fff;
 }
 .profile-img{
-    text-align: center;
+  text-align: center;
 }
 .profile-img img{
-    width: 70%;
-    height: 100%;
+  width: 70%;
+  height: 100%;
 }
 .profile-img .file {
-    position: relative;
-    overflow: hidden;
-    margin-top: -20%;
-    width: 70%;
-    border: none;
-    border-radius: 0;
-    font-size: 15px;
-    background: #212529b8;
+  position: relative;
+  overflow: hidden;
+  margin-top: -20%;
+  width: 70%;
+  border: none;
+  border-radius: 0;
+  font-size: 15px;
+  background: #212529b8;
 }
 .profile-img .file input {
-    position: absolute;
-    opacity: 0;
-    right: 0;
-    top: 0;
+  position: absolute;
+  opacity: 0;
+  right: 0;
+  top: 0;
 }
 .profile-head h5{
-    color: #333;
+  color: #333;
 }
 .profile-head h6{
-    color: #0062cc;
+  color: #0062cc;
 }
 .profile-edit-btn{
-    border: solid;
-    border-radius: 1.5rem;
-    width: auto;
-    padding: 2%;
-    font-weight: 600;
-    color: #6c757d;
-    cursor: pointer;
+  border: solid;
+  border-radius: 1.5rem;
+  width: auto;
+  padding: 2%;
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
 }
 .proile-rating{
-    font-size: 12px;
-    color: #818182;
-    margin-top: 5%;
+  font-size: 12px;
+  color: #818182;
+  margin-top: 5%;
 }
 .proile-rating span{
-    color: #495057;
-    font-size: 15px;
-    font-weight: 600;
+  color: #495057;
+  font-size: 15px;
+  font-weight: 600;
 }
 .profile-head .nav-tabs{
-    margin-bottom:5%;
+  margin-bottom:5%;
 }
 .profile-head .nav-tabs .nav-link{
-    font-weight:600;
-    border: none;
+  font-weight:600;
+  border: none;
 }
 .profile-head .nav-tabs .nav-link.active{
-    border: none;
-    border-bottom:2px solid #0062cc;
+  border: none;
+  border-bottom:2px solid #0062cc;
 }
 .profile-work{
-    padding: 14%;
-    margin-top: -15%;
+  padding: 14%;
+  margin-top: -15%;
 }
 .profile-work p{
-    font-size: 12px;
-    color: #818182;
-    font-weight: 600;
-    margin-top: 10%;
+  font-size: 12px;
+  color: #818182;
+  font-weight: 600;
+  margin-top: 10%;
 }
 .profile-work a{
-    text-decoration: none;
-    color: #495057;
-    font-weight: 600;
-    font-size: 14px;
+  text-decoration: none;
+  color: #495057;
+  font-weight: 600;
+  font-size: 14px;
 }
 .profile-work ul{
-    list-style: none;
+  list-style: none;
 }
 .profile-tab label{
-    font-weight: 600;
+  font-weight: 600;
 }
 .profile-tab p{
-    font-weight: 600;
-    color: #0062cc;
+  font-weight: 600;
+  color: #0062cc;
 }
 /*****map******/
 #map {
-    height: 400px;
-    width: auto;
+  height: 400px;
+  width: auto;
 
 }
 
 
 /********************************Furniture**********************************/
 .wrapperFurniturePage {
-    display: grid;
-    grid-template-columns: 1fr 8fr 1fr;
-    grid-gap: 2em;
-    margin-top: 5em;
+  display: grid;
+  grid-template-columns: 1fr 8fr 1fr;
+  grid-gap: 2em;
+  margin-top: 5em;
 }
 
 .contentFurniturePage {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 2em;
-	padding: 1em;
-	border: solid 1px grey;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 2em;
+  padding: 1em;
+  border: solid 1px grey;
 }
 
 .contentFurniturePage > div {
-    background-color: grey;
+  background-color: grey;
 }
 
 .imageFurniturePage {
-    margin: auto;
-    display: block;
-    width: 75%;
+  margin: auto;
+  display: block;
+  width: 75%;
 }
 
 .imageFurniturePage:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .buttonOptionFurniturePage {
-    display: block;
-    margin-top: 1em;
-    margin: 0.5em;
+  display: block;
+  margin-top: 1em;
+  margin: 0.5em;
 }
 
 @media (max-width: 825px) {
-    .contentFurniturePage {
-        grid-template-columns: 1fr 1fr;
-    }
+  .contentFurniturePage {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 450px) {
-    .contentFurniturePage {
-        grid-template-columns: 1fr;
-    }
+  .contentFurniturePage {
+    grid-template-columns: 1fr;
+  }
 }
 
 
@@ -239,170 +239,168 @@ footer {
  * https://freefrontend.com/css-search-boxes/ */
 
 body, .search-bar {
-	display: flex;
+  display: flex;
 }
 .search-bar input,
-.search-btn, 
-.search-btn:before, 
+.search-btn,
+.search-btn:before,
 .search-btn:after {
-	transition: all 0.25s ease-out;
+  transition: all 0.25s ease-out;
 }
 .search-bar input,
 .search-btn {
-	width: 3em;
-	height: 3em;
+  width: 3em;
+  height: 3em;
 }
 .search-bar input:invalid:not(:focus),
 .search-btn {
-	cursor: pointer;
+  cursor: pointer;
 }
 .search-bar,
 .search-bar input:focus,
 .search-bar input:valid  {
-	width: 100%;
+  width: 100%;
 }
 .search-bar input:focus,
 .search-bar input:not(:focus) + .search-btn:focus {
-	outline: transparent;
+  outline: transparent;
 }
 .search-bar {
-	margin: auto;
-	padding: 1.5em;
-	justify-content: center;
-	max-width: 30em;
+  margin: auto;
+  padding: 1.5em;
+  justify-content: center;
+  max-width: 30em;
 }
 .search-bar input {
-	background: transparent;
-	border-radius: 1.5em;
-	box-shadow: 0 0 0 0.4em #171717 inset;
-	padding: 0.75em;
-	transform: translate(0.5em,0.5em) scale(0.5);
-	transform-origin: 100% 0;
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
+  background: transparent;
+  border-radius: 1.5em;
+  box-shadow: 0 0 0 0.4em #171717 inset;
+  padding: 0.75em;
+  transform: translate(0.5em,0.5em) scale(0.5);
+  transform-origin: 100% 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 .search-bar input::-webkit-search-decoration {
-	-webkit-appearance: none;
+  -webkit-appearance: none;
 }
 .search-bar input:focus,
 .search-bar input:valid {
-	background: #fff;
-	border-radius: 0.375em 0 0 0.375em;
-	box-shadow: 0 0 0 0.1em #d9d9d9 inset;
-	transform: scale(1);
+  background: #171717;
+  border-radius: 0.375em 0 0 0.375em;
+  box-shadow: 0 0 0 0.1em #171717 inset;
+  transform: scale(1);
 }
 .search-btn {
-	background: #171717;
-	border-radius: 0 0.75em 0.75em 0 / 0 1.5em 1.5em 0;
-	padding: 0.75em;
-	position: relative;
-	transform: translate(0.25em,0.25em) rotate(45deg) scale(0.25,0.125);
-	transform-origin: 0 50%;
+  background: #171717;
+  border-radius: 0 0.75em 0.75em 0 / 0 1.5em 1.5em 0;
+  padding: 0.75em;
+  position: relative;
+  transform: translate(0.25em,0.25em) rotate(45deg) scale(0.25,0.125);
+  transform-origin: 0 50%;
 }
-.search-btn:before, 
+.search-btn:before,
 .search-btn:after {
-	content: "";
-	display: block;
-	opacity: 0;
-	position: absolute;
+  content: "";
+  display: block;
+  opacity: 0;
+  position: absolute;
 }
 .search-btn:before {
-	border-radius: 50%;
-	box-shadow: 0 0 0 0.2em #f1f1f1 inset;
-	top: 0.75em;
-	left: 0.75em;
-	width: 1.2em;
-	height: 1.2em;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0.2em #171717 inset;
+  top: 0.75em;
+  left: 0.75em;
+  width: 1.2em;
+  height: 1.2em;
 }
 .search-btn:after {
-	background: #f1f1f1;
-	border-radius: 0 0.25em 0.25em 0;
-	top: 51%;
-	left: 51%;
-	width: 0.75em;
-	height: 0.25em;
-	transform: translate(0.2em,0) rotate(45deg);
-	transform-origin: 0 50%;
+  background: #171717;
+  border-radius: 0 0.25em 0.25em 0;
+  top: 51%;
+  left: 51%;
+  width: 0.75em;
+  height: 0.25em;
+  transform: translate(0.2em,0) rotate(45deg);
+  transform-origin: 0 50%;
 }
 .search-btn span {
-	display: inline-block;
-	overflow: hidden;
-	width: 1px;
-	height: 1px;
+  display: inline-block;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
 }
 
 /* Active state */
 .search-bar input:focus + .search-btn,
 .search-bar input:valid + .search-btn {
-	background: #2762f3;
-	border-radius: 0 0.375em 0.375em 0;
-	transform: scale(1);
+  background: #2762f3;
+  border-radius: 0 0.375em 0.375em 0;
+  transform: scale(1);
 }
-.search-bar input:focus + .search-btn:before, 
+.search-bar input:focus + .search-btn:before,
 .search-bar input:focus + .search-btn:after,
-.search-bar input:valid + .search-btn:before, 
+.search-bar input:valid + .search-btn:before,
 .search-bar input:valid + .search-btn:after {
-	opacity: 1;
+  opacity: 1;
 }
 .search-bar input:focus + .search-btn:hover,
 .search-bar input:valid + .search-btn:hover,
 .search-bar input:valid:not(:focus) + .search-btn:focus {
-	background: #0c48db;
+  background: #0c48db;
 }
 .search-bar input:focus + .search-btn:active,
 .search-bar input:valid + .search-btn:active {
-	transform: translateY(1px);
+  transform: translateY(1px);
 }
 
 @media screen and (prefers-color-scheme: dark) {
-	body, input {
-		color: #f1f1f1;
-	}
-	body {
-		background: #171717;
-	}
-	.search-bar input {
-		box-shadow: 0 0 0 0.4em #f1f1f1 inset;
-	}
-	.search-bar input:focus,
-	.search-bar input:valid {
-		background: #3d3d3d;
-		box-shadow: 0 0 0 0.1em #3d3d3d inset;
-	}
-	.search-btn {
-		background: #f1f1f1;
-	}
+  body, input {
+    color: #171717;
+  }
+
+  .search-bar input {
+    box-shadow: 0 0 0 0.4em #171717 inset;
+  }
+  .search-bar input:focus,
+  .search-bar input:valid {
+    background: #3d3d3d;
+    box-shadow: 0 0 0 0.1em #3d3d3d inset;
+  }
+  .search-btn {
+    background:#171717;
+  }
 }
 
 /********************************User**********************************/
 #shortTableContainer {
-    display: grid;
-    grid-template-columns: 1fr 4fr;
-    grid-gap: 5em;
-    text-align: -webkit-center;
-    overflow-x: auto;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-gap: 5em;
+  text-align: -webkit-center;
+  overflow-x: auto;
 }
 #shortTable {
-    width: 15em;
-    transition: 1s;
+  width: 15em;
+  transition: 1s;
 }
 
 #largeTable {
-    width: 100%;
-    transition: 1s;
+  width: 100%;
+  transition: 1s;
 }
 
 #largeTableContainer {
-    overflow-x: auto;
+  overflow-x: auto;
 }
 
 @media (max-width: 800px) {
-    #shortTable {
-        width: 90%;
-        margin: auto;
-    }
-    #shortTableContainer {
-        grid-template-columns: 1fr;
-    }
+  #shortTable {
+    width: 90%;
+    margin: auto;
+  }
+  #shortTableContainer {
+    grid-template-columns: 1fr;
+  }
 }
