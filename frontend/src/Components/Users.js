@@ -49,10 +49,14 @@ const changeContainerId = () => {
 }
 
 const displayLargeTable = () => {
-  document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "");
   document.querySelector('#shortTableContainer').id = "largeTableContainer";
+  setTimeout(displayLargeElements, 750);
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
   document.querySelector('#shortTable').id = "largeTable";
+}
+
+const displayLargeElements = () => {
+  document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "");
 }
 
 const generateUsersPage = () => {
