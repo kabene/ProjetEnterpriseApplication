@@ -212,13 +212,10 @@ public class UserDAOImpl implements UserDAO {
 
     try {
       ps.setInt(1, id);
-      ps.executeQuery();
+      ps.executeUpdate();
     } catch (SQLException throwables) {
       System.out.println("waiting removed and role setted");
-
     }
-
-
   }
 
   /**
