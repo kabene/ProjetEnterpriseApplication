@@ -128,7 +128,7 @@ const generateUserCard = (userDetail) => {
     status = 'En attente';
   else 
   status = "Accepté";
-  return `
+ let page= `
    <div class="container emp-profile">
     <form>
       <div class="row">
@@ -137,7 +137,7 @@ const generateUserCard = (userDetail) => {
             <h5 id="Name&Firstname">` + userDetail.lastName + ` ` + userDetail.firstName +`</h5>
             <p class="proile-rating">ROLE : 
               <span id="role">
-                <p>` + userDetail.role + `</p> 
+               ` + userDetail.role + ` 
               </span>
             </p>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -214,10 +214,12 @@ const generateUserCard = (userDetail) => {
               </div>
             </div>
 
-            <div class="col-md-2" style="display: flex"> 
-              <input type="submit" class="profile-edit-btn" name="btnAddMore"  id="approuver" value="approuver" style="color: #0062cc; margin:5px"/>
-              <input type="submit" class="profile-edit-btn" name="btnAddMore" id="refuser" value="refuser" style="color: red; margin:5px"/>
-            </div>
+            <div class="col-md-2" style="display: flex"> `;
+            if(userDetail.waiting) {
+              page += `<input type="submit" class="profile-edit-btn" name="btnAddMore"  id="approuver" value="approuver" style="color: #0062cc; margin:5px"/>
+              <input type="submit" class="profile-edit-btn" name="btnAddMore" id="refuser" value="refuser" style="color: red; margin:5px"/>`;
+            }
+       page+= `</div>
           </div>         
           <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             <div class="row">
@@ -241,6 +243,7 @@ const generateUserCard = (userDetail) => {
 </form>           
 </div>
     `;
+            return page;
 }
 
 const clientDetail = async (id) => {
