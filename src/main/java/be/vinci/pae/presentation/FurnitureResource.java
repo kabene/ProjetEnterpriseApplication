@@ -119,6 +119,13 @@ public class FurnitureResource {
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 
+  /**
+   * PATCH one piece of furniture to the 'available_for_sale' state.
+   *
+   * @param id : the furniture id
+   * @param reqNode : the request body
+   * @return : updated piece of furniture
+   */
   @PATCH
   @Path("/available/{id}")
   @Admin
@@ -133,6 +140,12 @@ public class FurnitureResource {
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 
+  /**
+   * PATCH one piece of furniture to the 'withdrawn' state.
+   *
+   * @param id : the furniture id
+   * @return : the updated piece of furniture
+   */
   @PATCH
   @Path("/withdraw/{id}")
   @Admin
