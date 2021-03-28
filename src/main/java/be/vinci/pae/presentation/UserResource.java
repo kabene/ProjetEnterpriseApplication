@@ -192,6 +192,7 @@ public class UserResource {
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
   public Response validateUser(@PathParam("id") int id, JsonNode reqNode) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/validate/"+id);
     JsonNode valueNode = reqNode.get("value");
     if (valueNode == null) {
       throw new WebApplicationException(
