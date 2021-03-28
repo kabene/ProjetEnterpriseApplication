@@ -1,7 +1,5 @@
 package be.vinci.pae.persistence.dao;
 
-
-import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import org.apache.commons.text.StringEscapeUtils;

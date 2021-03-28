@@ -1,7 +1,6 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
-import java.sql.Date;
 import java.util.List;
 
 public interface FurnitureDAO {
