@@ -140,7 +140,7 @@ public class FurnitureResource {
   public Response withdraw(@PathParam("id") int id) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /furniture/withdraw/" + id);
     FurnitureDTO furnitureDTO = furnitureUCC.withdraw(id);
-    return Response.ok(furnitureDTO).build();
+    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 }
 
