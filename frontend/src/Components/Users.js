@@ -49,7 +49,6 @@ const changeContainerId = () => {
 }
 
 const displayLargeTable = () => {
-  console.log(document.querySelectorAll('.notNeeded'));
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "");
   document.querySelector('#shortTableContainer').id = "largeTableContainer";
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
@@ -336,7 +335,7 @@ const getUserList = async () => {
 const AddressToGeo = async (address) => {
 
   var platform = new H.service.Platform({
-    'apikey': 'lork4RxfbCvij9rrt-YAdXwViqsyXrHaxgdhP5cfRJs'
+    'apikey': 's4UWDeMzmG-UyPMvL1e41P24GWrJk2AvNahLgtZ4eio'
   });
 
   var service = platform.getSearchService();
