@@ -4,6 +4,7 @@ import {Loader} from "@googlemaps/js-api-loader";
 let page = document.querySelector("#page");
 let usersList;
 let currentUser;
+let timeouts = [];
 
 const Users = async () => {
   currentUser = getUserSessionData();
@@ -20,31 +21,31 @@ const Users = async () => {
 }
 
 const displayShortElements = async (e) => {
+  removeTimeouts();
   //display / hide the needed elements
   let largeTable = document.querySelector('#largeTable');
   if (largeTable !== null)
     largeTable.id = "shortTable";
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
-  setTimeout(changeContainerId, 1000);
+  if (document.querySelector('#largeTableContainer') !== null)
+    timeouts.push(setTimeout(changeContainerId, 1000));
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
   let userCardDiv = document.getElementById("userCardDiv");
   userCardDiv.innerHTML = generateLoadingAnimation();
 
   //get the correct element
-  let element;
-  for (let i = 0; i < e.path.length; i++) {
-    if ((e.path[i].className + "").includes("toBeClicked")) {
-      element = e.path[i].attributes
-      break;
-    }
+  let element = e.srcElement;
+  while (!element.className.includes("toBeClicked")) {
+    element = element.parentElement;
   }
+  let attributesTab = element.attributes;
 
   //generate the user card
-  let userDetail = await clientDetail(element["userId"].value);
-  //TODO what to do when the address is wrong ?
+  let userDetail = await clientDetail(attributesTab["userId"].value);
+  userCardDiv.innerHTML = generateUserCard(userDetail);
   await AddressToGeo(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune)
                       .catch((err) => console.error(err));
-  userCardDiv.innerHTML = generateUserCard(userDetail);
+
 }
 
 const changeContainerId = () => {
@@ -52,11 +53,14 @@ const changeContainerId = () => {
 }
 
 const displayLargeTable = () => {
-  console.log(document.querySelectorAll('.notNeeded'));
-  document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "");
   document.querySelector('#shortTableContainer').id = "largeTableContainer";
+  timeouts.push(setTimeout(displayLargeElements, 750));
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
   document.querySelector('#shortTable').id = "largeTable";
+}
+
+const displayLargeElements = () => {
+  document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "");
 }
 
 const generateUsersPage = () => {
@@ -124,7 +128,7 @@ const generateUserCard = (userDetail) => {
     status = 'En attente';
   else 
   status = "Accepté";
-  return `
+ let page= `
    <div class="container emp-profile">
     <form>
       <div class="row">
@@ -133,7 +137,7 @@ const generateUserCard = (userDetail) => {
             <h5 id="Name&Firstname">` + userDetail.lastName + ` ` + userDetail.firstName +`</h5>
             <p class="proile-rating">ROLE : 
               <span id="role">
-                <p>` + userDetail.role + `</p> 
+               ` + userDetail.role + ` 
               </span>
             </p>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -210,10 +214,12 @@ const generateUserCard = (userDetail) => {
               </div>
             </div>
 
-            <div class="col-md-2" style="display: flex"> 
-              <input type="submit" class="profile-edit-btn" name="btnAddMore"  id="approuver" value="approuver" style="color: #0062cc; margin:5px"/>
-              <input type="submit" class="profile-edit-btn" name="btnAddMore" id="refuser" value="refuser" style="color: red; margin:5px"/>
-            </div>
+            <div class="col-md-2" style="display: flex"> `;
+            if(userDetail.waiting) {
+              page += `<input type="submit" class="profile-edit-btn" name="btnAddMore"  id="approuver" value="approuver" style="color: #0062cc; margin:5px"/>
+              <input type="submit" class="profile-edit-btn" name="btnAddMore" id="refuser" value="refuser" style="color: red; margin:5px"/>`;
+            }
+       page+= `</div>
           </div>         
           <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             <div class="row">
@@ -237,6 +243,7 @@ const generateUserCard = (userDetail) => {
 </form>           
 </div>
     `;
+            return page;
 }
 
 const clientDetail = async (id) => {
@@ -262,7 +269,7 @@ const clientDetail = async (id) => {
   return userDetails;
 }
 
-const map = (latitude, lngitude) => {
+const map = async (latitude, lngitude) => {
   if (latitude != null && lngitude != null) {
     console.log(latitude, lngitude);
     let map;
@@ -339,18 +346,25 @@ const getUserList = async () => {
 const AddressToGeo = async (address) => {
 
   var platform = new H.service.Platform({
-    'apikey': 's4UWDeMzmG-UyPMvL1e41P24GWrJk2AvNahLgtZ4eio'
+    'apikey': 'lork4RxfbCvij9rrt-YAdXwViqsyXrHaxgdhP5cfRJs'
   });
 
   var service = platform.getSearchService();
 
   await service.geocode({
         q: address
-      }, (result) => {
-        console.log(result.items[0].position)
-        map(result.items[0].position.lat, result.items[0].position.lng);
+      },  (result) => {
+       if(result.items[0]!=null) {
+         map(result.items[0].position.lat, result.items[0].position.lng);
+       }
       },
-      map(null, null))
+     await map(null, null))
+}
+
+const removeTimeouts = () => {
+  timeouts.forEach(timeout => {
+      clearTimeout(timeout);
+  })
 }
 
 export default Users;
