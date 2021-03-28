@@ -8,6 +8,7 @@ import be.vinci.pae.utils.Json;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -96,4 +97,18 @@ public class FurnitureResource {
     }
     return Response.ok(res).build();
   }
+
+  // split state transitions into multiple requests for authentication level management
+  // (some are admin only, others are not)
+
+  @PATCH
+  @Path("/restoration/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response toRestoration(@PathParam("id") int id) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /funiture/restoration/" + id);
+    FurnitureDTO furnitureDTO = furnitureUCC.toRestoration(id);
+    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
+  }
 }
+
