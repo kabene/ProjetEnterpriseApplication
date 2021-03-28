@@ -204,66 +204,21 @@ public class UserDAOImpl implements UserDAO {
   public void setRole(int id, boolean value) {
     String query;
     if (value) {
-      query = "UPDATE  satchoFurniture.users u SET waiting = false WHERE  u.user_id  = ?";
+      query = "UPDATE  satchoFurniture.users u SET waiting = false WHERE  u.user_id = ?";
     } else {
-      query = "UPDATE satchoFurniture.users u SET  role = customer, waiting = false WHERE u.user_id =?";
+      query = "UPDATE satchoFurniture.users u SET  role = 'customer', waiting = false WHERE u.user_id = ?";
     }
     PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setInt(1, id);
-      ps.executeQuery();
-      ps.close();
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-    }
-  }
 
-  /**
-   * Set the role and  set wait
-   *
-   * @param id    userId.
-   * @param value value if the user is confirmed.
-   */
-  @Override
-  public void setRole(int id, boolean value) {
-    String query;
-    if (value) {
-      query = "UPDATE  satchoFurniture.users u SET waiting = false WHERE  u.user_id  = ?";
-    } else {
-      query = "UPDATE satchoFurniture.users u SET  role = customer, waiting = false WHERE u.user_id =?";
-    }
-    PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setInt(1, id);
       ps.executeQuery();
-      ps.close();
     } catch (SQLException throwables) {
-      throwables.printStackTrace();
-    }
-  }
+      System.out.println("waiting removed and role setted");
 
-  /**
-   * Set the role and  set wait
-   *
-   * @param id    userId.
-   * @param value value if the user is confirmed.
-   */
-  @Override
-  public void setRole(int id, boolean value) {
-    String query;
-    if (value) {
-      query = "UPDATE  satchoFurniture.users u SET waiting = false WHERE  u.user_id  = ?";
-    } else {
-      query = "UPDATE satchoFurniture.users u SET  role = customer, waiting = false WHERE u.user_id =?";
     }
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setInt(1, id);
-      ps.executeQuery();
-      ps.close();
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-    }
+
+
   }
 
   /**
