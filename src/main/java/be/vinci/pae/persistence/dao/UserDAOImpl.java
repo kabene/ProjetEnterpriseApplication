@@ -1,6 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import org.apache.commons.text.StringEscapeUtils;
@@ -133,6 +134,7 @@ public class UserDAOImpl implements UserDAO {
     return users;
   }
 
+
   /**
    * used to register a new user.
    *
@@ -209,6 +211,11 @@ public class UserDAOImpl implements UserDAO {
     } catch (SQLException e) {
       throw new InternalError(e);
     }
+  }
+
+  @Override
+  public void patchState(FurnitureDTO furnitureDTO) {
+    // TODO: generated stub
   }
 
   /**

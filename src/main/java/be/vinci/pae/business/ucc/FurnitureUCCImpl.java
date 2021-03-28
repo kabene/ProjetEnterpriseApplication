@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
@@ -60,6 +61,26 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     return dtos;
   }
 
+  @Override
+  public FurnitureDTO toRestoration(int furnitureId) {
+    FurnitureDTO furnitureDTO;
+    dalServices.startTransaction();
+    try {
+      furnitureDTO = furnitureDAO.findById(furnitureId);
+      if (!furnitureDTO.getCondition().equals("accepted")) {
+        throw new ConflictException(
+            "The resource cannot change from its current state to the 'in_restoration' state");
+      }
+      furnitureDTO.setCondition("in_restoration");
+      userDAO.patchState(furnitureDTO);
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+
+  }
+
   /**
    * Completes the FurnitureDTO given as an argument with it's references in the db.
    *
@@ -82,10 +103,5 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     dto.setPhotos(photos);
     String type = furnitureTypeDAO.findById(dto.getTypeId());
     dto.setType(type);
-  }
-
-  @Override
-  public FurnitureDTO toRestoration(int furnitureId) {
-    return null;
   }
 }
