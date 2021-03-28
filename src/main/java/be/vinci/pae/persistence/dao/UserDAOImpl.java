@@ -214,8 +214,18 @@ public class UserDAOImpl implements UserDAO {
   }
 
   @Override
-  public void patchState(FurnitureDTO furnitureDTO) {
-    // TODO: generated stub
+  public void updateToRestoration(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET condition = ?"
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setString(1, furnitureDTO.getCondition());
+      ps.setInt(2, furnitureDTO.getFurnitureId());
+      ps.execute();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
   }
 
   /**
