@@ -53,6 +53,7 @@ const displayShortElements = async (e) => {
   let verifA =document.querySelector("#accept");
   let verifR =document.querySelector("#refuse");
   valueButtonValid=e.srcElement.id;
+
   verifA.addEventListener("click",validation);
   verifR.addEventListener("click",validation);
 
@@ -378,7 +379,6 @@ const removeTimeouts = () => {
 }
 
 const validation= async (e)=> {
-  console.log("clicked");
   let id =userDetail.id;
   let value=e.srcElement.id;
   let val;
@@ -406,8 +406,9 @@ const validation= async (e)=> {
     ret = data;
   }).catch((err) => {
     console.error(err);
+    return;
   });
-  return ret;
+ return ret; // TODO REFRESH PAGE IN REAL TIME
 }
 
 export default Users;
