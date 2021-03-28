@@ -129,4 +129,14 @@
     </td>
 </tr>
 
+<tr>
+    <td>furniture/available/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+    Modifie l'état d'une ressource de type 'furniture' vers 'available_for_sale', et renvoie les informations mises à jour.
+    Le body de la requête contient un double 'selling_price'.
+    </td>
+</tr>
+
 </table>
