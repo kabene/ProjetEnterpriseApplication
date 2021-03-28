@@ -31,17 +31,14 @@ const displayShortElements = async (e) => {
   userCardDiv.innerHTML = generateLoadingAnimation();
 
   //get the correct element
-  let element;
-  for (let i = 0; i < e.path.length; i++) {
-    if ((e.path[i].className + "").includes("toBeClicked")) {
-      element = e.path[i].attributes
-      break;
-    }
+  let element = e.srcElement;
+  while (!element.className.includes("toBeClicked")) {
+    element = element.parentElement;
   }
+  let attributesTab = element.attributes;
 
   //generate the user card
-  let userDetail = await clientDetail(element["userId"].value);
-  //TODO what to do when the address is wrong ?
+  let userDetail = await clientDetail(attributesTab["userId"].value);
   await AddressToGeo(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune)
                       .catch((err) => console.error(err));
   userCardDiv.innerHTML = generateUserCard(userDetail);
