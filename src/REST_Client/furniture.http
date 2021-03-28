@@ -18,3 +18,12 @@ Authorization: {{jwt}}
 PATCH {{baseUrl}}/furniture/restoration/1
 Authorization: {{jwt}}
 ###
+
+PATCH {{baseUrl}}/furniture/available/1
+Authorization: {{jwt}}
+Content-Type: application/json
+
+{
+  "selling_price": 150.0
+}
+###
