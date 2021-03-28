@@ -120,4 +120,13 @@
     </td>
 </tr>
 
+<tr>
+    <td>furniture/restoration/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+    Modifie l'état d'une ressource de type 'furniture' vers 'in_restoration', et renvoie les informations mises à jour.
+    </td>
+</tr>
+
 </table>
