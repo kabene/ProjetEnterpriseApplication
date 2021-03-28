@@ -27,7 +27,8 @@ const displayShortElements = async (e) => {
   if (largeTable !== null)
     largeTable.id = "shortTable";
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
-  timeouts.push(setTimeout(changeContainerId, 1000));
+  if (document.querySelector('#largeTableContainer') !== null)
+    timeouts.push(setTimeout(changeContainerId, 1000));
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
   let userCardDiv = document.getElementById("userCardDiv");
   userCardDiv.innerHTML = generateLoadingAnimation();
