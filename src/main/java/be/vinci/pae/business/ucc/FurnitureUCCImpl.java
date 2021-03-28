@@ -72,7 +72,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
             "The resource cannot change from its current state to the 'in_restoration' state");
       }
       furnitureDTO.setCondition("in_restoration");
-      furnitureDAO.updateToRestoration(furnitureDTO);
+      furnitureDTO = furnitureDAO.updateToRestoration(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
     } catch (Exception e) {
@@ -95,7 +95,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       furnitureDTO.setCondition("available_for_sale");
       furnitureDTO.setSellingPrice(sellingPrice);
-      furnitureDAO.updateToAvailable(furnitureDTO);
+      furnitureDTO = furnitureDAO.updateToAvailable(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
     } catch (Exception e) {
@@ -117,7 +117,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
             "The resource isn't in a withdrawable state");
       }
       furnitureDTO.setCondition("withdrawn");
-      furnitureDAO.updateToWithdrawn(furnitureDTO);
+      furnitureDTO = furnitureDAO.updateToWithdrawn(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
     } catch (Exception e) {

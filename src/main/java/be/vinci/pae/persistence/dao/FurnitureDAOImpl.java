@@ -67,7 +67,7 @@ public class FurnitureDAOImpl implements FurnitureDAO {
   }
 
   @Override
-  public void updateToRestoration(FurnitureDTO furnitureDTO) {
+  public FurnitureDTO updateToRestoration(FurnitureDTO furnitureDTO) {
     String query = "UPDATE satchofurniture.furniture "
         + "SET condition = ? "
         + "WHERE furniture_id = ? ";
@@ -80,12 +80,11 @@ public class FurnitureDAOImpl implements FurnitureDAO {
     } catch (SQLException e) {
       throw new InternalError(e);
     }
-
-
+    return furnitureDTO;
   }
 
   @Override
-  public void updateToAvailable(FurnitureDTO furnitureDTO) {
+  public FurnitureDTO updateToAvailable(FurnitureDTO furnitureDTO) {
     String query = "UPDATE satchofurniture.furniture "
         + "SET condition = ?, "
         + "selling_price = ? "
@@ -100,11 +99,27 @@ public class FurnitureDAOImpl implements FurnitureDAO {
     } catch (SQLException e) {
       throw new InternalError(e);
     }
+    return furnitureDTO;
   }
 
   @Override
-  public void updateToWithdrawn(FurnitureDTO furnitureDTO) {
-    return; // TODO
+  public FurnitureDTO updateToWithdrawn(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET condition = ?, "
+        + "sale_withdrawal_date = ? "
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    java.sql.Date saleWithdrawalDate = new java.sql.Date(new java.util.Date().getTime()); //now
+    try {
+      ps.setString(1, furnitureDTO.getCondition());
+      ps.setDate(2, saleWithdrawalDate);
+      ps.setInt(3, furnitureDTO.getFurnitureId());
+      ps.execute();
+      furnitureDTO.setSaleWithdrawalDate(saleWithdrawalDate.toString());
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return furnitureDTO;
   }
 
   /**
