@@ -66,6 +66,26 @@ public class FurnitureDAOImpl implements FurnitureDAO {
     return res;
   }
 
+  @Override
+  public void updateToRestoration(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET condition = ?"
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setString(1, furnitureDTO.getCondition());
+      ps.setInt(2, furnitureDTO.getFurnitureId());
+      ps.execute();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+  }
+
+  @Override
+  public void updateToAvailable(FurnitureDTO furnitureDTO) {
+    return;
+  }
+
   /**
    * transfers ONE furniture entry from a result set to a dto.
    *
