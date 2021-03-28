@@ -12,3 +12,9 @@ GET {{baseUrl}}/furniture/
 GET {{baseUrl}}/furniture/detail
 Authorization: {{jwt}}
 ###
+
+// state changes
+
+PATCH {{baseUrl}}/furniture/restoration/1
+Authorization: {{jwt}}
+###

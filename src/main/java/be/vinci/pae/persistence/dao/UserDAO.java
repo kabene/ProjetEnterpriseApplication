@@ -52,5 +52,5 @@ public interface UserDAO {
 
   List<UserDTO> findBySearch(String customerSearch);
 
-  void patchState(FurnitureDTO furnitureDTO);
+  void updateToRestoration(FurnitureDTO furnitureDTO);
 }
