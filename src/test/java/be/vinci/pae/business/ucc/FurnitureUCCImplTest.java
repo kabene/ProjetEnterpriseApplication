@@ -234,28 +234,12 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockFurnitureDAO.findAll()).thenReturn(emptyList);
 
-    assertEquals(emptyList, furnitureUCC.getAll());
+    assertEquals(emptyList, furnitureUCC.getAll(), "The getAll method should return "
+        + "an empty list if it is called while the db is empty");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
-
-    Mockito.verify(mockFurnitureDAO).findAll();
-  }
-
-  @DisplayName("TEST FurnitureUCC.getAll : db throwing InternalError,"
-      + " should rollback + throw InternalError")
-  @Test
-  public void test_getAll_InternalError_shouldThrowInternalError() {
-    Mockito.when(mockFurnitureDAO.findAll()).thenThrow(InternalError.class);
-
-    assertThrows(InternalError.class, () -> {
-      furnitureUCC.getAll();
-    });
-
-    Mockito.verify(mockDal).startTransaction();
-    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
-    Mockito.verify(mockDal).rollbackTransaction();
 
     Mockito.verify(mockFurnitureDAO).findAll();
   }
@@ -283,7 +267,9 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
     Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
 
-    assertEquals(mockFurnitureDTO1, furnitureUCC.toRestoration(id));
+    assertEquals(mockFurnitureDTO1, furnitureUCC.toRestoration(id),
+        "The toRestoration method should return the corresponding dto "
+            + "if it is called with a valid id.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
@@ -309,7 +295,8 @@ class FurnitureUCCImplTest {
 
     assertThrows(ConflictException.class, () -> {
       furnitureUCC.toRestoration(id);
-    });
+    }, "The toRestoration method should throw a ConflictException if it is given "
+        + "the id of a piece of furniture in the '" + startingCondition + "' condition.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
@@ -326,7 +313,8 @@ class FurnitureUCCImplTest {
 
     assertThrows(NotFoundException.class, () -> {
       furnitureUCC.toRestoration(id);
-    });
+    }, "The toRestoration method should throw a NotFoundException "
+        + "if it is called with an id that isn't present in the database");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
@@ -357,7 +345,9 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
     Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
 
-    assertEquals(mockFurnitureDTO1, furnitureUCC.toAvailable(id, sellingPrice));
+    assertEquals(mockFurnitureDTO1, furnitureUCC.toAvailable(id, sellingPrice),
+        "The toAvailable method should return the corresponding dto "
+            + "if it is called with a valid id.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
@@ -385,7 +375,8 @@ class FurnitureUCCImplTest {
 
     assertThrows(ConflictException.class, () -> {
       furnitureUCC.toAvailable(id, sellingPrice);
-    });
+    }, "The toAvailable method should throw a ConflictException if it is given "
+        + "the id of a piece of furniture in the '" + startingCondition + "' condition.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
@@ -403,7 +394,8 @@ class FurnitureUCCImplTest {
 
     assertThrows(NotFoundException.class, () -> {
       furnitureUCC.toAvailable(id, sellingPrice);
-    });
+    }, "The toAvailable method should throw a NotFoundException "
+      + "if it is called with an id that isn't present in the database");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
@@ -433,7 +425,9 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
     Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
 
-    assertEquals(mockFurnitureDTO1, furnitureUCC.withdraw(id));
+    assertEquals(mockFurnitureDTO1, furnitureUCC.withdraw(id),
+        "The withdraw method should return the corresponding dto "
+            + "if it is called with a valid id.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
@@ -459,7 +453,8 @@ class FurnitureUCCImplTest {
 
     assertThrows(ConflictException.class, () -> {
       furnitureUCC.withdraw(id);
-    });
+    }, "The withdraw method should throw a ConflictException if it is given "
+        + "the id of a piece of furniture in the '" + startingCondition + "' condition.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
@@ -475,8 +470,10 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
 
     assertThrows(NotFoundException.class, () -> {
-      furnitureUCC.withdraw(id);
-    });
+          furnitureUCC.withdraw(id);
+        },
+        "The withdraw method should throw a NotFoundException "
+            + "if it is called with an id that isn't present in the database");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
