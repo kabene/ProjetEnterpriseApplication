@@ -69,12 +69,12 @@ ALTER TABLE satchofurniture.furniture
 
 
 INSERT INTO satchoFurniture.addresses
-VALUES (DEFAULT, 'ez', 1, 1, '1', 'a', 'a');
+VALUES (DEFAULT, 'sente des artistes', '1bis', null, '4800', 'Vervier', 'Belgique');
 
 INSERT INTO satchoFurniture.users
-VALUES (DEFAULT, 'a', 'a', 'ex', 'a@gmail.com', 1, now(), 'customer',
-        '$2a$04$yS2WqRPYnf2Tb7GjbiSBSeLcKDa1ExJXzvUQpPOcJUGdJkdzbJhnC', 0, 1, 'true')
-    INSERT
+VALUES (DEFAULT, 'Albert', 'Satcho', 'bert', 'bert.satcho@gmail.be', 1, now(), 'admin',
+        '$2y$04$Q8iu7vV9XiJCq4G3pAqd6eF63CvuwcM07sy3/FLk9iMoctjizRdl6', 0, 0, 'false');
+INSERT
 INTO satchofurniture.addresses (address_id, street, building_number, unit_number, postcode, commune, country)
 VALUES (2, 'johndoe street', '4', '1', '1567', 'Beijing', 'Germany');
 
@@ -86,7 +86,57 @@ VALUES (2, 'doe', 'john', 'johndoe', 'john@gmail.com', 2, '02/02/2021', 'admin',
 
 
 INSERT INTO satchoFurniture.furniture_types (type_name)
-VALUES ('example type')
-    INSERT
+VALUES ('Armoire');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Bahut');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Bibliothèque');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Bonnetière');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Buffet');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Bureau');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Chaise');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Chiffonnier');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Coffre');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Coiffeuse');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Commode');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Confident/Indiscret');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Console');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Dresse');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Fauteil');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Guéridon');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Lingère');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Lit');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Penderie');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Secrétaire');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Table');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Tabouret');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Vaisselier');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('Valet muet');
+INSERT INTO satchoFurniture.furniture_types (type_name)
+VALUES ('...');
+
+
+INSERT
 INTO satchoFurniture.furniture (seller_id, condition, description, type_id, selling_price)
-VALUES (1, 'available for sale', 'description', 1, 149.90)
+VALUES (1, 'available for sale', 'description', 23, 149.90);

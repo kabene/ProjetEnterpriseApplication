@@ -228,9 +228,7 @@ public class UserResource {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/validate/" + id);
     JsonNode valueNode = reqNode.get("value");
     if (valueNode == null) {
-      throw new WebApplicationException(
-          Response.status(Status.BAD_REQUEST).entity("Lacks mandatory info").type("text/plain")
-              .build());
+      throw new BadRequestException("Error: malformed request");
     }
     boolean value = valueNode.asBoolean();
     UserDTO userDTO = userUCC.validateUser(id, value);
