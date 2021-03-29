@@ -91,14 +91,48 @@ const generateRow = (furniture) => {
 }
 
 const generateColoredState = (furniture) => {
-    let res;
+    let res, classname, condition;
     switch(furniture.condition) {
-        case "available for sale":
-            res = `<p class="text-success">Disponible à la vente</p>`; 
+        case "available_for_sale":
+            classname="text-success";
+            condition = "Disponible à la vente";
             break;
+        case "accepted":
+            classname="text-info";
+            condition = "Accepté";
+            break;
+        case "in_restoration":
+            classname="text-warning";
+            condition="En restoration";
+            break;
+        case "under_option":
+            classname="text-danger";
+            condition="Sous option";
+            break;
+        case "sold":
+            classname="text-danger";
+            condition="Vendu";
+            break;
+        case "withdrawn":
+            classname="text-dark";
+            condition="Retiré de la vente";
+            break;
+        case "requested_for_visit":
+        case "refused":
+        case "reserved":
+        case "delivered":
+        case "collected":
         default:
-            res = furniture.condition;   
+            classname="";
+            condition = furniture.condition;
     }
+    res = `<p class="${classname}">${condition}</p>`; 
     return res;
 }
+
+//input: "primary", "secondary", "info", etc...
+const generateDotNotif = (colorClassName) => {
+    return `<span class="badge badge-pill badge-${colorClassName}">‏‏‎ ‎</span>`
+}
+
 export default FurnitureList;
