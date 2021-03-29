@@ -120,4 +120,32 @@
     </td>
 </tr>
 
+<tr>
+    <td>furniture/restoration/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+    Modifie l'état d'une ressource de type 'furniture' vers 'in_restoration', et renvoie les informations mises à jour.
+    </td>
+</tr>
+
+<tr>
+    <td>furniture/available/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+    Modifie l'état d'une ressource de type 'furniture' vers 'available_for_sale', et renvoie les informations mises à jour.
+    Le body de la requête contient un double 'selling_price'.
+    </td>
+</tr>
+
+<tr>
+    <td>furniture/withdraw/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+    Modifie l'état d'une ressource de type 'furniture' vers 'withdrawn', et renvoie les informations mises à jour.
+    </td>
+</tr>
+
 </table>

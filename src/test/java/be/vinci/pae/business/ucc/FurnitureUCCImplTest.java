@@ -9,6 +9,7 @@ import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.FurnitureImpl;
 import be.vinci.pae.business.pojos.PhotoImpl;
 import be.vinci.pae.business.pojos.UserImpl;
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
@@ -26,6 +27,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
 class FurnitureUCCImplTest {
@@ -231,12 +234,247 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockFurnitureDAO.findAll()).thenReturn(emptyList);
 
-    assertEquals(emptyList, furnitureUCC.getAll());
+    assertEquals(emptyList, furnitureUCC.getAll(), "The getAll method should return "
+        + "an empty list if it is called while the db is empty");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
 
     Mockito.verify(mockFurnitureDAO).findAll();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toRestoration : given valid id, should return dto")
+  @Test
+  public void test_toRestoration_givenValidId_shouldReturnDTO() {
+    int id = 1;
+    final String startingCondition = "accepted";
+    final String expectedEndingCondition = "in_restoration";
+    int sellerId = 1;
+    List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
+
+    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockFurnitureDAO.updateToRestoration(mockFurnitureDTO1))
+        .thenReturn(mockFurnitureDTO1);
+
+    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
+
+    Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
+
+    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(id);
+    Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(null);
+    Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
+    Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
+
+    assertEquals(mockFurnitureDTO1, furnitureUCC.toRestoration(id),
+        "The toRestoration method should return the corresponding dto "
+            + "if it is called with a valid id.");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+
+    Mockito.verify(mockFurnitureDAO).updateToRestoration(mockFurnitureDTO1);
+
+    Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
+    Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO1);
+    Mockito.verify(mockFurnitureDTO1).setPhotos(emptyList);
+  }
+
+  @DisplayName("TEST FurnitureUCC.toRestoration : given invalid id (invalid condition),"
+      + " should throw ConflictException")
+  @ParameterizedTest
+  @ValueSource(strings = {"requested_for_visit", "refused", "in_restoration", "available_for_sale",
+      "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
+  public void test_toRestoration_givenInvalidId1_shouldThrowConflict(String startingCondition) {
+    int id = 1;
+
+    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+
+    assertThrows(ConflictException.class, () -> {
+      furnitureUCC.toRestoration(id);
+    }, "The toRestoration method should throw a ConflictException if it is given "
+        + "the id of a piece of furniture in the '" + startingCondition + "' condition.");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toRestoration : given invalid id (not in db),"
+      + " should throw NotFoundException")
+  @Test
+  public void test_toRestoration_givenInvalidId2_shouldThrowNotFound() {
+    int id = 1;
+
+    Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
+
+    assertThrows(NotFoundException.class, () -> {
+      furnitureUCC.toRestoration(id);
+    }, "The toRestoration method should throw a NotFoundException "
+        + "if it is called with an id that isn't present in the database");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toAvailable : given valid id, should return dto")
+  @ParameterizedTest
+  @ValueSource(strings = {"accepted", "in_restoration"})
+  public void test_toAvailable_givenValidId_shouldReturnDTO(String startingCondition) {
+    final int id = 1;
+    final String expectedEndingCondition = "available_for_sale";
+    final double sellingPrice = 149.99;
+    final int sellerId = 1;
+    final List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
+
+    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockFurnitureDAO.updateToAvailable(mockFurnitureDTO1))
+        .thenReturn(mockFurnitureDTO1);
+
+    Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
+
+    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
+
+    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(id);
+    Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(null);
+    Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
+    Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
+
+    assertEquals(mockFurnitureDTO1, furnitureUCC.toAvailable(id, sellingPrice),
+        "The toAvailable method should return the corresponding dto "
+            + "if it is called with a valid id.");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+
+    Mockito.verify(mockFurnitureDAO).updateToAvailable(mockFurnitureDTO1);
+
+    Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
+    Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO1);
+    Mockito.verify(mockFurnitureDTO1).setPhotos(emptyList);
+
+  }
+
+  @DisplayName("TEST FurnitureUCC.toAvailable : given invalid id (invalid condition),"
+      + " should throw ConflictException")
+  @ParameterizedTest
+  @ValueSource(strings = {"requested_for_visit", "refused", "available_for_sale",
+      "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
+  public void test_toAvailable_givenInvalidStates_shouldThrowConflict(String startingCondition) {
+    final int id = 1;
+    final double sellingPrice = 149.99;
+
+    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+
+    assertThrows(ConflictException.class, () -> {
+      furnitureUCC.toAvailable(id, sellingPrice);
+    }, "The toAvailable method should throw a ConflictException if it is given "
+        + "the id of a piece of furniture in the '" + startingCondition + "' condition.");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toAvailable : given invalid id (not in db),"
+      + " should throw NotFoundException")
+  @Test
+  public void test_toAvailable_givenInvalidId_shouldThrowNotFound() {
+    final int id = 1;
+    final double sellingPrice = 149.99;
+
+    Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
+
+    assertThrows(NotFoundException.class, () -> {
+      furnitureUCC.toAvailable(id, sellingPrice);
+    }, "The toAvailable method should throw a NotFoundException "
+        + "if it is called with an id that isn't present in the database");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.withdraw : given valid id, should return dto")
+  @ParameterizedTest
+  @ValueSource(strings = {"in_restoration", "available_for_sale"})
+  public void test_withdraw_givenValidId_shouldReturnDTO(String startingCondition) {
+    final int id = 1;
+    final String expectedEndingCondition = "withdrawn";
+    final int sellerId = 1;
+    final List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
+
+    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockFurnitureDAO.updateToWithdrawn(mockFurnitureDTO1))
+        .thenReturn(mockFurnitureDTO1);
+
+    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
+
+    Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
+
+    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(id);
+    Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(null);
+    Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
+    Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
+
+    assertEquals(mockFurnitureDTO1, furnitureUCC.withdraw(id),
+        "The withdraw method should return the corresponding dto "
+            + "if it is called with a valid id.");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+
+    Mockito.verify(mockFurnitureDAO).updateToWithdrawn(mockFurnitureDTO1);
+
+    Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
+    Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO1);
+    Mockito.verify(mockFurnitureDTO1).setPhotos(emptyList);
+  }
+
+  @DisplayName("TEST FurnitureUCC.withdraw : given invalid id (invalid condition),"
+      + " should throw ConflictException")
+  @ParameterizedTest
+  @ValueSource(strings = {"requested_for_visit", "refused", "accepted",
+      "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
+  public void test_withdraw_givenInvalidStates_shouldThrowConflict(String startingCondition) {
+    final int id = 1;
+
+    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+
+    assertThrows(ConflictException.class, () -> {
+      furnitureUCC.withdraw(id);
+    }, "The withdraw method should throw a ConflictException if it is given "
+        + "the id of a piece of furniture in the '" + startingCondition + "' condition.");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.withdraw : given invalid id (not in db),"
+      + " should throw NotFoundException")
+  @Test
+  public void test_withdraw_givenInvalidId_shouldThrowNotFound() {
+    final int id = 1;
+
+    Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
+
+    assertThrows(NotFoundException.class, () -> furnitureUCC.withdraw(id),
+        "The withdraw method should throw a NotFoundException "
+            + "if it is called with an id that isn't present in the database");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
   }
 }

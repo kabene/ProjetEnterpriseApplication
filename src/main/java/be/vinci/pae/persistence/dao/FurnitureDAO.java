@@ -20,4 +20,10 @@ public interface FurnitureDAO {
    * @return a list of all entries in the furniture table
    */
   List<FurnitureDTO> findAll();
+
+  FurnitureDTO updateToRestoration(FurnitureDTO furnitureDTO);
+
+  FurnitureDTO updateToAvailable(FurnitureDTO furnitureDTO);
+
+  FurnitureDTO updateToWithdrawn(FurnitureDTO furnitureDTO);
 }

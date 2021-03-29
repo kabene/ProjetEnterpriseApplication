@@ -2,12 +2,15 @@ package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.ucc.FurnitureUCC;
+import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.filters.Admin;
 import be.vinci.pae.utils.Json;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -96,4 +99,61 @@ public class FurnitureResource {
     }
     return Response.ok(res).build();
   }
+
+  // split state transitions into multiple requests for authentication level management
+  // (some are admin only, others are not)
+
+  /**
+   * PATCH one piece of furniture to the 'in_restoration' state.
+   *
+   * @param id : the furniture id
+   * @return : the updated piece of furniture
+   */
+  @PATCH
+  @Path("/restoration/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response toRestoration(@PathParam("id") int id) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /funiture/restoration/" + id);
+    FurnitureDTO furnitureDTO = furnitureUCC.toRestoration(id);
+    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
+  }
+
+  /**
+   * PATCH one piece of furniture to the 'available_for_sale' state.
+   *
+   * @param id : the furniture id
+   * @param reqNode : the request body
+   * @return : updated piece of furniture
+   */
+  @PATCH
+  @Path("/available/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response toAvailable(@PathParam("id") int id, JsonNode reqNode) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /funiture/available/" + id);
+    if (reqNode == null || reqNode.get("selling_price") == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    double sellingPrice = reqNode.get("selling_price").asDouble();
+    FurnitureDTO furnitureDTO = furnitureUCC.toAvailable(id, sellingPrice);
+    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
+  }
+
+  /**
+   * PATCH one piece of furniture to the 'withdrawn' state.
+   *
+   * @param id : the furniture id
+   * @return : the updated piece of furniture
+   */
+  @PATCH
+  @Path("/withdraw/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response withdraw(@PathParam("id") int id) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /furniture/withdraw/" + id);
+    FurnitureDTO furnitureDTO = furnitureUCC.withdraw(id);
+    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
+  }
 }
+

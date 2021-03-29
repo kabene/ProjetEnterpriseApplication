@@ -1,6 +1,5 @@
 package be.vinci.pae.persistence.dao;
 
-
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import org.apache.commons.text.StringEscapeUtils;
@@ -132,6 +131,7 @@ public class UserDAOImpl implements UserDAO {
     }
     return users;
   }
+
 
   /**
    * used to register a new user.

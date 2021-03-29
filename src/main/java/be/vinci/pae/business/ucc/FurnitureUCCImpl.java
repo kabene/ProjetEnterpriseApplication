@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
@@ -30,12 +31,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     dalServices.startTransaction();
     try {
       res = furnitureDAO.findById(id);
-      if (res != null) {
-        completeFurnitureDTO(res);
-        dalServices.commitTransaction();
-      } else {
-        dalServices.rollbackTransaction();
-      }
+      completeFurnitureDTO(res);
+      dalServices.commitTransaction();
     } catch (Exception e) {
       dalServices.rollbackTransaction();
       throw e;
@@ -46,8 +43,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   @Override
   public List<FurnitureDTO> getAll() {
     List<FurnitureDTO> dtos;
-    dalServices.startTransaction();
     try {
+      dalServices.startTransaction();
       dtos = furnitureDAO.findAll();
       for (FurnitureDTO dto : dtos) {
         completeFurnitureDTO(dto);
@@ -58,6 +55,72 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       throw e;
     }
     return dtos;
+  }
+
+  @Override
+  public FurnitureDTO toRestoration(int furnitureId) {
+    FurnitureDTO furnitureDTO;
+    dalServices.startTransaction();
+    try {
+      furnitureDTO = furnitureDAO.findById(furnitureId);
+      if (!furnitureDTO.getCondition().equals("accepted")) {
+        throw new ConflictException(
+            "The resource cannot change from its current state to the 'in_restoration' state");
+      }
+      furnitureDTO.setCondition("in_restoration");
+      furnitureDTO = furnitureDAO.updateToRestoration(furnitureDTO);
+      completeFurnitureDTO(furnitureDTO);
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return furnitureDTO;
+  }
+
+  @Override
+  public FurnitureDTO toAvailable(int furnitureId, double sellingPrice) {
+    FurnitureDTO furnitureDTO;
+    dalServices.startTransaction();
+    try {
+      furnitureDTO = furnitureDAO.findById(furnitureId);
+      if (!furnitureDTO.getCondition().equals("accepted") && !furnitureDTO.getCondition()
+          .equals("in_restoration")) {
+        throw new ConflictException(
+            "The resource cannot change from its current state to the 'available_for_sale' state");
+      }
+      furnitureDTO.setCondition("available_for_sale");
+      furnitureDTO.setSellingPrice(sellingPrice);
+      furnitureDTO = furnitureDAO.updateToAvailable(furnitureDTO);
+      completeFurnitureDTO(furnitureDTO);
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return furnitureDTO;
+  }
+
+  @Override
+  public FurnitureDTO withdraw(int furnitureId) {
+    FurnitureDTO furnitureDTO;
+    dalServices.startTransaction();
+    try {
+      furnitureDTO = furnitureDAO.findById(furnitureId);
+      if (!furnitureDTO.getCondition().equals("available_for_sale") && !furnitureDTO.getCondition()
+          .equals("in_restoration")) {
+        throw new ConflictException(
+            "The resource isn't in a withdrawable state");
+      }
+      furnitureDTO.setCondition("withdrawn");
+      furnitureDTO = furnitureDAO.updateToWithdrawn(furnitureDTO);
+      completeFurnitureDTO(furnitureDTO);
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return furnitureDTO;
   }
 
   /**
