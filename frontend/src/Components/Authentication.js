@@ -166,7 +166,7 @@ const onSignUp = (e) => {
     return response.json();
 
   }).then((data) => onUserRegistration(data))
-    .catch((err) => console.log("Erreur de fetch !! :´<\n" + err));
+    .catch((err) => console.log("Erreur de fetch !! :\n" + err));
 }
 const onUserRegistration = (userData) => {
   console.log("onUserRegistration", userData);

@@ -1,10 +1,13 @@
 import {getUserSessionData} from "../utils/session";
 import {Loader} from "@googlemaps/js-api-loader";
+import {verifyAdmin} from "../utils/utils";
 
 let page = document.querySelector("#page");
 let usersList;
 let currentUser;
 let timeouts = [];
+let userDetail;
+let valueButtonValid;
 
 const Users = async () => {
   currentUser = getUserSessionData();
@@ -41,10 +44,18 @@ const displayShortElements = async (e) => {
   let attributesTab = element.attributes;
 
   //generate the user card
-  let userDetail = await clientDetail(attributesTab["userId"].value);
+   userDetail = await clientDetail(attributesTab["userId"].value);
   userCardDiv.innerHTML = generateUserCard(userDetail);
   await AddressToGeo(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune)
                       .catch((err) => console.error(err));
+
+
+  let verifA =document.querySelector("#accept");
+  let verifR =document.querySelector("#refuse");
+  valueButtonValid=e.srcElement.id;
+
+  verifA.addEventListener("click",validation);
+  verifR.addEventListener("click",validation);
 
 }
 
@@ -216,8 +227,8 @@ const generateUserCard = (userDetail) => {
 
             <div class="col-md-2" style="display: flex"> `;
             if(userDetail.waiting) {
-              page += `<input type="submit" class="profile-edit-btn" name="btnAddMore"  id="approuver" value="approuver" style="color: #0062cc; margin:5px"/>
-              <input type="submit" class="profile-edit-btn" name="btnAddMore" id="refuser" value="refuser" style="color: red; margin:5px"/>`;
+              page += `<input type="button" class="profile-edit-btn " id="accept" value="accepter" style="color: #0062cc; margin:5px"/>
+              <input type="button" class="profile-edit-btn "  id="refuse" value="refuser" style="color: red; margin:5px"/>`;
             }
        page+= `</div>
           </div>         
@@ -365,6 +376,39 @@ const removeTimeouts = () => {
   timeouts.forEach(timeout => {
       clearTimeout(timeout);
   })
+}
+
+const validation= async (e)=> {
+  let id =userDetail.id;
+  let value=e.srcElement.id;
+  let val;
+  if(value=="refuse"){
+   val= {value: false,}
+  }else if(value=="accept"){
+    val= {value: true,}
+  }
+  let ret = [];
+  await fetch(`/users/validate/${id}`, {
+    method: "PATCH",
+    body:JSON.stringify(val),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    ret = data;
+  }).catch((err) => {
+    console.error(err);
+    return;
+  });
+ return ret; // TODO REFRESH PAGE IN REAL TIME
 }
 
 export default Users;

@@ -129,5 +129,25 @@ public class UserUCCImpl implements UserUCC {
     return res;
   }
 
-
+  /**
+   * validate or refuse the user status and set the waiting flag.
+   *
+   * @param userId id of the user.
+   * @param value  refused or validated.
+   * @return the user modified.
+   */
+  @Override
+  public UserDTO validateUser(int userId, boolean value) {
+    UserDTO res = null;
+    try {
+      dalServices.startTransaction();
+      userDAO.setRole(userId, value);
+      res = userDAO.findById(userId);
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      e.printStackTrace();
+      dalServices.rollbackTransaction();
+    }
+    return res;
+  }
 }
