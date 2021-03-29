@@ -1,6 +1,5 @@
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
-import {verifyAdmin} from "../utils/utils.js";
 import { getUserSessionData } from "../utils/session";
 
 
@@ -10,8 +9,8 @@ let currentUser;
 let pageHTML;
 
 
-const FurnitureList = async () => {
-    currentUser = getUserSessionData();
+const FurnitureList = async (id) => {
+    let currentUser = getUserSessionData();
 
     pageHTML = `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
     page.innerHTML = pageHTML;
@@ -32,15 +31,19 @@ const FurnitureList = async () => {
         console.log("Erreur de fetch !! :´\n" + err);
     });
 
-
-    pageHTML = `<div class="mx-5"><h1>Liste des meubles:</h1>`;
-    pageHTML += generateTable();
+    if(!id){
+        pageHTML = `<div class="mx-5"><h1>Liste des meubles:</h1>`;
+        pageHTML += generateTableView();
+    } else {
+        pageHTML = generateCardView(id); // TODO
+    }
+    
     page.innerHTML = pageHTML;
 }
 
-const generateTable = () => {
+const generateTableView = () => {
     let res = `
-    <table class="table table-bordered table-hover">
+    <table id="largeTable" class="table table-bordered table-hover">
         <thead class="table-secondary"><tr>
             <th></th>
             <th>Description</th>
@@ -55,8 +58,11 @@ const generateTable = () => {
     furnitureList.forEach(furniture => {
         res += generateRow(furniture);
     });
-    res = res + `</tbody>
-    </table></div>`;
+    res = res + `
+            </tbody>
+        </table>
+        <div class="shortElement" id="FurnitureCardDiv"></div>
+    </div>`;
     return res;
 } 
 
@@ -64,27 +70,29 @@ const generateRow = (furniture) => {
     let res = `
     <th>`;
     if(furniture.favouritePhoto) {
-        res += `<img src="` + furniture.favouritePhoto.source +`" alt="thumbnail photoId=` + furniture.favouritePhoto.photoId + `"/>`;
+        res += `<img src="${furniture.favouritePhoto.source}" alt="thumbnail photoId=${furniture.favouritePhoto.photoId}"/>`;
+    }else {
+        // TODO: default img if no favourite
     }
     res += `</th>
-    <th><p>` + furniture.description + `</p></th>
-    <th><p>` + furniture.type + `</p></th>
-    <th>` + generateColoredState(furniture) +`</th>
-    <th>`;
+    <th><p>${furniture.description}</p></th>
+    <th class="notNeeded"><p>${furniture.type}</p></th>
+    <th class="state">${generateColoredState(furniture)}</th>
+    <th class="notNeeded">`;
     if(furniture.seller) {
-        res += `<a href="#">` + furniture.seller.username +`</a>`;
+        res += `<a href="#" id="${furniture.seller.userId}" class="userLink">${furniture.seller.username}</a>`;
     }
-    res += `</th><th>`
+    res += `</th><th class="notNeeded">`
     if(furniture.buyer) {
-        res += `<a href="#">` + furniture.buyer.username +`</a>`;
+        res += `<a href="#" id="${furniture.buyer.userId}" class="userLink">${furniture.buyer.username}</a>`;
     };
-    res += `</th><th>`
+    res += `</th><th class="notNeeded">`
     if(furniture.sellingPrice) {
-        res += `<p>` + furniture.sellingPrice +`€</p>`;
+        res += `<p>${furniture.sellingPrice}€</p>`;
     };
-    res += `</th><th>`
+    res += `</th><th class="notNeeded">`
     if(furniture.specialSalePrice) {
-        res += `<p>` + furniture.specialSalePrice +`</p>`;
+        res += `<p>${furniture.specialSalePrice}</p>`;
     };
     res += `</th></tr>`
     return res;
@@ -128,6 +136,38 @@ const generateColoredState = (furniture) => {
     }
     res = `<p class="${classname}">${condition}</p>`; 
     return res;
+}
+
+const generateDotState = (furniture) => {
+    let classname;
+    switch(furniture.condition) {
+        case "available_for_sale":
+            classname="success";
+            break;
+        case "accepted":
+            classname="info";
+            break;
+        case "in_restoration":
+            classname="warning";
+            break;
+        case "under_option":
+            classname="danger";
+            break;
+        case "sold":
+            classname="danger";
+            break;
+        case "withdrawn":
+            classname="dark";
+            break;
+        case "requested_for_visit":
+        case "refused":
+        case "reserved":
+        case "delivered":
+        case "collected":
+        default:
+            classname="light";
+    }
+    return generateDotNotif(classname);
 }
 
 //input: "primary", "secondary", "info", etc...
