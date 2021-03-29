@@ -61,7 +61,7 @@ public interface UserDAO {
   List<UserDTO> findBySearch(String customerSearch);
 
   /**
-   * Set the role and  set wait
+   * Set the role and  set wait.
    *
    * @param id    userId.
    * @param value value if the user is confirmed.
