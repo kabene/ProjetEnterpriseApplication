@@ -195,7 +195,7 @@ public class UserDAOImpl implements UserDAO {
   }
 
   /**
-   * Set the role and  set wait
+   * Set the role and  set wait.
    *
    * @param id    userId.
    * @param value value if the user is confirmed.
@@ -206,7 +206,9 @@ public class UserDAOImpl implements UserDAO {
     if (value) {
       query = "UPDATE  satchoFurniture.users u SET waiting = false WHERE  u.user_id = ?";
     } else {
-      query = "UPDATE satchoFurniture.users u SET  role = 'customer', waiting = false WHERE u.user_id = ?";
+      query = "UPDATE satchoFurniture.users u "
+          + "SET  role = 'customer', waiting = false "
+          + "WHERE u.user_id = ?";
     }
     PreparedStatement ps = dalServices.makeStatement(query);
 
