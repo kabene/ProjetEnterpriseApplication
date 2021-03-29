@@ -215,6 +215,7 @@ public class UserDAOImpl implements UserDAO {
     try {
       ps.setInt(1, id);
       ps.executeUpdate();
+      ps.close();
     } catch (SQLException throwables) {
       System.out.println("waiting removed and role setted");
     }
