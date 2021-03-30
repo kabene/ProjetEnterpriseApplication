@@ -96,19 +96,19 @@ const generateAllRows = () => {
 const generateRow = (furniture) => {
   let res = `
     <tr class="toBeClicked" furnitureId="${furniture.furnitureId}">
-      <th>${generateFavouritePhotoTableElement(furniture)}</th>
+      <th>${generateFavouritePhotoImgTag(furniture)}</th>
       <th><p>${furniture.description}</p></th>
       <th class="notNeeded"><p>${furniture.type}</p></th>
-      <th class="tableState" condition="${furniture.condition}">${generateColoredState(furniture.condition)}</th>
-      <th class="notNeeded">${generateSellerTableElement(furniture)}</th>
-      <th class="notNeeded">${generateBuyerTableElement(furniture)}</th>
+      <th class="tableState" condition="${furniture.condition}">${generateColoredState(furniture)}</th>
+      <th class="notNeeded">${generateSellerLink(furniture)}</th>
+      <th class="notNeeded">${generateBuyerLink(furniture)}</th>
       <th class="notNeeded">${generateSellingPriceTableElement(furniture)}</th>
       <th class="notNeeded">${generateSpecialPriceTableElement(furniture)}</th>
     </tr>`;
   return res;
 }
 
-const generateFavouritePhotoTableElement = (furniture) => {
+const generateFavouritePhotoImgTag = (furniture) => {
   let res = "";
   if (furniture.favouritePhoto) {
     res = `<img src="${furniture.favouritePhoto.source}" alt="thumbnail photoId=${furniture.favouritePhoto.photoId}"/>`;
@@ -118,20 +118,24 @@ const generateFavouritePhotoTableElement = (furniture) => {
   return res;
 }
 
-const generateSellerTableElement = (furniture) => {
+const generateSellerLink = (furniture) => {
   let res = "";
   if (furniture.seller) {
-    res = `<a href="#" id="${furniture.seller.userId}" class="userLink">${furniture.seller.username}</a>`;
+    res = generateUserLink(furniture.seller);
   }
   return res;
 }
 
-const generateBuyerTableElement = (furniture) => {
+const generateBuyerLink = (furniture) => {
   let res = "";
   if (furniture.buyer) {
-    res = `<a href="#" id="${furniture.buyer.userId}" class="userLink">${furniture.buyer.username}</a>`;
+    res = generateUserLink(furniture.buyer);
   }
   return res;
+}
+
+const generateUserLink = (user) => {
+  return `<a href="#" userId="${user.userId}" class="userLink">${user.username}</a>`;
 }
 
 const generateSellingPriceTableElement = (furniture) => {
@@ -194,10 +198,8 @@ const generateStateInfos = (condition) => {
 }
 
 const generateColoredState = (furniture) => {
-  let res, classname, condition;
-  let infos = generateStateInfos(furniture);
-  res = `<p class="text-${infos.classname}">${infos.condition}</p>`;
-  return res;
+  let infos = generateStateInfos(furniture.condition);
+  return `<p class="text-${infos.classname}">${infos.condition}</p>`;
 }
 
 //input: "primary", "secondary", "info", etc...
@@ -246,12 +248,17 @@ const generateCardHTML = (furniture) => {
   <div class="container emp-profile">
     <form>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-12">
           <div class="profile-head">
-            <h5 id="cardDescription">${furniture.description}</h5>
-            <p class="proile-rating">STATE : 
-              <span id="cardState">${generateColoredState(furniture)}</span>
-            </p>
+            <div class="row">
+              <div class="col-md-6">
+                ${generateFavouritePhotoImgTag(furniture)}
+              </div>
+              <div class="col-md-6">
+                <h5 id="descriptionCardEntry">${furniture.description}</h5>
+                <p class="proile-rating">ÉTAT : <span id="stateCardEntry">${generateColoredState(furniture)}</span></p>
+              </div>
+            </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item">
                 <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">tab link 1</a>
@@ -262,9 +269,6 @@ const generateCardHTML = (furniture) => {
             </ul>
           </div>
         </div>
-        <div class="col-md-2">
-          <input type="submit" class="profile-edit-btn" name="btnAddMore" value="prendre le controle"/>
-        </div>
       </div>
   
       <div class="row">
@@ -272,14 +276,18 @@ const generateCardHTML = (furniture) => {
           <div class="tab-content profile-tab" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
   
-              ${generateCardEntry("label1", "id1", "value1")}
-              ${generateCardEntry("label2", "id2", "value2")}
-              ${generateCardEntry("label3", "id3", "value3")}
+              ${generateTypeCardEntry(furniture)}
+              ${generateBuyingPriceCardEntry(furniture)}
+              ${generateBuyingDateCardEntry(furniture)}
+              ${generateSellerCardEntry(furniture)}
+              ${generateSellingPriceCardEntry(furniture)}
+              ${generateBuyerCardEntry(furniture)}
+              ${generateOptionCardEntry(furniture)}
 
             </div>         
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
-              ${generateCardEntry("label tab2", "id1", "value tab 2")}
+              ${generateCardLabelKeyEntry("label tab2", "id1", "value tab 2")}
 
             </div>
           </div>
@@ -291,7 +299,7 @@ const generateCardHTML = (furniture) => {
   return res;
 }
 
-const generateCardEntry = (label, id, value) => {
+const generateCardLabelKeyEntry = (label, id, value) => {
   let res = `
   <div class="row">
     <div class="col-md-6">
@@ -303,6 +311,56 @@ const generateCardEntry = (label, id, value) => {
   </div>
   `;
   return res;
+}
+
+const generateTypeCardEntry = (furniture) => {
+  return generateCardLabelKeyEntry("Type", "typeCardEntry", furniture.type);
+}
+
+const generateBuyingPriceCardEntry = (furniture) => {
+  return "";//TODO
+}
+
+const generateBuyingDateCardEntry = (furniture) => {
+  return "";//TODO
+}
+
+const generateUserCardEntry = (label, id, user) => {
+  let res = `
+  <div class="row">
+    <div class="col-md-6">
+      <label class="mr-3">${label}</label>
+      ${generateUserLink(user)}
+    </div>
+    <div class="col-md-6">
+      <p id="${id}">${user.firstName} ${user.lastName}</p>
+    </div>
+  </div>`;
+  return res;
+}
+
+const generateSellerCardEntry = (furniture) => {
+  let res ="";
+  if(furniture.seller) {
+    res = generateUserCardEntry("Vendeur", "sellerCardEntry", furniture.seller);
+  }
+  return res;
+}
+
+const generateBuyerCardEntry = (furniture) => {
+  let res ="";
+  if(furniture.buyer) {
+    res = generateUserCardEntry("Acheteur", "buyerCardEntry", furniture.buyer);
+  }
+  return res;
+}
+
+const generateOptionCardEntry = (furniture) => {
+  return "";//TODO: infos client qui a demandé l'option
+}
+
+const generateSellingPriceCardEntry = (furniture) => {
+  return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry", furniture.sellingPrice + "€");
 }
 
 export default FurnitureList;
