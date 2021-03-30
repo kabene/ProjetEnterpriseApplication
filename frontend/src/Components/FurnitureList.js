@@ -218,7 +218,7 @@ const generateColoredCondition = (furniture) => {
 }
 
 //input: "primary", "secondary", "info", etc...
-const generateDot = (colorClassName) => `<span class="badge badge-pill badge-${colorClassName}"> </span>`;
+const generateDot = (colorClassName) => `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
 
 const generateBadgeCondition = (furniture) => {
   let infos = generateConditionInfos(furniture.condition);
