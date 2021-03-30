@@ -21,10 +21,10 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
 
   @Override
   public Response toResponse(Throwable exception) {
-    logThrowable(exception);
     if (exception instanceof jakarta.ws.rs.NotFoundException) {
       return Response.temporaryRedirect(URI.create("/")).build(); // TODO: find good uri to redirect to
     }
+    logThrowable(exception);
     return Response.status(getStatusCode(exception)).entity(getEntity(exception)).build();
   }
 
