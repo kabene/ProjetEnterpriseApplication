@@ -66,7 +66,20 @@ public class PhotoDAOImpl implements PhotoDAO {
    */
   @Override
   public List<PhotoDTO> getAllHomePageVisiblePhotos() {
-    return null;
+    List<PhotoDTO> res = new ArrayList<>();
+    String query = "SELECT p.* FROM satchofurniture.photos p WHERE p.is_on_home_page = true";
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        res.add(toDTO(rs));
+      }
+      rs.close();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e.getMessage());
+    }
+    return res;
   }
 
 
