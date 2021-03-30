@@ -404,7 +404,10 @@ const generateOptionCardEntry = (furniture) => {
 }
 
 const generateSellingPriceCardEntry = (furniture) => {
-  return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry", furniture.sellingPrice + "€");
+  if(furniture.sellingPrice) {
+    return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry", furniture.sellingPrice + "€");
+  }
+  return "";
 }
 
 const generateSaleWithdrawalDateCardEntry = (furniture) => {
