@@ -276,7 +276,7 @@ const generateCard = (furniture) => {
   let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
   let cardHTML = generateCardHTML(furniture);
   furnitureCardDiv.innerHTML = cardHTML;
-
+  addTransitionBtnListeners(furniture);
 }
 
 const changeContainerId = () => {
@@ -403,13 +403,79 @@ const generateSellingPriceCardEntry = (furniture) => {
 const generateButtonRow = (furniture) => {
   let res = `
   <div class="row d-flex mt-5">
-    <button class="btn btn-primary mr-1">btn1</button>
-    <button class="btn btn-primary mx-1">btn2</button>
-    <button class="btn btn-primary mx-1">btn3</button>
-    <button class="btn btn-primary ml-auto">btn fin</button>
+    ${generateAllTransitionBtns(furniture)}
   </div>
   `;
   return res;
+}
+
+const generateAllTransitionBtns = (furniture) => {
+  let res = "";
+  switch(furniture.condition) {
+    case "accepted":
+      res += generateTransitionBtn("btnToAvailable", "Indiquer disponible à la vente");
+      res += generateTransitionBtn("btnToRestoration", "Indiquer en restoration");
+      break;
+    case "available_for_sale":
+      res += generateTransitionBtn("btnToSold", "Indiquer vendu");
+      res += generateTransitionBtn("btnWithdraw", "Retirer de la vente", "danger");
+      break;
+    case "in_restoration":
+      res += generateTransitionBtn("btnToAvailable", "Indiquer disponible à la vente");
+      res += generateTransitionBtn("btnWithdraw", "Retirer de la vente", "danger");
+      break;
+    case "under_option":
+    case "sold":
+    case "withdrawn":
+    case "requested_for_visit":
+    case "refused":
+    case "reserved":
+    case "delivered":
+    case "collected":
+    default:
+  }
+  return res;
+}
+
+const generateTransitionBtn = (id, label, colorClass="primary") => {
+  return `<button id=${id} class="transitionBtn btn btn-${colorClass} mr-1">${label}</button>`
+}
+
+const addTransitionBtnListeners = (furniture) => {
+  document.querySelectorAll(".transitionBtn").forEach(element => {
+    element.addEventListener("click", findTransitionMethod(element.id, furniture));
+  })
+}
+
+const findTransitionMethod = (btnId, furniture) => {
+  switch(btnId) {
+    case "btnToAvailable":
+      return (e) => toAvailable(e, furniture);
+    case "btnToRestoration":
+      return (e) => toRestoration(e, furniture);
+    case "btnWithdraw":
+      return (e) => withdraw(e, furniture);
+    default:
+      return (e) => {
+        e.preventDefault();
+        console.log("unrecognized button id: " + btnId) ; //'do nothing' method
+      };
+  };
+}
+
+const toAvailable = (e, furniture) => { //TODO
+  e.preventDefault();
+  console.log("toAvailable");
+}
+
+const toRestoration = (e, furniture) => {//TODO
+  e.preventDefault();
+  console.log("toRestoration");
+}
+
+const withdraw = (e, furniture) => {//TODO
+  e.preventDefault();
+  console.log("withdraw");
 }
 
 export default FurnitureList;
