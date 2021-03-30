@@ -1,7 +1,6 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.PhotoDTO;
-import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.PhotoFactory;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;

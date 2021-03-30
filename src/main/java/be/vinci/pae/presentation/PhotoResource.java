@@ -3,7 +3,6 @@ package be.vinci.pae.presentation;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.ucc.PhotoUCC;
 import be.vinci.pae.main.Main;
-import be.vinci.pae.presentation.filters.Admin;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.GET;
