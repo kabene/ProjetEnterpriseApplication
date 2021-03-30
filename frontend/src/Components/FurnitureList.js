@@ -3,7 +3,7 @@ import {getUserSessionData} from "../utils/session";
 
 let page = document.querySelector("#page");
 let furnitureList;
-let currentFurniture;
+let furnitureMap = {};
 let currentUser;
 let pageHTML;
 
@@ -56,7 +56,10 @@ const findOneFurniture = async (id) => {
       throw error();
     }
     return response.json();
-  }).then((data) => generateCard(data)).catch((err) => {
+  }).then((data) => {
+    furnitureMap[data.furnitureId] = data;
+    generateCard(data);
+  }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
   });
 }
@@ -232,11 +235,15 @@ const displayShortElements = (e) => {
     element.innerHTML = generateDotState(classname);
   });
   let id = element.attributes["furnitureId"].value;
-  findOneFurniture(id);
+  if(!furnitureMap[id]) {
+    findOneFurniture(id);
+  }else {
+    console.log("found furniture in map");
+    generateCard(furnitureMap[id]);
+  }
 }
 
 const generateCard = (furniture) => {
-  console.log("generateCard id=" + furniture.furnitureId)
   let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
   let cardHTML = generateCardHTML(furniture);
   furnitureCardDiv.innerHTML = cardHTML;
@@ -293,6 +300,7 @@ const generateCardHTML = (furniture) => {
           </div>
         </div>
       </div>
+      ${generateButtonRow(furniture)}
     </form>           
   </div>
   `;
@@ -361,6 +369,18 @@ const generateOptionCardEntry = (furniture) => {
 
 const generateSellingPriceCardEntry = (furniture) => {
   return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry", furniture.sellingPrice + "€");
+}
+
+const generateButtonRow = (furniture) => {
+  let res = `
+  <div class="row d-flex mt-5">
+    <button class="btn btn-primary mr-1">btn1</button>
+    <button class="btn btn-primary mx-1">btn2</button>
+    <button class="btn btn-primary mx-1">btn3</button>
+    <button class="btn btn-primary ml-auto">btn fin</button>
+  </div>
+  `;
+  return res;
 }
 
 export default FurnitureList;
