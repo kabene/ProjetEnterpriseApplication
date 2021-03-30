@@ -322,6 +322,7 @@ const generateCardHTML = (furniture) => {
               ${generateSellingPriceCardEntry(furniture)}
               ${generateBuyerCardEntry(furniture)}
               ${generateOptionCardEntry(furniture)}
+              ${generateSaleWithdrawalDateCardEntry(furniture)}
 
               ${generateButtonRow(furniture)}
             </div>       
@@ -398,6 +399,13 @@ const generateOptionCardEntry = (furniture) => {
 
 const generateSellingPriceCardEntry = (furniture) => {
   return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry", furniture.sellingPrice + "€");
+}
+
+const generateSaleWithdrawalDateCardEntry = (furniture) => {
+  if(furniture.saleWithdrawalDate) {
+    return generateCardLabelKeyEntry("Date de retrait de la vente", "WithdrawalDateCardEntry", furniture.saleWithdrawalDate);
+  }
+  return "";
 }
 
 const generateButtonRow = (furniture) => {
