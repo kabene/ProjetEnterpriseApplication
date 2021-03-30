@@ -104,6 +104,7 @@ const generateAllRows = () => {
   let res = "";
   furnitureList.forEach(furniture => {
     res += generateRow(furniture);
+    furnitureMap[furniture.furnitureId] = furniture;
   });
   return res;
 }
