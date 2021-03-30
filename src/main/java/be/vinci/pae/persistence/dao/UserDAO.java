@@ -49,5 +49,5 @@ public interface UserDAO {
 
   List<UserDTO> getAllUsers();
 
-  List<UserDTO> findBySearch(String customerSearch);
+  List<UserDTO> findBySearch(String userSearch);
 }
