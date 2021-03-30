@@ -6,6 +6,7 @@ import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.pojos.FurnitureImpl;
 import be.vinci.pae.business.pojos.PhotoImpl;
 import be.vinci.pae.business.ucc.FurnitureUCC;
+import be.vinci.pae.business.ucc.PhotoUCC;
 import be.vinci.pae.persistence.dal.DalServicesImpl;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
@@ -37,26 +38,34 @@ public class TestBinder extends AbstractBinder {
       bind(Class.forName(Configurate.getConfiguration("AddressFactory"))).to(AddressFactory.class)
           .in(Singleton.class);
       bind(Mockito.mock(AddressDAO.class)).to(AddressDAO.class);
+
       //users
       bind(Class.forName(Configurate.getConfiguration("UserFactory"))).to(UserFactory.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("UserUCC"))).to(UserUCC.class)
           .in(Singleton.class);
       bind(Mockito.mock(UserDAOImpl.class)).to(UserDAO.class);
+
       //furniture
       bind(Class.forName(Configurate.getConfiguration("FurnitureUCC"))).to(FurnitureUCC.class)
           .in(Singleton.class);
       bind(Mockito.mock(FurnitureDAOImpl.class)).to(FurnitureDAO.class);
+
       //furniture types
       bind(Mockito.mock(FurnitureTypeDAOImpl.class)).to(FurnitureTypeDAO.class);
+
       //photos
+      bind(Class.forName(Configurate.getConfiguration("PhotoUCC"))).to(PhotoUCC.class)
+          .in(Singleton.class);
       bind(Mockito.mock(PhotoDAOImpl.class)).to(PhotoDAO.class);
+
       //other services
       bind(Mockito.mock(DalServicesImpl.class)).to(ConnectionDalServices.class);
       bind(Class.forName(Configurate.getConfiguration("ConnectionBackendDalServices")))
           .to(ConnectionBackendDalServices.class).in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("Authentication"))).to(Authentication.class)
           .in(Singleton.class);
+
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
