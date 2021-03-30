@@ -135,7 +135,10 @@ public class FurnitureResource {
     if (reqNode == null || reqNode.get("selling_price") == null) {
       throw new BadRequestException("Error: malformed request");
     }
-    double sellingPrice = reqNode.get("selling_price").asDouble();
+    Double sellingPrice = reqNode.get("selling_price").asDouble();
+    if(sellingPrice <= 0){
+      throw new BadRequestException("Error: malformed request");
+    }
     FurnitureDTO furnitureDTO = furnitureUCC.toAvailable(id, sellingPrice);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }

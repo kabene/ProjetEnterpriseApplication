@@ -549,16 +549,37 @@ const findTransitionMethod = (btnId, furniture) => {
 
 const toAvailable = (e, furniture) => { //TODO
   e.preventDefault();
-  console.log("toAvailable");
+  let sellingPrice = e.target.parentElement.parentElement.querySelector("#sellingPriceInput").value;
+  let bundle = {
+    selling_price: sellingPrice,
+  };
+  fetch("/furniture/available/"+furniture.furnitureId, {
+    method: "PATCH",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw error();
+    }
+    return response.json();
+  }).then((data) => {
+    furnitureMap[data.furnitureId] = data;
+    loadCard(data.furnitureId);
+  }).catch((err) => {
+    console.log("Erreur de fetch !! :´\n" + err);
+  });
 }
+
 
 const toRestoration = (e, furniture) => {//TODO
   e.preventDefault();
-  console.log("toRestoration");
   fetch("/furniture/restoration/"+furniture.furnitureId, {
     method: "PATCH",
     headers: {
-      Authorization: currentUser.token,
+      "Authorization": currentUser.token,
     }
   }).then((response) => {
     if (!response.ok) {
@@ -575,11 +596,10 @@ const toRestoration = (e, furniture) => {//TODO
 
 const withdraw = (e, furniture) => {//TODO
   e.preventDefault();
-  console.log("withdraw");
   fetch("/furniture/withdraw/"+furniture.furnitureId, {
     method: "PATCH",
     headers: {
-      Authorization: currentUser.token,
+      "Authorization": currentUser.token,
     }
   }).then((response) => {
     if (!response.ok) {
