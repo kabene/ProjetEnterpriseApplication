@@ -114,7 +114,8 @@ public class FurnitureResource {
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
   public Response toRestoration(@PathParam("id") int id) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /funiture/restoration/" + id);
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
+        .log(Level.INFO, "PATCH /furniture/restoration/" + id);
     FurnitureDTO furnitureDTO = furnitureUCC.toRestoration(id);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
@@ -122,7 +123,7 @@ public class FurnitureResource {
   /**
    * PATCH one piece of furniture to the 'available_for_sale' state.
    *
-   * @param id : the furniture id
+   * @param id      : the furniture id
    * @param reqNode : the request body
    * @return : updated piece of furniture
    */
@@ -131,12 +132,12 @@ public class FurnitureResource {
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
   public Response toAvailable(@PathParam("id") int id, JsonNode reqNode) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /funiture/available/" + id);
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /furniture/available/" + id);
     if (reqNode == null || reqNode.get("selling_price") == null) {
       throw new BadRequestException("Error: malformed request");
     }
-    Double sellingPrice = reqNode.get("selling_price").asDouble();
-    if(sellingPrice <= 0){
+    double sellingPrice = reqNode.get("selling_price").asDouble();
+    if (sellingPrice <= 0) {
       throw new BadRequestException("Error: malformed request");
     }
     FurnitureDTO furnitureDTO = furnitureUCC.toAvailable(id, sellingPrice);
