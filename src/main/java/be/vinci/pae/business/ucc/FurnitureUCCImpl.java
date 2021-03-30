@@ -129,15 +129,15 @@ public class FurnitureUCCImpl implements FurnitureUCC {
    * @param dto : the FurnitureDTO to complete
    */
   private void completeFurnitureDTO(FurnitureDTO dto) {
-    if (dto.getBuyerId() != null && dto.getBuyerId() != 0) {
+    if (dto.getBuyerId() != null) {
       UserDTO u = userDAO.findById(dto.getBuyerId());
       dto.setBuyer(u);
     }
-    if (dto.getSellerId() != null && dto.getSellerId() != 0) {
+    if (dto.getSellerId() != null) {
       UserDTO u = userDAO.findById(dto.getSellerId());
       dto.setSeller(u);
     }
-    if (dto.getFavouritePhotoId() != null && dto.getFavouritePhotoId() != 0) {
+    if (dto.getFavouritePhotoId() != null) {
       PhotoDTO favPhoto = photoDAO.getPhotoById(dto.getFavouritePhotoId());
       dto.setFavouritePhoto(favPhoto);
     }
