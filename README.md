@@ -165,3 +165,23 @@
 </tr>
 
 </table>
+
+<table style="caption-side: top">
+<caption>Operations sur les ressources de type "Photo"</caption>
+<tr>
+    <th>URI</th>
+    <th>Methode</th>
+    <th>Droit(s) requit(s)</th>
+    <th>Operation</th>
+</tr>
+
+<tr>
+    <td>photos/homePage</td>
+    <td>GET</td>
+    <td>Aucun</td>
+    <td>
+    Renvoie une liste de toutes les information sur les ressources de type "photo" qui sont visible dans la home page.
+    </td>
+</tr>
+
+</table>
