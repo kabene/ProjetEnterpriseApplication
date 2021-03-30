@@ -114,7 +114,7 @@ const generateRow = (furniture) => {
       <th>${generateFavouritePhotoImgTag(furniture)}</th>
       <th><p>${furniture.description}</p></th>
       <th class="notNeeded"><p>${furniture.type}</p></th>
-      <th class="tableCondition" condition="${furniture.condition}">${generateColoredCondition(furniture)}</th>
+      <th class="tableCondition text-center" condition="${furniture.condition}">${generateColoredCondition(furniture)}</th>
       <th class="notNeeded">${generateSellerLink(furniture)}</th>
       <th class="notNeeded">${generateBuyerLink(furniture)}</th>
       <th class="notNeeded">${generateSellingPriceTableElement(furniture)}</th>
