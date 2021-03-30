@@ -25,9 +25,10 @@ public class PhotoResource {
   PhotoUCC photoUCC;
 
   /**
-   * GET all photos that are visible in the home page's carousel
+   * GET all photos that are visible in the home page's carousel.
    *
-   * @return http response containing a list full of all the visible photos in the home page's carousel in json format
+   * @return http response containing a list full of all the visible photos
+   * in the home page's carousel in json format.
    */
   @GET
   @Path("/homePage")
