@@ -59,26 +59,6 @@ class PhotoUCCImplTest {
       + "should return all visible photo on home page.")
   @Test
   void test_getAllVisibleHomePage_shouldReturnAllVisibleHomePage() {
-
-    Mockito.when(mockPhotoDTO1.getPhotoId()).thenReturn(1);
-    Mockito.when(mockPhotoDTO1.getFurnitureId()).thenReturn(1);
-    Mockito.when(mockPhotoDTO1.isOnHomePage()).thenReturn(true);
-    Mockito.when(mockPhotoDTO1.isVisible()).thenReturn(true);
-    Mockito.when(mockPhotoDTO1.getSource()).thenReturn("content1");
-
-    Mockito.when(mockPhotoDTO1.getPhotoId()).thenReturn(2);
-    Mockito.when(mockPhotoDTO1.getFurnitureId()).thenReturn(1);
-    Mockito.when(mockPhotoDTO1.isOnHomePage()).thenReturn(true);
-    Mockito.when(mockPhotoDTO1.isVisible()).thenReturn(true);
-    Mockito.when(mockPhotoDTO1.getSource()).thenReturn("content2");
-
-    Mockito.when(mockPhotoDTO1.getPhotoId()).thenReturn(3);
-    Mockito.when(mockPhotoDTO1.getFurnitureId()).thenReturn(2);
-    Mockito.when(mockPhotoDTO1.isOnHomePage()).thenReturn(true);
-    Mockito.when(mockPhotoDTO1.isVisible()).thenReturn(true);
-    Mockito.when(mockPhotoDTO1.getSource()).thenReturn("content3");
-
-
     List<PhotoDTO> photoDTOS = Arrays.asList(mockPhotoDTO1, mockPhotoDTO2, mockPhotoDTO3);
 
     Mockito.when(mockPhotoDAO.getAllHomePageVisiblePhotos()).thenReturn(photoDTOS);
@@ -93,6 +73,7 @@ class PhotoUCCImplTest {
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
   @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos without any data present:"
