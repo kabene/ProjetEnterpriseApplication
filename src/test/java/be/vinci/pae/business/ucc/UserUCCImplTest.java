@@ -231,7 +231,7 @@ public class UserUCCImplTest {
     List<UserDTO> emptyList = new ArrayList<UserDTO>();
     Mockito.when(mockUserDAO.getAllUsers()).thenReturn(emptyList);
     assertEquals(emptyList, userUCC.getAll(),
-        "UserUCC.getAll should return a List<UserDTO> of all users");
+        "UserUCC.getAll should return a empty List<UserDTO> of all users");
     Mockito.verify(mockUserDAO).getAllUsers();
   }
 
@@ -245,6 +245,19 @@ public class UserUCCImplTest {
     Mockito.when(mockUserDAO.findBySearch(username)).thenReturn(allSearchResults);
     assertEquals(allSearchResults, userUCC.getSearchResult(username),
         "UserUCC.getSearchResult should return a List<UserDTO> with respective user");
+    Mockito.verify(mockUserDAO).findBySearch(username);
+  }
+
+  @DisplayName("TEST UserUCC.getSearchResult : given a not existing username,"
+      + " should return empty list of Users")
+  @Test
+  public void test_getSearchResult_givenNotExistingUsername_shouldReturnEmptyListOfUsers() {
+    String username = "notExistingUsername";
+    List<UserDTO> emptyList = new ArrayList<UserDTO>();
+
+    Mockito.when(mockUserDAO.findBySearch(username)).thenReturn(emptyList);
+    assertEquals(emptyList, userUCC.getSearchResult(username),
+        "UserUCC.getSearchResult should return a empty List<UserDTO> of all users");
     Mockito.verify(mockUserDAO).findBySearch(username);
   }
 }
