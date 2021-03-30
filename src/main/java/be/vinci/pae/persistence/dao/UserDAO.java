@@ -45,9 +45,26 @@ public interface UserDAO {
    */
   boolean usernameAlreadyTaken(String username);
 
-  boolean isAdmin(int id);
-
+  /**
+   * getAllusers of the db.
+   *
+   * @return list contains the users of the db.
+   */
   List<UserDTO> getAllUsers();
 
-  List<UserDTO> findBySearch(String userSearch);
+  /**
+   * find the users that correspond with the string.
+   *
+   * @param customerSearch reg of the search.
+   * @return list containing the users researched.
+   */
+  List<UserDTO> findBySearch(String customerSearch);
+
+  /**
+   * Set the role and  set wait.
+   *
+   * @param id    userId.
+   * @param value value if the user is confirmed.
+   */
+  void setRole(int id, boolean value);
 }

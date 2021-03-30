@@ -25,7 +25,7 @@ const Navbar = async () => {
 
   if (!pers) {
     navbarHtml += `
-    <li class="nav-item"><button type="button" class="btn btn-primary navbarButton" id="seeFurnitureButton" href="#" data-uri="/furnitures">Voir les meubles</button>
+    <li class="nav-item"><button type="button" class="btn btn-primary navbarButton" id="seeFurnitureButton" href="#" data-uri="/furniture">Voir les meubles</button>
     <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/authentication">S'identifier</button></li>
     `;
   } else {
@@ -37,7 +37,7 @@ const Navbar = async () => {
                       <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/furnitureList">Rechercher un meuble</button>
                       <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visits">Demandes de visite</button>
                       <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/users">Gestion des utilisateurs</button>
-                      <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
+                      <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furniture">Voir les meubles</button>
                       <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
                       <li class="my-auto font-weight-bold">${userPrintable}</li>
       `;
@@ -47,7 +47,7 @@ const Navbar = async () => {
       navbarHtml += `
                   <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton p-0" href="#" data-uri="/visits">Mes demandes de visite</button>
                   <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>
-                  <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furnitures">Voir les meubles</button>
+                  <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furniture">Voir les meubles</button>
                   <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
                   <li class="my-auto font-weight-bold"> ${userPrintable}</li>
                   `;
