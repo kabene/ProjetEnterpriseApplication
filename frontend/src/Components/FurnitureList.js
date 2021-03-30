@@ -220,6 +220,12 @@ const generateColoredState = (furniture) => {
 //input: "primary", "secondary", "info", etc...
 const generateDotState = (colorClassName) => `<span class="badge badge-pill badge-${colorClassName}">‏‏‎ ‎</span>`;
 
+const generateBadgeState = (furniture) => {
+  let infos = generateStateInfos(furniture.condition);
+  let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.condition}</span>`;
+  return res;
+}
+
 const generateLoadingAnimation = () => `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
 
 const displayShortElements = (e) => {
@@ -296,7 +302,7 @@ const generateCardHTML = (furniture) => {
               </div>
               <div class="col-md-6 text-left">
                 <h5 id="descriptionCardEntry">${furniture.description}</h5>
-                <p class="proile-rating">ÉTAT : <span id="stateCardEntry">${generateColoredState(furniture)}</span></p>
+                <p class="proile-rating">ÉTAT : <span id="stateCardEntry">${generateBadgeState(furniture)}</span></p>
               </div>
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
