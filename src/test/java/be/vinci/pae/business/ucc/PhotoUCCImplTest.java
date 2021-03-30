@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PhotoUCCImplTest {
 
@@ -86,8 +86,8 @@ class PhotoUCCImplTest {
     List<PhotoDTO> expected = photoDTOS;
     List<PhotoDTO> actual = photoUCC.getAllHomePageVisiblePhotos();
     assertEquals(expected, actual,
-        "called photoUCC.getAllHomePageVisiblePhotos()," +
-            " should have return all visible photo on home page.");
+        "called photoUCC.getAllHomePageVisiblePhotos(),"
+        + " should have return all visible photo on home page.");
 
     Mockito.verify(mockPhotoDAO).getAllHomePageVisiblePhotos();
 
@@ -95,8 +95,8 @@ class PhotoUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
   }
 
-  @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos without any data present:" +
-      " should return an empty list.")
+  @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos without any data present:"
+      + " should return an empty list.")
   @Test
   void test_getAllVisibleHomePageWithEmptyDataBase_shouldReturnEmptyList() {
     List<PhotoDTO> photoDTOS = new ArrayList<PhotoDTO>();
@@ -107,7 +107,7 @@ class PhotoUCCImplTest {
     List<PhotoDTO> actual = photoUCC.getAllHomePageVisiblePhotos();
     assertEquals(expected, actual,
         "called photoUCC.getAllHomePageVisiblePhotos() without any data present,"
-            + " should have return an empty list.");
+        + " should have return an empty list.");
 
     Mockito.verify(mockPhotoDAO).getAllHomePageVisiblePhotos();
 
