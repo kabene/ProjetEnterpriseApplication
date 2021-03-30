@@ -1,4 +1,5 @@
 import {RedirectUrl} from "./Router";
+import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {getUserSessionData} from "../utils/session";
 
 let page = document.querySelector("#page");
@@ -8,7 +9,7 @@ let timeouts = [];
 let currentUser;
 let pageHTML;
 
-const FurnitureList = async () => {
+const FurnitureList = async (id) => {
   currentUser = getUserSessionData();
 
   pageHTML = generateLoadingAnimation();
@@ -16,13 +17,17 @@ const FurnitureList = async () => {
 
   await findFurnitureList();
 
-  pageHTML =  generatePageHtml();
+  if(!id) {
+    pageHTML =  generatePageHtml();
 
-  page.innerHTML = pageHTML;
+    page.innerHTML = pageHTML;
 
-  document.querySelectorAll(".toBeClicked").forEach(
-      element => element.addEventListener("click", displayShortElements));
-  document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
+    document.querySelectorAll(".toBeClicked").forEach(
+        element => element.addEventListener("click", displayShortElements));
+    document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
+  }else {
+    loadCard(id);
+  }
 }
 
 const findFurnitureList = async () => {
@@ -70,56 +75,76 @@ const removeTimeouts = () => {
 })
 }
 
-const generatePageHtml = () => {
+const generatePageHtml = (largeTable = true) => {
+  let tableSize = "large";
+  let notNeededClassName = "notNeeded";
+  let shortElementClassName = "shortElement d-none";
+  if(largeTable === false) {
+    tableSize = "short";
+    notNeededClassName = "notNeeded d-none";
+    shortElementClassName = "shortElement";
+  }
   let res = `
-  <div id="largeTableContainer">
+  <div id="${tableSize}TableContainer">
     <div>
-      <button type="button" id="buttonReturn" class="btn btn-dark m-3 d-none">Retour à la liste</button>
-      <table id="largeTable" class="table table-hover border border-1">
+      <button type="button" id="buttonReturn" class="btn btn-dark m-3 ${shortElementClassName}">Retour à la liste</button>
+      <table id="${tableSize}Table" class="table table-hover border border-1">
         <thead class="table-secondary">
           <tr>
             <th></th>
             <th>Description</th>
-            <th class="notNeeded">Type</th>
+            <th class="${notNeededClassName}">Type</th>
             <th>État</th>
-            <th class="notNeeded">Vendeur</th>
-            <th class="notNeeded">Acheteur</th>
-            <th class="notNeeded">Prix de vente</th>
-            <th class="notNeeded">Prix spécial</th>
+            <th class="${notNeededClassName}">Vendeur</th>
+            <th class="${notNeededClassName}">Acheteur</th>
+            <th class="${notNeededClassName}">Prix de vente</th>
+            <th class="${notNeededClassName}">Prix spécial</th>
           </tr>
         </thead>
         <tbody>
-          ${generateAllRows()}
+          ${generateAllRows(notNeededClassName)}
         </tbody>
       </table>
     </div>
-    <div class="shortElement d-none" id="furnitureCardDiv">Hello</div>
+    <div class="shortElement ${shortElementClassName}" id="furnitureCardDiv">Hello</div>
   </div>
     
   </div>`;
   return res;
 }
 
-const generateAllRows = () => {
+const generateAllRows = (notNeededClassName) => {
   let res = "";
   furnitureList.forEach(furniture => {
-    res += generateRow(furniture);
+    if(!furnitureMap[furniture.furnitureId]){
+      furnitureMap[furniture.furnitureId] = furniture;
+    } else if(furniture !== furnitureMap[furniture.furnitureId]) {
+      furniture = furnitureMap[furniture.furnitureId];
+    }
+    res += generateRow(furniture, notNeededClassName);
     furnitureMap[furniture.furnitureId] = furniture;
   });
   return res;
 }
 
-const generateRow = (furniture) => {
+const generateRow = (furniture, notNeededClassName) => {
+  let conditionHtml;
+  if(notNeededClassName === "notNeeded") {
+    conditionHtml = generateColoredCondition(furniture);
+  }else {
+    let infos = generateConditionInfos(furniture.condition);
+    conditionHtml = generateDot(infos.classname);
+  }
   let res = `
     <tr class="toBeClicked" furnitureId="${furniture.furnitureId}">
       <th>${generateFavouritePhotoImgTag(furniture)}</th>
       <th><p>${furniture.description}</p></th>
-      <th class="notNeeded"><p>${furniture.type}</p></th>
-      <th class="tableCondition text-center" condition="${furniture.condition}">${generateColoredCondition(furniture)}</th>
-      <th class="notNeeded">${generateSellerLink(furniture)}</th>
-      <th class="notNeeded">${generateBuyerLink(furniture)}</th>
-      <th class="notNeeded">${generateSellingPriceTableElement(furniture)}</th>
-      <th class="notNeeded">${generateSpecialPriceTableElement(furniture)}</th>
+      <th class="${notNeededClassName}"><p>${furniture.type}</p></th>
+      <th class="tableCondition text-center" condition="${furniture.condition}">${conditionHtml}</th>
+      <th class="${notNeededClassName}">${generateSellerLink(furniture)}</th>
+      <th class="${notNeededClassName}">${generateBuyerLink(furniture)}</th>
+      <th class="${notNeededClassName}">${generateSellingPriceTableElement(furniture)}</th>
+      <th class="${notNeededClassName}">${generateSpecialPriceTableElement(furniture)}</th>
     </tr>`;
   return res;
 }
@@ -440,16 +465,16 @@ const generateAllTransitionBtns = (furniture) => {
   let res = "";
   switch(furniture.condition) {
     case "accepted":
-      res += generateTransitionBtn("btnToAvailable", "Indiquer disponible à la vente");
-      res += generateTransitionBtn("btnToRestoration", "Indiquer en restoration");
+      res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
+      res += generateTransitionModal("ToRestoration", "Indiquer en restoration");
       break;
     case "available_for_sale":
-      res += generateTransitionBtn("btnToSold", "Indiquer vendu");
-      res += generateTransitionBtn("btnWithdraw", "Retirer de la vente", "danger");
+      res += generateTransitionModal("ToSold", "Indiquer vendu");
+      res += generateTransitionModal("Withdraw", "Retirer de la vente", "danger", "secondary");
       break;
     case "in_restoration":
-      res += generateTransitionBtn("btnToAvailable", "Indiquer disponible à la vente");
-      res += generateTransitionBtn("btnWithdraw", "Retirer de la vente", "danger");
+      res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
+      res += generateTransitionModal("Withdraw", "Retirer de la vente", "danger", "secondary");
       break;
     case "under_option":
     case "sold":
@@ -464,9 +489,39 @@ const generateAllTransitionBtns = (furniture) => {
   return res;
 }
 
-const generateTransitionBtn = (id, label, colorClass="primary") => {
-  return `<button id=${id} class="transitionBtn btn btn-${colorClass} mr-1">${label}</button>`
+const generateModalBodyFromTransitionId = (transitionId) => {
+  switch(transitionId) {
+    case "ToAvailable":
+      return generateToAvailableForm();
+    case "ToRestoration":
+      return "Voulez-vous vraiment indiquer ce meuble comme allant en restoration ?"
+    case "ToSold":
+      return "Voulez-vous vraiment indiquer ce meuble comme vendu ?"
+    case "Withdraw":
+      return "Voulez-vous vraiment retirer ce meuble de la vente ? <br/><strong>Cette action est irréversible</strong>"
+    default:
+      return "not implemented yet";
+  }
 }
+
+const generateToAvailableForm = () => {
+  let res = `
+  <form>
+    <div class="form-group">
+      <label for="sellingPriceInput" class="mr-3">Prix de vente: </label>
+      <input type="number" id="sellingPriceInput" class="w-25" name="sellingPriceInput" min="0.01" step="0.01"> €
+    </div>
+  </form>
+  `;
+  return res;
+}
+
+const generateTransitionModal = (id, label, triggerColorClass="primary", closeColorClass="danger") => {
+  let body = generateModalBodyFromTransitionId(id);
+  let sendBtn = generateCloseBtn(label, "btn"+id, `btn btn-${triggerColorClass} mx-5 transitionBtn`);
+  return generateModalPlusTriggerBtn("modal_"+id, label, `btn btn-${triggerColorClass}`, `<h4>${label}</h4>`, body, `${sendBtn}`, "Fermer", `btn btn-${closeColorClass}`);
+}
+
 
 const addTransitionBtnListeners = (furniture) => {
   document.querySelectorAll(".transitionBtn").forEach(element => {
@@ -490,6 +545,8 @@ const findTransitionMethod = (btnId, furniture) => {
   };
 }
 
+//condition transition methods
+
 const toAvailable = (e, furniture) => { //TODO
   e.preventDefault();
   console.log("toAvailable");
@@ -498,11 +555,51 @@ const toAvailable = (e, furniture) => { //TODO
 const toRestoration = (e, furniture) => {//TODO
   e.preventDefault();
   console.log("toRestoration");
+  fetch("/furniture/restoration/"+furniture.furnitureId, {
+    method: "PATCH",
+    headers: {
+      Authorization: currentUser.token,
+    }
+  }).then((response) => {
+    if (!response.ok) {
+      throw error();
+    }
+    return response.json();
+  }).then((data) => {
+    furnitureMap[data.furnitureId] = data;
+    loadCard(data.furnitureId);
+  }).catch((err) => {
+    console.log("Erreur de fetch !! :´\n" + err);
+  });
 }
 
 const withdraw = (e, furniture) => {//TODO
   e.preventDefault();
   console.log("withdraw");
+  fetch("/furniture/withdraw/"+furniture.furnitureId, {
+    method: "PATCH",
+    headers: {
+      Authorization: currentUser.token,
+    }
+  }).then((response) => {
+    if (!response.ok) {
+      throw error();
+    }
+    return response.json();
+  }).then((data) => {
+    furnitureMap[data.furnitureId] = data;
+    loadCard(data.furnitureId);
+  }).catch((err) => {
+    console.log("Erreur de fetch !! :´\n" + err);
+  });
+}
+
+const loadCard = (id) => {
+  page.innerHTML = generatePageHtml(false);
+  generateCard(furnitureMap[id]);
+  document.querySelectorAll(".toBeClicked").forEach(
+    element => element.addEventListener("click", displayShortElements));
+  document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
 }
 
 export default FurnitureList;
