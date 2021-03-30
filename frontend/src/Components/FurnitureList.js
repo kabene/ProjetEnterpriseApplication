@@ -75,7 +75,7 @@ const generatePageHtml = () => {
   <div id="largeTableContainer">
     <div>
       <button type="button" id="buttonReturn" class="btn btn-dark m-3 d-none">Retour à la liste</button>
-      <table id="largeTable" class="table table-hover">
+      <table id="largeTable" class="table table-hover border border-1">
         <thead class="table-secondary">
           <tr>
             <th></th>
