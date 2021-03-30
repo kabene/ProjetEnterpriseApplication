@@ -114,7 +114,7 @@ const generateRow = (furniture) => {
       <th>${generateFavouritePhotoImgTag(furniture)}</th>
       <th><p>${furniture.description}</p></th>
       <th class="notNeeded"><p>${furniture.type}</p></th>
-      <th class="tableState" condition="${furniture.condition}">${generateColoredState(furniture)}</th>
+      <th class="tableCondition" condition="${furniture.condition}">${generateColoredCondition(furniture)}</th>
       <th class="notNeeded">${generateSellerLink(furniture)}</th>
       <th class="notNeeded">${generateBuyerLink(furniture)}</th>
       <th class="notNeeded">${generateSellingPriceTableElement(furniture)}</th>
@@ -169,7 +169,7 @@ const generateSpecialPriceTableElement = (furniture) => {
   return res;
 }
 
-const generateStateInfos = (condition) => {
+const generateConditionInfos = (condition) => {
   let res = {
     classname: "",
     condition: "",
@@ -212,16 +212,16 @@ const generateStateInfos = (condition) => {
   return res;
 }
 
-const generateColoredState = (furniture) => {
-  let infos = generateStateInfos(furniture.condition);
+const generateColoredCondition = (furniture) => {
+  let infos = generateConditionInfos(furniture.condition);
   return `<p class="text-${infos.classname}">${infos.condition}</p>`;
 }
 
 //input: "primary", "secondary", "info", etc...
-const generateDotState = (colorClassName) => `<span class="badge badge-pill badge-${colorClassName}">‏‏‎ ‎</span>`;
+const generateDotCondition = (colorClassName) => `<span class="badge badge-pill badge-${colorClassName}">‏‏‎ ‎</span>`;
 
-const generateBadgeState = (furniture) => {
-  let infos = generateStateInfos(furniture.condition);
+const generateBadgeCondition = (furniture) => {
+  let infos = generateConditionInfos(furniture.condition);
   let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.condition}</span>`;
   return res;
 }
@@ -251,10 +251,10 @@ const displayShortElements = (e) => {
   }
   element.className = "toBeClicked table-dark text-dark";
 
-  document.querySelectorAll(".tableState").forEach(element => {
+  document.querySelectorAll(".tableCondition").forEach(element => {
     let condition = element.attributes["condition"].value;
-    let classname = generateStateInfos(condition).classname;
-    element.innerHTML = generateDotState(classname);
+    let classname = generateConditionInfos(condition).classname;
+    element.innerHTML = generateDotCondition(classname);
   });
   let id = element.attributes["furnitureId"].value;
   if(!furnitureMap[id]) {
@@ -302,7 +302,7 @@ const generateCardHTML = (furniture) => {
               </div>
               <div class="col-md-6 text-left">
                 <h5 id="descriptionCardEntry">${furniture.description}</h5>
-                <p class="proile-rating">ÉTAT : <span id="stateCardEntry">${generateBadgeState(furniture)}</span></p>
+                <p class="proile-rating">ÉTAT : <span id="conditionCardEntry">${generateBadgeCondition(furniture)}</span></p>
               </div>
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
