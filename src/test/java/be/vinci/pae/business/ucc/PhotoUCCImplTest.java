@@ -55,8 +55,8 @@ class PhotoUCCImplTest {
   }
 
 
-  @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos: " +
-      "should return all visible photo on home page.")
+  @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos: "
+      + "should return all visible photo on home page.")
   @Test
   void test_getAllVisibleHomePage_shouldReturnAllVisibleHomePage() {
 
