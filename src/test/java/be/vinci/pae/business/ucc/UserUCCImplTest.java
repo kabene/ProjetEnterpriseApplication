@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.business.dto.AddressDTO;
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.AddressImpl;
 import be.vinci.pae.business.pojos.User;
@@ -16,6 +17,7 @@ import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import be.vinci.pae.utils.Configurate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -223,12 +225,12 @@ public class UserUCCImplTest {
   }
 
   @DisplayName("TEST UserUCC.getAll : given nothing,"
-      + " should return all Users")
+      + " should return empty list of Users")
   @Test
-  public void test_getAll_givenNothing_shouldReturnAllUsers() {
-    List<UserDTO> allUsers = Arrays.asList(mockUser1, mockUser2);
-    Mockito.when(mockUserDAO.getAllUsers()).thenReturn(allUsers);
-    assertEquals(allUsers, userUCC.getAll(),
+  public void test_getAll_emptyDB_shouldReturnEmptyListOfUsers() {
+    List<UserDTO> emptyList = new ArrayList<UserDTO>();
+    Mockito.when(mockUserDAO.getAllUsers()).thenReturn(emptyList);
+    assertEquals(emptyList, userUCC.getAll(),
         "UserUCC.getAll should return a List<UserDTO> of all users");
     Mockito.verify(mockUserDAO).getAllUsers();
   }
