@@ -1,16 +1,10 @@
 package be.vinci.pae.business.ucc;
 
-import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
-import be.vinci.pae.business.pojos.FurnitureImpl;
 import be.vinci.pae.business.pojos.PhotoImpl;
-import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
-import be.vinci.pae.persistence.dao.FurnitureDAO;
-import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
-import be.vinci.pae.persistence.dao.UserDAO;
 import be.vinci.pae.utils.Configurate;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -33,7 +27,9 @@ class PhotoUCCImplTest {
   private static PhotoDAO mockPhotoDAO;
   private static ConnectionDalServices mockDal;
 
-  private static PhotoDTO mockPhotoDTO1, mockPhotoDTO2, mockPhotoDTO3;
+  private static PhotoDTO mockPhotoDTO1;
+  private static PhotoDTO mockPhotoDTO2;
+  private static PhotoDTO mockPhotoDTO3;
 
   @BeforeAll
   public static void init() {
@@ -59,7 +55,8 @@ class PhotoUCCImplTest {
   }
 
 
-  @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos: should return all visible photo on home page.")
+  @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos: " +
+      "should return all visible photo on home page.")
   @Test
   void test_getAllVisibleHomePage_shouldReturnAllVisibleHomePage() {
 
@@ -89,7 +86,8 @@ class PhotoUCCImplTest {
     List<PhotoDTO> expected = photoDTOS;
     List<PhotoDTO> actual = photoUCC.getAllHomePageVisiblePhotos();
     assertEquals(expected, actual,
-        "called photoUCC.getAllHomePageVisiblePhotos(), should have return all visible photo on home page.");
+        "called photoUCC.getAllHomePageVisiblePhotos()," +
+            " should have return all visible photo on home page.");
 
     Mockito.verify(mockPhotoDAO).getAllHomePageVisiblePhotos();
 
@@ -97,7 +95,8 @@ class PhotoUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
   }
 
-  @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos without any data present: should return an empty list.")
+  @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos without any data present:" +
+      " should return an empty list.")
   @Test
   void test_getAllVisibleHomePageWithEmptyDataBase_shouldReturnEmptyList() {
     List<PhotoDTO> photoDTOS = new ArrayList<PhotoDTO>();

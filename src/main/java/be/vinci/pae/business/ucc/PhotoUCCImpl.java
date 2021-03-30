@@ -1,9 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.PhotoDTO;
-import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
-import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import jakarta.inject.Inject;
 

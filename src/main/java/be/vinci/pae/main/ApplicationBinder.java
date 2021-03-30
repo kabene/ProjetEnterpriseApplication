@@ -32,9 +32,11 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("AddressDAO"))).to(AddressDAO.class)
           .in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("FurnitureDAO"))).to(FurnitureDAO.class)
+      bind(Class.forName(Configurate.getConfiguration("FurnitureDAO")))
+          .to(FurnitureDAO.class)
           .in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("FurnitureTypeDAO"))).to(FurnitureTypeDAO.class)
+      bind(Class.forName(Configurate.getConfiguration("FurnitureTypeDAO")))
+          .to(FurnitureTypeDAO.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("PhotoDAO"))).to(PhotoDAO.class)
           .in(Singleton.class);
@@ -42,9 +44,11 @@ public class ApplicationBinder extends AbstractBinder {
       //FACTORY
       bind(Class.forName(Configurate.getConfiguration("UserFactory"))).to(UserFactory.class)
           .in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("AddressFactory"))).to(AddressFactory.class)
+      bind(Class.forName(Configurate.getConfiguration("AddressFactory")))
+          .to(AddressFactory.class)
           .in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("FurnitureFactory"))).to(FurnitureFactory.class)
+      bind(Class.forName(Configurate.getConfiguration("FurnitureFactory")))
+          .to(FurnitureFactory.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("PhotoFactory"))).to(PhotoFactory.class)
           .in(Singleton.class);
@@ -60,7 +64,8 @@ public class ApplicationBinder extends AbstractBinder {
       //OTHERS
       bind(Class.forName(Configurate.getConfiguration("Authentication"))).to(Authentication.class)
           .in(Singleton.class);
-      bind(Class.forName(Configurate.getConfiguration("ConnectionDalServices"))).to(ConnectionDalServices.class)
+      bind(Class.forName(Configurate.getConfiguration("ConnectionDalServices")))
+          .to(ConnectionDalServices.class)
           .to(ConnectionBackendDalServices.class)
           .in(Singleton.class);
 
