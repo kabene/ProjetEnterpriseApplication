@@ -218,7 +218,7 @@ const generateColoredCondition = (furniture) => {
 }
 
 //input: "primary", "secondary", "info", etc...
-const generateDotCondition = (colorClassName) => `<span class="badge badge-pill badge-${colorClassName}">‏‏‎ ‎</span>`;
+const generateDot = (colorClassName) => `<span class="badge badge-pill badge-${colorClassName}"> </span>`;
 
 const generateBadgeCondition = (furniture) => {
   let infos = generateConditionInfos(furniture.condition);
@@ -245,16 +245,20 @@ const displayShortElements = (e) => {
   let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
   furnitureCardDiv.innerHTML = generateLoadingAnimation();
 
+  document.querySelectorAll(".toBeClicked").forEach( element => {
+    element.className = "toBeClicked";
+  });
+
   let element = e.srcElement;
   while (!element.className.includes("toBeClicked")) {
     element = element.parentElement;
   }
-  element.className = "toBeClicked table-dark text-dark";
+  element.className = "toBeClicked bg-secondary text-light";
 
   document.querySelectorAll(".tableCondition").forEach(element => {
     let condition = element.attributes["condition"].value;
     let classname = generateConditionInfos(condition).classname;
-    element.innerHTML = generateDotCondition(classname);
+    element.innerHTML = generateDot(classname);
   });
   let id = element.attributes["furnitureId"].value;
   if(!furnitureMap[id]) {
@@ -272,6 +276,11 @@ const displayLargeTable = () => {
   document.querySelector('#shortTable').id = "largeTable";
   document.querySelectorAll(".toBeClicked").forEach(element => element.className = "toBeClicked");
   document.querySelector("#buttonReturn").className = "btn btn-dark m-3 d-none";
+  document.querySelectorAll(".tableCondition").forEach(element => {
+    let condition = element.getAttribute("condition");
+    let infos = generateConditionInfos(condition);
+    element.innerHTML = `<p class="text-${infos.classname}">${infos.condition}</p>`
+  })
 }
 
 const displayLargeElements = () => {
