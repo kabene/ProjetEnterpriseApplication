@@ -294,7 +294,7 @@ const generateCardHTML = (furniture) => {
               <div class="col-md-6">
                 <p>${generateFavouritePhotoImgTag(furniture)}</p>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-6 text-left">
                 <h5 id="descriptionCardEntry">${furniture.description}</h5>
                 <p class="proile-rating">ÉTAT : <span id="stateCardEntry">${generateColoredState(furniture)}</span></p>
               </div>
@@ -324,12 +324,9 @@ const generateCardHTML = (furniture) => {
               ${generateOptionCardEntry(furniture)}
 
               ${generateButtonRow(furniture)}
-
-            </div>         
+            </div>       
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-
               ${generateCardLabelKeyEntry("label tab2", "id1", "value tab 2")}
-
             </div>
           </div>
         </div>
@@ -342,7 +339,7 @@ const generateCardHTML = (furniture) => {
 
 const generateCardLabelKeyEntry = (label, id, value) => {
   let res = `
-  <div class="row">
+  <div class="row text-left">
     <div class="col-md-6">
       <label>${label}</label>
     </div>
@@ -368,13 +365,12 @@ const generateBuyingDateCardEntry = (furniture) => {
 
 const generateUserCardEntry = (label, id, user) => {
   let res = `
-  <div class="row">
+  <div class="row text-left">
     <div class="col-md-6">
       <label class="mr-3">${label}</label>
-      ${generateUserLink(user)}
     </div>
     <div class="col-md-6">
-      <p id="${id}">${user.firstName} ${user.lastName}</p>
+      <p id="${id}">${generateUserLink(user)} (${user.firstName} ${user.lastName})</p>
     </div>
   </div>`;
   return res;
