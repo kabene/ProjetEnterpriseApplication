@@ -32,7 +32,7 @@ public class PhotoResource {
   @GET
   @Path("/homePage")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getVisibleHomePage() {
+  public Response getPresentHomePage() {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /photo/homePage");
     List<PhotoDTO> photoDTOS = photoUCC.getAllHomePageVisiblePhotos();
     List<PhotoDTO> res = new ArrayList<>();
