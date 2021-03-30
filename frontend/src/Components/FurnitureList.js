@@ -3,7 +3,8 @@ import {getUserSessionData} from "../utils/session";
 
 let page = document.querySelector("#page");
 let furnitureList;
-let furnitureMap = {};
+let furnitureMap = [];
+let timeouts = [];
 let currentUser;
 let pageHTML;
 
@@ -15,14 +16,13 @@ const FurnitureList = async () => {
 
   await findFurnitureList();
 
-  pageHTML = `<div class="mx-5"><h1>Liste des meubles:</h1>`;
-  pageHTML += generateTableView();
+  pageHTML =  generatePageHtml();
 
   page.innerHTML = pageHTML;
 
   document.querySelectorAll(".toBeClicked").forEach(
       element => element.addEventListener("click", displayShortElements));
-
+  document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
 }
 
 const findFurnitureList = async () => {
@@ -64,27 +64,39 @@ const findOneFurniture = async (id) => {
   });
 }
 
-const generateTableView = () => {
+const removeTimeouts = () => {
+  timeouts.forEach(timeout => {
+    clearTimeout(timeout);
+})
+}
+
+const generatePageHtml = () => {
   let res = `
-    <table id="largeTable" class="table table-bordered table-hover">
+  <div id="largeTableContainer">
+    <div>
+      <button type="button" id="buttonReturn" class="btn btn-dark m-3 d-none">Retour à la liste</button>
+      <table id="largeTable" class="table table-hover">
         <thead class="table-secondary">
-            <tr>
-                <th></th>
-                <th>Description</th>
-                <th class="notNeeded">Type</th>
-                <th>État</th>
-                <th class="notNeeded">Vendeur</th>
-                <th class="notNeeded">Acheteur</th>
-                <th class="notNeeded">Prix de vente</th>
-                <th class="notNeeded">Prix spécial</th>
-            </tr>
+          <tr>
+            <th></th>
+            <th>Description</th>
+            <th class="notNeeded">Type</th>
+            <th>État</th>
+            <th class="notNeeded">Vendeur</th>
+            <th class="notNeeded">Acheteur</th>
+            <th class="notNeeded">Prix de vente</th>
+            <th class="notNeeded">Prix spécial</th>
+          </tr>
         </thead>
         <tbody>
           ${generateAllRows()}
         </tbody>
-        </table>
-        <div class="shortElement d-none" id="furnitureCardDiv">Hello</div>
-    </div>`;
+      </table>
+    </div>
+    <div class="shortElement d-none" id="furnitureCardDiv">Hello</div>
+  </div>
+    
+  </div>`;
   return res;
 }
 
@@ -211,16 +223,19 @@ const generateDotState = (colorClassName) => `<span class="badge badge-pill badg
 const generateLoadingAnimation = () => `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
 
 const displayShortElements = (e) => {
-
+  removeTimeouts();
   //hide large table
   let largeTable = document.querySelector('#largeTable');
-  if (largeTable !== null) {
+  if (largeTable !== null) 
     largeTable.id = "shortTable";
-  }
+  if (document.querySelector('#largeTableContainer') !== null)
+    timeouts.push(setTimeout(changeContainerId, 1000));
   document.querySelectorAll(".notNeeded").forEach(
       element => element.className = "notNeeded d-none");
   document.querySelectorAll(".shortElement").forEach(
       element => element.className = "shortElement");
+  let returnBtn = document.querySelector("#buttonReturn");
+  returnBtn.className = "btn btn-dark m-3";
   let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
   furnitureCardDiv.innerHTML = generateLoadingAnimation();
 
@@ -228,6 +243,7 @@ const displayShortElements = (e) => {
   while (!element.className.includes("toBeClicked")) {
     element = element.parentElement;
   }
+  element.className = "toBeClicked table-dark text-dark";
 
   document.querySelectorAll(".tableState").forEach(element => {
     let condition = element.attributes["condition"].value;
@@ -243,11 +259,28 @@ const displayShortElements = (e) => {
   }
 }
 
+const displayLargeTable = () => {
+  document.querySelector('#shortTableContainer').id = "largeTableContainer";
+  timeouts.push(setTimeout(displayLargeElements, 750));
+  document.querySelectorAll(".shortElement").forEach(element => element.className = "shortElement d-none");
+  document.querySelector('#shortTable').id = "largeTable";
+  document.querySelectorAll(".toBeClicked").forEach(element => element.className = "toBeClicked");
+  document.querySelector("#buttonReturn").className = "btn btn-dark m-3 d-none";
+}
+
+const displayLargeElements = () => {
+  document.querySelectorAll('.notNeeded').forEach(element => element.className = "notNeeded");
+}
+
 const generateCard = (furniture) => {
   let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
   let cardHTML = generateCardHTML(furniture);
   furnitureCardDiv.innerHTML = cardHTML;
 
+}
+
+const changeContainerId = () => {
+  document.querySelector('#largeTableContainer').id = "shortTableContainer";
 }
 
 const generateCardHTML = (furniture) => {
@@ -259,7 +292,7 @@ const generateCardHTML = (furniture) => {
           <div class="profile-head">
             <div class="row">
               <div class="col-md-6">
-                ${generateFavouritePhotoImgTag(furniture)}
+                <p>${generateFavouritePhotoImgTag(furniture)}</p>
               </div>
               <div class="col-md-6">
                 <h5 id="descriptionCardEntry">${furniture.description}</h5>
@@ -268,10 +301,10 @@ const generateCardHTML = (furniture) => {
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item">
-                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">tab link 1</a>
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Information</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">tab link 2</a>
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Photos</a>
               </li>
             </ul>
           </div>
@@ -282,7 +315,6 @@ const generateCardHTML = (furniture) => {
         <div class="col-md-8">
           <div class="tab-content profile-tab" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-  
               ${generateTypeCardEntry(furniture)}
               ${generateBuyingPriceCardEntry(furniture)}
               ${generateBuyingDateCardEntry(furniture)}
@@ -290,6 +322,8 @@ const generateCardHTML = (furniture) => {
               ${generateSellingPriceCardEntry(furniture)}
               ${generateBuyerCardEntry(furniture)}
               ${generateOptionCardEntry(furniture)}
+
+              ${generateButtonRow(furniture)}
 
             </div>         
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -300,7 +334,6 @@ const generateCardHTML = (furniture) => {
           </div>
         </div>
       </div>
-      ${generateButtonRow(furniture)}
     </form>           
   </div>
   `;
