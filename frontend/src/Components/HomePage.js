@@ -3,8 +3,13 @@ import meuble2 from "../img/furnitures/Coiffeuse_2.png";
 import meuble3 from "../img/furnitures/Secretaire.png";
 
 let page = document.querySelector("#page");
+let visiblePhotos;
 
-const HomePage = () => {
+const HomePage = async () => {
+    
+    visiblePhotos = await getVisiblePhotos();
+    console.log(visiblePhotos);
+
     let pageHTML = `
     <div class="row mx-0 pt-5">
         <div class="col-2"></div>
@@ -51,5 +56,28 @@ const HomePage = () => {
     `;
     page.innerHTML = pageHTML;
 }
+
+const getVisiblePhotos = async () => {
+    let ret = [];
+    await fetch("/photos/homePage", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Error code : " + response.status + " : " + response.statusText);
+        }
+        return response.json();
+      }).then((data) => {
+        ret = data;
+      }).catch((err) => {
+        console.error(err);
+      });
+
+    return ret;
+}
+
+
 
 export default HomePage;
