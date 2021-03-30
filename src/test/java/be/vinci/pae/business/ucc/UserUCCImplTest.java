@@ -260,4 +260,5 @@ public class UserUCCImplTest {
         "UserUCC.getSearchResult should return a empty List<UserDTO> of all users");
     Mockito.verify(mockUserDAO).findBySearch(username);
   }
+
 }
