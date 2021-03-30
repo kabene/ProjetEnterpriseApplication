@@ -35,6 +35,16 @@ CREATE TABLE satchofurniture.furniture_types
     type_name varchar(50) NOT NULL
 );
 
+CREATE TABLE satchoFurniture.options(
+    id_option SERIAL PRIMARY KEY,
+    duree  integer NOT NULL,
+    date_option timestamp NOT NULL,
+    client_id integer NOT NULL REFERENCES satchoFurniture.users (user_id),
+    furniture_id integer NOT NULL REFERENCES satchoFurniture.furniture (furniture_id),
+    is_canceled boolean NOT NULL
+
+);
+
 --CREATE TYPE cond AS ENUM ('requested_for_visit', 'refused', 'accepted', 'in_restoration', 'available_for_sale', 'under_option', 'sold', 'reserved', 'delivered', 'collected', 'withdrawed');
 
 CREATE TABLE satchofurniture.furniture
@@ -53,6 +63,15 @@ CREATE TABLE satchofurniture.furniture
     is_to_pick_up        boolean NULL,
     pick_up_date         date NULL
 );
+CREATE TABLE satchoFurniture.options(
+                                        id_option SERIAL PRIMARY KEY,
+                                        duree  integer NOT NULL,
+                                        date_option timestamp NOT NULL,
+                                        client_id integer NOT NULL REFERENCES satchoFurniture.users (user_id),
+                                        furniture_id integer NOT NULL REFERENCES satchoFurniture.furniture (furniture_id),
+                                        is_canceled boolean NOT NULL
+
+);
 
 CREATE TABLE satchofurniture.photos
 (
@@ -69,7 +88,7 @@ ALTER TABLE satchofurniture.furniture
 
 
 INSERT INTO satchoFurniture.addresses
-VALUES (DEFAULT, 'sente des artistes', '1bis', null, '4800', 'Vervier', 'Belgique');
+VALUES (DEFAULT, 'sente des artistes', '1bis', 1 , '4800', 'Vervier', 'Belgique');
 
 INSERT INTO satchoFurniture.users
 VALUES (DEFAULT, 'Albert', 'Satcho', 'bert', 'bert.satcho@gmail.be', 1, now(), 'admin',
