@@ -131,7 +131,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.login : login by a user waiting for confirmation, should throw UnauthorizedException")
+  @DisplayName("TEST UserUCC.login : login by a user waiting for confirmation,"
+      + " should throw UnauthorizedException")
   @Test
   public void test_login_byWaitingUser_shouldThrowUnauthorizedException() {
     final String username = "userInWaiting";
@@ -142,7 +143,8 @@ public class UserUCCImplTest {
 
     assertThrows(UnauthorizedException.class,
         () -> userUCC.login(username, pwd),
-        "UserUCC.login should throw UnauthorizedException as long as the user is waiting for confirmation");
+        "UserUCC.login should throw UnauthorizedException"
+            + " as long as the user is waiting for confirmation");
 
     Mockito.verify(mockUserDAO).findByUsername(username);
     Mockito.verify(mockUser1, Mockito.never()).checkPassword(pwd);
@@ -151,7 +153,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.login : DAO throws InternalError, Should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.login : DAO throws InternalError,"
+      + " Should rollback and throw InternalError")
   @Test
   public void test_login_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     String username = "username";
@@ -252,7 +255,8 @@ public class UserUCCImplTest {
 
   }
 
-  @DisplayName("TEST UserUCC.getAll : DAO throws InternalError, should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.getAll : DAO throws InternalError,"
+      + " should rollback and throw InternalError")
   @Test
   public void test_register_InternalErrorThrown1_shouldThrowInternalErrorAndRollback() {
     String username = "username";
@@ -271,7 +275,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST UserUCC.getAll : DAO throws InternalError, should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.getAll : DAO throws InternalError,"
+      + " should rollback and throw InternalError")
   @Test
   public void test_register_InternalErrorThrown2_shouldThrowInternalErrorAndRollback() {
     String username = "username";
@@ -321,7 +326,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.getAll : DAO throws InternalError, should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.getAll : DAO throws InternalError,"
+      + " should rollback and throw InternalError")
   @Test
   public void test_getAll_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     Mockito.when(mockUserDAO.getAllUsers()).thenThrow(new InternalError());
@@ -367,7 +373,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.getSearchResult : DAO throws InternalError, Should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.getSearchResult : DAO throws InternalError,"
+      + " Should rollback and throw InternalError")
   @Test
   public void test_getSearchResult_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     String pattern = "pattern";
@@ -419,7 +426,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.getOne : DAO throws InternalError, Should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.getOne : DAO throws InternalError,"
+      + " Should rollback and throw InternalError")
   @Test
   public void test_getOne_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     int userId = 1;
