@@ -149,8 +149,8 @@ public class UserUCCImpl implements UserUCC {
       res = userDAO.findById(userId);
       dalServices.commitTransaction();
     } catch (Throwable e) {
-      e.printStackTrace();
       dalServices.rollbackTransaction();
+      throw e;
     }
     return res;
   }

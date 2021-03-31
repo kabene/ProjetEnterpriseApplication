@@ -1,11 +1,14 @@
 package be.vinci.pae.main;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
+import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.pojos.FurnitureImpl;
+import be.vinci.pae.business.pojos.OptionImpl;
 import be.vinci.pae.business.pojos.PhotoImpl;
 import be.vinci.pae.business.ucc.FurnitureUCC;
+import be.vinci.pae.business.ucc.OptionUCC;
 import be.vinci.pae.business.ucc.PhotoUCC;
 import be.vinci.pae.persistence.dal.DalServicesImpl;
 import be.vinci.pae.persistence.dao.AddressDAO;
@@ -13,6 +16,8 @@ import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.FurnitureDAOImpl;
 import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
 import be.vinci.pae.persistence.dao.FurnitureTypeDAOImpl;
+import be.vinci.pae.persistence.dao.OptionDAO;
+import be.vinci.pae.persistence.dao.OptionDAOImpl;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import be.vinci.pae.persistence.dao.PhotoDAOImpl;
 import be.vinci.pae.presentation.authentication.Authentication;
@@ -58,6 +63,11 @@ public class TestBinder extends AbstractBinder {
       bind(Class.forName(Configurate.getConfiguration("PhotoUCC"))).to(PhotoUCC.class)
           .in(Singleton.class);
       bind(Mockito.mock(PhotoDAOImpl.class)).to(PhotoDAO.class);
+
+      //options
+      bind(Class.forName(Configurate.getConfiguration("OptionUCC"))).to(OptionUCC.class)
+          .in(Singleton.class);
+      bind(Mockito.mock(OptionDAOImpl.class)).to(OptionDAO.class);
 
       //other services
       bind(Mockito.mock(DalServicesImpl.class)).to(ConnectionDalServices.class);

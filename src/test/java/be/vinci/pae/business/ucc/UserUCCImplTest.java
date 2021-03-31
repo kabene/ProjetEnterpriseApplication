@@ -26,6 +26,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
 public class UserUCCImplTest {
@@ -430,5 +432,70 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.validateUser : nominal, return DTO")
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  public void test_validateUser_givenValidId_shouldReturnDTO(boolean value) {
+    int userId = 1;
+
+    Mockito.when(mockUserDAO.findById(userId)).thenReturn(mockUser1);
+
+    assertEquals(mockUser1, userUCC.validateUser(userId, value),
+        "A valid call should return the corresponding DTO");
+
+    Mockito.verify(mockUserDAO).setRole(userId, value);
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.validateUser : invalid id, throw ")
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  public void test_validateUser_givenInvalidId_shouldThrowNotFound(boolean value) {
+    int userId = 1;
+
+    Mockito.when(mockUserDAO.findById(userId)).thenThrow(new NotFoundException());
+
+    assertThrows(NotFoundException.class, ()-> userUCC.validateUser(userId, value),
+        "an invalid id should throw NotFoundException");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.validateUser : invalid id, throw ")
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  public void test_validateUser_catchesInternalError1_shouldThrowNotFound(boolean value) {
+    int userId = 1;
+
+    Mockito.when(mockUserDAO.findById(userId)).thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, ()-> userUCC.validateUser(userId, value),
+        "an invalid id should throw NotFoundException");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.validateUser : invalid id, throw ")
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  public void test_validateUser_catchesInternalError2_shouldThrowNotFound(boolean value) {
+    int userId = 1;
+
+    Mockito.doThrow(new InternalError()).when(mockUserDAO).setRole(userId, value);
+
+    assertThrows(InternalError.class, ()-> userUCC.validateUser(userId, value),
+        "an invalid id should throw NotFoundException");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 }

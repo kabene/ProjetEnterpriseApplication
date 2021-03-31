@@ -12,15 +12,15 @@ public interface OptionUCC {
    * @param furnitureId furnitureId.
    * @return OptionDTO.
    */
-  OptionDTO introduceOption(int clientId, int furnitureId);
+  OptionDTO introduceOption(UserDTO user, int furnitureId);
 
   /**
    * cancel an option.
    *
+   * @param user id of the user that want to cancel the option
    * @param idOption id of the option to cancel.
-   * @param idUser id of the user that want to cancel the option
    * @return an OptionDTO that represent the canceled one.
    */
-  OptionDTO cancelOption(int idUser,int idOption);
+  OptionDTO cancelOption(UserDTO user,int idOption);
 
 }

@@ -3,11 +3,13 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.OptionDAO;
+import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
 
 public class OptionUCCImpl implements OptionUCC {
@@ -18,15 +20,17 @@ public class OptionUCCImpl implements OptionUCC {
   private OptionDAO optionDAO;
   @Inject
   private FurnitureDAO furnitureDAO;
+  @Inject
+  private UserDAO userDAO;
 
 
   /**
-   * @param clientId    clientId.
+   * @param userId      userId.
    * @param furnitureId furnitureId.
    * @return OptionDTO  introduced.
    */
   @Override
-  public OptionDTO introduceOption(int clientId, int furnitureId) {
+  public OptionDTO introduceOption(UserDTO user, int furnitureId) {
     OptionDTO opt = null;
     try {
       dalServices.startTransaction();
@@ -36,11 +40,11 @@ public class OptionUCCImpl implements OptionUCC {
       }
       furnitureDTO.setCondition("under_option");
       furnitureDAO.updateConditionOnly(furnitureDTO);
-      opt = optionDAO.introduceOption(clientId, furnitureId);
+      opt = optionDAO.introduceOption(user, furnitureId);
       dalServices.commitTransaction();
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
+      throw e;
     }
     return opt;
   }
@@ -48,33 +52,36 @@ public class OptionUCCImpl implements OptionUCC {
   /**
    * cancel an option.
    *
-   * @param idOption id of the option to cancel.
-   * @param idUser   id of the user that want to cancel the option.
+   * @param user   id of the user that want to cancel the option.
+   * @param optionId id of the option to cancel.
    * @return an OptionDTO that represent the canceled one.
    */
   @Override
-  public OptionDTO cancelOption(int idUser,
-      int idOption) {
+  public OptionDTO cancelOption(UserDTO user,
+      int optionId) {
     OptionDTO opt = null;
     try {
       dalServices.startTransaction();
-      opt = optionDAO.getOption(idOption);
+      opt = optionDAO.getOption(optionId);
       if (opt.isCanceled()) {
-        throw new ConflictException("The resource is already closed");
+        throw new ConflictException("The resource is already canceled");
       }
-      if (opt.getClientId() != idUser) {
+      if (opt.getClientId() != user.getId()) {
         throw new UnauthorizedException("not allowed to cancel the option");
       }
       FurnitureDTO furnitureDTO = furnitureDAO.findById(opt.getFurnitureId());
+      if(!furnitureDTO.getCondition().equals("under_option")) {
+        throw new ConflictException("The resource is not under option");
+      }
       furnitureDTO.setCondition("available_for_sale");
       furnitureDAO.updateConditionOnly(furnitureDTO);
 
-      optionDAO.cancelOption(idOption);
-      opt = optionDAO.getOption(idOption);
+      optionDAO.cancelOption(optionId);
+      opt = optionDAO.getOption(optionId);
       dalServices.commitTransaction();
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
+      throw e;
     }
     return opt;
   }

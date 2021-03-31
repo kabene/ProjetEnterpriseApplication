@@ -1,6 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.OptionDTO;
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.OptionFactory;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
@@ -24,12 +25,12 @@ public class OptionDAOImpl implements OptionDAO {
    * @return OptionDTO.
    */
   @Override
-  public OptionDTO introduceOption(int clientId,int furnitureId) {
+  public OptionDTO introduceOption(UserDTO user,int furnitureId) {
     String query= "INSERT INTO satchoFurniture.options VALUES(DEFAULT,0,NOW(),?,?,'false') RETURNING *";
     PreparedStatement ps= dalServices.makeStatement(query);
     OptionDTO optionFound;
     try{
-      ps.setInt(1,clientId);
+      ps.setInt(1,user.getId());
       ps.setInt(2,furnitureId);
       ResultSet rs=ps.executeQuery();
       if(rs.next()){

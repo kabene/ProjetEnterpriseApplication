@@ -49,7 +49,7 @@ public class OptionRessouce {
       throw new BadRequestException("Error: Malformed request");
     }
     int furnitureId=furniture_Id.asInt();
-    OptionDTO optionDTO = optionUCC.introduceOption(currentUser.getId(),furnitureId);
+    OptionDTO optionDTO = optionUCC.introduceOption(currentUser,furnitureId);
     ObjectNode resNode = jsonMapper.createObjectNode().putPOJO("option",optionDTO);
     return Response.ok(resNode,MediaType.APPLICATION_JSON).build();
   }
@@ -67,7 +67,7 @@ public class OptionRessouce {
       throw new BadRequestException("Error: Malformed request");
     }
     int optionId=option_Id.asInt();
-    OptionDTO optionDTO=optionUCC.cancelOption(currentUser.getId(),optionId);
+    OptionDTO optionDTO=optionUCC.cancelOption(currentUser,optionId);
     optionDTO=Json.filterPublicJsonView(optionDTO,OptionDTO.class);
     return Response.ok(optionDTO,MediaType.APPLICATION_JSON).build();
   }
