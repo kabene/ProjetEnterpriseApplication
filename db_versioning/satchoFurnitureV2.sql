@@ -65,9 +65,9 @@ CREATE TABLE satchofurniture.furniture
 );
 
 CREATE TABLE satchoFurniture.options(
-                                        id_option SERIAL PRIMARY KEY,
-                                        duree  integer DEFAULT 0,
-                                        date_option timestamp DEFAULT now(),
+                                        option_id SERIAL PRIMARY KEY,
+                                        duration  integer NOT NULL ,
+                                        date_option timestamp  NOT NULL ,
                                         client_id integer NOT NULL REFERENCES satchoFurniture.users (user_id),
                                         furniture_id integer NOT NULL REFERENCES satchoFurniture.furniture (furniture_id),
                                         is_canceled boolean NOT NULL

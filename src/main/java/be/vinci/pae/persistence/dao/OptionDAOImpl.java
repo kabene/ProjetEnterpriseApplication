@@ -54,7 +54,7 @@ public class OptionDAOImpl implements OptionDAO {
    */
   @Override
   public void cancelOption(int idOption)  {
-    String query="UPDATE  satchoFurniture.options o SET is_canceled=true WHERE id_option=?";
+    String query="UPDATE  satchoFurniture.options o SET canceled=true WHERE option_id=?";
     PreparedStatement ps=dalServices.makeStatement(query);
     try {
       ps.setInt(1,idOption);
@@ -74,7 +74,7 @@ public class OptionDAOImpl implements OptionDAO {
   @Override
   public OptionDTO getOption(int id) {
     OptionDTO optionFound=null;
-    String query="SELECT o.* FROM satchofurniture.options o WHERE o.id_option=? ";
+    String query="SELECT o.* FROM satchofurniture.options o WHERE o.option_id=? ";
     PreparedStatement ps=dalServices.makeStatement(query);
     try {
       ps.setInt(1,id);
@@ -101,12 +101,12 @@ public class OptionDAOImpl implements OptionDAO {
    */
   private OptionDTO toDTO(ResultSet rs) throws SQLException {
     OptionDTO optionFound = optionFactory.getOptionDTO();
-    optionFound.setOptionId(rs.getInt("id_option"));
-    optionFound.setDuree(rs.getInt("duree"));
+    optionFound.setOptionId(rs.getInt("option_id"));
+    optionFound.setDuree(rs.getInt("duration"));
     optionFound.setDateOption(rs.getDate("date_option").toString());
     optionFound.setClientId(rs.getInt("client_id"));
     optionFound.setFurnitureId(rs.getInt("furniture_id"));
-    optionFound.setCanceled(rs.getBoolean("is_canceled"));
+    optionFound.setCanceled(rs.getBoolean("canceled"));
     return optionFound;
   }
 }

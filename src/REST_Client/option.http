@@ -13,5 +13,5 @@ Content-Type: application/json
 Authorization: {{jwt}}
 
 {
-  "optionId": 6
+  "optionId": 1
 }
