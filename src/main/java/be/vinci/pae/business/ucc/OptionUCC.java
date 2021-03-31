@@ -5,13 +5,14 @@ import be.vinci.pae.business.dto.UserDTO;
 
 public interface OptionUCC {
 
+
   /**
-   * Create  an Option and insert it.
-   *
-   * @param option is an OptionDTO.
-   * @return the optionDTO insered.
+   *  create an option.
+   * @param clientId clientId.
+   * @param furnitureId furnitureId.
+   * @return OptionDTO.
    */
-  OptionDTO introduceOption(OptionDTO option);
+  OptionDTO introduceOption(int clientId, int furnitureId);
 
   /**
    * cancel an option.

@@ -7,13 +7,15 @@ import java.sql.SQLException;
 
 public interface OptionDAO {
 
+
   /**
-   * Create  an Option and insert it.
+   * Create an option.
    *
-   * @param option is an OptionDTO.
-   * @return the id of the option.
+   * @param clientId    clientId.
+   * @param furnitureId furnitureId.
+   * @return OptionDTO.
    */
-   int introduceOption(OptionDTO option);
+  int introduceOption(int clientId, int furnitureId);
 
   /**
    * cancel an option.
@@ -23,7 +25,8 @@ public interface OptionDAO {
   void cancelOption(int idOption);
 
   /**
-   *  search an option.
+   * search an option.
+   *
    * @param id id of the option.
    * @return OptionDTO that represent the option
    */

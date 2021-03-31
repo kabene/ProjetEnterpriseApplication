@@ -5,6 +5,7 @@ import be.vinci.pae.business.ucc.OptionUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.utils.Json;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
@@ -34,24 +35,28 @@ public class OptionRessouce {
   @Path("/introduce")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response introduce(OptionDTO option){
+  public Response introduce(JsonNode reqNode){
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /option/introduce");
-    if(option==null||option.getDuree()==0||option.getDateOption() ==null||option.getClientId()==0||option.getFurnitureId()==0){
-      throw new BadRequestException("Error :Malformed request");
+    JsonNode client_Id= reqNode.get("clientId");
+    JsonNode furniture_Id = reqNode.get("furnitureId");
+    if(client_Id==null || furniture_Id==null){
+      throw new BadRequestException("Error: Malformed request");
     }
-    OptionDTO optionDTO = optionUCC.introduceOption(option);
+    int clienId=client_Id.asInt();
+    int furnitureId=furniture_Id.asInt();
+    OptionDTO optionDTO = optionUCC.introduceOption(clienId,furnitureId);
     //SHOULD I FILTER THIS?
     ObjectNode resNode = jsonMapper.createObjectNode().putPOJO("option",optionDTO);
     return Response.ok(resNode,MediaType.APPLICATION_JSON).build();
   }
 
   @GET
-  @Path("/option/cancel/{id}")
+  @Path("/cancel/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response cancel(@PathParam("id") int id){
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /cancel/detail/"+id);
     OptionDTO optionDTO=optionUCC.cancelOption(id);
-    //FILTERS ???
+    optionDTO=Json.filterPublicJsonView(optionDTO,OptionDTO.class);
     return Response.ok(optionDTO).build();
   }
 

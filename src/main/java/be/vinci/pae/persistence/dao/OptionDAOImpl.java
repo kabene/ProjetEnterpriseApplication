@@ -16,22 +16,21 @@ public class OptionDAOImpl implements OptionDAO {
   @Inject
   private ConnectionBackendDalServices dalServices;
 
+
   /**
-   * Create  an Option and insert it.
-   *
-   * @param option is an OptionDTO.
-   *
+   * Create an option.
+   * @param clientId clientId.
+   * @param furnitureId furnitureId.
+   * @return OptionDTO.
    */
   @Override
-  public int introduceOption(OptionDTO option) {
-    String query= "INSERT INTO satchoFurniture.options OUTPUT Inserted.id_option VALUES(DEFAULT,?,?,?,?,DEFAULT)";
+  public int introduceOption(int clientId,int furnitureId) {
+    String query= "INSERT INTO satchoFurniture.options OUTPUT Inserted.id_option VALUES(DEFAULT,0,NOW(),?,?,'false')";
     PreparedStatement ps= dalServices.makeStatement(query);
     int id=0;
     try{
-      ps.setInt(1,option.getDuree());
-      ps.setTimestamp(2,option.getDateOption());
-      ps.setInt(3,option.getClientId());
-      ps.setInt(4,option.getFurnitureId());
+      ps.setInt(1,clientId);
+      ps.setInt(2,furnitureId);
       ResultSet rs=ps.executeQuery();
       if(rs.next()){
         id=rs.getInt("id_option");

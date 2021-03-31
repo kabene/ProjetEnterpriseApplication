@@ -2,12 +2,15 @@ package be.vinci.pae.main;
 
 
 import be.vinci.pae.business.factories.FurnitureFactory;
+import be.vinci.pae.business.factories.OptionFactory;
 import be.vinci.pae.business.factories.PhotoFactory;
 import be.vinci.pae.business.ucc.FurnitureUCC;
+import be.vinci.pae.business.ucc.OptionUCC;
 import be.vinci.pae.business.ucc.PhotoUCC;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
+import be.vinci.pae.persistence.dao.OptionDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.factories.AddressFactory;
@@ -40,6 +43,9 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("PhotoDAO"))).to(PhotoDAO.class)
           .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("OptionDAO"))).to(OptionDAO.class)
+          .in(Singleton.class);
+
 
       //FACTORY
       bind(Class.forName(Configurate.getConfiguration("UserFactory"))).to(UserFactory.class)
@@ -52,6 +58,8 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("PhotoFactory"))).to(PhotoFactory.class)
           .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("OptionFactory"))).to(OptionFactory.class)
+          .in(Singleton.class);
 
       //UCC
       bind(Class.forName(Configurate.getConfiguration("UserUCC"))).to(UserUCC.class)
@@ -59,6 +67,8 @@ public class ApplicationBinder extends AbstractBinder {
       bind(Class.forName(Configurate.getConfiguration("FurnitureUCC"))).to(FurnitureUCC.class)
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("PhotoUCC"))).to(PhotoUCC.class)
+          .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("OptionUCC"))).to(OptionUCC.class)
           .in(Singleton.class);
 
       //OTHERS

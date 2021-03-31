@@ -21,11 +21,11 @@ public class OptionUCCImpl implements OptionUCC {
    * @return the optionDTO insered.
    */
   @Override
-  public OptionDTO introduceOption(OptionDTO option) {
+  public OptionDTO introduceOption(int clientId,int furnitureId) {
     OptionDTO opt = null;
     try {
       dalServices.startTransaction();
-      int id = optionDAO.introduceOption(option);
+      int id = optionDAO.introduceOption(clientId,furnitureId);
       opt = optionDAO.getOption(id);
       dalServices.commitTransaction();
     } catch (Exception e) {

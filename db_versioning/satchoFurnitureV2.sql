@@ -63,10 +63,11 @@ CREATE TABLE satchofurniture.furniture
     is_to_pick_up        boolean NULL,
     pick_up_date         date NULL
 );
+
 CREATE TABLE satchoFurniture.options(
                                         id_option SERIAL PRIMARY KEY,
-                                        duree  integer NOT NULL,
-                                        date_option timestamp NOT NULL,
+                                        duree  integer DEFAULT 0,
+                                        date_option timestamp DEFAULT now(),
                                         client_id integer NOT NULL REFERENCES satchoFurniture.users (user_id),
                                         furniture_id integer NOT NULL REFERENCES satchoFurniture.furniture (furniture_id),
                                         is_canceled boolean NOT NULL

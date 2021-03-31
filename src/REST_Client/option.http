@@ -1,0 +1,8 @@
+
+POST {{baseUrl}}/option/introduce
+Content-Type: application/json
+
+{
+  "clientId": 1,
+  "furnitureId": 7
+}
