@@ -62,8 +62,8 @@ public class OptionDAOImpl implements OptionDAO {
       ps.setInt(1, idOption);
       ps.executeUpdate();
       ps.close();
-    } catch (SQLException throwables) {
-      throw new InternalError(throwables);
+    } catch (SQLException throwable) {
+      throw new InternalError(throwable);
     }
   }
 
@@ -88,8 +88,8 @@ public class OptionDAOImpl implements OptionDAO {
       }
       rs.close();
       ps.close();
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException throwable) {
+      throwable.printStackTrace();
     }
     return optionFound;
   }
