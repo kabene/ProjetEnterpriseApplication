@@ -2,7 +2,6 @@ package be.vinci.pae.presentation.filters;
 
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.ucc.UserUCC;
-import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.inject.Inject;
@@ -27,7 +26,7 @@ public class AdminRequestFilter implements ContainerRequestFilter {
     int userId = decodedToken.getClaim("user").asInt();
     UserDTO currentUser = userUCC.getOne(userId);
     if (currentUser.isWaiting()) {
-      throw new ForbiddenException("Your account is not yet validated");
+      throw new UnauthorizedException("Your account is not yet validated");
     }
     boolean isAdmin = currentUser.getRole().equals("admin");
     if (!isAdmin) {
