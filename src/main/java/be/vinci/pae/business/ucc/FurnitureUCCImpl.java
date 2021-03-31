@@ -33,7 +33,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       res = furnitureDAO.findById(id);
       completeFurnitureDTO(res);
       dalServices.commitTransaction();
-    } catch (Exception e) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }
@@ -50,7 +50,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
         completeFurnitureDTO(dto);
       }
       dalServices.commitTransaction();
-    } catch (Exception e) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }
@@ -71,7 +71,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       furnitureDTO = furnitureDAO.updateToRestoration(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
-    } catch (Exception e) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }
@@ -94,7 +94,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       furnitureDTO = furnitureDAO.updateToAvailable(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
-    } catch (Exception e) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }
@@ -116,7 +116,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       furnitureDTO = furnitureDAO.updateToWithdrawn(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
-    } catch (Exception e) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }
