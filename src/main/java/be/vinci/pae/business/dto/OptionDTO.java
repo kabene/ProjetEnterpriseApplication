@@ -2,7 +2,7 @@ package be.vinci.pae.business.dto;
 
 import be.vinci.pae.business.pojos.OptionImpl;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.sql.Date;
+
 
 @JsonDeserialize(as = OptionImpl.class)
 public interface OptionDTO {
