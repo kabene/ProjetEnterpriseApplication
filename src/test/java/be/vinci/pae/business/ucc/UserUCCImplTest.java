@@ -391,7 +391,7 @@ public class UserUCCImplTest {
   }
 
   /**
-   * Jenkins.
+   * Unit Test.
    */
   @DisplayName("TEST UserUCC.getOne : nominal, should return DTO")
   @Test
@@ -446,6 +446,9 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
+  /**
+   * Unit Test.
+   */
   @DisplayName("TEST UserUCC.validateUser : nominal, return DTO")
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
@@ -464,7 +467,7 @@ public class UserUCCImplTest {
   }
 
   /**
-   * Jenkins.
+   * Unit Test..
    */
   @DisplayName("TEST UserUCC.validateUser : invalid id, throw NotFoundException")
   @ParameterizedTest
@@ -483,7 +486,7 @@ public class UserUCCImplTest {
   }
 
   /**
-   * Jenkins.
+   * Unit Test..
    */
   @DisplayName("TEST UserUCC.validateUser : catch InternalError 1")
   @ParameterizedTest
@@ -502,7 +505,7 @@ public class UserUCCImplTest {
   }
 
   /**
-   * Jenkins.
+   * Unit Test..
    */
   @DisplayName("TEST UserUCC.validateUser : catch InternalError 2")
   @ParameterizedTest
