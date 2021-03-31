@@ -9,7 +9,6 @@ import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.OptionDAO;
-import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
 
 public class OptionUCCImpl implements OptionUCC {
