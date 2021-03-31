@@ -390,6 +390,9 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
+  /**
+   * Jenkins.
+   */
   @DisplayName("TEST UserUCC.getOne : nominal, should return DTO")
   @Test
   public void test_getOne_givenValidId_shouldReturnDTO() {
@@ -460,6 +463,9 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
   }
 
+  /**
+   * Jenkins.
+   */
   @DisplayName("TEST UserUCC.validateUser : invalid id, throw ")
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
@@ -476,6 +482,9 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
+  /**
+   * Jenkins.
+   */
   @DisplayName("TEST UserUCC.validateUser : invalid id, throw ")
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
@@ -492,6 +501,9 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
+  /**
+   * Jenkins.
+   */
   @DisplayName("TEST UserUCC.validateUser : invalid id, throw ")
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
