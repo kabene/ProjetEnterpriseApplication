@@ -156,14 +156,15 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockFurnitureDAO).findById(furnitureId);
   }
 
-  @DisplayName("TEST UserUCC.getOne : DAO throws InternalError, Should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.getOne : DAO throws InternalError, "
+      + "Should rollback and throw InternalError")
   @Test
   public void test_getOne_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     int furnitureId = 1;
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError("some error"));
 
-    assertThrows(InternalError.class, ()-> furnitureUCC.getOne(furnitureId),
+    assertThrows(InternalError.class, () -> furnitureUCC.getOne(furnitureId),
         "If the DAO throws an exception, it should be thrown back");
 
     Mockito.verify(mockFurnitureDAO).findById(furnitureId);
@@ -261,12 +262,13 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockFurnitureDAO).findAll();
   }
 
-  @DisplayName("TEST UserUCC.getAll : DAO throws InternalError, Should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.getAll : "
+      + "DAO throws InternalError, Should rollback and throw InternalError")
   @Test
   public void test_getAll_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     Mockito.when(mockFurnitureDAO.findAll()).thenThrow(new InternalError("some error"));
 
-    assertThrows(InternalError.class, ()-> furnitureUCC.getAll(),
+    assertThrows(InternalError.class, () -> furnitureUCC.getAll(),
         "If the DAO throws an exception, it should be thrown back");
 
     Mockito.verify(mockFurnitureDAO).findAll();
@@ -353,14 +355,15 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.toAvailable : DAO throws InternalError, Should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.toAvailable : DAO throws InternalError, "
+      + "Should rollback and throw InternalError")
   @Test
   public void test_toRestoration_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     int furnitureId = 1;
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError("some error"));
 
-    assertThrows(InternalError.class, ()-> furnitureUCC.toRestoration(furnitureId),
+    assertThrows(InternalError.class, () -> furnitureUCC.toRestoration(furnitureId),
         "If the DAO throws an exception, it should be thrown back");
 
     Mockito.verify(mockFurnitureDAO).findById(furnitureId);
@@ -451,7 +454,8 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.toAvailable : DAO throws InternalError, Should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.toAvailable : DAO throws InternalError, "
+      + "Should rollback and throw InternalError")
   @Test
   public void test_toAvailable_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     int furnitureId = 1;
@@ -459,7 +463,7 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError("some error"));
 
-    assertThrows(InternalError.class, ()-> furnitureUCC.toAvailable(furnitureId, price),
+    assertThrows(InternalError.class, () -> furnitureUCC.toAvailable(furnitureId, price),
         "If the DAO throws an exception, it should be thrown back");
 
     Mockito.verify(mockFurnitureDAO).findById(furnitureId);
@@ -545,14 +549,15 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.withdraw : DAO throws InternalError, Should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.withdraw : DAO throws InternalError, "
+      + "Should rollback and throw InternalError")
   @Test
   public void test_withdraw_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     int furnitureId = 1;
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError("some error"));
 
-    assertThrows(InternalError.class, ()-> furnitureUCC.withdraw(furnitureId),
+    assertThrows(InternalError.class, () -> furnitureUCC.withdraw(furnitureId),
         "If the DAO throws an exception, it should be thrown back");
 
     Mockito.verify(mockFurnitureDAO).findById(furnitureId);
