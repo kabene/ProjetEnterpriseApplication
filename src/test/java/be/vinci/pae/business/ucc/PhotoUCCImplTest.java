@@ -68,7 +68,7 @@ class PhotoUCCImplTest {
     List<PhotoDTO> actual = photoUCC.getAllHomePageVisiblePhotos();
     assertEquals(expected, actual,
         "called photoUCC.getAllHomePageVisiblePhotos(),"
-        + " should have return all visible photo on home page.");
+            + " should have return all visible photo on home page.");
 
     Mockito.verify(mockPhotoDAO).getAllHomePageVisiblePhotos();
 
@@ -89,7 +89,7 @@ class PhotoUCCImplTest {
     List<PhotoDTO> actual = photoUCC.getAllHomePageVisiblePhotos();
     assertEquals(expected, actual,
         "called photoUCC.getAllHomePageVisiblePhotos() without any data present,"
-        + " should have return an empty list.");
+            + " should have return an empty list.");
 
     Mockito.verify(mockPhotoDAO).getAllHomePageVisiblePhotos();
 
@@ -97,12 +97,13 @@ class PhotoUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
   }
 
-  @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos : DAO throws InternalError, Should rollback and throw InternalError")
+  @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos : DAO throws InternalError,"
+      + " Should rollback and throw InternalError")
   @Test
   void test_getAllVisibleHomePage_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     Mockito.when(mockPhotoDAO.getAllHomePageVisiblePhotos()).thenThrow(new InternalError());
 
-    assertThrows(InternalError.class, ()-> photoUCC.getAllHomePageVisiblePhotos(),
+    assertThrows(InternalError.class, () -> photoUCC.getAllHomePageVisiblePhotos(),
         "If the DAO throws an exception, it should be thrown back");
 
     Mockito.verify(mockPhotoDAO).getAllHomePageVisiblePhotos();

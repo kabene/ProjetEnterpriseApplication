@@ -134,8 +134,8 @@ public class UserUCCImplTest {
   @DisplayName("TEST UserUCC.login : login by a user waiting for confirmation, should throw UnauthorizedException")
   @Test
   public void test_login_byWaitingUser_shouldThrowUnauthorizedException() {
-    String username = "userInWaiting";
-    String pwd = "goodPwd";
+    final String username = "userInWaiting";
+    final String pwd = "goodPwd";
     Mockito.when(mockUserDAO.findByUsername(username)).thenReturn(mockUser1);
     Mockito.when(mockUser1.getId()).thenReturn(0);
     Mockito.when(mockUser1.isWaiting()).thenReturn(true);
@@ -459,7 +459,7 @@ public class UserUCCImplTest {
 
     Mockito.when(mockUserDAO.findById(userId)).thenThrow(new NotFoundException());
 
-    assertThrows(NotFoundException.class, ()-> userUCC.validateUser(userId, value),
+    assertThrows(NotFoundException.class, () -> userUCC.validateUser(userId, value),
         "an invalid id should throw NotFoundException");
 
     Mockito.verify(mockDal).startTransaction();
@@ -475,7 +475,7 @@ public class UserUCCImplTest {
 
     Mockito.when(mockUserDAO.findById(userId)).thenThrow(new InternalError());
 
-    assertThrows(InternalError.class, ()-> userUCC.validateUser(userId, value),
+    assertThrows(InternalError.class, () -> userUCC.validateUser(userId, value),
         "an invalid id should throw NotFoundException");
 
     Mockito.verify(mockDal).startTransaction();
@@ -491,7 +491,7 @@ public class UserUCCImplTest {
 
     Mockito.doThrow(new InternalError()).when(mockUserDAO).setRole(userId, value);
 
-    assertThrows(InternalError.class, ()-> userUCC.validateUser(userId, value),
+    assertThrows(InternalError.class, () -> userUCC.validateUser(userId, value),
         "an invalid id should throw NotFoundException");
 
     Mockito.verify(mockDal).startTransaction();

@@ -52,7 +52,7 @@ public class OptionUCCImpl implements OptionUCC {
   /**
    * cancel an option.
    *
-   * @param user   id of the user that want to cancel the option.
+   * @param user     id of the user that want to cancel the option.
    * @param optionId id of the option to cancel.
    * @return an OptionDTO that represent the canceled one.
    */
@@ -70,7 +70,7 @@ public class OptionUCCImpl implements OptionUCC {
         throw new UnauthorizedException("not allowed to cancel the option");
       }
       FurnitureDTO furnitureDTO = furnitureDAO.findById(opt.getFurnitureId());
-      if(!furnitureDTO.getCondition().equals("under_option")) {
+      if (!furnitureDTO.getCondition().equals("under_option")) {
         throw new ConflictException("The resource is not under option");
       }
       furnitureDTO.setCondition("available_for_sale");
