@@ -3,8 +3,10 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
+import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.OptionDAO;
 import jakarta.inject.Inject;
 
@@ -14,6 +16,8 @@ public class OptionUCCImpl implements OptionUCC {
   private ConnectionDalServices dalServices;
   @Inject
   private OptionDAO optionDAO;
+  @Inject
+  private FurnitureDAO furnitureDAO;
 
 
   /**
@@ -26,6 +30,10 @@ public class OptionUCCImpl implements OptionUCC {
     OptionDTO opt = null;
     try {
       dalServices.startTransaction();
+      FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
+      if (!furnitureDTO.getCondition().equals("available_for_sale")) {
+        throw new ConflictException("The resource isn't in a the 'available for sale' state");
+      }
       opt = optionDAO.introduceOption(clientId, furnitureId);
       dalServices.commitTransaction();
     } catch (Exception e) {
@@ -44,12 +52,15 @@ public class OptionUCCImpl implements OptionUCC {
    */
   @Override
   public OptionDTO cancelOption(int idUser,
-      int idOption) { // MAYBE more a deleat because after we will never reuse  the option
+      int idOption) {
     OptionDTO opt = null;
     try {
       dalServices.startTransaction();
       opt = optionDAO.getOption(idOption);
-      if(opt.getClientId()!=idUser){
+      if (opt.isCanceled()) {
+        throw new ConflictException("The resource is already closed");
+      }
+      if (opt.getClientId() != idUser) {
         throw new UnauthorizedException("not allowed to cancel the option");
       }
       optionDAO.cancelOption(idOption);
