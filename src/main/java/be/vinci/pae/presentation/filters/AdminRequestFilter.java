@@ -25,6 +25,9 @@ public class AdminRequestFilter implements ContainerRequestFilter {
 
     int userId = decodedToken.getClaim("user").asInt();
     UserDTO currentUser = userUCC.getOne(userId);
+    if (currentUser.isWaiting()) {
+      throw new UnauthorizedException("Your account is not yet validated");
+    }
     boolean isAdmin = currentUser.getRole().equals("admin");
     if (!isAdmin) {
       throw new UnauthorizedException("Error: Authorisation refused");

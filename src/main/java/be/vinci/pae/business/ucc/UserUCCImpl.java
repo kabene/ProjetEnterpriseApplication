@@ -8,6 +8,7 @@ import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
@@ -39,6 +40,9 @@ public class UserUCCImpl implements UserUCC {
     try {
       dalServices.startTransaction();
       User userFound = (User) userDAO.findByUsername(username);
+      if (userFound.isWaiting()) {
+        throw new UnauthorizedException("Your account is not yet validated");
+      }
       if (!userFound.checkPassword(password)) {
         throw new ForbiddenException("Error: invalid credentials");
       }
