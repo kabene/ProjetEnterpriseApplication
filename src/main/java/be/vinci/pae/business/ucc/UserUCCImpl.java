@@ -53,9 +53,9 @@ public class UserUCCImpl implements UserUCC {
       dalServices.rollbackTransaction();
       throw new ForbiddenException("Error: invalid credentials");
       // no user found with given username
-    } catch (Throwable exception) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw exception;
+      throw e;
     }
   }
 
@@ -84,9 +84,9 @@ public class UserUCCImpl implements UserUCC {
       userDTO = userDAO.findByUsername(userDTO.getUsername());
       dalServices.commitTransaction();
       return userDTO;
-    } catch (Throwable exception) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw exception;
+      throw e;
     }
   }
 
@@ -102,9 +102,9 @@ public class UserUCCImpl implements UserUCC {
       dalServices.startTransaction();
       list = userDAO.getAllUsers();
       dalServices.commitTransaction();
-    } catch (Throwable exception) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw exception;
+      throw e;
     }
     return list;
   }
@@ -121,9 +121,9 @@ public class UserUCCImpl implements UserUCC {
       dalServices.startTransaction();
       list = userDAO.getAllWaitingUsers();
       dalServices.commitTransaction();
-    } catch (Throwable exception) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw exception;
+      throw e;
     }
     return list;
   }
@@ -162,9 +162,9 @@ public class UserUCCImpl implements UserUCC {
       res = userDAO.findById(userId);
       res.setAddress(addressDAO.findById(res.getAddressId()));
       dalServices.commitTransaction();
-    } catch (Throwable exception) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw exception;
+      throw e;
     }
     return res;
   }
