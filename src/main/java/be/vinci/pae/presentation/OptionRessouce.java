@@ -34,7 +34,7 @@ public class OptionRessouce {
   private final ObjectMapper jsonMapper = new ObjectMapper();
 
   @POST
-  @Path("/introduce")
+  @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
@@ -52,18 +52,13 @@ public class OptionRessouce {
   }
 
   @PATCH
-  @Path("/cancel")
+  @Path("/cancel/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public Response cancel(JsonNode reqNode,@Context ContainerRequest request) {
+  public Response cancel(@PathParam("id") int optionId,@Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /option/cancel");
     UserDTO currentUser = (UserDTO) request.getProperty("user");
-    JsonNode nodeOptionId = reqNode.get("optionId");
-    if (nodeOptionId == null) {
-      throw new BadRequestException("Error: Malformed request");
-    }
-    int optionId = nodeOptionId.asInt();
     OptionDTO optionDTO = optionUCC.cancelOption(currentUser,optionId);
     optionDTO = Json.filterPublicJsonView(optionDTO,OptionDTO.class);
     return Response.ok(optionDTO,MediaType.APPLICATION_JSON).build();
