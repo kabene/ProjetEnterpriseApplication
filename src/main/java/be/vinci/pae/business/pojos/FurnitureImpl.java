@@ -46,7 +46,7 @@ public class FurnitureImpl implements FurnitureDTO {
   @JsonView(Views.AdminOnly.class)
   private String dateOfSale;
   @JsonView(Views.AdminOnly.class)
-  private Boolean toPickUp;
+  private Boolean isToPickUp;
   @JsonView(Views.AdminOnly.class)
   private String pickUpDate;
 
@@ -212,12 +212,12 @@ public class FurnitureImpl implements FurnitureDTO {
 
   @Override
   public Boolean isToPickUp() {
-    return toPickUp;
+    return isToPickUp;
   }
 
   @Override
   public void setToPickUp(Boolean b) {
-    this.toPickUp = b;
+    this.isToPickUp = b;
   }
 
   @Override

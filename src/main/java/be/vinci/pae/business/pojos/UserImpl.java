@@ -35,7 +35,7 @@ public class UserImpl implements User {
   @JsonView(Views.AdminOnly.class)
   private Integer soldFurnitureNbr;
   @JsonView(Views.AdminOnly.class)
-  private Boolean waiting;
+  private Boolean isWaiting;
 
   @Override
   public Integer getId() {
@@ -160,12 +160,12 @@ public class UserImpl implements User {
 
   @Override
   public Boolean isWaiting() {
-    return waiting;
+    return isWaiting;
   }
 
   @Override
   public void setWaiting(Boolean waiting) {
-    this.waiting = waiting;
+    this.isWaiting = waiting;
   }
 
 
