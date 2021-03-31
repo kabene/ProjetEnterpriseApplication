@@ -53,12 +53,10 @@ public class OptionImpl implements OptionDTO {
   }
 
   @Override
-  public int getClientId() {
-    return clientId;
-  }
+  public int getUserId() { return clientId; }
 
   @Override
-  public void setClientId(int clientId) {
+  public void setUserId(int clientId) {
     this.clientId = clientId;
   }
 

@@ -159,7 +159,7 @@ class OptionUCCImplTest {
     Mockito.when(mockOptionDAO.getOption(optionId)).thenReturn(mockOptionDTO1);
     Mockito.when(mockOptionDTO1.isCanceled()).thenReturn(false);
     Mockito.when(mockOptionDTO1.getFurnitureId()).thenReturn(furnitureId);
-    Mockito.when(mockOptionDTO1.getClientId()).thenReturn(userID);
+    Mockito.when(mockOptionDTO1.getUserId()).thenReturn(userID);
     Mockito.when(mockUserDTO1.getId()).thenReturn(userID);
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
@@ -221,7 +221,7 @@ class OptionUCCImplTest {
     Mockito.when(mockOptionDAO.getOption(optionId)).thenReturn(mockOptionDTO1);
     Mockito.when(mockOptionDTO1.isCanceled()).thenReturn(false);
     Mockito.when(mockOptionDTO1.getFurnitureId()).thenReturn(furnitureId);
-    Mockito.when(mockOptionDTO1.getClientId()).thenReturn(userId1);
+    Mockito.when(mockOptionDTO1.getUserId()).thenReturn(userId1);
     Mockito.when(mockUserDTO1.getId()).thenReturn(userId2);
 
     assertThrows(UnauthorizedException.class, () -> optionUCC.cancelOption(mockUserDTO1, optionId),
@@ -245,7 +245,7 @@ class OptionUCCImplTest {
     Mockito.when(mockOptionDAO.getOption(optionId)).thenReturn(mockOptionDTO1);
     Mockito.when(mockOptionDTO1.isCanceled()).thenReturn(false);
     Mockito.when(mockOptionDTO1.getFurnitureId()).thenReturn(furnitureId);
-    Mockito.when(mockOptionDTO1.getClientId()).thenReturn(userID);
+    Mockito.when(mockOptionDTO1.getUserId()).thenReturn(userID);
     Mockito.when(mockUserDTO1.getId()).thenReturn(userID);
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
@@ -269,7 +269,7 @@ class OptionUCCImplTest {
     Mockito.when(mockOptionDAO.getOption(optionId)).thenReturn(mockOptionDTO1);
     Mockito.when(mockOptionDTO1.isCanceled()).thenReturn(false);
     Mockito.when(mockOptionDTO1.getFurnitureId()).thenReturn(furnitureId);
-    Mockito.when(mockOptionDTO1.getClientId()).thenReturn(userID);
+    Mockito.when(mockOptionDTO1.getUserId()).thenReturn(userID);
     Mockito.when(mockUserDTO1.getId()).thenReturn(userID);
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError());
 

@@ -106,7 +106,7 @@ public class OptionDAOImpl implements OptionDAO {
     optionFound.setOptionId(rs.getInt("option_id"));
     optionFound.setDuration(rs.getInt("duration"));
     optionFound.setDateOption(rs.getDate("date_option").toString());
-    optionFound.setClientId(rs.getInt("client_id"));
+    optionFound.setUserId(rs.getInt("client_id"));
     optionFound.setFurnitureId(rs.getInt("furniture_id"));
     optionFound.setCanceled(rs.getBoolean("canceled"));
     return optionFound;

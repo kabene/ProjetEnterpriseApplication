@@ -65,7 +65,7 @@ public class OptionUCCImpl implements OptionUCC {
       if (opt.isCanceled()) {
         throw new ConflictException("The resource is already canceled");
       }
-      if (opt.getClientId() != user.getId()) {
+      if (opt.getUserId() != user.getId()) {
         throw new UnauthorizedException("not allowed to cancel the option");
       }
       FurnitureDTO furnitureDTO = furnitureDAO.findById(opt.getFurnitureId());

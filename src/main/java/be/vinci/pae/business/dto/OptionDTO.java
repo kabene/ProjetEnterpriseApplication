@@ -19,9 +19,9 @@ public interface OptionDTO {
 
   void setDateOption(String dateOption);
 
-  int getClientId();
+  int getUserId();
 
-  void setClientId(int clientId);
+  void setUserId(int clientId);
 
   int getFurnitureId();
 
