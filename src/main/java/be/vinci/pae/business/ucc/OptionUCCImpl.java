@@ -20,8 +20,6 @@ public class OptionUCCImpl implements OptionUCC {
   private OptionDAO optionDAO;
   @Inject
   private FurnitureDAO furnitureDAO;
-  @Inject
-  private UserDAO userDAO;
 
 
   /**
