@@ -15,18 +15,17 @@ public class OptionUCCImpl implements OptionUCC {
 
 
   /**
-   * Create  an Option and insert it.
    *
-   * @param option is an OptionDTO.
-   * @return the optionDTO insered.
+   * @param clientId clientId.
+   * @param furnitureId furnitureId.
+   * @return
    */
   @Override
   public OptionDTO introduceOption(int clientId,int furnitureId) {
     OptionDTO opt = null;
     try {
       dalServices.startTransaction();
-      int id = optionDAO.introduceOption(clientId,furnitureId);
-      opt = optionDAO.getOption(id);
+      opt=optionDAO.introduceOption(clientId,furnitureId);
       dalServices.commitTransaction();
     } catch (Exception e) {
       e.printStackTrace();

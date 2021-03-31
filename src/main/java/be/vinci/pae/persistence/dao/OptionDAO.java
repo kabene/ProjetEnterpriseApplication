@@ -15,7 +15,7 @@ public interface OptionDAO {
    * @param furnitureId furnitureId.
    * @return OptionDTO.
    */
-  int introduceOption(int clientId, int furnitureId);
+   OptionDTO introduceOption(int clientId, int furnitureId);
 
   /**
    * cancel an option.

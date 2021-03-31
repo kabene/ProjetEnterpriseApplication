@@ -24,23 +24,28 @@ public class OptionDAOImpl implements OptionDAO {
    * @return OptionDTO.
    */
   @Override
-  public int introduceOption(int clientId,int furnitureId) {
-    String query= "INSERT INTO satchoFurniture.options OUTPUT Inserted.id_option VALUES(DEFAULT,0,NOW(),?,?,'false')";
+  public OptionDTO introduceOption(int clientId,int furnitureId) {
+    String query= "INSERT INTO satchoFurniture.options VALUES(DEFAULT,0,NOW(),?,?,'false') RETURNING *";
     PreparedStatement ps= dalServices.makeStatement(query);
-    int id=0;
     try{
       ps.setInt(1,clientId);
       ps.setInt(2,furnitureId);
-      ResultSet rs=ps.executeQuery();
-      if(rs.next()){
-        id=rs.getInt("id_option");
+      ResultSet res=ps.executeQuery();
+      if(res.next()){
+
       }
       ps.close();
     }catch (SQLException e){
       throw new InternalError(e);
     }
-    return id;
   }
+
+  public int getId() {
+    String query= "SELECT LAST_INSERT_ID()";
+
+
+  }
+
 
   /**
    * cancel an option.
