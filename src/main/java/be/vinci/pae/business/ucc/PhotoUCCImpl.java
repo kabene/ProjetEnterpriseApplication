@@ -28,7 +28,7 @@ public class PhotoUCCImpl implements PhotoUCC {
       dalServices.startTransaction();
       res = photoDAO.getAllHomePageVisiblePhotos();
       dalServices.commitTransaction();
-    } catch (Exception e) {
+    } catch (Throwable e) {
       e.printStackTrace();
       dalServices.rollbackTransaction();
     }

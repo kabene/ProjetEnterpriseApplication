@@ -49,7 +49,7 @@ public class UserUCCImpl implements UserUCC {
       dalServices.rollbackTransaction();
       throw new ForbiddenException("Error: invalid credentials");
       // no user found with given username
-    } catch (Exception exception) {
+    } catch (Throwable exception) {
       dalServices.rollbackTransaction();
       throw exception;
     }
@@ -80,7 +80,7 @@ public class UserUCCImpl implements UserUCC {
       userDTO = userDAO.findByUsername(userDTO.getUsername());
       dalServices.commitTransaction();
       return userDTO;
-    } catch (Exception exception) {
+    } catch (Throwable exception) {
       dalServices.rollbackTransaction();
       throw exception;
     }
@@ -93,7 +93,7 @@ public class UserUCCImpl implements UserUCC {
       dalServices.startTransaction();
       list = userDAO.getAllUsers();
       dalServices.commitTransaction();
-    } catch (Exception exception) {
+    } catch (Throwable exception) {
       dalServices.rollbackTransaction();
       throw exception;
     }
@@ -107,9 +107,9 @@ public class UserUCCImpl implements UserUCC {
       dalServices.startTransaction();
       list = userDAO.findBySearch(userSearch);
       dalServices.commitTransaction();
-    } catch (Exception exception) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw exception;
+      throw e;
     }
     return list;
   }
@@ -122,7 +122,7 @@ public class UserUCCImpl implements UserUCC {
       res = userDAO.findById(userId);
       res.setAddress(addressDAO.findById(res.getAddressId()));
       dalServices.commitTransaction();
-    } catch (Exception exception) {
+    } catch (Throwable exception) {
       dalServices.rollbackTransaction();
       throw exception;
     }
@@ -144,7 +144,7 @@ public class UserUCCImpl implements UserUCC {
       userDAO.setRole(userId, value);
       res = userDAO.findById(userId);
       dalServices.commitTransaction();
-    } catch (Exception e) {
+    } catch (Throwable e) {
       e.printStackTrace();
       dalServices.rollbackTransaction();
     }
