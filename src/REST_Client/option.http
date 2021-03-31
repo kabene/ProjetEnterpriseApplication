@@ -1,8 +1,17 @@
 
 POST {{baseUrl}}/option/introduce
 Content-Type: application/json
+Authorization: {{jwt}}
 
 {
-  "clientId": 1,
   "furnitureId": 7
+}
+###
+
+PATCH {{baseUrl}}/option/cancel
+Content-Type: application/json
+Authorization: {{jwt}}
+
+{
+  "optionId": 6
 }

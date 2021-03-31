@@ -5,6 +5,7 @@ import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @JsonInclude(Include.NON_NULL)
@@ -15,7 +16,7 @@ public class OptionImpl implements OptionDTO {
   @JsonView(Views.AdminOnly.class)
   private int duree;
   @JsonView(Views.AdminOnly.class)
-  private Timestamp dateOption;
+  private String dateOption;
   @JsonView(Views.AdminOnly.class)
   private int clientId;
   @JsonView(Views.AdminOnly.class)
@@ -44,12 +45,12 @@ public class OptionImpl implements OptionDTO {
   }
 
   @Override
-  public Timestamp getDateOption() {
+  public String getDateOption() {
     return dateOption;
   }
 
   @Override
-  public void setDateOption(Timestamp dateOption) {
+  public void setDateOption(String dateOption) {
     this.dateOption = dateOption;
   }
 
@@ -79,7 +80,7 @@ public class OptionImpl implements OptionDTO {
   }
 
   @Override
-  public void setCanceled(boolean canceled) {
-    isCanceled = canceled;
+  public void setCanceled(boolean isCanceled) {
+    this.isCanceled = isCanceled;
   }
 }

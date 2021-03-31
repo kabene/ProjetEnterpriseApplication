@@ -2,7 +2,7 @@ package be.vinci.pae.business.dto;
 
 import be.vinci.pae.business.pojos.OptionImpl;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.sql.Timestamp;
+import java.sql.Date;
 
 @JsonDeserialize(as = OptionImpl.class)
 public interface OptionDTO {
@@ -15,9 +15,9 @@ public interface OptionDTO {
 
   void setDuree(int duree);
 
-  Timestamp getDateOption();
+  String getDateOption();
 
-  void setDateOption(Timestamp dateOption);
+  void setDateOption(String dateOption);
 
   int getClientId();
 
@@ -29,6 +29,6 @@ public interface OptionDTO {
 
   boolean isCanceled();
 
-  void setCanceled(boolean canceled);
+  void setCanceled(boolean isCanceled);
 
 }
