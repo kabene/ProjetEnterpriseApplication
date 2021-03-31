@@ -131,8 +131,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.login : login by a user waiting for confirmation,"
-      + " should throw UnauthorizedException")
+  @DisplayName("TEST UserUCC.login : login by a user waiting"
+      + " for confirmation, should throw UnauthorizedException")
   @Test
   public void test_login_byWaitingUser_shouldThrowUnauthorizedException() {
     final String username = "userInWaiting";
@@ -144,7 +144,7 @@ public class UserUCCImplTest {
     assertThrows(UnauthorizedException.class,
         () -> userUCC.login(username, pwd),
         "UserUCC.login should throw UnauthorizedException"
-            + " as long as the user is waiting for confirmation");
+            + "as long as the user is waiting for confirmation");
 
     Mockito.verify(mockUserDAO).findByUsername(username);
     Mockito.verify(mockUser1, Mockito.never()).checkPassword(pwd);
@@ -153,8 +153,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.login : DAO throws InternalError,"
-      + " Should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.login : DAO throws InternalError"
+      + ", Should rollback and throw InternalError")
   @Test
   public void test_login_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     String username = "username";
@@ -402,7 +402,8 @@ public class UserUCCImplTest {
 
     Mockito.when(mockAddressDAO.findById(addressId)).thenReturn(mockAddressDTO);
 
-    assertEquals(userUCC.getOne(userId), mockUser1, "getOne should return the corresponding DTO");
+    assertEquals(userUCC.getOne(userId), mockUser1, "getOne should"
+        + " return the corresponding DTO");
 
     Mockito.verify(mockUser1).setAddress(mockAddressDTO);
 
@@ -426,8 +427,8 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.getOne : DAO throws InternalError,"
-      + " Should rollback and throw InternalError")
+  @DisplayName("TEST UserUCC.getOne : DAO throws InternalError, "
+      + "Should rollback and throw InternalError")
   @Test
   public void test_getOne_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
     int userId = 1;
