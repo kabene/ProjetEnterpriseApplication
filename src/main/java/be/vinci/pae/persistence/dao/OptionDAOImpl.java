@@ -77,7 +77,7 @@ public class OptionDAOImpl implements OptionDAO {
    */
   @Override
   public OptionDTO getOption(int id) {
-    OptionDTO optionFound ;
+    OptionDTO optionFound;
     String query = "SELECT o.* FROM satchofurniture.options o WHERE o.option_id=? ";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
