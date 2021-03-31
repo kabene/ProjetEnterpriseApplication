@@ -33,6 +33,13 @@ public class OptionRessouce {
   private OptionUCC optionUCC;
   private final ObjectMapper jsonMapper = new ObjectMapper();
 
+  /**
+   * POST a new option resource.
+   *
+   * @param reqNode body of the request.
+   * @param request request context.
+   * @return created resource as json.
+   */
   @POST
   @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
@@ -51,6 +58,13 @@ public class OptionRessouce {
     return Response.ok(resNode,MediaType.APPLICATION_JSON).build();
   }
 
+  /**
+   * PATCH (cancels) an option by id.
+   *
+   * @param optionId the id of the option.
+   * @param request the request context.
+   * @return modified resource as json.
+   */
   @PATCH
   @Path("/cancel/{id}")
   @Produces(MediaType.APPLICATION_JSON)
