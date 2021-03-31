@@ -2,8 +2,6 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public interface OptionDAO {
 
