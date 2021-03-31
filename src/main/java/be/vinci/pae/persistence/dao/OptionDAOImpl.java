@@ -56,14 +56,14 @@ public class OptionDAOImpl implements OptionDAO {
    */
   @Override
   public void cancelOption(int idOption) {
-    String query = "UPDATE  satchoFurniture.options o SET canceled=true WHERE option_id=?";
+    String query = "UPDATE  satchoFurniture.options o SET is_canceled=true WHERE option_id=?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setInt(1, idOption);
       ps.executeUpdate();
       ps.close();
-    } catch (SQLException throwable) {
-      throw new InternalError(throwable);
+    } catch (SQLException e) {
+      throw new InternalError(e);
     }
   }
 
@@ -88,8 +88,8 @@ public class OptionDAOImpl implements OptionDAO {
       }
       rs.close();
       ps.close();
-    } catch (SQLException throwable) {
-      throwable.printStackTrace();
+    } catch (SQLException e) {
+      throw new InternalError(e);
     }
     return optionFound;
   }
