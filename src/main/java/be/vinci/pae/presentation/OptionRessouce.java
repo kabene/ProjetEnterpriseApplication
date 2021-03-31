@@ -41,14 +41,14 @@ public class OptionRessouce {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
-  public Response introduce(JsonNode reqNode,@Context ContainerRequest request){
+  public Response introduce(JsonNode reqNode,@Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /option/introduce");
-    UserDTO currentUser= (UserDTO) request.getProperty("user");
-    JsonNode furniture_Id = reqNode.get("furnitureId");
-    if(furniture_Id==null){
+    UserDTO currentUser = (UserDTO) request.getProperty("user");
+    JsonNode nodeFurnitureId = reqNode.get("furnitureId");
+    if (nodeFurnitureId == null) {
       throw new BadRequestException("Error: Malformed request");
     }
-    int furnitureId=furniture_Id.asInt();
+    int furnitureId = nodeFurnitureId.asInt();
     OptionDTO optionDTO = optionUCC.introduceOption(currentUser,furnitureId);
     ObjectNode resNode = jsonMapper.createObjectNode().putPOJO("option",optionDTO);
     return Response.ok(resNode,MediaType.APPLICATION_JSON).build();
@@ -59,16 +59,16 @@ public class OptionRessouce {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public Response cancel(JsonNode reqNode,@Context ContainerRequest request){
+  public Response cancel(JsonNode reqNode,@Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /option/cancel");
-    UserDTO currentUser= (UserDTO) request.getProperty("user");
-    JsonNode option_Id = reqNode.get("optionId");
-    if(option_Id==null){
+    UserDTO currentUser = (UserDTO) request.getProperty("user");
+    JsonNode nodeOptionId = reqNode.get("optionId");
+    if(nodeOptionId == null){
       throw new BadRequestException("Error: Malformed request");
     }
-    int optionId=option_Id.asInt();
+    int optionId = nodeOptionId.asInt();
     OptionDTO optionDTO=optionUCC.cancelOption(currentUser,optionId);
-    optionDTO=Json.filterPublicJsonView(optionDTO,OptionDTO.class);
+    optionDTO = Json.filterPublicJsonView(optionDTO,OptionDTO.class);
     return Response.ok(optionDTO,MediaType.APPLICATION_JSON).build();
   }
 
