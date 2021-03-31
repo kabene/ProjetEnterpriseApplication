@@ -84,7 +84,8 @@ class OptionUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
   }
 
-  @DisplayName("TEST OptionUCC.introduceOption : invalid furniture condition, should throw ConflictException")
+  @DisplayName("TEST OptionUCC.introduceOption : invalid "
+      + "furniture condition, should throw ConflictException")
   @ParameterizedTest
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted", "in_restoration",
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
@@ -106,7 +107,8 @@ class OptionUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST OptionUCC.introduceOption : given invalid furniture id, should throw NotFoundException")
+  @DisplayName("TEST OptionUCC.introduceOption : given invalid "
+      + "furniture id, should throw NotFoundException")
   @Test
   public void test_introduceOption_givenInvalidFurnitureId_shouldThrowNotFound() {
     int furnitureId = 2;
@@ -126,7 +128,8 @@ class OptionUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST OptionUCC.introduceOption : catches InternalError, should throw it back after rollback")
+  @DisplayName("TEST OptionUCC.introduceOption : catches "
+      + "InternalError, should throw it back after rollback")
   @Test
   public void test_introduceOption_catchesInternalError_shouldThrowInternalError() {
     int furnitureId = 2;
@@ -173,7 +176,8 @@ class OptionUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
   }
 
-  @DisplayName("TEST OptionUCC.cancelOption : given unknown option id, should throw NotFoundException")
+  @DisplayName("TEST OptionUCC.cancelOption : given unknown "
+      + "option id, should throw NotFoundException")
   @Test
   public void test_cancelOption_invalidOptionId_shouldThrowNotFoundException() {
     int optionId = 1;
@@ -188,7 +192,8 @@ class OptionUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST OptionUCC.cancelOption : given already canceled option id, should throw ConflictException")
+  @DisplayName("TEST OptionUCC.cancelOption : given already "
+      + "canceled option id, should throw ConflictException")
   @Test
   public void test_cancelOption_alreadyCancelledOption_shouldThrowConflict() {
     int optionId = 1;
@@ -204,7 +209,8 @@ class OptionUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST OptionUCC.cancelOption : given not owned option id, should throw UnauthorizedException")
+  @DisplayName("TEST OptionUCC.cancelOption : "
+      + "given not owned option id, should throw UnauthorizedException")
   @Test
   public void test_cancelOption_notOptionOwner_shouldThrowUnauthorized() {
     int optionId = 1;
@@ -226,11 +232,12 @@ class OptionUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST OptionUCC.cancelOption : on furniture not under option, should throw ConflictException")
+  @DisplayName("TEST OptionUCC.cancelOption : on furniture "
+      + "not under option, should throw ConflictException")
   @ParameterizedTest
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted", "in_restoration",
       "available_for_sale", "sold", "reserved", "delivered", "collected", "withdrawn"})
-  public void test_cancelOption_givenValidArgs_shouldReturnDTO(String condition) {
+  public void test_cancelOption_givenInvalidCondition_shouldReturnDTO(String condition) {
     int optionId = 1;
     int furnitureId = 2;
     int userID = 3;
@@ -251,7 +258,8 @@ class OptionUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST OptionUCC.cancelOption : catches InternalError, should throw it back after rollback")
+  @DisplayName("TEST OptionUCC.cancelOption : catches "
+      + "InternalError, should throw it back after rollback")
   @Test
   public void test_cancelOption_catchesInternalError_shouldThrowInternalError() {
     int optionId = 1;
