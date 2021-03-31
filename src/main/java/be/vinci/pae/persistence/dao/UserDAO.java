@@ -62,10 +62,10 @@ public interface UserDAO {
   /**
    * find the users that correspond with the string.
    *
-   * @param customerSearch reg of the search.
+   * @param userSearch reg of the search.
    * @return list containing the users researched.
    */
-  List<UserDTO> findBySearch(String customerSearch);
+  List<UserDTO> findBySearch(String userSearch);
 
   /**
    * Set the role and  set wait.

@@ -74,6 +74,11 @@ public class UserDAOImpl implements UserDAO {
     return userFound;
   }
 
+  /**
+   * getAllusers of the db.
+   *
+   * @return list contains the users of the db.
+   */
   @Override
   public List<UserDTO> getAllUsers() {
     List<UserDTO> users = new ArrayList<>();
@@ -111,6 +116,12 @@ public class UserDAOImpl implements UserDAO {
     return users;
   }
 
+  /**
+   * find the users that correspond with the string.
+   *
+   * @param userSearch reg of the search.
+   * @return list containing the users researched.
+   */
   @Override
   public List<UserDTO> findBySearch(String userSearch) {
     List<UserDTO> users = new ArrayList<>();
