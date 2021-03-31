@@ -20,32 +20,33 @@ public class OptionDAOImpl implements OptionDAO {
 
   /**
    * Create an option.
-   * @param clientId clientId.
+   *
+   * @param user        user.
    * @param furnitureId furnitureId.
    * @return OptionDTO.
    */
   @Override
-  public OptionDTO introduceOption(UserDTO user,int furnitureId) {
-    String query= "INSERT INTO satchoFurniture.options VALUES(DEFAULT,0,NOW(),?,?,'false') RETURNING *";
-    PreparedStatement ps= dalServices.makeStatement(query);
+  public OptionDTO introduceOption(UserDTO user, int furnitureId) {
+    String query = "INSERT INTO satchoFurniture.options "
+        + "VALUES(DEFAULT,0,NOW(),?,?,'false') RETURNING *";
+    PreparedStatement ps = dalServices.makeStatement(query);
     OptionDTO optionFound;
-    try{
-      ps.setInt(1,user.getId());
-      ps.setInt(2,furnitureId);
-      ResultSet rs=ps.executeQuery();
-      if(rs.next()){
-          optionFound=toDTO(rs);
-      }else{
+    try {
+      ps.setInt(1, user.getId());
+      ps.setInt(2, furnitureId);
+      ResultSet rs = ps.executeQuery();
+      if (rs.next()) {
+        optionFound = toDTO(rs);
+      } else {
         throw new NotFoundException("Error: option not found");
       }
       rs.close();
       ps.close();
-    }catch (SQLException e){
+    } catch (SQLException e) {
       throw new InternalError(e);
     }
     return optionFound;
   }
-
 
 
   /**
@@ -54,11 +55,11 @@ public class OptionDAOImpl implements OptionDAO {
    * @param idOption id of the option to cancel.
    */
   @Override
-  public void cancelOption(int idOption)  {
-    String query="UPDATE  satchoFurniture.options o SET canceled=true WHERE option_id=?";
-    PreparedStatement ps=dalServices.makeStatement(query);
+  public void cancelOption(int idOption) {
+    String query = "UPDATE  satchoFurniture.options o SET canceled=true WHERE option_id=?";
+    PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setInt(1,idOption);
+      ps.setInt(1, idOption);
       ps.executeUpdate();
       ps.close();
     } catch (SQLException throwables) {
@@ -74,15 +75,15 @@ public class OptionDAOImpl implements OptionDAO {
    */
   @Override
   public OptionDTO getOption(int id) {
-    OptionDTO optionFound=null;
-    String query="SELECT o.* FROM satchofurniture.options o WHERE o.option_id=? ";
-    PreparedStatement ps=dalServices.makeStatement(query);
+    OptionDTO optionFound = null;
+    String query = "SELECT o.* FROM satchofurniture.options o WHERE o.option_id=? ";
+    PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setInt(1,id);
-      ResultSet rs=ps.executeQuery();
-      if(rs.next()){
-        optionFound=toDTO(rs);
-      }else {
+      ps.setInt(1, id);
+      ResultSet rs = ps.executeQuery();
+      if (rs.next()) {
+        optionFound = toDTO(rs);
+      } else {
         throw new NotFoundException("Error: option not found");
       }
       rs.close();

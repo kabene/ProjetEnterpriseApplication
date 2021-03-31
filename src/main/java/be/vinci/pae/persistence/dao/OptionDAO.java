@@ -11,11 +11,11 @@ public interface OptionDAO {
   /**
    * Create an option.
    *
-   * @param clientId    clientId.
+   * @param user        user.
    * @param furnitureId furnitureId.
    * @return OptionDTO.
    */
-   OptionDTO introduceOption(UserDTO user, int furnitureId);
+  OptionDTO introduceOption(UserDTO user, int furnitureId);
 
   /**
    * cancel an option.

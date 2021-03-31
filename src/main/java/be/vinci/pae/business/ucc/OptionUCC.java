@@ -7,8 +7,9 @@ public interface OptionUCC {
 
 
   /**
-   *  create an option.
-   * @param clientId clientId.
+   * create an option.
+   *
+   * @param user        user.
    * @param furnitureId furnitureId.
    * @return OptionDTO.
    */
@@ -17,10 +18,10 @@ public interface OptionUCC {
   /**
    * cancel an option.
    *
-   * @param user id of the user that want to cancel the option
+   * @param user     id of the user that want to cancel the option
    * @param idOption id of the option to cancel.
    * @return an OptionDTO that represent the canceled one.
    */
-  OptionDTO cancelOption(UserDTO user,int idOption);
+  OptionDTO cancelOption(UserDTO user, int idOption);
 
 }
