@@ -68,7 +68,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
             "The resource cannot change from its current state to the 'in_restoration' state");
       }
       furnitureDTO.setCondition("in_restoration");
-      furnitureDTO = furnitureDAO.updateToRestoration(furnitureDTO);
+      furnitureDTO = furnitureDAO.updateConditionOnly(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
     } catch (Throwable e) {

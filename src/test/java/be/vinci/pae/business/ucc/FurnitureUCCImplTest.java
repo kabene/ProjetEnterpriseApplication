@@ -286,7 +286,7 @@ class FurnitureUCCImplTest {
     List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDAO.updateToRestoration(mockFurnitureDTO1))
+    Mockito.when(mockFurnitureDAO.updateConditionOnly(mockFurnitureDTO1))
         .thenReturn(mockFurnitureDTO1);
 
     Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
@@ -307,7 +307,7 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
 
-    Mockito.verify(mockFurnitureDAO).updateToRestoration(mockFurnitureDTO1);
+    Mockito.verify(mockFurnitureDAO).updateConditionOnly(mockFurnitureDTO1);
 
     Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
     Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO1);

@@ -34,6 +34,8 @@ public class OptionUCCImpl implements OptionUCC {
       if (!furnitureDTO.getCondition().equals("available_for_sale")) {
         throw new ConflictException("The resource isn't in a the 'available for sale' state");
       }
+      furnitureDTO.setCondition("under_option");
+      furnitureDAO.updateConditionOnly(furnitureDTO);
       opt = optionDAO.introduceOption(clientId, furnitureId);
       dalServices.commitTransaction();
     } catch (Exception e) {
@@ -63,6 +65,10 @@ public class OptionUCCImpl implements OptionUCC {
       if (opt.getClientId() != idUser) {
         throw new UnauthorizedException("not allowed to cancel the option");
       }
+      FurnitureDTO furnitureDTO = furnitureDAO.findById(opt.getFurnitureId());
+      furnitureDTO.setCondition("available_for_sale");
+      furnitureDAO.updateConditionOnly(furnitureDTO);
+
       optionDAO.cancelOption(idOption);
       opt = optionDAO.getOption(idOption);
       dalServices.commitTransaction();

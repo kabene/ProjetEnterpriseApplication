@@ -21,7 +21,7 @@ public interface FurnitureDAO {
    */
   List<FurnitureDTO> findAll();
 
-  FurnitureDTO updateToRestoration(FurnitureDTO furnitureDTO);
+  FurnitureDTO updateConditionOnly(FurnitureDTO furnitureDTO);
 
   FurnitureDTO updateToAvailable(FurnitureDTO furnitureDTO);
 
