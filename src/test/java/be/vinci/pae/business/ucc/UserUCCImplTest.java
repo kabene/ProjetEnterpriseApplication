@@ -11,6 +11,7 @@ import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
@@ -126,6 +127,26 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.login : login by a user waiting for confirmation, should throw UnauthorizedException")
+  @Test
+  public void test_login_byWaitingUser_shouldThrowUnauthorizedException() {
+    String username = "userInWaiting";
+    String pwd = "goodPwd";
+    Mockito.when(mockUserDAO.findByUsername(username)).thenReturn(mockUser1);
+    Mockito.when(mockUser1.getId()).thenReturn(0);
+    Mockito.when(mockUser1.isWaiting()).thenReturn(true);
+
+    assertThrows(UnauthorizedException.class,
+        () -> userUCC.login(username, pwd),
+        "UserUCC.login should throw UnauthorizedException as long as the user is waiting for confirmation");
+
+    Mockito.verify(mockUserDAO).findByUsername(username);
+    Mockito.verify(mockUser1, Mockito.never()).checkPassword(pwd);
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
   }
 
   @DisplayName("TEST UserUCC.login : DAO throws InternalError, Should rollback and throw InternalError")
