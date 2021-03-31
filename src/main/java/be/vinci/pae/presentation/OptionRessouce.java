@@ -63,11 +63,11 @@ public class OptionRessouce {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /option/cancel");
     UserDTO currentUser = (UserDTO) request.getProperty("user");
     JsonNode nodeOptionId = reqNode.get("optionId");
-    if(nodeOptionId == null){
+    if (nodeOptionId == null) {
       throw new BadRequestException("Error: Malformed request");
     }
     int optionId = nodeOptionId.asInt();
-    OptionDTO optionDTO=optionUCC.cancelOption(currentUser,optionId);
+    OptionDTO optionDTO = optionUCC.cancelOption(currentUser,optionId);
     optionDTO = Json.filterPublicJsonView(optionDTO,OptionDTO.class);
     return Response.ok(optionDTO,MediaType.APPLICATION_JSON).build();
   }
