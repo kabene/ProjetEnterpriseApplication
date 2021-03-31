@@ -50,11 +50,13 @@ public class OptionRessouce {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /option/introduce");
     UserDTO currentUser = (UserDTO) request.getProperty("user");
     JsonNode nodeFurnitureId = reqNode.get("furnitureId");
-    if (nodeFurnitureId == null) {
+    JsonNode nodeDurationId = reqNode.get("duration");
+    if (nodeFurnitureId == null|| nodeDurationId==null) {
       throw new BadRequestException("Error: Malformed request");
     }
     int furnitureId = nodeFurnitureId.asInt();
-    OptionDTO optionDTO = optionUCC.introduceOption(currentUser,furnitureId);
+    int duration=nodeDurationId.asInt();
+    OptionDTO optionDTO = optionUCC.introduceOption(currentUser,furnitureId,duration);
     ObjectNode resNode = jsonMapper.createObjectNode().putPOJO("option",optionDTO);
     return Response.ok(resNode,MediaType.APPLICATION_JSON).build();
   }
