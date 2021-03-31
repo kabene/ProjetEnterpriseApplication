@@ -1,5 +1,5 @@
 --@author GERARD Thibaut
-DROP TABLE satchoFurniture.options;
+
 DROP SCHEMA IF EXISTS satchoFurniture CASCADE;
 
 CREATE SCHEMA satchoFurniture;
