@@ -18,8 +18,9 @@ public interface OptionUCC {
    * cancel an option.
    *
    * @param idOption id of the option to cancel.
+   * @param idUser id of the user that want to cancel the option
    * @return an OptionDTO that represent the canceled one.
    */
-  OptionDTO cancelOption(int idOption);
+  OptionDTO cancelOption(int idUser,int idOption);
 
 }
