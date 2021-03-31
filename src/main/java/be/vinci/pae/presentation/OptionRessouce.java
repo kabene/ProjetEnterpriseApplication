@@ -16,6 +16,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -33,8 +34,15 @@ public class OptionRessouce {
   private OptionUCC optionUCC;
   private final ObjectMapper jsonMapper = new ObjectMapper();
 
+  /**
+   * POST a new option resource.
+   *
+   * @param reqNode body of the request.
+   * @param request request context.
+   * @return created resource as json.
+   */
   @POST
-  @Path("/introduce")
+  @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
@@ -51,19 +59,21 @@ public class OptionRessouce {
     return Response.ok(resNode,MediaType.APPLICATION_JSON).build();
   }
 
+  /**
+   * PATCH (cancels) an option by id.
+   *
+   * @param optionId the id of the option.
+   * @param request the request context.
+   * @return modified resource as json.
+   */
   @PATCH
-  @Path("/cancel")
+  @Path("/cancel/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public Response cancel(JsonNode reqNode,@Context ContainerRequest request) {
+  public Response cancel(@PathParam("id") int optionId,@Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /option/cancel");
     UserDTO currentUser = (UserDTO) request.getProperty("user");
-    JsonNode nodeOptionId = reqNode.get("optionId");
-    if (nodeOptionId == null) {
-      throw new BadRequestException("Error: Malformed request");
-    }
-    int optionId = nodeOptionId.asInt();
     OptionDTO optionDTO = optionUCC.cancelOption(currentUser,optionId);
     optionDTO = Json.filterPublicJsonView(optionDTO,OptionDTO.class);
     return Response.ok(optionDTO,MediaType.APPLICATION_JSON).build();
