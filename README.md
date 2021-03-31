@@ -185,3 +185,31 @@
 </tr>
 
 </table>
+
+<table style="caption-side: top">
+<caption>Operations sur les ressources de type "Option"</caption>
+<tr>
+    <th>URI</th>
+    <th>Methode</th>
+    <th>Droit(s) requit(s)</th>
+    <th>Operation</th>
+</tr>
+
+<tr>
+    <td>option/</td>
+    <td>POST</td>
+    <td>Droit(s) requit(s)</td>
+    <td>
+    Renvoie l'option crée
+    </td>
+</tr>
+<tr>
+    <td>option/cancel/{id}</td>
+    <td>PATCH</td>
+    <td>Droit(s) requit(s)</td>
+    <td>
+    Renvoie l'option modifiée 
+    </td>
+</tr>
+
+</table>

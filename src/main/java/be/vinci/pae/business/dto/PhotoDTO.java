@@ -20,7 +20,7 @@ public interface PhotoDTO {
 
   Boolean isVisible();
 
-  void setVisible(Boolean visible);
+  void setVisible(Boolean isVisible);
 
   String getSource();
 

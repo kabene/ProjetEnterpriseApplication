@@ -54,6 +54,16 @@ CREATE TABLE satchofurniture.furniture
     pick_up_date         date NULL
 );
 
+CREATE TABLE satchoFurniture.options(
+                                        option_id SERIAL PRIMARY KEY,
+                                        duration  integer NOT NULL ,
+                                        date_option timestamp  NOT NULL ,
+                                        user_id integer NOT NULL REFERENCES satchoFurniture.users (user_id),
+                                        furniture_id integer NOT NULL REFERENCES satchoFurniture.furniture (furniture_id),
+                                        is_canceled boolean NOT NULL
+
+);
+
 CREATE TABLE satchofurniture.photos
 (
     photo_id        SERIAL PRIMARY KEY,
@@ -69,7 +79,7 @@ ALTER TABLE satchofurniture.furniture
 
 
 INSERT INTO satchoFurniture.addresses
-VALUES (DEFAULT, 'sente des artistes', '1bis', null, '4800', 'Vervier', 'Belgique');
+VALUES (DEFAULT, 'sente des artistes', '1bis', 1 , '4800', 'Vervier', 'Belgique');
 
 INSERT INTO satchoFurniture.users
 VALUES (DEFAULT, 'Albert', 'Satcho', 'bert', 'bert.satcho@gmail.be', 1, now(), 'admin',

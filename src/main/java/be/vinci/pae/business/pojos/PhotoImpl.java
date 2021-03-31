@@ -16,7 +16,7 @@ public class PhotoImpl implements PhotoDTO {
   @JsonView(Views.Public.class)
   private Boolean onHomePage;
   @JsonView(Views.Public.class)
-  private Boolean visible;
+  private Boolean isVisible;
   @JsonView(Views.Public.class)
   private String source;
 
@@ -52,12 +52,12 @@ public class PhotoImpl implements PhotoDTO {
 
   @Override
   public Boolean isVisible() {
-    return visible;
+    return isVisible;
   }
 
   @Override
-  public void setVisible(Boolean visible) {
-    this.visible = visible;
+  public void setVisible(Boolean isVisible) {
+    this.isVisible = isVisible;
   }
 
   @Override

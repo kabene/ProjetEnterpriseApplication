@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.business.dto.AddressDTO;
-import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.AddressImpl;
 import be.vinci.pae.business.pojos.User;
@@ -12,6 +11,7 @@ import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
@@ -26,6 +26,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
 public class UserUCCImplTest {
@@ -129,6 +131,46 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
+  @DisplayName("TEST UserUCC.login : login by a user waiting"
+      + " for confirmation, should throw UnauthorizedException")
+  @Test
+  public void test_login_byWaitingUser_shouldThrowUnauthorizedException() {
+    final String username = "userInWaiting";
+    final String pwd = "goodPwd";
+    Mockito.when(mockUserDAO.findByUsername(username)).thenReturn(mockUser1);
+    Mockito.when(mockUser1.getId()).thenReturn(0);
+    Mockito.when(mockUser1.isWaiting()).thenReturn(true);
+
+    assertThrows(UnauthorizedException.class,
+        () -> userUCC.login(username, pwd),
+        "UserUCC.login should throw UnauthorizedException"
+            + "as long as the user is waiting for confirmation");
+
+    Mockito.verify(mockUserDAO).findByUsername(username);
+    Mockito.verify(mockUser1, Mockito.never()).checkPassword(pwd);
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.login : DAO throws InternalError"
+      + ", Should rollback and throw InternalError")
+  @Test
+  public void test_login_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
+    String username = "username";
+    String password = "password";
+
+    Mockito.when(mockUserDAO.findByUsername(username)).thenThrow(new InternalError("some error"));
+
+    assertThrows(InternalError.class, () -> userUCC.login(username, password),
+        "If the DAO throws an exception, it should be thrown back");
+
+    Mockito.verify(mockUserDAO).findByUsername(username);
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
   @DisplayName("TEST UserUCC.register : given valid fields, should return matching UserDTO")
   @Test
   public void test_register_success() {
@@ -213,6 +255,49 @@ public class UserUCCImplTest {
 
   }
 
+  @DisplayName("TEST UserUCC.getAll : DAO throws InternalError,"
+      + " should rollback and throw InternalError")
+  @Test
+  public void test_register_InternalErrorThrown1_shouldThrowInternalErrorAndRollback() {
+    String username = "username";
+    String email = "email";
+
+    Mockito.when(mockUser1.getUsername()).thenReturn(username);
+    Mockito.when(mockUser1.getEmail()).thenReturn(email);
+
+    Mockito.when(mockUserDAO.usernameAlreadyTaken(username)).thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, () -> userUCC.register(mockUser1, mockAddressDTO),
+        "If the DAO throws an exception, it should be thrown back");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.getAll : DAO throws InternalError,"
+      + " should rollback and throw InternalError")
+  @Test
+  public void test_register_InternalErrorThrown2_shouldThrowInternalErrorAndRollback() {
+    String username = "username";
+    String email = "email";
+
+    Mockito.when(mockUser1.getUsername()).thenReturn(username);
+    Mockito.when(mockUser1.getEmail()).thenReturn(email);
+
+    Mockito.when(mockUserDAO.usernameAlreadyTaken(username)).thenReturn(false);
+    Mockito.when(mockUserDAO.emailAlreadyTaken(email)).thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, () -> userUCC.register(mockUser1, mockAddressDTO),
+        "If the DAO throws an exception, it should be thrown back");
+
+    Mockito.verify(mockUserDAO).usernameAlreadyTaken(username);
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
   @DisplayName("TEST UserUCC.getAll : given nothing,"
       + " should return all Users")
   @Test
@@ -222,6 +307,9 @@ public class UserUCCImplTest {
     assertEquals(allUsers, userUCC.getAll(),
         "UserUCC.getAll should return a List<UserDTO> of all users");
     Mockito.verify(mockUserDAO).getAllUsers();
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
   @DisplayName("TEST UserUCC.getAll : given nothing,"
@@ -233,6 +321,24 @@ public class UserUCCImplTest {
     assertEquals(emptyList, userUCC.getAll(),
         "UserUCC.getAll should return a empty List<UserDTO> of all users");
     Mockito.verify(mockUserDAO).getAllUsers();
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.getAll : DAO throws InternalError,"
+      + " should rollback and throw InternalError")
+  @Test
+  public void test_getAll_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
+    Mockito.when(mockUserDAO.getAllUsers()).thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, () -> userUCC.getAll(),
+        "If the DAO throws an exception, it should be thrown back");
+
+    Mockito.verify(mockUserDAO).getAllUsers();
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
   @DisplayName("TEST UserUCC.getSearchResult : given an existing username,"
@@ -246,6 +352,9 @@ public class UserUCCImplTest {
     assertEquals(allSearchResults, userUCC.getSearchResult(username),
         "UserUCC.getSearchResult should return a List<UserDTO> with respective user");
     Mockito.verify(mockUserDAO).findBySearch(username);
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
   @DisplayName("TEST UserUCC.getSearchResult : given a not existing username,"
@@ -259,6 +368,158 @@ public class UserUCCImplTest {
     assertEquals(emptyList, userUCC.getSearchResult(username),
         "UserUCC.getSearchResult should return a empty List<UserDTO> of all users");
     Mockito.verify(mockUserDAO).findBySearch(username);
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
+  @DisplayName("TEST UserUCC.getSearchResult : DAO throws InternalError,"
+      + " Should rollback and throw InternalError")
+  @Test
+  public void test_getSearchResult_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
+    String pattern = "pattern";
+
+    Mockito.when(mockUserDAO.findBySearch(pattern)).thenThrow(new InternalError("some error"));
+
+    assertThrows(InternalError.class, () -> userUCC.getSearchResult(pattern),
+        "If the DAO throws an exception, it should be thrown back");
+
+    Mockito.verify(mockUserDAO).findBySearch(pattern);
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  /**
+   * Unit Test.
+   */
+  @DisplayName("TEST UserUCC.getOne : nominal, should return DTO")
+  @Test
+  public void test_getOne_givenValidId_shouldReturnDTO() {
+    int userId = 1;
+    int addressId = 1;
+
+    Mockito.when(mockUserDAO.findById(userId)).thenReturn(mockUser1);
+
+    Mockito.when(mockUser1.getAddressId()).thenReturn(addressId);
+
+    Mockito.when(mockAddressDAO.findById(addressId)).thenReturn(mockAddressDTO);
+
+    assertEquals(userUCC.getOne(userId), mockUser1, "getOne should"
+        + " return the corresponding DTO");
+
+    Mockito.verify(mockUser1).setAddress(mockAddressDTO);
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.getOne : nominal, should return DTO")
+  @Test
+  public void test_getOne_givenInvalidId_shouldThrowNotFoundException() {
+    int userId = 1;
+
+    Mockito.when(mockUserDAO.findById(userId)).thenThrow(new NotFoundException());
+
+    assertThrows(NotFoundException.class, () -> userUCC.getOne(userId),
+        "getOne should return the corresponding DTO");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.getOne : DAO throws InternalError, "
+      + "Should rollback and throw InternalError")
+  @Test
+  public void test_getOne_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
+    int userId = 1;
+
+    Mockito.when(mockUserDAO.findById(userId)).thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, () -> userUCC.getOne(userId),
+        "getOne should return the corresponding DTO");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+  }
+
+  /**
+   * Unit Test.
+   */
+  @DisplayName("TEST UserUCC.validateUser : nominal, return DTO")
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  public void test_validateUser_givenValidId_shouldReturnDTO(boolean value) {
+    int userId = 1;
+
+    Mockito.when(mockUserDAO.findById(userId)).thenReturn(mockUser1);
+
+    assertEquals(mockUser1, userUCC.validateUser(userId, value),
+        "A valid call should return the corresponding DTO");
+
+    Mockito.verify(mockUserDAO).setRole(userId, value);
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+  }
+
+  /**
+   * Unit Test..
+   */
+  @DisplayName("TEST UserUCC.validateUser : invalid id, throw NotFoundException")
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  public void test_validateUser_givenInvalidId_shouldThrowNotFound(boolean value) {
+    int userId = 1;
+
+    Mockito.when(mockUserDAO.findById(userId)).thenThrow(new NotFoundException());
+
+    assertThrows(NotFoundException.class, () -> userUCC.validateUser(userId, value),
+        "an invalid id should throw NotFoundException");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  /**
+   * Unit Test..
+   */
+  @DisplayName("TEST UserUCC.validateUser : catch InternalError 1")
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  public void test_validateUser_catchesInternalError1_shouldThrowNotFound(boolean value) {
+    int userId = 1;
+
+    Mockito.when(mockUserDAO.findById(userId)).thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, () -> userUCC.validateUser(userId, value),
+        "an invalid id should throw NotFoundException");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  /**
+   * Unit Test..
+   */
+  @DisplayName("TEST UserUCC.validateUser : catch InternalError 2")
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  public void test_validateUser_catchesInternalError2_shouldThrowNotFound(boolean value) {
+    int userId = 1;
+
+    Mockito.doThrow(new InternalError()).when(mockUserDAO).setRole(userId, value);
+
+    assertThrows(InternalError.class, () -> userUCC.validateUser(userId, value),
+        "an invalid id should throw NotFoundException");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
 }

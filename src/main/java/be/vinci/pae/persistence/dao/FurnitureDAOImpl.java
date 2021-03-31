@@ -67,7 +67,7 @@ public class FurnitureDAOImpl implements FurnitureDAO {
   }
 
   @Override
-  public FurnitureDTO updateToRestoration(FurnitureDTO furnitureDTO) {
+  public FurnitureDTO updateConditionOnly(FurnitureDTO furnitureDTO) {
     String query = "UPDATE satchofurniture.furniture "
         + "SET condition = ? "
         + "WHERE furniture_id = ? ";
