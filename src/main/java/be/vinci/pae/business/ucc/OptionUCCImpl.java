@@ -22,7 +22,7 @@ public class OptionUCCImpl implements OptionUCC {
 
 
   /**
-   * introduce an option
+   * introduce an option.
    *
    * @param user        userId.
    * @param furnitureId furnitureId.
