@@ -68,7 +68,7 @@ CREATE TABLE satchoFurniture.options(
                                         option_id SERIAL PRIMARY KEY,
                                         duration  integer NOT NULL ,
                                         date_option timestamp  NOT NULL ,
-                                        client_id integer NOT NULL REFERENCES satchoFurniture.users (user_id),
+                                        user_id integer NOT NULL REFERENCES satchoFurniture.users (user_id),
                                         furniture_id integer NOT NULL REFERENCES satchoFurniture.furniture (furniture_id),
                                         is_canceled boolean NOT NULL
 
