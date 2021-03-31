@@ -27,24 +27,24 @@ public class OptionDAOImpl implements OptionDAO {
   public OptionDTO introduceOption(int clientId,int furnitureId) {
     String query= "INSERT INTO satchoFurniture.options VALUES(DEFAULT,0,NOW(),?,?,'false') RETURNING *";
     PreparedStatement ps= dalServices.makeStatement(query);
+    OptionDTO optionFound;
     try{
       ps.setInt(1,clientId);
       ps.setInt(2,furnitureId);
-      ResultSet res=ps.executeQuery();
-      if(res.next()){
-
+      ResultSet rs=ps.executeQuery();
+      if(rs.next()){
+          optionFound=toDTO(rs);
+      }else{
+        throw new NotFoundException("Error: option not found");
       }
+      rs.close();
       ps.close();
     }catch (SQLException e){
       throw new InternalError(e);
     }
+    return optionFound;
   }
 
-  public int getId() {
-    String query= "SELECT LAST_INSERT_ID()";
-
-
-  }
 
 
   /**
