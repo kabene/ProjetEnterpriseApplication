@@ -27,7 +27,6 @@ public class UserUCCImpl implements UserUCC {
   @Inject
   private ConnectionDalServices dalServices;
 
-
   /**
    * Logs in after checking the given credentials.
    *
