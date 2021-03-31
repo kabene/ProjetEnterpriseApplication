@@ -25,6 +25,13 @@ public interface UserUCC {
 
   List<UserDTO> getAll();
 
+  /**
+   * get all user waiting for registration validation.
+   *
+   * @return list contains the waiting users.
+   */
+  List<UserDTO> getAllWaiting();
+
   List<UserDTO> getSearchResult(String userSearch);
 
   UserDTO getOne(int userId);

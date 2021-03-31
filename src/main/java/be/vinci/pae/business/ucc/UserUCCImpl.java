@@ -104,6 +104,25 @@ public class UserUCCImpl implements UserUCC {
     return list;
   }
 
+  /**
+   * get all user waiting for registration validation.
+   *
+   * @return list contains the waiting users.
+   */
+  @Override
+  public List<UserDTO> getAllWaiting() {
+    List<UserDTO> list;
+    try {
+      dalServices.startTransaction();
+      list = userDAO.getAllWaitingUsers();
+      dalServices.commitTransaction();
+    } catch (Throwable exception) {
+      dalServices.rollbackTransaction();
+      throw exception;
+    }
+    return list;
+  }
+
   @Override
   public List<UserDTO> getSearchResult(String userSearch) {
     List<UserDTO> list;
