@@ -264,7 +264,6 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST UserUCC.getAll : DAO throws InternalError, Should rollback and throw InternalError")
   @Test
   public void test_getAll_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-
     Mockito.when(mockFurnitureDAO.findAll()).thenThrow(new InternalError("some error"));
 
     assertThrows(InternalError.class, ()-> furnitureUCC.getAll(),
