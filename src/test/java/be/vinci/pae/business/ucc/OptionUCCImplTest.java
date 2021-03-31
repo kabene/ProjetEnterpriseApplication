@@ -65,19 +65,19 @@ class OptionUCCImplTest {
   @Test
   public void test_introduceOption_givenValidId_shouldReturnDTO() {
     int furnitureId = 2;
-    int duration =1;
+    int duration = 1;
     String condition = "available_for_sale";
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
-    Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId,duration))
+    Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId, duration))
         .thenReturn(mockOptionDTO1);
 
     assertEquals(mockOptionDTO1, optionUCC.introduceOption(mockUserDTO1, furnitureId, duration),
         "calling the function with valid arguments should return corresponding DTO");
 
     Mockito.verify(mockFurnitureDTO1).setCondition("under_option");
-    Mockito.verify(mockOptionDAO).introduceOption(mockUserDTO1, furnitureId,duration);
+    Mockito.verify(mockOptionDAO).introduceOption(mockUserDTO1, furnitureId, duration);
     Mockito.verify(mockFurnitureDAO).updateConditionOnly(mockFurnitureDTO1);
 
     Mockito.verify(mockDal).startTransaction();
@@ -92,15 +92,15 @@ class OptionUCCImplTest {
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_introduceOption_givenInvalidCondition_shouldThrowConflict(String condition) {
     int furnitureId = 2;
-    int duration=2;
+    int duration = 2;
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
-    Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId,duration))
+    Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId, duration))
         .thenReturn(mockOptionDTO1);
 
     assertThrows(ConflictException.class,
-        () -> optionUCC.introduceOption(mockUserDTO1, furnitureId,duration),
+        () -> optionUCC.introduceOption(mockUserDTO1, furnitureId, duration),
         "calling the function with furniture id corresponding to resource in"
             + " invalid condition should throw ConflictException");
 
@@ -114,16 +114,16 @@ class OptionUCCImplTest {
   @Test
   public void test_introduceOption_givenInvalidFurnitureId_shouldThrowNotFound() {
     int furnitureId = 2;
-    int duration =2;
+    int duration = 2;
     String condition = "available_for_sale";
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new NotFoundException());
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
-    Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId,duration))
+    Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId, duration))
         .thenReturn(mockOptionDTO1);
 
     assertThrows(NotFoundException.class,
-        () -> optionUCC.introduceOption(mockUserDTO1, furnitureId,duration),
+        () -> optionUCC.introduceOption(mockUserDTO1, furnitureId, duration),
         "calling the function with invalid userId should throw NotFoundException");
 
     Mockito.verify(mockDal).startTransaction();
@@ -136,15 +136,16 @@ class OptionUCCImplTest {
   @Test
   public void test_introduceOption_catchesInternalError_shouldThrowInternalError() {
     int furnitureId = 2;
-    int duration=2;
+    int duration = 2;
     String condition = "available_for_sale";
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
-    Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId,duration))
+    Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId, duration))
         .thenThrow(new InternalError());
 
-    assertThrows(InternalError.class, () -> optionUCC.introduceOption(mockUserDTO1, furnitureId,duration),
+    assertThrows(InternalError.class,
+        () -> optionUCC.introduceOption(mockUserDTO1, furnitureId, duration),
         "catching InternalError should throw it back after rollback");
 
     Mockito.verify(mockDal).startTransaction();

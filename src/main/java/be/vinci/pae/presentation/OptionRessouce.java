@@ -46,26 +46,26 @@ public class OptionRessouce {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
-  public Response introduce(JsonNode reqNode,@Context ContainerRequest request) {
+  public Response introduce(JsonNode reqNode, @Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /option/introduce");
     UserDTO currentUser = (UserDTO) request.getProperty("user");
     JsonNode nodeFurnitureId = reqNode.get("furnitureId");
     JsonNode nodeDurationId = reqNode.get("duration");
-    if (nodeFurnitureId == null|| nodeDurationId==null) {
+    if (nodeFurnitureId == null || nodeDurationId == null) {
       throw new BadRequestException("Error: Malformed request");
     }
     int furnitureId = nodeFurnitureId.asInt();
-    int duration=nodeDurationId.asInt();
-    OptionDTO optionDTO = optionUCC.introduceOption(currentUser,furnitureId,duration);
-    ObjectNode resNode = jsonMapper.createObjectNode().putPOJO("option",optionDTO);
-    return Response.ok(resNode,MediaType.APPLICATION_JSON).build();
+    int duration = nodeDurationId.asInt();
+    OptionDTO optionDTO = optionUCC.introduceOption(currentUser, furnitureId, duration);
+    ObjectNode resNode = jsonMapper.createObjectNode().putPOJO("option", optionDTO);
+    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
 
   /**
    * PATCH (cancels) an option by id.
    *
    * @param optionId the id of the option.
-   * @param request the request context.
+   * @param request  the request context.
    * @return modified resource as json.
    */
   @PATCH
@@ -73,12 +73,12 @@ public class OptionRessouce {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public Response cancel(@PathParam("id") int optionId,@Context ContainerRequest request) {
+  public Response cancel(@PathParam("id") int optionId, @Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /option/cancel");
     UserDTO currentUser = (UserDTO) request.getProperty("user");
-    OptionDTO optionDTO = optionUCC.cancelOption(currentUser,optionId);
-    optionDTO = Json.filterPublicJsonView(optionDTO,OptionDTO.class);
-    return Response.ok(optionDTO,MediaType.APPLICATION_JSON).build();
+    OptionDTO optionDTO = optionUCC.cancelOption(currentUser, optionId);
+    optionDTO = Json.filterPublicJsonView(optionDTO, OptionDTO.class);
+    return Response.ok(optionDTO, MediaType.APPLICATION_JSON).build();
   }
 
 
