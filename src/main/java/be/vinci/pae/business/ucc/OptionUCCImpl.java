@@ -22,11 +22,11 @@ public class OptionUCCImpl implements OptionUCC {
 
 
   /**
-   * introduce an option.
+   * create an option.
    *
-   * @param user        userId.
+   * @param user        user.
    * @param furnitureId furnitureId.
-   * @return OptionDTO  introduced.
+   * @return OptionDTO.
    */
   @Override
   public OptionDTO introduceOption(UserDTO user, int furnitureId) {
