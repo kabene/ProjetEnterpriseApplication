@@ -5,8 +5,6 @@ import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.sql.Date;
-import java.sql.Timestamp;
 
 @JsonInclude(Include.NON_NULL)
 public class OptionImpl implements OptionDTO {
