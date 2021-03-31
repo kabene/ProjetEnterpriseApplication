@@ -39,6 +39,9 @@ public class UserUCCImpl implements UserUCC {
     try {
       dalServices.startTransaction();
       User userFound = (User) userDAO.findByUsername(username);
+      if (userFound.isWaiting()) {
+        throw new ForbiddenException("Your account is not yet validated");
+      }
       if (!userFound.checkPassword(password)) {
         throw new ForbiddenException("Error: invalid credentials");
       }
