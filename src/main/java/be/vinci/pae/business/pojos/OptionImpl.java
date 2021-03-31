@@ -12,7 +12,7 @@ public class OptionImpl implements OptionDTO {
   @JsonView(Views.Public.class)
   private int optionId;
   @JsonView(Views.AdminOnly.class)
-  private int duree;
+  private int duration;
   @JsonView(Views.AdminOnly.class)
   private String dateOption;
   @JsonView(Views.AdminOnly.class)
@@ -33,13 +33,13 @@ public class OptionImpl implements OptionDTO {
   }
 
   @Override
-  public int getDuree() {
-    return duree;
+  public int getDuration() {
+    return duration;
   }
 
   @Override
-  public void setDuree(int duree) {
-    this.duree = duree;
+  public void setDuration(int duration) {
+    this.duration = duration;
   }
 
   @Override

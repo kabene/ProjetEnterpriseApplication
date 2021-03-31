@@ -63,7 +63,7 @@ class OptionUCCImplTest {
 
   @DisplayName("TEST OptionUCC.introduceOption : given valid arguments, should return DTO")
   @Test
-  public void test_introduceOption_givenValidIds_shouldReturnDTO() {
+  public void test_introduceOption_givenValidId_shouldReturnDTO() {
     int furnitureId = 2;
     String condition = "available_for_sale";
 

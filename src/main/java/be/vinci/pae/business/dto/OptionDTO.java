@@ -11,9 +11,9 @@ public interface OptionDTO {
 
   void setOptionId(int optionId);
 
-  int getDuree();
+  int getDuration();
 
-  void setDuree(int duree);
+  void setDuration(int duration);
 
   String getDateOption();
 

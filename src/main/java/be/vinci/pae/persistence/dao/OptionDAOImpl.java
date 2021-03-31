@@ -104,7 +104,7 @@ public class OptionDAOImpl implements OptionDAO {
   private OptionDTO toDTO(ResultSet rs) throws SQLException {
     OptionDTO optionFound = optionFactory.getOptionDTO();
     optionFound.setOptionId(rs.getInt("option_id"));
-    optionFound.setDuree(rs.getInt("duration"));
+    optionFound.setDuration(rs.getInt("duration"));
     optionFound.setDateOption(rs.getDate("date_option").toString());
     optionFound.setClientId(rs.getInt("client_id"));
     optionFound.setFurnitureId(rs.getInt("furniture_id"));
