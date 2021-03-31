@@ -90,6 +90,27 @@ public class UserDAOImpl implements UserDAO {
     return users;
   }
 
+  /**
+   * get all user waiting for registration validation of the db.
+   *
+   * @return list contains the waiting users of the db.
+   */
+  @Override
+  public List<UserDTO> getAllWaitingUsers() {
+    List<UserDTO> users = new ArrayList<>();
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.waiting = true";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        users.add(toDTO(rs));
+      }
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return users;
+  }
+
   @Override
   public List<UserDTO> findBySearch(String userSearch) {
     List<UserDTO> users = new ArrayList<>();

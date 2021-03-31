@@ -53,6 +53,13 @@ public interface UserDAO {
   List<UserDTO> getAllUsers();
 
   /**
+   * get all user waiting for registration validation of the db.
+   *
+   * @return list contains the waiting users of the db.
+   */
+  List<UserDTO> getAllWaitingUsers();
+
+  /**
    * find the users that correspond with the string.
    *
    * @param customerSearch reg of the search.
