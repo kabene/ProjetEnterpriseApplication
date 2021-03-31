@@ -466,7 +466,7 @@ public class UserUCCImplTest {
   /**
    * Jenkins.
    */
-  @DisplayName("TEST UserUCC.validateUser : invalid id, throw ")
+  @DisplayName("TEST UserUCC.validateUser : invalid id, throw NotFoundException")
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
   public void test_validateUser_givenInvalidId_shouldThrowNotFound(boolean value) {
@@ -485,7 +485,7 @@ public class UserUCCImplTest {
   /**
    * Jenkins.
    */
-  @DisplayName("TEST UserUCC.validateUser : invalid id, throw ")
+  @DisplayName("TEST UserUCC.validateUser : catch InternalError 1")
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
   public void test_validateUser_catchesInternalError1_shouldThrowNotFound(boolean value) {
@@ -504,7 +504,7 @@ public class UserUCCImplTest {
   /**
    * Jenkins.
    */
-  @DisplayName("TEST UserUCC.validateUser : invalid id, throw ")
+  @DisplayName("TEST UserUCC.validateUser : catch InternalError 2")
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
   public void test_validateUser_catchesInternalError2_shouldThrowNotFound(boolean value) {
