@@ -185,7 +185,7 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Admin
   public Response getUsers() {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/detail");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/detail");
     List<UserDTO> users = userUCC.getAll();
     return createNodeFromUserList(users);
   }
@@ -225,7 +225,7 @@ public class UserResource {
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
   public Response validateUser(@PathParam("id") int id, JsonNode reqNode) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/validate/" + id);
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /users/validate/" + id);
     JsonNode valueNode = reqNode.get("value");
     if (valueNode == null) {
       throw new BadRequestException("Error: malformed request");

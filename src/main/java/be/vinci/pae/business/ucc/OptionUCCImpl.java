@@ -1,9 +1,9 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.OptionDTO;
-import be.vinci.pae.business.dto.UserDTO;
+
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
-import be.vinci.pae.persistence.dao.UserDAO;
+import be.vinci.pae.persistence.dao.OptionDAO;
 import jakarta.inject.Inject;
 
 public class OptionUCCImpl implements OptionUCC {
@@ -11,7 +11,7 @@ public class OptionUCCImpl implements OptionUCC {
   @Inject
   private ConnectionDalServices dalServices;
   @Inject
-  private UserDAO userDAO;
+  private OptionDAO optionDAO;
 
 
   /**
@@ -22,7 +22,17 @@ public class OptionUCCImpl implements OptionUCC {
    */
   @Override
   public OptionDTO introduceOption(OptionDTO option) {
-    return null;
+    OptionDTO opt = null;
+    try {
+      dalServices.startTransaction();
+      int id = optionDAO.introduceOption(option);
+      opt = optionDAO.getOption(id);
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      e.printStackTrace();
+      dalServices.rollbackTransaction();
+    }
+    return opt;
   }
 
   /**
@@ -32,7 +42,18 @@ public class OptionUCCImpl implements OptionUCC {
    * @return an OptionDTO that represent the canceled one.
    */
   @Override
-  public OptionDTO cancelOption(int idOption) {
-    return null;
+  public OptionDTO cancelOption(
+      int idOption) { // MAYBE more a deleat because after we will never reuse  the option
+    OptionDTO opt = null;
+    try {
+      dalServices.startTransaction();
+      optionDAO.cancelOption(idOption);
+      opt=optionDAO.getOption(idOption);
+      dalServices.commitTransaction();
+    } catch (Exception e) {
+      e.printStackTrace();
+      dalServices.rollbackTransaction();
+    }
+    return opt;
   }
 }

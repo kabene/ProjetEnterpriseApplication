@@ -2,6 +2,8 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public interface OptionDAO {
 
@@ -9,15 +11,14 @@ public interface OptionDAO {
    * Create  an Option and insert it.
    *
    * @param option is an OptionDTO.
-   * @return the optionDTO insered.
+   * @return the id of the option.
    */
-  OptionDTO introduceOption(OptionDTO option);
+   int introduceOption(OptionDTO option);
 
   /**
    * cancel an option.
    *
    * @param idOption id of the option to cancel.
-   * @return an OptionDTO that represent the canceled one.
    */
   void cancelOption(int idOption);
 
