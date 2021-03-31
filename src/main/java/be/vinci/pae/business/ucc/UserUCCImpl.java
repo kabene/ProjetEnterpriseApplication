@@ -90,6 +90,11 @@ public class UserUCCImpl implements UserUCC {
     }
   }
 
+  /**
+   * get all users.
+   *
+   * @return list contains the users.
+   */
   @Override
   public List<UserDTO> getAll() {
     List<UserDTO> list;
@@ -105,7 +110,7 @@ public class UserUCCImpl implements UserUCC {
   }
 
   /**
-   * get all user waiting for registration validation.
+   * get all users waiting for registration validation.
    *
    * @return list contains the waiting users.
    */
@@ -123,6 +128,12 @@ public class UserUCCImpl implements UserUCC {
     return list;
   }
 
+  /**
+   * get the users that correspond with the string.
+   *
+   * @param userSearch reg of the search.
+   * @return list contains the users researched.
+   */
   @Override
   public List<UserDTO> getSearchResult(String userSearch) {
     List<UserDTO> list;
@@ -137,6 +148,12 @@ public class UserUCCImpl implements UserUCC {
     return list;
   }
 
+  /**
+   * get the user searched by his id.
+   *
+   * @param userId the id of the user.
+   * @return User represented by UserDTO.
+   */
   @Override
   public UserDTO getOne(int userId) {
     UserDTO res = null;
