@@ -11,9 +11,10 @@ public interface OptionUCC {
    *
    * @param user        user.
    * @param furnitureId furnitureId.
+   * @param duration    duration
    * @return OptionDTO.
    */
-  OptionDTO introduceOption(UserDTO user, int furnitureId);
+  OptionDTO introduceOption(UserDTO user, int furnitureId, int duration);
 
   /**
    * cancel an option.

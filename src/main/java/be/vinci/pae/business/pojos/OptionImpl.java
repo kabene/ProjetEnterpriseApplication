@@ -53,7 +53,9 @@ public class OptionImpl implements OptionDTO {
   }
 
   @Override
-  public int getUserId() { return clientId; }
+  public int getUserId() {
+    return clientId;
+  }
 
   @Override
   public void setUserId(int clientId) {

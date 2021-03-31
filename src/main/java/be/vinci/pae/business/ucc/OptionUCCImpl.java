@@ -29,8 +29,8 @@ public class OptionUCCImpl implements OptionUCC {
    * @return OptionDTO.
    */
   @Override
-  public OptionDTO introduceOption(UserDTO user, int furnitureId) {
-    OptionDTO opt = null;
+  public OptionDTO introduceOption(UserDTO user, int furnitureId, int duration) {
+    OptionDTO opt;
     try {
       dalServices.startTransaction();
       FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
@@ -39,7 +39,7 @@ public class OptionUCCImpl implements OptionUCC {
       }
       furnitureDTO.setCondition("under_option");
       furnitureDAO.updateConditionOnly(furnitureDTO);
-      opt = optionDAO.introduceOption(user, furnitureId);
+      opt = optionDAO.introduceOption(user, furnitureId, duration);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -58,7 +58,7 @@ public class OptionUCCImpl implements OptionUCC {
   @Override
   public OptionDTO cancelOption(UserDTO user,
       int optionId) {
-    OptionDTO opt = null;
+    OptionDTO opt;
     try {
       dalServices.startTransaction();
       opt = optionDAO.getOption(optionId);
