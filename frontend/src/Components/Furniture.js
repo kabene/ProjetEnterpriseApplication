@@ -150,7 +150,11 @@ const getOptionList= async () => {
 
 
 const updateFurnitureList = (furnitureId, condition) => {
-
+    furnitureList.forEach(furniture => {
+        if (furniture.furnitureId === furnitureId) {
+            furniture.condition = condition;
+        }
+    })
 }
 
 const generateTable = () => {
