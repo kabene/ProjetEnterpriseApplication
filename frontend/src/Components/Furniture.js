@@ -1,7 +1,6 @@
 import { getUserSessionData } from "../utils/session";
 import imageStub from "../img/furnitures/Bureau_1.png";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import imageStub from "../img/furnitures/Bureau_1.png"
 import {displayErrorMessage} from "../utils/utils.js"
 
 
@@ -63,9 +62,9 @@ const cancelOption= (e)=>{
   }).then((data) => {
     refresh(data, "available_for_sale");
   }).catch((err) => {
-    //TODO
-    console.log(err);
-  });
+     console.log("Erreur de fetch !! :´<\n" + err);
+     displayErrorMessage("errorDiv", err);
+   });
 }
 
 
@@ -94,11 +93,11 @@ const addOption =  (e) => {
       }
       return response.json();
     }).then((data) => {
-      refresh(data.option, "under_option"); //TODO
+      refresh(data.option, "under_option");
     }).catch((err) => {
-      //TODO
-      console.log(err);
-    });
+     console.log("Erreur de fetch !! :´<\n" + err);
+     displayErrorMessage("errorDiv", err);
+   });
 
 }
 
@@ -270,11 +269,11 @@ const getOptionButton = (furniture) => {
 
   if (furniture.condition === "available_for_sale" && currentUser !== null ) { //place option
 
-    let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , " btnCreateOption btn btn-primary mx-5");
+    let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , "btnCreateOption btn btn-primary mx-5");
     return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
   }
   else if( furniture.condition === "under_option" && alreadyUnderOption ) { //cancel option
-    return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn-danger mx-5 cancelOptButton">annuler l'option</button>`;
+    return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn-danger cancelOptButton">annuler l'option</button>`;
   }else{ // nothing
     return "";
   }
