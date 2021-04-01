@@ -1,4 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
+import {displayErrorMessage} from "../utils/utils.js";
+
 let page = document.querySelector("#page");
 let visiblePhotos;
 
@@ -12,6 +14,9 @@ const HomePage = async () => {
 
 const getPageHTML = () => {
 	return `
+	<div class="col-5 mx-auto">
+        <div id="errorDiv" class="d-none"></div>
+    </div>
     <div class="row mx-0 pt-5">
         <div class="col-2"></div>
         <div class="col-8">` + getCarousel() + `</div>
@@ -83,8 +88,9 @@ const getVisiblePhotos = async () => {
 	}).then((data) => {
 		ret = data;
 	}).catch((err) => {
-		console.error(err);
-	});
+        console.log("Erreur de fetch !! :´<\n" + err);
+        displayErrorMessage("errorDiv", err);
+      });
 
 	return ret;
 }

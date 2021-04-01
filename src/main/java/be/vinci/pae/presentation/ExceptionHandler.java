@@ -24,7 +24,7 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
       return Response.temporaryRedirect(URI.create("/")).build(); 
     }
     logThrowable(exception);
-    return Response.status(getStatusCode(exception)).entity(getEntity(exception)).build();
+    return Response.status(getStatusCode(exception), getMessage(exception)).build();
   }
 
   private int getStatusCode(Throwable e) {
@@ -47,7 +47,7 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
     return 500;
   }
 
-  private Object getEntity(Throwable e) {
+  private String getMessage(Throwable e) {
     if (e instanceof BusinessException) {
       return e.getMessage();
     }
