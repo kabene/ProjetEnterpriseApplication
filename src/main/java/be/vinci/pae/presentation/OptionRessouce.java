@@ -1,5 +1,6 @@
 package be.vinci.pae.presentation;
 
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.ucc.OptionUCC;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -21,6 +23,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -79,6 +83,23 @@ public class OptionRessouce {
     OptionDTO optionDTO = optionUCC.cancelOption(currentUser, optionId);
     optionDTO = Json.filterPublicJsonView(optionDTO, OptionDTO.class);
     return Response.ok(optionDTO, MediaType.APPLICATION_JSON).build();
+  }
+
+  @GET
+  @Path("/list")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public Response getByUser(@Context ContainerRequest request){
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /option/list");
+    UserDTO currentUser = (UserDTO) request.getProperty("user");
+    List<OptionDTO> optionDTOs = optionUCC.listOption(currentUser);
+    List<OptionDTO> res = new ArrayList<>();
+    for (OptionDTO dto : optionDTOs) {
+      OptionDTO filteredDTO = Json.filterPublicJsonView(dto, OptionDTO.class);
+      res.add(filteredDTO);
+    }
+    return Response.ok(res).build();
+
   }
 
 

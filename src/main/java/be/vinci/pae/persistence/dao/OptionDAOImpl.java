@@ -1,5 +1,6 @@
 package be.vinci.pae.persistence.dao;
 
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.OptionFactory;
@@ -9,6 +10,8 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OptionDAOImpl implements OptionDAO {
 
@@ -96,6 +99,30 @@ public class OptionDAOImpl implements OptionDAO {
     return optionFound;
   }
 
+  /**
+   * list all the options of the user.
+   *
+   * @param userId userId.
+   * @return list of all the option tha the user made.
+   */
+  @Override
+  public List<OptionDTO> findAll(int userId) {
+    List<OptionDTO> res = new ArrayList<>();
+    String query = " SELECT * FROM satchofurniture.options o WHERE o.client_id=? ";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, userId);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        res.add(toDTO(rs));
+      }
+      rs.close();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return res;
+  }
 
   /**
    * Creates and fills a OptionDTO object using a ResultSet.

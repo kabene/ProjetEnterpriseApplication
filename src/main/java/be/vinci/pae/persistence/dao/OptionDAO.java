@@ -2,6 +2,7 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import java.util.List;
 
 public interface OptionDAO {
 
@@ -11,7 +12,7 @@ public interface OptionDAO {
    *
    * @param user        user.
    * @param furnitureId furnitureId.
-   * @param duration  duration
+   * @param duration    duration
    * @return OptionDTO.
    */
   OptionDTO introduceOption(UserDTO user, int furnitureId, int duration);
@@ -31,5 +32,11 @@ public interface OptionDAO {
    */
   OptionDTO getOption(int id);
 
-
+  /**
+   * list all the options of the user.
+   *
+   * @param userId userId.
+   * @return list of all the option tha the user made.
+   */
+  List<OptionDTO> findAll(int userId);
 }

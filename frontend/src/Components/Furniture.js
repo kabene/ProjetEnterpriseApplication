@@ -7,6 +7,7 @@ let furnitureList;
 let currentUser;
 
 
+
 const Furniture = async () => {
     currentUser = getUserSessionData();
 
@@ -44,6 +45,7 @@ const getFurnitureList = async () => {
     });
     return ret;
 }
+
 
 
 const generateTable = () => {
@@ -128,13 +130,15 @@ const generateItemAndModal = (furniture) => {
 
 
 const getOptionButton = (furniture) => {
-    if (furniture.condition === "available for sale" && currentUser !== null /*TODO check if the user is a simple customer*/) {
+    if (furniture.condition === "available_for_sale" && currentUser !== null /*TODO check if the user is a simple customer*/) {
         //TODO add events when clicking on button
         return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">Introduire une option</button>`;
-    } else {
+    } else if( 1/*TODO*/ ){
         //TODO add 'annuler option' button + event when clicking on it if the user has booked the furniture
+        return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">annuler l'option</button>`;
+    }else {
+       //TODO timer
     }
-    return "";
 }
 
 const getTabPhotoToRender = (furniture) => {
@@ -146,6 +150,18 @@ const getTabPhotoToRender = (furniture) => {
             photosToRender.push(p);
     })
     return photosToRender;
+}
+
+const generateOptionForm = () => {
+    let res = `
+  <form>
+    <div class="form-group">
+      <label for="sellingPriceInput" class="mr-3">Duree: </label>
+      <input type="number" id="sellingPriceInput" class="w-25" name="sellingPriceInput" min="1" step="1" max="5"> jours
+    </div>
+  </form>
+  `;
+    return res;
 }
 
 
