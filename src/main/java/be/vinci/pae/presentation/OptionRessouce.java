@@ -89,10 +89,9 @@ public class OptionRessouce {
   @Path("/list")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
-  public Response getByUser(@Context ContainerRequest request){
+  public Response getByUser(){
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /option/list");
-    UserDTO currentUser = (UserDTO) request.getProperty("user");
-    List<OptionDTO> optionDTOs = optionUCC.listOption(currentUser);
+    List<OptionDTO> optionDTOs = optionUCC.listOption();
     List<OptionDTO> res = new ArrayList<>();
     for (OptionDTO dto : optionDTOs) {
       OptionDTO filteredDTO = Json.filterPublicJsonView(dto, OptionDTO.class);

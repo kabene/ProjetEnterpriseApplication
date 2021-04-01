@@ -91,15 +91,14 @@ public class OptionUCCImpl implements OptionUCC {
   /**
    * list all the options.
    *
-   * @param currentUser the user that made the requests.
-   * @return list of all the Option made by a user.
+   * @return list of all the Options.
    */
   @Override
-  public List<OptionDTO> listOption(UserDTO currentUser) {
+  public List<OptionDTO> listOption() {
     List<OptionDTO> dtos;
     dalServices.startTransaction();
     try {
-      dtos = optionDAO.findAll(currentUser.getId());
+      dtos = optionDAO.findAll();
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();

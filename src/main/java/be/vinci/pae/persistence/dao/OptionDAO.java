@@ -33,10 +33,9 @@ public interface OptionDAO {
   OptionDTO getOption(int id);
 
   /**
-   * list all the options of the user.
+   * list all the options .
    *
-   * @param userId userId.
-   * @return list of all the option tha the user made.
+   * @return list of all the option.
    */
-  List<OptionDTO> findAll(int userId);
+  List<OptionDTO> findAll();
 }

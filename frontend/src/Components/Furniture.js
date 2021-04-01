@@ -5,6 +5,7 @@ import imageStub from "../img/furnitures/Bureau_1.png"
 let page = document.querySelector("#page");
 let furnitureList;
 let currentUser;
+let optionList;
 
 
 
@@ -14,8 +15,11 @@ const Furniture = async () => {
     page.innerHTML = generateLoadingAnimation();
 
     furnitureList = await getFurnitureList();
+    optionList = await getOptionList();
 
     page.innerHTML = generateTable();
+
+   let submitOption= document.addEventListener("click",document.getElementById())
 }
 
 
@@ -44,6 +48,26 @@ const getFurnitureList = async () => {
         console.error(err);
     });
     return ret;
+}
+
+const getOptionList= async () => {
+  let ret = [];
+  await fetch("/option/list", {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok)
+      throw new Error("Error code : " + response.status + " : " + response.statusText);
+    return response.json();
+  }).then((data) => {
+    ret = data;
+  }).catch((err) => {
+    console.error(err);
+  });
+  return ret;
 }
 
 
@@ -130,15 +154,15 @@ const generateItemAndModal = (furniture) => {
 
 
 const getOptionButton = (furniture) => {
-    if (furniture.condition === "available_for_sale" && currentUser !== null /*TODO check if the user is a simple customer*/) {
-        //TODO add events when clicking on button
-        return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">Introduire une option</button>`;
-    } else if( 1/*TODO*/ ){
-        //TODO add 'annuler option' button + event when clicking on it if the user has booked the furniture
-        return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">annuler l'option</button>`;
-    }else {
-       //TODO timer
-    }
+  if (furniture.condition === "available_for_sale" && currentUser !== null /*TODO check if the user is a simple customer*/) {
+    //TODO add events when clicking on button
+    return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">Introduire une option</button>`;
+  } else if( furniture.condition === "under_option" && optionList.furnitureId) {
+    //TODO add 'annuler option' button + event when clicking on it if the user has booked the furniture
+    return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">annuler l'option</button>`;
+  }else{
+
+  }
 }
 
 const getTabPhotoToRender = (furniture) => {

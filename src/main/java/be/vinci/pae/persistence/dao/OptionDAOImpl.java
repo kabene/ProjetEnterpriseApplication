@@ -100,18 +100,15 @@ public class OptionDAOImpl implements OptionDAO {
   }
 
   /**
-   * list all the options of the user.
-   *
-   * @param userId userId.
-   * @return list of all the option tha the user made.
+   * list all the options .
+   * @return list of all the options.
    */
   @Override
-  public List<OptionDTO> findAll(int userId) {
+  public List<OptionDTO> findAll() {
     List<OptionDTO> res = new ArrayList<>();
-    String query = " SELECT * FROM satchofurniture.options o WHERE o.client_id=? ";
+    String query = " SELECT * FROM satchofurniture.options ";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setInt(1, userId);
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
         res.add(toDTO(rs));
