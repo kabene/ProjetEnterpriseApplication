@@ -10,9 +10,6 @@ import java.util.List;
 
 public class FurnitureTypeDAOImpl extends AbstractDAO implements FurnitureTypeDAO {
 
-  @Inject
-  ConnectionBackendDalServices dalServices;
-
   @Override
   public String findById(int id) {
     String res = "";

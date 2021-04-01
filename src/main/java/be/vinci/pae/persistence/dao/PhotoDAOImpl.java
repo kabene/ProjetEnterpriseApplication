@@ -14,8 +14,6 @@ import java.util.List;
 public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
 
   @Inject
-  private ConnectionBackendDalServices dalServices;
-  @Inject
   private PhotoFactory photoFactory;
 
   @Override
