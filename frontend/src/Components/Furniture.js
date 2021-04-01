@@ -230,23 +230,25 @@ const generateItemAndModal = (furniture) => {
 
 const getOptionButton = (furniture) => {
   let alreadyUnderOption=false;
+  console.log(optionList);
   optionList.forEach(option=>{
-      if( option.furnitureId !== furniture.furnitureId){
+      if( option.furnitureId == furniture.furnitureId){
           if( !option.canceled){
-            alreadyUnderOption =true;
+            if(option.userId == currentUser.user.id) {
+              alreadyUnderOption =true;
+            }
        }
   }
   });
 
-  if (furniture.condition === "available_for_sale" &&  !alreadyUnderOption && currentUser !== null ) {
+  if (furniture.condition === "available_for_sale" && currentUser !== null ) { //place option
 
     let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , " btnCreateOption btn btn-primary mx-5");
     return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
-
-  } else if( furniture.condition === "under_option" && alreadyUnderOption ) {
-
+  } 
+  else if( furniture.condition === "under_option" && alreadyUnderOption ) { //cancel option
     return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn btn-primary mx-5 cancelOptButton">annuler l'option</button>`;
-  }else{
+  }else{ // nothing
     return "";
   }
 }
