@@ -28,6 +28,7 @@ const Furniture = async () => {
     })
 }
 const cancelOption= (e)=>{
+  e.preventDefault();
   let furnitureId = e.target.id.substring(4);
   let optionId;
   optionList.forEach(option=>{
@@ -61,6 +62,7 @@ const cancelOption= (e)=>{
 
 
 const addOption =  (e) => {
+  e.preventDefault();
   let furnitureId = e.target.id.substring(3);
   let duration = e.target.parentElement.parentElement.querySelector("input").value;
 
@@ -260,7 +262,7 @@ const getOptionButton = (furniture) => {
     return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
   } 
   else if( furniture.condition === "under_option" && alreadyUnderOption ) { //cancel option
-    return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn btn-primary mx-5 cancelOptButton">annuler l'option</button>`;
+    return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn-danger mx-5 cancelOptButton">annuler l'option</button>`;
   }else{ // nothing
     return "";
   }
