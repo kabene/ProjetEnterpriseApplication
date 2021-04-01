@@ -50,7 +50,7 @@ const cancelOption= (e)=>{
     }
     return response.json();
   }).then((data) => {
-    refresh(data.option, "available_for_sale");
+    refresh(data, "available_for_sale");
   }).catch((err) => {
     //TODO
     console.log(err);
@@ -98,6 +98,9 @@ const refresh = (data, condition) => {
   document.querySelectorAll(".btnCreateOption").forEach(element =>{
     element.addEventListener("click", addOption )
   });
+  document.querySelectorAll(".cancelOptButton").forEach(element=>{
+    element.addEventListener("click",cancelOption);
+  })
 }
 
 
