@@ -85,6 +85,12 @@ Authorization: {{jwt}}
 
 ###
 
+// getAllConfirmed()
+GET {{baseUrl}}/users/detail/confirmed
+Authorization: {{jwt}}
+
+###
+
 // getSearchResult()
 POST {{baseUrl}}/users/detail/search
 Content-Type: application/json
