@@ -18,7 +18,7 @@ function escapeHtml(text) {
         .replace(/\//g, "&#047;");
 }
 
-export async function verifyAdmin (){
+async function verifyAdmin (){
     let token = getUserSessionData().token;
     let res = false;
     let result;
@@ -46,7 +46,16 @@ export async function verifyAdmin (){
     return res;
 }
 
+const removeTimeouts = (timeouts) => {
+    timeouts.forEach(timeout => clearTimeout(timeout))
+}
+  
+const generateLoadingAnimation = () => {
+return `
+    <div class="text-center">
+        <h2>Loading <div class="spinner-border"></div></h2>
+    </div>`
+}
 
 
-
-export {escapeHtml};
+export {escapeHtml, removeTimeouts, generateLoadingAnimation, verifyAdmin};

@@ -1,8 +1,9 @@
 import {getUserSessionData} from "../utils/session";
+import {removeTimeouts, generateLoadingAnimation} from "../utils/utils";
 import {Loader} from "@googlemaps/js-api-loader";
-import {verifyAdmin} from "../utils/utils";
 
 let page = document.querySelector("#page");
+let waitingUserList;
 let usersList;
 let currentUser;
 let timeouts = [];
@@ -14,65 +15,94 @@ const Users = async () => {
 
   page.innerHTML = generateLoadingAnimation();
 
+  waitingUserList = await getWaitingUserList();
   usersList = await getUserList();
-  
+
   page.innerHTML = generateUsersPage();
 
-  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", displayShortElements));
-  document.getElementById("buttonReturn").addEventListener("click", displayLargeTable);
+  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
+  document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
 }
 
+
+
+/********************  Business methods  **********************/
+
+/**
+ * Called when clicking a row in the body table.
+ * Display the short elements if the table is large, else just refresh the user card.
+ */
+const onRowClick = (e) => {
+  if (document.querySelector('#shortTableContainer') !== null)
+    displayUserCard(e);
+  else
+    displayShortElements(e);
+}
+
+/**
+ * Called when clicking on the buttonReturn.
+ * Hide all the short elements, display the large ones and magnify the large.
+ */
+ const displayLargeTable = () => {
+  removeTimeouts(timeouts);
+  //hide
+  document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
+  //display
+  timeouts.push(setTimeout(() => document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "")
+                    , 750));
+  //magnify
+  document.querySelector('#shortTable').id = "largeTable";
+  if (document.querySelector('#shortTableContainer') !== null) //can be undefined because of the setTimeout in displayShortElements
+    document.querySelector('#shortTableContainer').id = "largeTableContainer";
+}
+
+/**
+ * Called when clicking on the rows of the large table's body.
+ * Shrink the large table, hide the not needed element in the table and display the user card needed.
+ */
 const displayShortElements = async (e) => {
-  removeTimeouts();
-  //display / hide the needed elements
-  let largeTable = document.querySelector('#largeTable');
-  if (largeTable !== null)
-    largeTable.id = "shortTable";
+  removeTimeouts(timeouts);
+  //shrink
+  document.querySelector('#largeTable').id = "shortTable";
+  timeouts.push(setTimeout( () => document.querySelector('#largeTableContainer').id = "shortTableContainer"
+                    , 1000));
+  //hide
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
-  if (document.querySelector('#largeTableContainer') !== null)
-    timeouts.push(setTimeout(changeContainerId, 1000));
+  //display
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
-  let userCardDiv = document.getElementById("userCardDiv");
+  await displayUserCard(e);
+
+  //TODO move
+}
+
+/**
+ * Called when clicking on one of the rows of the table's body (large or short).
+ * Display the card of the user that has been clicked on the table.
+ */
+const displayUserCard = async (e) => {
+  let userCardDiv = document.querySelector("#userCardDiv");
   userCardDiv.innerHTML = generateLoadingAnimation();
-
-  //get the correct element
-  let element = e.srcElement;
-  while (!element.className.includes("toBeClicked")) {
+  //get the tr element
+  let element = e.target;
+  while (!element.className.includes("toBeClicked"))
     element = element.parentElement;
-  }
-  let attributesTab = element.attributes;
-
+  let userId = element.attributes["userId"].value;
   //generate the user card
-   userDetail = await clientDetail(attributesTab["userId"].value);
+  userDetail = await clientDetail(userId);
   userCardDiv.innerHTML = generateUserCard(userDetail);
   await AddressToGeo(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune)
                       .catch((err) => console.error(err));
-
-
-  let verifA =document.querySelector("#accept");
-  let verifR =document.querySelector("#refuse");
-  valueButtonValid=e.srcElement.id;
-
-  verifA.addEventListener("click",validation);
-  verifR.addEventListener("click",validation);
-
+  //add event listener to validation button if the user of the user card is waiting                    
+  if (userDetail.waiting) {
+    valueButtonValid = e.target.id;
+    document.querySelector("#accept").addEventListener("click",validation);
+    document.querySelector("#refuse").addEventListener("click",validation);
+  }
 }
 
-const changeContainerId = () => {
-  document.querySelector('#largeTableContainer').id = "shortTableContainer";
-}
 
-const displayLargeTable = () => {
-  document.querySelector('#shortTableContainer').id = "largeTableContainer";
-  timeouts.push(setTimeout(displayLargeElements, 750));
-  document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
-  document.querySelector('#shortTable').id = "largeTable";
-}
-
-const displayLargeElements = () => {
-  document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "");
-}
+/********************  HTML generation  **********************/
 
 const generateUsersPage = () => {
   return `
@@ -226,11 +256,12 @@ const generateUserCard = (userDetail) => {
             </div>
 
             <div class="col-md-2" style="display: flex"> `;
-            if(userDetail.waiting) {
-              page += `<input type="button" class="profile-edit-btn " id="accept" value="accepter" style="color: #0062cc; margin:5px"/>
-              <input type="button" class="profile-edit-btn "  id="refuse" value="refuser" style="color: red; margin:5px"/>`;
-            }
-       page+= `</div>
+      if(userDetail.waiting) {
+        page += `<input type="button" class="profile-edit-btn" id="accept" value="accepter" style="color: #0062cc; margin:5px"/>
+                 <input type="button" class="profile-edit-btn" id="refuse" value="refuser" style="color: red; margin:5px"/>
+                 `;
+      }
+       page += `</div>
           </div>         
           <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             <div class="row">
@@ -252,10 +283,12 @@ const generateUserCard = (userDetail) => {
     </div>
   </div>
 </form>           
-</div>
-    `;
-            return page;
+</div>`;
+  return page;
 }
+
+
+/********************  Backend fetch  **********************/
 
 const clientDetail = async (id) => {
   let userDetails;
@@ -280,59 +313,32 @@ const clientDetail = async (id) => {
   return userDetails;
 }
 
-const map = async (latitude, lngitude) => {
-  if (latitude != null && lngitude != null) {
-    console.log(latitude, lngitude);
-    let map;
-    const additionalOptions = {};
-    const place = {lat: latitude, lng: lngitude};
-    const loader = new Loader({
-      apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
-      version: "weekly",
-      ...additionalOptions,
-    });
-    loader.load().then(() => {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: place,
-        zoom: 13,
-      });
-      new google.maps.Marker({
-        position: place,
-        map: map,
-      })
-    });
-  } else {
-    console.log("adresse not found");
-    const additionalOptions = {};
-    let map;
-    let  place={lat: 41.726931, lng: -49.948253};
-    const loader = new Loader({
-      apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
-      version: "weekly",
-      ...additionalOptions,
-    });
-    loader.load().then(() => {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: place,
-        zoom: 13,
-      });
-      new google.maps.Marker({
-        position: place,
-        map: map,
-      })
-    });
-  }
-}
-
-const generateLoadingAnimation = () => {
-  return `
-      <div class="text-center">
-          <h2>Loading <div class="spinner-border"></div></h2>
-      </div>`
+const getWaitingUserList = async () => {
+  let ret = [];
+  await fetch("/users/detail/waiting", {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    ret = data;
+  }).catch((err) => {
+    console.error(err);
+  });
+  return ret;
 }
 
 const getUserList = async () => {
   let ret = [];
+  //TODO change to get only confirmed
   await fetch("/users/detail", {
     method: "GET",
     headers: {
@@ -354,6 +360,39 @@ const getUserList = async () => {
   return ret;
 }
 
+
+const validation = async (e) => {
+  let value = e.target.id;
+  let val;
+  if (value === "refuse") 
+    val = {value: false,};
+  else if(value === "accept") 
+    val= {value: true,};
+
+  let ret = [];
+  await fetch(`/users/validate/${userDetail.id}`, {
+    method: "PATCH",
+    body:JSON.stringify(val),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok)
+      throw new Error("Error code : " + response.status + " : " + response.statusText);
+    return response.json();
+  }).then((data) => {
+    ret = data;
+  }).catch((err) => {
+    console.error(err);
+  });
+
+ return ret; // TODO REFRESH PAGE IN REAL TIME
+}
+
+
+/********************  MAP API  **********************/
+
 const AddressToGeo = async (address) => {
 
   var platform = new H.service.Platform({
@@ -365,50 +404,54 @@ const AddressToGeo = async (address) => {
   await service.geocode({
         q: address
       },  (result) => {
-       if(result.items[0]!=null) {
+       if(result.items[0] != null) 
          map(result.items[0].position.lat, result.items[0].position.lng);
-       }
       },
-     await map(null, null))
+     await map(null, null));
 }
 
-const removeTimeouts = () => {
-  timeouts.forEach(timeout => {
-      clearTimeout(timeout);
-  })
-}
 
-const validation= async (e)=> {
-  let id =userDetail.id;
-  let value=e.srcElement.id;
-  let val;
-  if(value=="refuse"){
-   val= {value: false,}
-  }else if(value=="accept"){
-    val= {value: true,}
+const map = async (latitude, lngitude) => {
+  if (latitude != null && lngitude != null) {
+    let map;
+    const additionalOptions = {};
+    const place = {lat: latitude, lng: lngitude};
+    const loader = new Loader({
+      apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
+      version: "weekly",
+      ...additionalOptions,
+    });
+    loader.load().then(() => {
+      map = new google.maps.Map(document.querySelector("#map"), {
+        center: place,
+        zoom: 13,
+      });
+      new google.maps.Marker({
+        position: place,
+        map: map,
+      })
+    });
+  } else {
+    console.log("adresse not found");
+    let map;
+    const additionalOptions = {};
+    const place = {lat: 41.726931, lng: -49.948253};
+    const loader = new Loader({
+      apiKey: "AIzaSyCOBWUhB79EsC0kEXXucgtPUgmLHqoJ1u4",
+      version: "weekly",
+      ...additionalOptions,
+    });
+    loader.load().then(() => {
+      map = new google.maps.Map(document.querySelector("#map"), {
+        center: place,
+        zoom: 13,
+      });
+      new google.maps.Marker({
+        position: place,
+        map: map,
+      })
+    });
   }
-  let ret = [];
-  await fetch(`/users/validate/${id}`, {
-    method: "PATCH",
-    body:JSON.stringify(val),
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText
-      );
-    }
-    return response.json();
-  }).then((data) => {
-    ret = data;
-  }).catch((err) => {
-    console.error(err);
-    return;
-  });
- return ret; // TODO REFRESH PAGE IN REAL TIME
 }
 
 export default Users;

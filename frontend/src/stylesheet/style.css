@@ -374,6 +374,16 @@ body, .search-bar {
 }
 
 /********************************User**********************************/
+
+#largeTableContainer {
+  overflow-x: auto;
+}
+
+#largeTable {
+  width: 100%;
+  transition: 1s;
+}
+
 #shortTableContainer {
   display: grid;
   grid-template-columns: 1fr 4fr;
@@ -384,15 +394,6 @@ body, .search-bar {
 #shortTable {
   width: 15em;
   transition: 1s;
-}
-
-#largeTable {
-  width: 100%;
-  transition: 1s;
-}
-
-#largeTableContainer {
-  overflow-x: auto;
 }
 
 @media (max-width: 800px) {
