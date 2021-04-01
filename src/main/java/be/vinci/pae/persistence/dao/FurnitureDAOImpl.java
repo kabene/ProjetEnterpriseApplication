@@ -16,8 +16,6 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
 
   @Inject
   private FurnitureFactory furnitureFactory;
-  @Inject
-  private ConnectionBackendDalServices dalServices;
 
   /**
    * Finds one piece of furniture in the db having a specific id.

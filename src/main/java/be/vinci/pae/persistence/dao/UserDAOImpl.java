@@ -17,8 +17,6 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
 
   @Inject
   private UserFactory userFactory;
-  @Inject
-  private ConnectionBackendDalServices dalServices;
 
   /**
    * Executes a query to find a user having a specific username.

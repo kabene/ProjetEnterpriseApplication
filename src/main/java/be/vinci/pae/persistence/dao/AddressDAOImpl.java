@@ -14,9 +14,6 @@ import org.apache.commons.text.StringEscapeUtils;
 public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
 
   @Inject
-  private ConnectionBackendDalServices dalServices;
-
-  @Inject
   private AddressFactory addressFactory;
 
 

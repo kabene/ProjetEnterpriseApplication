@@ -15,8 +15,6 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
 
   @Inject
   private OptionFactory optionFactory;
-  @Inject
-  private ConnectionBackendDalServices dalServices;
 
 
   /**
