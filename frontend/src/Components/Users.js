@@ -354,15 +354,17 @@ const getConfirmedUsersList = async () => {
 }
 
 
-const validation = async () => {
+const validation= async (e)=> {
+  let id =userDetail.id;
+  let value=e.srcElement.id;
   let val;
-  if (valueButtonValid === "refuse") 
-    val = {value: false,};
-  else if(valueButtonValid === "accept") 
-    val= {value: true,};
-
+  if(value=="refuse"){
+    val= {value: false,}
+  }else if(value=="accept"){
+    val= {value: true,}
+  }
   let ret = [];
-  await fetch(`/users/validate/${userDetail.id}`, {
+  await fetch(`/users/validate/${id}`, {
     method: "PATCH",
     body:JSON.stringify(val),
     headers: {
@@ -370,16 +372,19 @@ const validation = async () => {
       "Content-Type": "application/json",
     },
   }).then((response) => {
-    if (!response.ok)
-      throw new Error("Error code : " + response.status + " : " + response.statusText);
+    if (!response.ok) {
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText
+      );
+    }
     return response.json();
   }).then((data) => {
     ret = data;
   }).catch((err) => {
     console.error(err);
+    return;
   });
-
- return ret; // TODO REFRESH PAGE IN REAL TIME
+  return ret; // TODO REFRESH PAGE IN REAL TIME
 }
 
 
