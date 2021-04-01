@@ -1,5 +1,6 @@
 import { getUserSessionData } from "../utils/session";
-import imageStub from "../img/furnitures/Bureau_1.png"
+import imageStub from "../img/furnitures/Bureau_1.png";
+import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
 
 
 let page = document.querySelector("#page");
@@ -156,13 +157,20 @@ const generateItemAndModal = (furniture) => {
 const getOptionButton = (furniture) => {
   if (furniture.condition === "available_for_sale" && currentUser !== null /*TODO check if the user is a simple customer*/) {
     //TODO add events when clicking on button
-    return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">Introduire une option</button>`;
-  } else if( furniture.condition === "under_option" && optionList.furnitureId) {
+    let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , " btnCreateOption btn btn-primary mx-5");
+    return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
+  } else if( furniture.condition === "under_option" && optionListfurnitureId) {
     //TODO add 'annuler option' button + event when clicking on it if the user has booked the furniture
     return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">annuler l'option</button>`;
   }else{
 
   }
+}
+
+const generateTransitionModal = (id, label, triggerColorClass="primary", closeColorClass="danger") => {
+  let body = generateOptionForm();
+  let sendBtn = generateCloseBtn(label, "btn"+id, `btn btn-${triggerColorClass} mx-5 transitionBtn`);
+  return generateModalPlusTriggerBtn("modal_"+id, label, `btn btn-${triggerColorClass}`, `<h4>${label}</h4>`, body, `${sendBtn}`, "Fermer", `btn btn-${closeColorClass}`);
 }
 
 const getTabPhotoToRender = (furniture) => {
