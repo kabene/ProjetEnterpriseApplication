@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAOImpl implements UserDAO {
+public class UserDAOImpl extends AbstractDAO implements UserDAO {
 
   @Inject
   private UserFactory userFactory;
@@ -154,24 +154,13 @@ public class UserDAOImpl implements UserDAO {
   }
 
   /**
-   * getAllusers of the db.
+   * find all users of the db.
    *
    * @return list contains the users of the db.
    */
   @Override
-  public List<UserDTO> getAllUsers() {
-    List<UserDTO> users = new ArrayList<>();
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        users.add(toDTO(rs));
-      }
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return users;
+  public List<UserDTO> findAll() {
+    return findAll("users");
   }
 
   /**
@@ -280,7 +269,7 @@ public class UserDAOImpl implements UserDAO {
    * @param rs : the ResultSet containing the information
    * @throws SQLException in case of problem during access to the ResultSet
    */
-  private UserDTO toDTO(ResultSet rs) throws SQLException {
+  protected UserDTO toDTO(ResultSet rs) throws SQLException {
     UserDTO userFound = userFactory.getUserDTO();
     userFound.setId(rs.getInt("user_id"));
     userFound.setLastName(rs.getString("last_name"));

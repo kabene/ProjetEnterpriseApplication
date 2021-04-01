@@ -9,10 +9,9 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-public class OptionDAOImpl implements OptionDAO {
+public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
 
   @Inject
   private OptionFactory optionFactory;
@@ -99,26 +98,13 @@ public class OptionDAOImpl implements OptionDAO {
   }
 
   /**
-   * list all the options .
+   * Finds all options.
    *
    * @return list of all the options.
    */
   @Override
   public List<OptionDTO> findAll() {
-    List<OptionDTO> res = new ArrayList<>();
-    String query = " SELECT * FROM satchofurniture.options ";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        res.add(toDTO(rs));
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return res;
+    return findAll("options");
   }
 
   @Override
@@ -150,7 +136,7 @@ public class OptionDAOImpl implements OptionDAO {
    * @param rs : the ResultSet containing the information
    * @throws SQLException in case of problem during access to the ResultSet
    */
-  private OptionDTO toDTO(ResultSet rs) throws SQLException {
+  protected OptionDTO toDTO(ResultSet rs) throws SQLException {
     OptionDTO optionFound = optionFactory.getOptionDTO();
     optionFound.setOptionId(rs.getInt("option_id"));
     optionFound.setDuration(rs.getInt("duration"));
