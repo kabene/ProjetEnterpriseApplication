@@ -99,7 +99,7 @@ CREATE TABLE satchofurniture.furniture_on_offer
     PRIMARY KEY (furniture_id, request_id)
 );
 
-
+SET datestyle = dmy;
 
 
 
@@ -197,35 +197,35 @@ VALUES (DEFAULT, 'Ile', 'Basile', 'bazz', 'bas.ile@gmail.be', 5, now(), 'custome
 -- 4. Les demandes de visite, dont vous trouverez les meubles à la page suivante.
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, condition, description, type_id)
-VALUES (1, 4, 'available for sale', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2);
+VALUES (1, 4, 'available_for_sale', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2);
 INSERT
 INTO satchoFurniture.photos (photo_id, furniture_id, is_on_home_page, is_visible, source)
 VALUES (DEFAULT, 1, true, true, 'img/furnitures/Bahut_2.png');
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, condition, description, type_id)
-VALUES (2, 4, 'available for sale', 'Large bureau 1m87 cm, deux colonnes de tiroirs', 6);
+VALUES (2, 4, 'available_for_sale', 'Large bureau 1m87 cm, deux colonnes de tiroirs', 6);
 INSERT
 INTO satchoFurniture.photos
 VALUES (DEFAULT, 2, true, true, 'img/furnitures/Bureau_1.png');
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, condition, description, type_id)
-VALUES (3, 4, 'refused', 'Table jardin en bois brut', 21);
+VALUES (3, 4, 'refurefased', 'Table jardin en bois brut', 21);
 INSERT
 INTO satchoFurniture.photos
 VALUES (DEFAULT, 3, true, true, 'img/furnitures/table-jardin-recente.jpg');
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, condition, description, type_id)
-VALUES (4, 5, 'available for sale', 'Table en chêne, pieds en fer forgé', 21);
+VALUES (4, 5, 'available_for_sale', 'Table en chêne, pieds en fer forgé', 21);
 INSERT
 INTO satchoFurniture.photos
 VALUES (DEFAULT, 4, true, true, 'img/furnitures/Table.jpg');
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, condition, description, type_id)
-VALUES (5, 5, 'available for sale', 'Secrétaire en acajou, marqueterie', 20);
+VALUES (5, 5, 'available_for_sale', 'Secrétaire en acajou, marqueterie', 20);
 INSERT
 INTO satchoFurniture.photos
 VALUES (DEFAULT, 5, true, true, 'img/furnitures/Secretaire.png');
