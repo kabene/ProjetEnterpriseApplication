@@ -82,10 +82,10 @@ public class UserDAOImpl implements UserDAO {
    */
   @Override
   public void register(UserDTO user, int addressId) {
-
     String query =
         " INSERT INTO satchoFurniture.users VALUES(DEFAULT,?,?,?,?," + addressId
-            + ",now(),?,?,0,0,'true')";
+            + ",now(),?,?,0,0,?)";
+
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setString(1, StringEscapeUtils.escapeHtml4(user.getLastName()));
@@ -94,6 +94,7 @@ public class UserDAOImpl implements UserDAO {
       ps.setString(4, StringEscapeUtils.escapeHtml4(user.getEmail()));
       ps.setString(5, StringEscapeUtils.escapeHtml4(user.getRole()));
       ps.setString(6, StringEscapeUtils.escapeHtml4(user.getPassword()));
+      ps.setBoolean(7, user.isWaiting());
       ps.execute();
       ps.close();
     } catch (SQLException e) {

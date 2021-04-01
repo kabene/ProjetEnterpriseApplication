@@ -28,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 public class UserUCCImplTest {
@@ -172,14 +173,16 @@ public class UserUCCImplTest {
   }
 
   @DisplayName("TEST UserUCC.register : given valid fields, should return matching UserDTO")
-  @Test
-  public void test_register_success() {
+  @ParameterizedTest
+  @ValueSource(strings = {"customer", "antique_dealer", "admin"})
+  public void test_register_success(String role) {
     String email = "email@gmail.com";
     String username = "username";
     String blancPwd = "pwd";
     String hashPwd = "hash";
     int addressId = 0;
 
+    Mockito.when(mockUser1.getRole()).thenReturn(role);
     Mockito.when(mockUser1.getEmail()).thenReturn(email);
     Mockito.when(mockUser1.getUsername()).thenReturn(username);
     Mockito.when(mockUser1.getPassword()).thenReturn(blancPwd);
@@ -194,6 +197,7 @@ public class UserUCCImplTest {
     UserDTO actual = userUCC.register(mockUser1, mockAddressDTO);
     assertEquals(mockUser1, actual, "The successful register should return the UserDTO");
 
+    Mockito.verify(mockUser1).setWaiting(!role.equals("customer"));
     Mockito.verify(mockUser1, Mockito.atLeastOnce()).getUsername();
     Mockito.verify(mockUser1, Mockito.atLeastOnce()).getEmail();
     Mockito.verify(mockUser1).getPassword();
@@ -211,6 +215,7 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+
   }
 
   @DisplayName("TEST UserUCC.register : given already "
@@ -316,7 +321,7 @@ public class UserUCCImplTest {
       + " should return empty list of Users")
   @Test
   public void test_getAll_emptyDB_shouldReturnEmptyListOfUsers() {
-    List<UserDTO> emptyList = new ArrayList<UserDTO>();
+    List<UserDTO> emptyList = new ArrayList<>();
     Mockito.when(mockUserDAO.getAllUsers()).thenReturn(emptyList);
     assertEquals(emptyList, userUCC.getAll(),
         "UserUCC.getAll should return a empty List<UserDTO> of all users");
@@ -359,7 +364,7 @@ public class UserUCCImplTest {
       + " should return empty list of Users")
   @Test
   public void test_getAllWaiting_noUserWaiting_shouldReturnEmptyListOfUsers() {
-    List<UserDTO> emptyList = new ArrayList<UserDTO>();
+    List<UserDTO> emptyList = new ArrayList<>();
     Mockito.when(mockUserDAO.getAllWaitingUsers()).thenReturn(emptyList);
     assertEquals(emptyList, userUCC.getAllWaiting(),
         "UserUCC.getAllWaiting should return a empty List<UserDTO> of user");
@@ -402,7 +407,7 @@ public class UserUCCImplTest {
       + " should return empty list of Users")
   @Test
   public void test_getAllConfirmed_noUserConfirmed_shouldReturnEmptyListOfUsers() {
-    List<UserDTO> emptyList = new ArrayList<UserDTO>();
+    List<UserDTO> emptyList = new ArrayList<>();
     Mockito.when(mockUserDAO.getAllConfirmedUsers()).thenReturn(emptyList);
     assertEquals(emptyList, userUCC.getAllConfirmed(),
         "UserUCC.getAllConfirmed should return a empty List<UserDTO> of user");
@@ -448,7 +453,7 @@ public class UserUCCImplTest {
   @Test
   public void test_getSearchResult_givenNotExistingUsername_shouldReturnEmptyListOfUsers() {
     String username = "notExistingUsername";
-    List<UserDTO> emptyList = new ArrayList<UserDTO>();
+    List<UserDTO> emptyList = new ArrayList<>();
 
     Mockito.when(mockUserDAO.findBySearch(username)).thenReturn(emptyList);
     assertEquals(emptyList, userUCC.getSearchResult(username),
