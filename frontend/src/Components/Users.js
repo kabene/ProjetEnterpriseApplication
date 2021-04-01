@@ -1,6 +1,6 @@
 import {getUserSessionData} from "../utils/session";
 import {Loader} from "@googlemaps/js-api-loader";
-import {verifyAdmin} from "../utils/utils";
+import {displayErrorMessage} from "../utils/utils";
 
 let page = document.querySelector("#page");
 let usersList;
@@ -76,6 +76,9 @@ const displayLargeElements = () => {
 
 const generateUsersPage = () => {
   return `
+        <div class="col-5 mx-auto">
+          <div id="errorDiv" class="d-none"></div>
+        </div>
         <div id="largeTableContainer">
           <div>
             <!-- @author Milan Raring
@@ -275,7 +278,8 @@ const clientDetail = async (id) => {
   }).then((data) => {
     userDetails = data;
   }).catch((err) => {
-    console.error(err);
+    console.log("Erreur de fetch !! :´<\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
   return userDetails;
 }
@@ -349,7 +353,8 @@ const getUserList = async () => {
   }).then((data) => {
     ret = data;
   }).catch((err) => {
-    console.error(err);
+    console.log("Erreur de fetch !! :´<\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
   return ret;
 }
@@ -405,7 +410,8 @@ const validation= async (e)=> {
   }).then((data) => {
     ret = data;
   }).catch((err) => {
-    console.error(err);
+    console.log("Erreur de fetch !! :´<\n" + err);
+    displayErrorMessage("errorDiv", err);
     return;
   });
  return ret; // TODO REFRESH PAGE IN REAL TIME

@@ -1,6 +1,8 @@
 import { getUserSessionData } from "../utils/session";
 import imageStub from "../img/furnitures/Bureau_1.png";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
+import imageStub from "../img/furnitures/Bureau_1.png"
+import {displayErrorMessage} from "../utils/utils.js"
 
 
 let page = document.querySelector("#page");
@@ -13,12 +15,20 @@ let optionList;
 const Furniture = async () => {
     currentUser = getUserSessionData();
 
-    page.innerHTML = generateLoadingAnimation();
+    page.innerHTML = `
+    <div class="col-5 mx-auto">
+        <div id="errorDiv" class="d-none"></div>
+    </div>
+    ${generateLoadingAnimation()}`;
 
     furnitureList = await getFurnitureList();
     optionList = await getOptionList();
 
-    page.innerHTML = generateTable();
+    page.innerHTML = `
+    <div class="col-5 mx-auto">
+        <div id="errorDiv" class="d-none"></div>
+    </div>
+    ${generateTable()}`;
 
     document.querySelectorAll(".btnCreateOption").forEach(element =>{
         element.addEventListener("click", addOption );
@@ -128,8 +138,9 @@ const getFurnitureList = async () => {
     }).then((data) => {
          ret = data;
     }).catch((err) => {
-        console.error(err);
-    });
+        console.log("Erreur de fetch !! :´<\n" + err);
+        displayErrorMessage("errorDiv", err);
+      });
     return ret;
 }
 
@@ -148,7 +159,8 @@ const getOptionList= async () => {
   }).then((data) => {
     ret = data;
   }).catch((err) => {
-    console.error(err);
+      console.log("Erreur de fetch !! :´<\n" + err);
+      displayErrorMessage("errorDiv", err);
   });
   return ret;
 }
@@ -260,7 +272,7 @@ const getOptionButton = (furniture) => {
 
     let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , " btnCreateOption btn btn-primary mx-5");
     return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
-  } 
+  }
   else if( furniture.condition === "under_option" && alreadyUnderOption ) { //cancel option
     return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn-danger mx-5 cancelOptButton">annuler l'option</button>`;
   }else{ // nothing
@@ -269,11 +281,7 @@ const getOptionButton = (furniture) => {
 }
 
 
-const generateTransitionModal = (id, label, triggerColorClass="primary", closeColorClass="danger") => {
-  let body = generateOptionForm();
-  let sendBtn = generateCloseBtn(label, "btn"+id, `btn btn-${triggerColorClass} mx-5 transitionBtn`);
-  return generateModalPlusTriggerBtn("modal_"+id, label, `btn btn-${triggerColorClass}`, `<h4>${label}</h4>`, body, `${sendBtn}`, "Fermer", `btn btn-${closeColorClass}`);
-}
+
 
 const getTabPhotoToRender = (furniture) => {
     let photos = furniture.photos;
