@@ -48,9 +48,11 @@ let pageHTML = `
     <div class="col-lg-4 col-10 p-3 mx-auto mx-lg-0 border border-1">
       <h2 class="text-center">Inscription</h2>
       <form id="registerForm">
-        <div class="form-group w-75 mx-auto">
+        <div class="form-group p-5 mx-auto">
           <div class="row">
-            <div class="col-12 col-xl-6 my-0 my-xl-auto">
+            <div class="col-0 col-xl-1"></div>
+
+            <div class="col-12 col-xl-4">
               <label for="usernameRegister">Pseudo*</label>
               <input class="form-control" id="usernameRegister" type="text" name="usernameRegister" placeholder="Entrez votre pseudo" required/>
               
@@ -67,30 +69,33 @@ let pageHTML = `
               <input class="form-control" id="passwordRegister" type="password" name="passwordRegister" placeholder="Entrez votre mot de passe" required/>
             </div>
 
+            <div class="col-0 col-xl-2"></div>
+
             <!-- Adresse -->
-            
-            <div class="col-12 col-xl-6 my-0 my-xl-auto">
-              <p class="mt-5 mt-lg-0">Adresse:</p>
+
+            <div class="col-12 col-xl-4 mt-5 mt-xl-0">
 
               <label for="streetRegister">Rue*</label>
-              <input class="form-control inputRegister my-2" id="streetRegister" type="text" name="streetRegister" placeholder="Entrez votre rue" required/>
+              <input class="form-control" id="streetRegister" type="text" name="streetRegister" placeholder="Entrez votre rue" required/>
               
               <label for="numRegister">Numero*</label>
-              <input class="form-control inputRegister my-2" id="numRegister" type="text" name="numRegister" placeholder="numero" required/>
+              <input class="form-control" id="numRegister" type="text" name="numRegister" placeholder="numero" required/>
               
               <label for="boxRegister">Boite*</label>
-              <input class="form-control inputRegister my-2" id="boxRegister" type="text" name="boxRegister" placeholder="boite" required/>
+              <input class="form-control" id="boxRegister" type="text" name="boxRegister" placeholder="boite" required/>
               
               <label for="postalRegister">Code postal*</label>
-              <input class="form-control inputRegister my-2" id="postalRegister" type="text" name="postalRegister" placeholder="code postal" required/>
+              <input class="form-control" id="postalRegister" type="text" name="postalRegister" placeholder="code postal" required/>
               
               <label for="communeRegister">Commune*</label>
-              <input class="form-control inputRegister my-2" id="communeRegister" type="text" name="communeRegister" placeholder="commune" required/>
+              <input class="form-control" id="communeRegister" type="text" name="communeRegister" placeholder="commune" required/>
               
               <label for="countryRegister">Pays*</label>
-              <input class="form-control inputRegister my-2" id="countryRegister" type="text" name="countryRegister" placeholder="pays" required/>
-              <div class="invalid-feedback w-75 mx-auto">Les champs marqués par * sont obligatoires.</div>
+              <input class="form-control" id="countryRegister" type="text" name="countryRegister" placeholder="pays" required/>
+              <div class="invalid-feedback">Les champs marqués par * sont obligatoires.</div>
             </div>
+
+            <div class="col-0 col-xl-1"></div>
           </div>
         </div>
         <select class="selectpicker" id="role">
