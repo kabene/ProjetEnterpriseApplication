@@ -17,6 +17,7 @@ const Users = async () => {
 
   waitingUsersList = await getWaitingUserList();
   confirmedUsersList = await getConfirmedUsersList();
+  console.log(confirmedUsersList);
 
   page.innerHTML = generateUsersPage();
 
@@ -94,8 +95,60 @@ const displayUserCard = async (e) => {
   //add event listener to validation button if the user of the user card is waiting                    
   if (userDetail.waiting) {
     valueButtonValid = e.target.id;
-    document.querySelector("#accept").addEventListener("click",validation);
-    document.querySelector("#refuse").addEventListener("click",validation);
+    document.querySelector("#accept").addEventListener("click",onValidateClick);
+    document.querySelector("#refuse").addEventListener("click",onValidateClick);
+  }
+}
+
+/**
+ * Called when click on accepter or refuser button
+ * Accept or refuse the user's request, display a small notification and update the card and the table
+ */
+const onValidateClick = async (e) => {
+  let validationButton = document.querySelector("#validationButton");
+  let validationButtonHTML = validationButton.outerHTML;
+  validationButton.innerHTML = generateLoadingAnimation();
+  let snackbar = document.querySelector("#snackbar");
+
+  let ret = await validation(e);
+
+  if (ret === null) {
+    //put back the validation buttons
+    validationButton.innerHTML = validationButtonHTML;
+    snackbar.innerText = "Erreur, l'opération a echoué";
+  } else {
+    //remove the validation button and update the user card and the table
+    validationButton.innerHTML = "";
+    snackbar.innerText = "L'opération a réussie";
+
+    removeFromArray(ret.id, waitingUsersList);
+    confirmedUsersList.push(ret);
+
+    document.querySelector("#waiting").innerText = "Considéré";
+    document.querySelector("#role").innerText = ret.role;
+
+    let tr = document.querySelector("[userId='" + ret.id +"']");
+    tr.lastElementChild.innerText = ret.role;
+    let trParent = tr.parentNode;
+    trParent.removeChild(tr);
+    trParent.appendChild(tr);
+
+    document.querySelector("#msgTableWaiting").innerText = waitingUsersList.length + " inscription(s) en attente";
+    document.querySelector("#msgTableConfirmed").innerText = confirmedUsersList.length + " client(s) inscrit(s)";
+  }
+
+  //display toast for 5 seconds
+  snackbar.className = "show";
+  setTimeout(() => snackbar.className = snackbar.className.replace("show", "")
+    , 5000);
+}
+
+const removeFromArray = (id, array) => {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].id === id) {
+      array.splice(i, 1);
+      break;
+    }
   }
 }
 
@@ -111,7 +164,8 @@ const generateUsersPage = () => {
             + generateTable() +
           `</div>
           <div class="shortElement" id="userCardDiv"></div>
-        </div>`;
+        </div>
+        <div id="snackbar"></div>`;
 }
 
 const generateTable = () => {
@@ -136,9 +190,9 @@ const generateTable = () => {
 }
 
 const getAllUsersRows = () => {
-  let res = "<tr><th colspan = '7' class='msgTable'>" + waitingUsersList.length + " inscription(s) en attente</th></tr>";
+  let res = "<tr><th colspan = '7' class='msgTable' id='msgTableWaiting'>" + waitingUsersList.length + " inscription(s) en attente</th></tr>";
   waitingUsersList.forEach(user => res += generateRow(user));
-  res += "<tr><th colspan = '7' class='msgTable'>" + confirmedUsersList.length + " client(s) inscrit(s)</th></tr>"
+  res += "<tr><th colspan = '7' class='msgTable' id='msgTableConfirmed'>" + confirmedUsersList.length + " client(s) inscrit(s)</th></tr>"
   confirmedUsersList.forEach(user => res += generateRow(user));
   return res;
 }
@@ -161,7 +215,7 @@ const generateUserCard = (userDetail) => {
   if (userDetail.waiting)
     status = 'En attente';
   else 
-  status = "Accepté";
+  status = "Considéré";
  let page= `
    <div class="container emp-profile">
     <form>
@@ -248,7 +302,7 @@ const generateUserCard = (userDetail) => {
               </div>
             </div>
 
-            <div class="col-md-2" style="display: flex"> `;
+            <div class="col-md-2" id="validationButton" style="display: flex"> `;
       if(userDetail.waiting) {
         page += `<input type="button" class="profile-edit-btn" id="accept" value="accepter" style="color: #0062cc; margin:5px"/>
                  <input type="button" class="profile-edit-btn" id="refuse" value="refuser" style="color: red; margin:5px"/>
