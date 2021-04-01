@@ -129,15 +129,18 @@ const generateAllRows = (notNeededClassName) => {
 
 const generateRow = (furniture, notNeededClassName) => {
   let conditionHtml;
-  if(notNeededClassName === "notNeeded") {
+  let thumbnailClass;
+  if(notNeededClassName === "notNeeded") { //large table
     conditionHtml = generateColoredCondition(furniture);
-  }else {
+    thumbnailClass = "w-50"
+  }else { //short table
     let infos = generateConditionInfos(furniture.condition);
     conditionHtml = generateDot(infos.classname);
+    thumbnailClass = "w-100"
   }
   let res = `
     <tr class="toBeClicked" furnitureId="${furniture.furnitureId}">
-      <th>${generateFavouritePhotoImgTag(furniture)}</th>
+      <th><div id="thumbnail" class="w-25 mx-auto">${generateFavouritePhotoImgTag(furniture)}<div></th>
       <th><p>${furniture.description}</p></th>
       <th class="${notNeededClassName}"><p>${furniture.type}</p></th>
       <th class="tableCondition text-center" condition="${furniture.condition}">${conditionHtml}</th>
@@ -152,7 +155,7 @@ const generateRow = (furniture, notNeededClassName) => {
 const generateFavouritePhotoImgTag = (furniture) => {
   let res = "";
   if (furniture.favouritePhoto) {
-    res = `<img src="${furniture.favouritePhoto.source}" alt="thumbnail photoId=${furniture.favouritePhoto.photoId}"/>`;
+    res = `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail photoId=${furniture.favouritePhoto.photoId}"/>`;
   } else {
     // TODO: default img if no favourite
   }
@@ -264,6 +267,8 @@ const displayShortElements = (e) => {
     timeouts.push(setTimeout(changeContainerId, 1000));
   document.querySelectorAll(".notNeeded").forEach(
       element => element.className = "notNeeded d-none");
+  document.querySelectorAll("#thumbnail").forEach(
+    element => element.className = "w-100 mx-auto");
   document.querySelectorAll(".shortElement").forEach(
       element => element.className = "shortElement");
   let returnBtn = document.querySelector("#buttonReturn");
@@ -302,6 +307,8 @@ const displayLargeTable = () => {
   document.querySelector('#shortTable').id = "largeTable";
   document.querySelectorAll(".toBeClicked").forEach(element => element.className = "toBeClicked");
   document.querySelector("#buttonReturn").className = "btn btn-dark m-3 d-none";
+  document.querySelectorAll("#thumbnail").forEach(
+    element => element.className = "w-25 mx-auto");
   document.querySelectorAll(".tableCondition").forEach(element => {
     let condition = element.getAttribute("condition");
     let infos = generateConditionInfos(condition);
@@ -368,7 +375,7 @@ const generateCardHTML = (furniture) => {
               ${generateButtonRow(furniture)}
             </div>       
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-              ${generateCardLabelKeyEntry("label tab2", "id1", "value tab 2")}
+              ${generatePhotoList(furniture)}
             </div>
           </div>
         </div>
@@ -376,6 +383,15 @@ const generateCardHTML = (furniture) => {
     </form>           
   </div>
   `;
+  return res;
+}
+
+const generatePhotoList = (furniture) => {
+  let photos = "";
+  furniture.photos.forEach(photo => {
+    photos += `<img class="img-fluid flex-grow-1 p-1" src="${photo.source}" alt="photo of id ${photo.photoId}"/>`;
+  });
+  let res = `<div class="d-flex flex-lg-fill">${photos}</div>`;
   return res;
 }
 
