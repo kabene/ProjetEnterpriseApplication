@@ -12,17 +12,17 @@ public class OptionImpl implements OptionDTO {
 
   @JsonView(Views.Public.class)
   private int optionId;
-  @JsonView(Views.AdminOnly.class)
+  @JsonView(Views.Public.class)
   private int duration;
-  @JsonView(Views.AdminOnly.class)
+  @JsonView(Views.Public.class)
   private String dateOption;
-  @JsonView(Views.AdminOnly.class)
-  private int clientId;
-  @JsonView(Views.AdminOnly.class)
+  @JsonView(Views.Public.class)
+  private int userId;
+  @JsonView(Views.Public.class)
   private int furnitureId;
-  @JsonView(Views.AdminOnly.class)
+  @JsonView(Views.Public.class)
   private boolean isCanceled;
-  @JsonView(Views.AdminOnly.class)
+  @JsonView(Views.Public.class)
   private UserDTO user;
 
   @Override
@@ -57,12 +57,12 @@ public class OptionImpl implements OptionDTO {
 
   @Override
   public int getUserId() {
-    return clientId;
+    return userId;
   }
 
   @Override
   public void setUserId(int clientId) {
-    this.clientId = clientId;
+    this.userId = clientId;
   }
 
   @Override

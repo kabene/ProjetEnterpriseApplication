@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import java.util.List;
 
 public interface OptionUCC {
 
@@ -25,4 +26,11 @@ public interface OptionUCC {
    */
   OptionDTO cancelOption(UserDTO user, int idOption);
 
+
+  /**
+   * list all the options.
+   *
+   * @return list of all the Option .
+   */
+  List<OptionDTO> listOption();
 }

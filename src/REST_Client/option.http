@@ -8,10 +8,10 @@ Authorization: {{jwt}}
 }
 ###
 
-PATCH {{baseUrl}}/option/cancel
+PATCH {{baseUrl}}/option/cancel/1
 Content-Type: application/json
 Authorization: {{jwt}}
+###
 
-{
-  "optionId": 1
-}
+GET {{baseUrl}}/option/list
+Authorization: {{jwt}}

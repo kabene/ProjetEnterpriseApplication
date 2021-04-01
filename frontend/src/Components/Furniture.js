@@ -1,11 +1,14 @@
 import { getUserSessionData } from "../utils/session";
-import imageStub from "../img/furnitures/Bureau_1.png"
+import imageStub from "../img/furnitures/Bureau_1.png";
+import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
 import {displayErrorMessage} from "../utils/utils.js"
 
 
 let page = document.querySelector("#page");
 let furnitureList;
 let currentUser;
+let optionList;
+
 
 
 const Furniture = async () => {
@@ -18,12 +21,97 @@ const Furniture = async () => {
     ${generateLoadingAnimation()}`;
 
     furnitureList = await getFurnitureList();
+    optionList = await getOptionList();
 
     page.innerHTML = `
     <div class="col-5 mx-auto">
         <div id="errorDiv" class="d-none"></div>
     </div>
     ${generateTable()}`;
+
+    document.querySelectorAll(".btnCreateOption").forEach(element =>{
+        element.addEventListener("click", addOption );
+    });
+    document.querySelectorAll(".cancelOptButton").forEach(element=>{
+      element.addEventListener("click",cancelOption);
+    })
+}
+const cancelOption= (e)=>{
+  e.preventDefault();
+  let furnitureId = e.target.id.substring(4);
+  let optionId;
+  optionList.forEach(option=>{
+    if(option.furnitureId == furnitureId ) {
+      if (!option.isCanceled){
+        optionId = option.optionId;
+      }
+    }
+  });
+
+   fetch("/option/cancel/"+optionId,{
+    method: "PATCH",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if(!response.ok) {
+      throw new Error(response.status + " : " + response.statusText);
+    }
+    return response.json();
+  }).then((data) => {
+    refresh(data, "available_for_sale");
+  }).catch((err) => {
+     console.log("Erreur de fetch !! :´<\n" + err);
+     displayErrorMessage("errorDiv", err);
+   });
+}
+
+
+
+
+const addOption =  (e) => {
+  e.preventDefault();
+  let furnitureId = e.target.id.substring(3);
+  let duration = e.target.parentElement.parentElement.querySelector("input").value;
+
+  let bundle = {
+    furnitureId: furnitureId,
+    duration: duration,
+  }
+  console.log(bundle);
+   fetch("/option/", {
+    method: "POST",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+    }).then((response) => {
+      if(!response.ok) {
+        throw new Error(response.status + " : " + response.statusText);
+      }
+      return response.json();
+    }).then((data) => {
+      refresh(data.option, "under_option");
+    }).catch((err) => {
+     console.log("Erreur de fetch !! :´<\n" + err);
+     displayErrorMessage("errorDiv", err);
+   });
+
+}
+
+const refresh = (data, condition) => {
+  optionList.push(data);
+  updateFurnitureList(data.furnitureId, condition)
+  page.innerHTML = generateTable();
+
+  document.querySelectorAll(".btnCreateOption").forEach(element =>{
+    element.addEventListener("click", addOption )
+  });
+  document.querySelectorAll(".cancelOptButton").forEach(element=>{
+    element.addEventListener("click",cancelOption);
+  })
 }
 
 
@@ -55,6 +143,35 @@ const getFurnitureList = async () => {
     return ret;
 }
 
+const getOptionList= async () => {
+  let ret = [];
+  await fetch("/option/list", {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok)
+      throw new Error("Error code : " + response.status + " : " + response.statusText);
+    return response.json();
+  }).then((data) => {
+    ret = data;
+  }).catch((err) => {
+      console.log("Erreur de fetch !! :´<\n" + err);
+      displayErrorMessage("errorDiv", err);
+  });
+  return ret;
+}
+
+
+const updateFurnitureList = (furnitureId, condition) => {
+    furnitureList.forEach(furniture => {
+        if (furniture.furnitureId === furnitureId) {
+            furniture.condition = condition;
+        }
+    })
+}
 
 const generateTable = () => {
     return `
@@ -138,14 +255,32 @@ const generateItemAndModal = (furniture) => {
 
 
 const getOptionButton = (furniture) => {
-    if (furniture.condition === "available for sale" && currentUser !== null /*TODO check if the user is a simple customer*/) {
-        //TODO add events when clicking on button
-        return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">Introduire une option</button>`;
-    } else {
-        //TODO add 'annuler option' button + event when clicking on it if the user has booked the furniture
-    }
+  let alreadyUnderOption=false;
+  console.log(optionList);
+  optionList.forEach(option=>{
+      if( option.furnitureId == furniture.furnitureId){
+          if( !option.canceled){
+            if(option.userId == currentUser.user.id) {
+              alreadyUnderOption =true;
+            }
+       }
+  }
+  });
+
+  if (furniture.condition === "available_for_sale" && currentUser !== null ) { //place option
+
+    let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , "btnCreateOption btn btn-primary mx-5");
+    return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
+  }
+  else if( furniture.condition === "under_option" && alreadyUnderOption ) { //cancel option
+    return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn-danger cancelOptButton">annuler l'option</button>`;
+  }else{ // nothing
     return "";
+  }
 }
+
+
+
 
 const getTabPhotoToRender = (furniture) => {
     let photos = furniture.photos;
@@ -156,6 +291,18 @@ const getTabPhotoToRender = (furniture) => {
             photosToRender.push(p);
     })
     return photosToRender;
+}
+
+const generateOptionForm = () => {
+    let res = `
+  <form>
+    <div class="form-group">
+      <label for="durationInput" class="mr-3">Duree: </label>
+      <input type="number" id="durationInput" class="w-25" name="durationInput" min="1" step="1" max="5"> jours
+    </div>
+  </form>
+  `;
+    return res;
 }
 
 

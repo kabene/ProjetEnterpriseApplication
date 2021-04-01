@@ -6,7 +6,7 @@ let visiblePhotos;
 
 const HomePage = async () => {
 
-	visiblePhotos = await getVisiblePhotos();
+	visiblePhotos = getVisiblePhotos();
 	console.log(visiblePhotos);
 
 	page.innerHTML = getPageHTML();
@@ -73,9 +73,9 @@ const getHTMLVisiblePhotos = () => {
 	return ret;
 }
 
-const getVisiblePhotos = async () => {
+const getVisiblePhotos = () => {
 	let ret = [];
-	await fetch("/photos/homePage", {
+	fetch("/photos/homePage", {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",

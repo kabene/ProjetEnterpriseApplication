@@ -2,7 +2,6 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
-
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.UnauthorizedException;
@@ -10,6 +9,7 @@ import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.OptionDAO;
 import jakarta.inject.Inject;
+import java.util.List;
 
 public class OptionUCCImpl implements OptionUCC {
 
@@ -84,4 +84,25 @@ public class OptionUCCImpl implements OptionUCC {
     }
     return opt;
   }
+
+
+  /**
+   * list all the options.
+   *
+   * @return list of all the Options.
+   */
+  @Override
+  public List<OptionDTO> listOption() {
+    List<OptionDTO> dtos;
+    dalServices.startTransaction();
+    try {
+      dtos = optionDAO.findAll();
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return dtos;
+  }
+
 }

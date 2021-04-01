@@ -9,6 +9,8 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OptionDAOImpl implements OptionDAO {
 
@@ -72,16 +74,16 @@ public class OptionDAOImpl implements OptionDAO {
   /**
    * search an option.
    *
-   * @param optionId id of the option.
+   * @param id id of the option.
    * @return OptionDTO that represent the option
    */
   @Override
-  public OptionDTO getOption(int optionId) {
-    OptionDTO optionFound = null;
+  public OptionDTO getOption(int id) {
+    OptionDTO optionFound;
     String query = "SELECT o.* FROM satchofurniture.options o WHERE o.option_id=? ";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setInt(1, optionId);
+      ps.setInt(1, id);
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         optionFound = toDTO(rs);
@@ -94,6 +96,29 @@ public class OptionDAOImpl implements OptionDAO {
       throw new InternalError(e);
     }
     return optionFound;
+  }
+
+  /**
+   * list all the options .
+   *
+   * @return list of all the options.
+   */
+  @Override
+  public List<OptionDTO> findAll() {
+    List<OptionDTO> res = new ArrayList<>();
+    String query = " SELECT * FROM satchofurniture.options ";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        res.add(toDTO(rs));
+      }
+      rs.close();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return res;
   }
 
   @Override
