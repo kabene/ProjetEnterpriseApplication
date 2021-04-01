@@ -27,7 +27,7 @@ const Furniture = async () => {
       element.addEventListener("click",cancelOption);
     })
 }
-const cancelOption= async (e)=>{
+const cancelOption= (e)=>{
   let furnitureId = e.target.id.substring(4);
   let optionId;
   optionList.forEach(option=>{
@@ -37,7 +37,8 @@ const cancelOption= async (e)=>{
       }
     }
   });
-  await fetch("/option/"+optionId,{
+
+   fetch("/option/cancel/"+optionId,{
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -58,7 +59,7 @@ const cancelOption= async (e)=>{
 
 
 
-const addOption = async (e) => {
+const addOption =  (e) => {
   let furnitureId = e.target.id.substring(3);
   let duration = e.target.parentElement.parentElement.querySelector("input").value;
 
@@ -67,7 +68,7 @@ const addOption = async (e) => {
     duration: duration,
   }
   console.log(bundle);
-  await fetch("/option/", {
+   fetch("/option/", {
     method: "POST",
     body: JSON.stringify(bundle),
     headers: {
@@ -234,9 +235,12 @@ const getOptionButton = (furniture) => {
   });
 
   if (furniture.condition === "available_for_sale" &&  !allreadyUnderOption && currentUser !== null ) {
+
     let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , " btnCreateOption btn btn-primary mx-5");
     return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
+
   } else if( furniture.condition === "under_option" && allreadyUnderOption ) {
+
     return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn btn-primary mx-5 cancelOptButton">annuler l'option</button>`;
   }else{
     return "";
