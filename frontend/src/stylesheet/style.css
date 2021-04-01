@@ -396,6 +396,14 @@ body, .search-bar {
   transition: 1s;
 }
 
+.msgTable {
+  font-size: x-small;
+}
+
+.msgTable:hover {
+  background-color: white;
+}
+
 @media (max-width: 800px) {
   #shortTable {
     width: 90%;

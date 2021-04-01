@@ -3,8 +3,8 @@ import {removeTimeouts, generateLoadingAnimation} from "../utils/utils";
 import {Loader} from "@googlemaps/js-api-loader";
 
 let page = document.querySelector("#page");
-let waitingUserList;
-let usersList;
+let waitingUsersList;
+let confirmedUsersList;
 let currentUser;
 let timeouts = [];
 let userDetail;
@@ -15,8 +15,8 @@ const Users = async () => {
 
   page.innerHTML = generateLoadingAnimation();
 
-  waitingUserList = await getWaitingUserList();
-  usersList = await getUserList();
+  waitingUsersList = await getWaitingUserList();
+  confirmedUsersList = await getConfirmedUsersList();
 
   page.innerHTML = generateUsersPage();
 
@@ -145,8 +145,10 @@ const generateTable = () => {
 }
 
 const getAllUsersRows = () => {
-  let res = "";
-  usersList.users.forEach(user => res += generateRow(user));
+  let res = "<tr><th colspan = '7' class='msgTable'>" + waitingUsersList.length + " inscription(s) en attente</th></tr>";
+  waitingUsersList.forEach(user => res += generateRow(user));
+  res += "<tr><th colspan = '7' class='msgTable'>" + confirmedUsersList.length + " client(s) inscrit(s)</th></tr>"
+  confirmedUsersList.forEach(user => res += generateRow(user));
   return res;
 }
 
@@ -329,17 +331,17 @@ const getWaitingUserList = async () => {
     }
     return response.json();
   }).then((data) => {
-    ret = data;
+    ret = data.users;
   }).catch((err) => {
     console.error(err);
   });
   return ret;
 }
 
-const getUserList = async () => {
+const getConfirmedUsersList = async () => {
   let ret = [];
   //TODO change to get only confirmed
-  await fetch("/users/detail", {
+  await fetch("/users/detail/confirmed", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -353,7 +355,7 @@ const getUserList = async () => {
     }
     return response.json();
   }).then((data) => {
-    ret = data;
+    ret = data.users;
   }).catch((err) => {
     console.error(err);
   });
@@ -361,12 +363,11 @@ const getUserList = async () => {
 }
 
 
-const validation = async (e) => {
-  let value = e.target.id;
+const validation = async () => {
   let val;
-  if (value === "refuse") 
+  if (valueButtonValid === "refuse") 
     val = {value: false,};
-  else if(value === "accept") 
+  else if(valueButtonValid === "accept") 
     val= {value: true,};
 
   let ret = [];
