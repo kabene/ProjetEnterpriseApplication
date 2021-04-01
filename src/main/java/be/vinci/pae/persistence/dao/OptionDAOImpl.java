@@ -70,16 +70,16 @@ public class OptionDAOImpl implements OptionDAO {
   /**
    * search an option.
    *
-   * @param id id of the option.
+   * @param optionId id of the option.
    * @return OptionDTO that represent the option
    */
   @Override
-  public OptionDTO getOption(int id) {
+  public OptionDTO getOption(int optionId) {
     OptionDTO optionFound = null;
     String query = "SELECT o.* FROM satchofurniture.options o WHERE o.option_id=? ";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setInt(1, id);
+      ps.setInt(1, optionId);
       ResultSet rs = ps.executeQuery();
       if (rs.next()) {
         optionFound = toDTO(rs);
@@ -92,6 +92,27 @@ public class OptionDAOImpl implements OptionDAO {
       throw new InternalError(e);
     }
     return optionFound;
+  }
+
+  @Override
+  public OptionDTO findByFurnitureId(int furnitureId) {
+    OptionDTO opt = null;
+    String query = "SELECT o.* FROM satchofurniture.options o WHERE o.furniture_id = ? AND o.is_canceled = 'false'";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, furnitureId);
+      ResultSet rs = ps.executeQuery();
+      if (rs.next()) {
+        opt = toDTO(rs);
+      } else {
+        throw new NotFoundException("Error: option not found");
+      }
+      rs.close();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return opt;
   }
 
 

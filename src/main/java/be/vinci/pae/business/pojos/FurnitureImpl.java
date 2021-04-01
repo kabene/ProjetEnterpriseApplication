@@ -1,6 +1,7 @@
 package be.vinci.pae.business.pojos;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
+import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.utils.Views;
@@ -49,6 +50,9 @@ public class FurnitureImpl implements FurnitureDTO {
   private Boolean isToPickUp;
   @JsonView(Views.AdminOnly.class)
   private String pickUpDate;
+  @JsonView(Views.AdminOnly.class)
+  private OptionDTO option;
+
 
   @Override
   public Integer getFurnitureId() {
@@ -228,5 +232,15 @@ public class FurnitureImpl implements FurnitureDTO {
   @Override
   public void setPickUpDate(String date) {
     this.pickUpDate = date;
+  }
+
+  @Override
+  public OptionDTO getOption() {
+    return option;
+  }
+
+  @Override
+  public void setOption(OptionDTO option) {
+    this.option = option;
   }
 }
