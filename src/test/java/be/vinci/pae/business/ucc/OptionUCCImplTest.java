@@ -11,6 +11,8 @@ import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.OptionDAO;
 import be.vinci.pae.utils.Configurate;
+import java.util.Arrays;
+import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +33,7 @@ class OptionUCCImplTest {
   private static ConnectionDalServices mockDal;
 
   private static OptionDTO mockOptionDTO1;
+  private static OptionDTO mockOptionDTO2;
   private static FurnitureDTO mockFurnitureDTO1;
   private static UserDTO mockUserDTO1;
 
@@ -45,6 +48,7 @@ class OptionUCCImplTest {
     mockDal = locator.getService(ConnectionDalServices.class);
 
     mockOptionDTO1 = Mockito.mock(OptionDTO.class);
+    mockOptionDTO2 = Mockito.mock(OptionDTO.class);
     mockFurnitureDTO1 = Mockito.mock(FurnitureDTO.class);
     mockUserDTO1 = Mockito.mock(UserDTO.class);
 
@@ -57,6 +61,7 @@ class OptionUCCImplTest {
     Mockito.reset(mockFurnitureDAO);
     Mockito.reset(mockDal);
     Mockito.reset(mockOptionDTO1);
+    Mockito.reset(mockOptionDTO2);
     Mockito.reset(mockFurnitureDTO1);
     Mockito.reset(mockUserDTO1);
   }
@@ -279,6 +284,48 @@ class OptionUCCImplTest {
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError());
 
     assertThrows(InternalError.class, () -> optionUCC.cancelOption(mockUserDTO1, optionId),
+        "catches InternalError, should throw it back");
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST OptionUCC.listOption : nominal, should return list of DTOs")
+  @Test
+  public void test_listOption_shouldReturnDTOList() {
+    List<OptionDTO> lst = Arrays.asList(mockOptionDTO1, mockOptionDTO2);
+
+    Mockito.when(mockOptionDAO.findAll()).thenReturn(lst);
+
+    assertEquals(lst, optionUCC.listOption());
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+  }
+
+  @DisplayName("TEST OptionUCC.listOption : empty db, should return empty list of DTOs")
+  @Test
+  public void test_listOption_emptyDB_shouldReturnEmptyDTOList() {
+    List<OptionDTO> emptyLst = Arrays.asList();
+
+    Mockito.when(mockOptionDAO.findAll()).thenReturn(emptyLst);
+
+    assertEquals(emptyLst, optionUCC.listOption());
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+  }
+
+  @DisplayName("TEST OptionUCC.cancelOption : catches "
+      + "InternalError, should throw it back after rollback")
+  @Test
+  public void test_listOption_catchesInternalError_shouldThrowInternalError() {
+    Mockito.when(mockOptionDAO.findAll()).thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, () -> optionUCC.listOption(),
         "catches InternalError, should throw it back");
 
     Mockito.verify(mockDal).startTransaction();
