@@ -1,6 +1,7 @@
 package be.vinci.pae.business.pojos;
 
 import be.vinci.pae.business.dto.OptionDTO;
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -21,6 +22,8 @@ public class OptionImpl implements OptionDTO {
   private int furnitureId;
   @JsonView(Views.AdminOnly.class)
   private boolean isCanceled;
+  @JsonView(Views.AdminOnly.class)
+  private UserDTO user;
 
   @Override
   public int getOptionId() {
@@ -60,6 +63,16 @@ public class OptionImpl implements OptionDTO {
   @Override
   public void setUserId(int clientId) {
     this.clientId = clientId;
+  }
+
+  @Override
+  public UserDTO getUser() {
+    return user;
+  }
+
+  @Override
+  public void setUser(UserDTO user) {
+    this.user = user;
   }
 
   @Override

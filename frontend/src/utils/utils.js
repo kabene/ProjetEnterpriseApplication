@@ -49,13 +49,18 @@ async function verifyAdmin (){
 const removeTimeouts = (timeouts) => {
     timeouts.forEach(timeout => clearTimeout(timeout))
 }
-  
+
 const generateLoadingAnimation = () => {
 return `
     <div class="text-center">
         <h2>Loading <div class="spinner-border"></div></h2>
     </div>`
 }
+function displayErrorMessage(alertDivId, error) {
+    let message = error.message;
+    let div = document.querySelector(`#${alertDivId}`);
+    div.className = "alert alert-danger mx-1";
+    div.innerHTML = `<p>${message}</p>`;
+}
 
-
-export {escapeHtml, removeTimeouts, generateLoadingAnimation, verifyAdmin};
+export {escapeHtml, removeTimeouts, generateLoadingAnimation, verifyAdmin, displayErrorMessage};

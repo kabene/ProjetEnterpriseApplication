@@ -1,5 +1,5 @@
 import {getUserSessionData} from "../utils/session";
-import {removeTimeouts, generateLoadingAnimation} from "../utils/utils";
+import {removeTimeouts, generateLoadingAnimation, displayErrorMessage} from "../utils/utils";
 import {Loader} from "@googlemaps/js-api-loader";
 
 let page = document.querySelector("#page");
@@ -92,7 +92,7 @@ const displayUserCard = async (e) => {
   userCardDiv.innerHTML = generateUserCard(userDetail);
   await AddressToGeo(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune)
                       .catch((err) => console.error(err));
-  //add event listener to validation button if the user of the user card is waiting                    
+  //add event listener to validation button if the user of the user card is waiting
   if (userDetail.waiting) {
     valueButtonValid = e.target.id;
     document.querySelector("#accept").addEventListener("click",onValidateClick);
@@ -157,6 +157,9 @@ const removeFromArray = (id, array) => {
 
 const generateUsersPage = () => {
   return `
+        <div class="col-5 mx-auto">
+          <div id="errorDiv" class="d-none"></div>
+        </div>
         <div id="largeTableContainer">
           <div>
             <input type="search" name="search" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
@@ -353,7 +356,8 @@ const clientDetail = async (id) => {
   }).then((data) => {
     userDetails = data;
   }).catch((err) => {
-    console.error(err);
+    console.log("Erreur de fetch !! :´<\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
   return userDetails;
 }
@@ -374,7 +378,8 @@ const getWaitingUserList = async () => {
   }).then((data) => {
     ret = data.users;
   }).catch((err) => {
-    console.error(err);
+    console.log("Erreur de fetch !! :´<\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
   return ret;
 }
@@ -425,7 +430,8 @@ const validation = async (e) => {
   }).then((data) => {
     ret = data;
   }).catch((err) => {
-    console.error(err);
+    console.log("Erreur de fetch !! :´<\n" + err);
+    displayErrorMessage("errorDiv", err);
     return;
   });
   return ret; // TODO REFRESH PAGE IN REAL TIME
@@ -445,7 +451,7 @@ const AddressToGeo = async (address) => {
   await service.geocode({
         q: address
       },  (result) => {
-       if(result.items[0] != null) 
+       if(result.items[0] != null)
          map(result.items[0].position.lat, result.items[0].position.lng);
       },
      await map(null, null));

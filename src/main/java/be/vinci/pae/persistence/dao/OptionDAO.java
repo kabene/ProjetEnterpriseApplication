@@ -26,10 +26,17 @@ public interface OptionDAO {
   /**
    * search an option.
    *
-   * @param id id of the option.
+   * @param optionId optionId of the option.
    * @return OptionDTO that represent the option
    */
-  OptionDTO getOption(int id);
+  OptionDTO getOption(int optionId);
 
+  /**
+   * search an option by furniture id.
+   *
+   * @param furnitureId furniture id.
+   * @return found option.
+   */
+  OptionDTO findByFurnitureId(int furnitureId);
 
 }

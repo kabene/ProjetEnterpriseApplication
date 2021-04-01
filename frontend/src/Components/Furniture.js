@@ -1,5 +1,6 @@
 import { getUserSessionData } from "../utils/session";
 import imageStub from "../img/furnitures/Bureau_1.png"
+import {displayErrorMessage} from "../utils/utils.js"
 
 
 let page = document.querySelector("#page");
@@ -10,11 +11,19 @@ let currentUser;
 const Furniture = async () => {
     currentUser = getUserSessionData();
 
-    page.innerHTML = generateLoadingAnimation();
+    page.innerHTML = `
+    <div class="col-5 mx-auto">
+        <div id="errorDiv" class="d-none"></div>
+    </div>
+    ${generateLoadingAnimation()}`;
 
     furnitureList = await getFurnitureList();
 
-    page.innerHTML = generateTable();
+    page.innerHTML = `
+    <div class="col-5 mx-auto">
+        <div id="errorDiv" class="d-none"></div>
+    </div>
+    ${generateTable()}`;
 }
 
 
@@ -40,8 +49,9 @@ const getFurnitureList = async () => {
     }).then((data) => {
          ret = data;
     }).catch((err) => {
-        console.error(err);
-    });
+        console.log("Erreur de fetch !! :´<\n" + err);
+        displayErrorMessage("errorDiv", err);
+      });
     return ret;
 }
 

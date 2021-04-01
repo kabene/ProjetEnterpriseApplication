@@ -1,8 +1,10 @@
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
-import {getUserSessionData} from "../utils/session";
+import {getUserSessionData} from "../utils/session.js";
+import {displayErrorMessage} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
+let mainPage;
 let furnitureList;
 let furnitureMap = [];
 let timeouts = [];
@@ -12,15 +14,18 @@ let pageHTML;
 const FurnitureList = async (id) => {
   currentUser = getUserSessionData();
 
-  pageHTML = generateLoadingAnimation();
+  pageHTML = `
+  <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
+  <div id="mainPage" class="col-12">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
+  mainPage = document.querySelector("#mainPage");
 
   await findFurnitureList();
 
   if(!id) {
     pageHTML =  generatePageHtml();
 
-    page.innerHTML = pageHTML;
+    mainPage.innerHTML = pageHTML;
 
     document.querySelectorAll(".toBeClicked").forEach(
         element => element.addEventListener("click", displayShortElements));
@@ -39,13 +44,16 @@ const findFurnitureList = async () => {
     },
   }).then((response) => {
     if (!response.ok) {
-      throw error();
+      throw new Error(
+        response.status + " : " + response.statusText
+      );
     }
     return response.json();
   }).then((data) => {
     furnitureList = data;
   }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
 }
 
@@ -58,7 +66,9 @@ const findOneFurniture = async (id) => {
     },
   }).then((response) => {
     if (!response.ok) {
-      throw error();
+      throw new Error(
+        response.status + " : " + response.statusText
+      );
     }
     return response.json();
   }).then((data) => {
@@ -66,6 +76,7 @@ const findOneFurniture = async (id) => {
     generateCard(data);
   }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
 }
 
@@ -129,15 +140,18 @@ const generateAllRows = (notNeededClassName) => {
 
 const generateRow = (furniture, notNeededClassName) => {
   let conditionHtml;
-  if(notNeededClassName === "notNeeded") {
+  let thumbnailClass;
+  if(notNeededClassName === "notNeeded") { //large table
     conditionHtml = generateColoredCondition(furniture);
-  }else {
+    thumbnailClass = "w-50"
+  }else { //short table
     let infos = generateConditionInfos(furniture.condition);
     conditionHtml = generateDot(infos.classname);
+    thumbnailClass = "w-100"
   }
   let res = `
     <tr class="toBeClicked" furnitureId="${furniture.furnitureId}">
-      <th>${generateFavouritePhotoImgTag(furniture)}</th>
+      <th><div id="thumbnail" class="w-25 mx-auto">${generateFavouritePhotoImgTag(furniture)}<div></th>
       <th><p>${furniture.description}</p></th>
       <th class="${notNeededClassName}"><p>${furniture.type}</p></th>
       <th class="tableCondition text-center" condition="${furniture.condition}">${conditionHtml}</th>
@@ -152,7 +166,7 @@ const generateRow = (furniture, notNeededClassName) => {
 const generateFavouritePhotoImgTag = (furniture) => {
   let res = "";
   if (furniture.favouritePhoto) {
-    res = `<img src="${furniture.favouritePhoto.source}" alt="thumbnail photoId=${furniture.favouritePhoto.photoId}"/>`;
+    res = `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail photoId=${furniture.favouritePhoto.photoId}"/>`;
   } else {
     // TODO: default img if no favourite
   }
@@ -264,6 +278,8 @@ const displayShortElements = (e) => {
     timeouts.push(setTimeout(changeContainerId, 1000));
   document.querySelectorAll(".notNeeded").forEach(
       element => element.className = "notNeeded d-none");
+  document.querySelectorAll("#thumbnail").forEach(
+    element => element.className = "w-100 mx-auto");
   document.querySelectorAll(".shortElement").forEach(
       element => element.className = "shortElement");
   let returnBtn = document.querySelector("#buttonReturn");
@@ -302,6 +318,8 @@ const displayLargeTable = () => {
   document.querySelector('#shortTable').id = "largeTable";
   document.querySelectorAll(".toBeClicked").forEach(element => element.className = "toBeClicked");
   document.querySelector("#buttonReturn").className = "btn btn-dark m-3 d-none";
+  document.querySelectorAll("#thumbnail").forEach(
+    element => element.className = "w-25 mx-auto");
   document.querySelectorAll(".tableCondition").forEach(element => {
     let condition = element.getAttribute("condition");
     let infos = generateConditionInfos(condition);
@@ -368,7 +386,7 @@ const generateCardHTML = (furniture) => {
               ${generateButtonRow(furniture)}
             </div>       
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-              ${generateCardLabelKeyEntry("label tab2", "id1", "value tab 2")}
+              ${generatePhotoList(furniture)}
             </div>
           </div>
         </div>
@@ -376,6 +394,15 @@ const generateCardHTML = (furniture) => {
     </form>           
   </div>
   `;
+  return res;
+}
+
+const generatePhotoList = (furniture) => {
+  let photos = "";
+  furniture.photos.forEach(photo => {
+    photos += `<img class="img-fluid flex-grow-1 p-1" src="${photo.source}" alt="photo of id ${photo.photoId}"/>`;
+  });
+  let res = `<div class="d-flex flex-lg-fill">${photos}</div>`;
   return res;
 }
 
@@ -435,7 +462,11 @@ const generateBuyerCardEntry = (furniture) => {
 }
 
 const generateOptionCardEntry = (furniture) => {
-  return "";//TODO: infos client qui a demandé l'option
+  let res ="";
+  if(furniture.option) {
+    res = generateUserCardEntry("Client intéressé", "optionUserCardEntry", furniture.option.user);
+  }
+  return res;
 }
 
 const generateSellingPriceCardEntry = (furniture) => {
@@ -562,14 +593,17 @@ const toAvailable = (e, furniture) => { //TODO
     },
   }).then((response) => {
     if (!response.ok) {
-      throw error();
+      console.log("Erreur de fetch !! :´\n" + response);
+      throw new Error(
+        response.status + " : " + response.statusText
+      );
     }
     return response.json();
   }).then((data) => {
     furnitureMap[data.furnitureId] = data;
     loadCard(data.furnitureId);
   }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
 }
 
@@ -583,7 +617,9 @@ const toRestoration = (e, furniture) => {//TODO
     }
   }).then((response) => {
     if (!response.ok) {
-      throw error();
+      throw new Error(
+        response.status + " : " + response.statusText
+      );
     }
     return response.json();
   }).then((data) => {
@@ -591,6 +627,7 @@ const toRestoration = (e, furniture) => {//TODO
     loadCard(data.furnitureId);
   }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
 }
 
@@ -603,7 +640,9 @@ const withdraw = (e, furniture) => {//TODO
     }
   }).then((response) => {
     if (!response.ok) {
-      throw error();
+      throw new Error(
+        response.status + " : " + response.statusText
+      );
     }
     return response.json();
   }).then((data) => {
@@ -611,11 +650,12 @@ const withdraw = (e, furniture) => {//TODO
     loadCard(data.furnitureId);
   }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
 }
 
 const loadCard = (id) => {
-  page.innerHTML = generatePageHtml(false);
+  mainPage.innerHTML = generatePageHtml(false);
   generateCard(furnitureMap[id]);
   document.querySelectorAll(".toBeClicked").forEach(
     element => element.addEventListener("click", displayShortElements));
