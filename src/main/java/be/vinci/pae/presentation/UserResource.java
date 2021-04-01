@@ -230,6 +230,22 @@ public class UserResource {
   }
 
   /**
+   * GET users/detail/confirmed - Get all confirmed users.
+   *
+   * @return the list of users
+   * @throws WebApplicationException to send a fail status
+   */
+  @GET
+  @Path("/detail/confirmed")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Admin
+  public Response getConfirmedUsers() {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/detail/confirmed");
+    List<UserDTO> users = userUCC.getAllConfirmed();
+    return createNodeFromUserList(users);
+  }
+
+  /**
    * GET a specific user's ,admin only details.
    *
    * @param id : the user id from the request path
