@@ -17,20 +17,21 @@ let pageHTML = `
 
     <!-- Login form -->
 
-    <div class="col-4 px-0 py-4 ml-5 border border-dark m-auto">
+    <div class="col-0 col-lg-1"></div>
+
+    <div class="col-10 col-lg-4 p-3 mx-auto mx-lg-0 mb-5 mb-lg-0 border border-1">
+      <h2 class="text-center">Connexion</h2>
       <form id="loginForm">
-        <div class="form-group">
-          <label for="usernameLogin" class="ml-5">Pseudo</label>
-          <input class="form-control w-75 m-auto" id="usernameLogin" type="text" name="usernameLogin" placeholder="Entrez votre pseudo" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <label for="passwordLogin" class="ml-5">Mot de passe</label>
-          <input class="form-control w-75 m-auto" id="passwordLogin" type="password" name="passwordLogin" placeholder="Entrez votre mot de passe" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <label for="rememberMe" class="ml-5 form-check-label">
+        <div class="form-group w-75 mx-auto">
+          <label for="usernameLogin" class="mt-2">Pseudo</label>
+          <input class="form-control" id="usernameLogin" type="text" name="usernameLogin" placeholder="Entrez votre pseudo" required/>
+
+          <label for="passwordLogin" class="mt-2">Mot de passe</label>
+          <input class="form-control" id="passwordLogin" type="password" name="passwordLogin" placeholder="Entrez votre mot de passe" required/>
+
+          <div class="invalid-feedback">Les champs marqués par * sont obligatoires.</div>
+
+          <label for="rememberMe" class="mt-5 ml-3 form-check-label">
             <input class="form-check-input" id="rememberMe" type="checkbox" name="rememberMe"/> Se
             souvenir de moi
           </label>
@@ -39,66 +40,58 @@ let pageHTML = `
         </button>
       </form>
     </div>
+  
+    <div class="col-0 col-lg-2"></div>
 
-    <div class="col-1" id="authenticationLine"></div>
-    <div class="col-1"></div>
-    
     <!-- Register form -->
 
-    <div class="col-4 px-0 py-4 px-5 mr-5 border border-dark m-auto">
+    <div class="col-lg-4 col-10 p-3 mx-auto mx-lg-0 border border-1">
+      <h2 class="text-center">Inscription</h2>
       <form id="registerForm">
-        <div class="form-group">
-          <label for="usernameRegister" class="ml-5">Pseudo</label>
-          <input class="form-control w-75 m-auto" id="usernameRegister" type="text" name="usernameRegister" placeholder="Entrez votre pseudo" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <label for="lastnameRegister" class="ml-5">Nom</label>
-          <input class="form-control w-75 m-auto" id="lastnameRegister" type="text" name="lastnameRegister" placeholder="Entrez votre nom" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <label for="firstnameRegister" class="ml-5">Prenom</label>
-          <input class="form-control w-75 m-auto" id="firstnameRegister" type="text" name="firstnameRegister" placeholder="Entrez votre prénom" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <label for="emailRegister" class="ml-5">Email</label>
-          <input class="form-control w-75 m-auto" id="emailRegister" type="text" name="emailRegister" placeholder="Entrez votre email" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <label for="passwordRegister" class="ml-5">Mot de passe</label>
-          <input class="form-control w-75 m-auto" id="passwordRegister" type="password" name="passwordRegister" placeholder="Entrez votre mot de passe" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
+        <div class="form-group w-75 mx-auto">
+          <div class="row">
+            <div class="col-12 col-xl-6 my-0 my-xl-auto">
+              <label for="usernameRegister">Pseudo*</label>
+              <input class="form-control" id="usernameRegister" type="text" name="usernameRegister" placeholder="Entrez votre pseudo" required/>
+              
+              <label for="lastnameRegister">Nom*</label>
+              <input class="form-control" id="lastnameRegister" type="text" name="lastnameRegister" placeholder="Entrez votre nom" required/>
+              
+              <label for="firstnameRegister">Prenom*</label>
+              <input class="form-control" id="firstnameRegister" type="text" name="firstnameRegister" placeholder="Entrez votre prénom" required/>
+              
+              <label for="emailRegister">Email*</label>
+              <input class="form-control" id="emailRegister" type="text" name="emailRegister" placeholder="Entrez votre email" required/>
+              
+              <label for="passwordRegister">Mot de passe*</label>
+              <input class="form-control" id="passwordRegister" type="password" name="passwordRegister" placeholder="Entrez votre mot de passe" required/>
+            </div>
 
-        <!-- Adresse -->
+            <!-- Adresse -->
+            
+            <div class="col-12 col-xl-6 my-0 my-xl-auto">
+              <p class="mt-5 mt-lg-0">Adresse:</p>
 
-        <p class="mb-2 ml-5">Adresse</p>
-        <div class="form-group">
-          <input class="form-control inputRegister my-2" id="streetRegister" type="text" name="streetRegister" placeholder="Entrez votre rue" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <input class="form-control inputRegister my-2" id="numRegister" type="text" name="numRegister" placeholder="numero" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <input class="form-control inputRegister my-2" id="boxRegister" type="text" name="boxRegister" placeholder="boite" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <input class="form-control inputRegister my-2" id="postalRegister" type="text" name="postalRegister" placeholder="code postal" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <input class="form-control inputRegister my-2" id="communeRegister" type="text" name="communeRegister" placeholder="commune" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
-        </div>
-        <div class="form-group">
-          <input class="form-control inputRegister my-2" id="countryRegister" type="text" name="countryRegister" placeholder="pays" required/>
-          <div class="invalid-feedback w-75 mx-auto">Champ obligatoire.</div>
+              <label for="streetRegister">Rue*</label>
+              <input class="form-control inputRegister my-2" id="streetRegister" type="text" name="streetRegister" placeholder="Entrez votre rue" required/>
+              
+              <label for="numRegister">Numero*</label>
+              <input class="form-control inputRegister my-2" id="numRegister" type="text" name="numRegister" placeholder="numero" required/>
+              
+              <label for="boxRegister">Boite*</label>
+              <input class="form-control inputRegister my-2" id="boxRegister" type="text" name="boxRegister" placeholder="boite" required/>
+              
+              <label for="postalRegister">Code postal*</label>
+              <input class="form-control inputRegister my-2" id="postalRegister" type="text" name="postalRegister" placeholder="code postal" required/>
+              
+              <label for="communeRegister">Commune*</label>
+              <input class="form-control inputRegister my-2" id="communeRegister" type="text" name="communeRegister" placeholder="commune" required/>
+              
+              <label for="countryRegister">Pays*</label>
+              <input class="form-control inputRegister my-2" id="countryRegister" type="text" name="countryRegister" placeholder="pays" required/>
+              <div class="invalid-feedback w-75 mx-auto">Les champs marqués par * sont obligatoires.</div>
+            </div>
+          </div>
         </div>
         <select class="selectpicker" id="role">
           <option selected="selected" value="customer">Client</option>
