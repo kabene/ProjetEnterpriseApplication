@@ -74,48 +74,6 @@ public class UserDAOImpl implements UserDAO {
     return userFound;
   }
 
-  @Override
-  public List<UserDTO> getAllUsers() {
-    List<UserDTO> users = new ArrayList<>();
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        users.add(toDTO(rs));
-      }
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return users;
-  }
-
-  @Override
-  public List<UserDTO> findBySearch(String userSearch) {
-    List<UserDTO> users = new ArrayList<>();
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u "
-          + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
-          + "WHERE lower(a.commune) LIKE lower(?) "
-          + "OR lower(u.first_name) LIKE lower(?)"
-          + "OR lower(u.last_name) LIKE lower(?)"
-          + "OR lower(a.postcode) LIKE lower(?)";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setString(1, "%" + userSearch + "%");
-      ps.setString(2, "%" + userSearch + "%");
-      ps.setString(3, "%" + userSearch + "%");
-      ps.setString(4, "%" + userSearch + "%");
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        users.add(toDTO(rs));
-      }
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return users;
-  }
-
-
   /**
    * used to register a new user.
    *
@@ -192,6 +150,79 @@ public class UserDAOImpl implements UserDAO {
     } catch (SQLException e) {
       throw new InternalError(e);
     }
+  }
+
+  /**
+   * getAllusers of the db.
+   *
+   * @return list contains the users of the db.
+   */
+  @Override
+  public List<UserDTO> getAllUsers() {
+    List<UserDTO> users = new ArrayList<>();
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        users.add(toDTO(rs));
+      }
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return users;
+  }
+
+  /**
+   * get all user waiting for registration validation of the db.
+   *
+   * @return list contains the waiting users of the db.
+   */
+  @Override
+  public List<UserDTO> getAllWaitingUsers() {
+    List<UserDTO> users = new ArrayList<>();
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.waiting = true";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        users.add(toDTO(rs));
+      }
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return users;
+  }
+
+  /**
+   * find the users that correspond with the string.
+   *
+   * @param userSearch reg of the search.
+   * @return list containing the users researched.
+   */
+  @Override
+  public List<UserDTO> findBySearch(String userSearch) {
+    List<UserDTO> users = new ArrayList<>();
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u "
+          + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
+          + "WHERE lower(a.commune) LIKE lower(?) "
+          + "OR lower(u.first_name) LIKE lower(?)"
+          + "OR lower(u.last_name) LIKE lower(?)"
+          + "OR lower(a.postcode) LIKE lower(?)";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setString(1, "%" + userSearch + "%");
+      ps.setString(2, "%" + userSearch + "%");
+      ps.setString(3, "%" + userSearch + "%");
+      ps.setString(4, "%" + userSearch + "%");
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        users.add(toDTO(rs));
+      }
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return users;
   }
 
   /**
