@@ -404,6 +404,13 @@ body, .search-bar {
   background-color: white;
 }
 
+#userSearchBar {
+  width: 24em;
+  margin-left: 1em;
+  margin-bottom: 1em;
+  transition: 1s;
+}
+
 @media (max-width: 800px) {
   #shortTable {
     width: 90%;
@@ -411,5 +418,10 @@ body, .search-bar {
   }
   #shortTableContainer {
     grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 400px) {
+  #userSearchBar {
+    width: 10em;
   }
 }

@@ -108,14 +108,7 @@ const generateUsersPage = () => {
   return `
         <div id="largeTableContainer">
           <div>
-            <!-- @author Milan Raring
-            https://freefrontend.com/css-search-boxes/ -->
-            <form action="" class="search-bar">
-                <input type="search" name="search" pattern=".*\S.*" required>
-                <button class="search-btn" type="submit">
-                    <span>Search</span>
-                </button>
-            </form>
+            <input type="search" name="search" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
             <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>`
             + generateTable() +
           `</div>
