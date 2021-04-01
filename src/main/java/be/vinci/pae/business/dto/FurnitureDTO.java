@@ -78,4 +78,8 @@ public interface FurnitureDTO {
   String getPickUpDate();
 
   void setPickUpDate(String date);
+
+  OptionDTO getOption();
+
+  void setOption(OptionDTO option);
 }
