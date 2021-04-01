@@ -23,7 +23,9 @@ const Furniture = async () => {
     document.querySelectorAll(".btnCreateOption").forEach(element =>{
         element.addEventListener("click", addOption )
     });
-    document.querySelectorAll(".")
+    document.querySelectorAll(".cancelOptButton").forEach(element=>{
+      element.addEventListener("click")
+    })
 }
 const addOption = async (e) => {
   let furnitureId = e.target.id.substring(3);
