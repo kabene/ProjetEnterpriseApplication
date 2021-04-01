@@ -451,7 +451,11 @@ const generateBuyerCardEntry = (furniture) => {
 }
 
 const generateOptionCardEntry = (furniture) => {
-  return "";//TODO: infos client qui a demandé l'option
+  let res ="";
+  if(furniture.option) {
+    res = generateUserCardEntry("Client intéressé", "optionUserCardEntry", furniture.option.user);
+  }
+  return res;
 }
 
 const generateSellingPriceCardEntry = (furniture) => {
