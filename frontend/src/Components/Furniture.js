@@ -48,8 +48,9 @@ const cancelOption= (e)=>{
     if(!response.ok) {
       throw new Error(response.status + " : " + response.statusText);
     }
+    return response.json();
   }).then((data) => {
-    refresh(data); //TODO
+    refresh(data.option, "available_for_sale");
   }).catch((err) => {
     //TODO
     console.log(err);
@@ -79,8 +80,9 @@ const addOption =  (e) => {
       if(!response.ok) {
         throw new Error(response.status + " : " + response.statusText);
       }
+      return response.json();
     }).then((data) => {
-      refresh(data); //TODO
+      refresh(data.option, "under_option"); //TODO
     }).catch((err) => {
       //TODO
       console.log(err);
@@ -88,8 +90,9 @@ const addOption =  (e) => {
 
 }
 
-const refresh = (data) => {
+const refresh = (data, condition) => {
   optionList.push(data);
+  updateFurnitureList(data.furnitureId, condition)
   page.innerHTML = generateTable();
 
   document.querySelectorAll(".btnCreateOption").forEach(element =>{
@@ -146,6 +149,9 @@ const getOptionList= async () => {
 }
 
 
+const updateFurnitureList = (furnitureId, condition) => {
+
+}
 
 const generateTable = () => {
     return `
