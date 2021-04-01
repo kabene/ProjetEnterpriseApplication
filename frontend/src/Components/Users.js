@@ -293,9 +293,7 @@ const clientDetail = async (id) => {
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText
-      );
+      throw new Error( "Error code : " + response.status + " : " + response.statusText);
     }
     return response.json();
   }).then((data) => {
@@ -316,9 +314,7 @@ const getWaitingUserList = async () => {
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText
-      );
+      throw new Error( "Error code : " + response.status + " : " + response.statusText);
     }
     return response.json();
   }).then((data) => {
@@ -331,7 +327,6 @@ const getWaitingUserList = async () => {
 
 const getConfirmedUsersList = async () => {
   let ret = [];
-  //TODO change to get only confirmed
   await fetch("/users/detail/confirmed", {
     method: "GET",
     headers: {
@@ -340,9 +335,7 @@ const getConfirmedUsersList = async () => {
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText
-      );
+      throw new Error("Error code : " + response.status + " : " + response.statusText);
     }
     return response.json();
   }).then((data) => {
@@ -354,17 +347,16 @@ const getConfirmedUsersList = async () => {
 }
 
 
-const validation= async (e)=> {
-  let id =userDetail.id;
-  let value=e.srcElement.id;
+const validation = async (e) => {
+  let value = e.target.id;
   let val;
-  if(value=="refuse"){
-    val= {value: false,}
-  }else if(value=="accept"){
-    val= {value: true,}
+  if (value === "refuse") {
+    val = {value: false,}
+  } else if (value=="accept") {
+    val = {value: true,}
   }
   let ret = [];
-  await fetch(`/users/validate/${id}`, {
+  await fetch(`/users/validate/${userDetail.id}`, {
     method: "PATCH",
     body:JSON.stringify(val),
     headers: {
@@ -373,9 +365,7 @@ const validation= async (e)=> {
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText
-      );
+      throw new Error("Error code : " + response.status + " : " + response.statusText);
     }
     return response.json();
   }).then((data) => {
