@@ -185,7 +185,7 @@ const onLogin = (e) => {
   .then((response) => {
     if (!response.ok) {
       if(response.status === 403) {
-        throw new Error("Pseudo ou mot de passe incorrecte");
+        throw new Error("Pseudo ou mot de passe incorrect");
       }else {
         throw new Error(
           response.status + " : " + response.statusText);
