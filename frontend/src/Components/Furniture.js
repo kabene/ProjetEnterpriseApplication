@@ -21,10 +21,10 @@ const Furniture = async () => {
     page.innerHTML = generateTable();
 
     document.querySelectorAll(".btnCreateOption").forEach(element =>{
-        element.addEventListener("click", addOption )
+        element.addEventListener("click", addOption );
     });
     document.querySelectorAll(".cancelOptButton").forEach(element=>{
-      element.addEventListener("click")
+      element.addEventListener("click",);
     })
 }
 const addOption = async (e) => {

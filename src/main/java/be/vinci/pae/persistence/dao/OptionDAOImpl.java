@@ -121,6 +121,30 @@ public class OptionDAOImpl implements OptionDAO {
     return res;
   }
 
+  @Override
+  public OptionDTO findByFurnitureId(int furnitureId) {
+    OptionDTO opt = null;
+    String query = "SELECT o.* FROM satchofurniture.options o "
+        + "WHERE o.furniture_id = ? AND o.is_canceled = 'false'";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, furnitureId);
+      ResultSet rs = ps.executeQuery();
+      if (rs.next()) {
+        opt = toDTO(rs);
+      } else {
+        throw new NotFoundException("Error: option not found");
+      }
+      rs.close();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return opt;
+  }
+
+
+
   /**
    * Creates and fills a OptionDTO object using a ResultSet.
    *

@@ -38,4 +38,13 @@ public interface OptionDAO {
    * @return list of all the option.
    */
   List<OptionDTO> findAll();
+
+  /**
+   * search an option by furniture id.
+   *
+   * @param furnitureId furniture id.
+   * @return found option.
+   */
+  OptionDTO findByFurnitureId(int furnitureId);
+
 }
