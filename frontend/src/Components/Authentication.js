@@ -29,43 +29,43 @@ let pageHTML = `
                 <div class="col-1"></div>
                 <div class="col-4 px-0 py-4 px-5 mr-5 border border-dark m-auto">
                     <div class="form-group">
-                        <label for="usernameSignup" class="ml-5">Pseudo</label>
-                        <input class="form-control w-75 m-auto" id="usernameSignup" type="text" name="usernameSignup" placeholder="Entrez votre pseudo"/>
+                        <label for="usernameRegister" class="ml-5">Pseudo</label>
+                        <input class="form-control w-75 m-auto" id="usernameRegister" type="text" name="usernameRegister" placeholder="Entrez votre pseudo"/>
                     </div>
                     <div class="form-group">
-                        <label for="nameSignup" class="ml-5">Nom</label>
-                        <input class="form-control w-75 m-auto" id="nameSignup" type="text" name="nameSignup" placeholder="Entrez votre nom"/>
+                        <label for="nameRegister" class="ml-5">Nom</label>
+                        <input class="form-control w-75 m-auto" id="nameRegister" type="text" name="nameRegister" placeholder="Entrez votre nom"/>
                     </div>
                     <div class="form-group">
-                        <label for="fornameSignup" class="ml-5">Prenom</label>
-                        <input class="form-control w-75 m-auto" id="fornameSignup" type="text" name="fornameSignup" placeholder="Entrez votre prénom"/>
+                        <label for="fornameRegister" class="ml-5">Prenom</label>
+                        <input class="form-control w-75 m-auto" id="fornameRegister" type="text" name="fornameRegister" placeholder="Entrez votre prénom"/>
                     </div>
                     <div class="form-group">
-                        <label for="emailSignup" class="ml-5">Email</label>
-                        <input class="form-control w-75 m-auto" id="emailSignup" type="text" name="emailSignup" placeholder="Entrez votre email"/>
+                        <label for="emailRegister" class="ml-5">Email</label>
+                        <input class="form-control w-75 m-auto" id="emailRegister" type="text" name="emailRegister" placeholder="Entrez votre email"/>
                     </div>
                     <div class="form-group">
-                        <label for="passwordSignup" class="ml-5">Mot de passe</label>
-                        <input class="form-control w-75 m-auto" id="passwordSignup" type="password" name="passwordSignup" placeholder="Entrez votre mot de passe"/>
+                        <label for="passwordRegister" class="ml-5">Mot de passe</label>
+                        <input class="form-control w-75 m-auto" id="passwordRegister" type="password" name="passwordRegister" placeholder="Entrez votre mot de passe"/>
                     </div>
                     <p class="mb-2 ml-5">Adresse</p>
                     <div class="form-group">
-                        <input class="form-control w-75 m-auto" id="streetSignup" type="text" name="streetSignup" placeholder="Entrez votre rue"/>
+                        <input class="form-control w-75 m-auto" id="streetRegister" type="text" name="streetRegister" placeholder="Entrez votre rue"/>
                         
                     </div>
                     <div class="form-group">
-                        <input class="form-control inputSignup my-2" id="numSignup" type="text" name="numSignup" placeholder="numero"/>
-                        <input class="form-control inputSignup my-2" id="boxSignup" type="text" name="boxSignup" placeholder="boite"/>
-                        <input class="form-control inputSignup my-2" id="postalSignup" type="text" name="postalSignup" placeholder="code postal"/>
-                        <input class="form-control inputSignup my-2" id="communeSignup" type="text" name="communeSignup" placeholder="commune"/>
-                        <input class="form-control inputSignup my-2" id="countrySignup" type="text" name="countrySignup" placeholder="pays"/>
+                        <input class="form-control inputRegister my-2" id="numRegister" type="text" name="numRegister" placeholder="numero"/>
+                        <input class="form-control inputRegister my-2" id="boxRegister" type="text" name="boxRegister" placeholder="boite"/>
+                        <input class="form-control inputRegister my-2" id="postalRegister" type="text" name="postalRegister" placeholder="code postal"/>
+                        <input class="form-control inputRegister my-2" id="communeRegister" type="text" name="communeRegister" placeholder="commune"/>
+                        <input class="form-control inputRegister my-2" id="countryRegister" type="text" name="countryRegister" placeholder="pays"/>
                     </div>
                     <select class="selectpicker" id="role">
                         <option selected="selected"  value="customer">Client</option>
                         <option value="antique_dealer">Anticaire</option>
                         <option value="admin">Administrateur </option>  
                     </select>
-                    <button class="btn btn-primary w-35 ml-5 mt-4" id="signupButton" type="submit">S'inscrire</button>
+                    <button class="btn btn-primary w-35 ml-5 mt-4" id="registerButton" type="submit">S'inscrire</button>
                 </div>
             </div>
         </form>
@@ -78,8 +78,8 @@ const Authentication = () => {
   let loginButton = document.querySelector("#loginButton");
   loginButton.addEventListener("click", onLogin);
 
-  let signupButton = document.querySelector("#signupButton");
-  signupButton.addEventListener("click", onSignUp);
+  let registerButton = document.querySelector("#registerButton");
+  registerButton.addEventListener("click", onSignUp);
 
   const user = getUserSessionData();
   if (user) {
@@ -136,19 +136,19 @@ const onSignUp = (e) => {
   e.preventDefault();
   console.log("on sign up");
   let user = {
-    username: document.querySelector("#usernameSignup").value,
-    lastName: document.querySelector("#nameSignup").value,
-    firstName: document.querySelector("#fornameSignup").value,
-    email: document.querySelector("#emailSignup").value,
-    password: document.querySelector("#passwordSignup").value,
+    username: document.querySelector("#usernameRegister").value,
+    lastName: document.querySelector("#nameRegister").value,
+    firstName: document.querySelector("#fornameRegister").value,
+    email: document.querySelector("#emailRegister").value,
+    password: document.querySelector("#passwordRegister").value,
     role:document.querySelector("#role").value,
     address: {
-      street: document.querySelector("#streetSignup").value,
-      buildingNumber: document.querySelector("#numSignup").value,
-      unitNumber: document.querySelector("#boxSignup").value,
-      postcode: document.querySelector("#postalSignup").value,
-      commune: document.querySelector("#communeSignup").value,
-      country: document.querySelector("#countrySignup").value,
+      street: document.querySelector("#streetRegister").value,
+      buildingNumber: document.querySelector("#numRegister").value,
+      unitNumber: document.querySelector("#boxRegister").value,
+      postcode: document.querySelector("#postalRegister").value,
+      commune: document.querySelector("#communeRegister").value,
+      country: document.querySelector("#countryRegister").value,
     }
   }
 
