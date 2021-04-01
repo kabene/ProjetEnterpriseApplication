@@ -24,9 +24,40 @@ const Furniture = async () => {
         element.addEventListener("click", addOption );
     });
     document.querySelectorAll(".cancelOptButton").forEach(element=>{
-      element.addEventListener("click",);
+      element.addEventListener("click",cancelOption);
     })
 }
+const cancelOption= async (e)=>{
+  let furnitureId = e.target.id.substring(4);
+  let optionId;
+  optionList.forEach(option=>{
+    if(option.furnitureId == furnitureId ) {
+      if (!option.isCanceled){
+        optionId = option.optionId;
+      }
+    }
+  });
+  await fetch("/option/"+optionId,{
+    method: "PATCH",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if(!response.ok) {
+      throw new Error(response.status + " : " + response.statusText);
+    }
+  }).then((data) => {
+    refresh(data); //TODO
+  }).catch((err) => {
+    //TODO
+    console.log(err);
+  });
+}
+
+
+
+
 const addOption = async (e) => {
   let furnitureId = e.target.id.substring(3);
   let duration = e.target.parentElement.parentElement.querySelector("input").value;
@@ -206,11 +237,12 @@ const getOptionButton = (furniture) => {
     let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , " btnCreateOption btn btn-primary mx-5");
     return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
   } else if( furniture.condition === "under_option" && allreadyUnderOption ) {
-    return `<button type="button" id="cancelBtn${furniture.furnitureId}" class="btn cancelOptButton" style="background-color: red">annuler l'option</button>`;
+    return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn btn-primary mx-5 cancelOptButton">annuler l'option</button>`;
   }else{
     return "";
   }
 }
+
 
 const generateTransitionModal = (id, label, triggerColorClass="primary", closeColorClass="danger") => {
   let body = generateOptionForm();
