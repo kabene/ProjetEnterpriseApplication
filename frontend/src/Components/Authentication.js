@@ -140,6 +140,23 @@ const validateLogin = (username, password) => {
    return true;
 }
 
+const validateRegister = () => {
+  let res = true;
+  if(document.querySelector("#usernameRegister").value === "") res = false;
+  else if(document.querySelector("#lastnameRegister").value === "") res = false;
+  else if(document.querySelector("#firstnameRegister").value === "") res = false;
+  else if(document.querySelector("#emailRegister").value === "") res = false;
+  else if(document.querySelector("#passwordRegister").value === "") res = false;
+  else if(document.querySelector("#role").value === "") res = false;
+  else if(document.querySelector("#streetRegister").value === "") res = false;
+  else if(document.querySelector("#numRegister").value === "") res = false;
+  else if(document.querySelector("#boxRegister").value === "") res = false;
+  else if(document.querySelector("#postalRegister").value === "") res = false;
+  else if(document.querySelector("#communeRegister").value === "") res = false;
+  else if(document.querySelector("#countryRegister").value === "") res = false;
+  return res;
+}
+
 const onLogin = (e) => {
   e.preventDefault();
   console.log("on login");
@@ -169,8 +186,12 @@ const onLogin = (e) => {
   })
   .then((response) => {
     if (!response.ok) {
-      throw new Error(
+      if(response.status === 403) {
+        throw new Error("Pseudo ou mot de passe incorrecte");
+      }else {
+        throw new Error(
           response.status + " : " + response.statusText);
+      }
     }
     return response.json();
   })
@@ -199,6 +220,10 @@ const onSignUp = (e) => {
   loginForm.className = "";
   registerForm.className = "was-validated";
   errorDiv.className = "d-none";
+
+  if(validateRegister() === false) {
+    return;
+  }
 
   let user = {
     username: document.querySelector("#usernameRegister").value,
