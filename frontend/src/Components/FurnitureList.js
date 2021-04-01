@@ -15,7 +15,7 @@ const FurnitureList = async (id) => {
   currentUser = getUserSessionData();
 
   pageHTML = `
-  <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div>
+  <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
   <div id="mainPage" class="col-12">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
