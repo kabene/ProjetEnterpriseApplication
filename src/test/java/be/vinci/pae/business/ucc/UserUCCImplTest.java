@@ -341,6 +341,49 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
+  @DisplayName("TEST UserUCC.getAllWaiting : given nothing,"
+      + " should return all waiting Users")
+  @Test
+  public void test_getAllWaiting_shouldReturnListOfAllUsers() {
+    List<UserDTO> allWaitingUsers = Arrays.asList(mockUser1, mockUser2);
+    Mockito.when(mockUserDAO.getAllWaitingUsers()).thenReturn(allWaitingUsers);
+    assertEquals(allWaitingUsers, userUCC.getAllWaiting(),
+        "UserUCC.getAllWaiting should return a List<UserDTO> of all waiting users");
+    Mockito.verify(mockUserDAO).getAllWaitingUsers();
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.getAllWaiting : given nothing,"
+      + " should return empty list of Users")
+  @Test
+  public void test_getAllWaiting_noUserWaiting_shouldReturnEmptyListOfUsers() {
+    List<UserDTO> emptyList = new ArrayList<UserDTO>();
+    Mockito.when(mockUserDAO.getAllWaitingUsers()).thenReturn(emptyList);
+    assertEquals(emptyList, userUCC.getAllWaiting(),
+        "UserUCC.getAllWaiting should return a empty List<UserDTO> of user");
+    Mockito.verify(mockUserDAO).getAllWaitingUsers();
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.getAllWaiting : DAO throws InternalError,"
+      + " should rollback and throw InternalError")
+  @Test
+  public void test_getAllWaiting_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
+    Mockito.when(mockUserDAO.getAllWaitingUsers()).thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, () -> userUCC.getAllWaiting(),
+        "If the DAO throws an exception, it should be thrown back");
+
+    Mockito.verify(mockUserDAO).getAllWaitingUsers();
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
   @DisplayName("TEST UserUCC.getSearchResult : given an existing username,"
       + " should return respective user")
   @Test

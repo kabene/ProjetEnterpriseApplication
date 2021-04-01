@@ -1,12 +1,14 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
+import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
+import be.vinci.pae.persistence.dao.OptionDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
@@ -23,7 +25,10 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   @Inject
   private FurnitureTypeDAO furnitureTypeDAO;
   @Inject
+  private OptionDAO optionDAO;
+  @Inject
   private ConnectionDalServices dalServices;
+
 
   @Override
   public FurnitureDTO getOne(int id) {
@@ -140,6 +145,11 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     if (dto.getFavouritePhotoId() != null) {
       PhotoDTO favPhoto = photoDAO.getPhotoById(dto.getFavouritePhotoId());
       dto.setFavouritePhoto(favPhoto);
+    }
+    if (dto.getCondition().equals("under_option")) {
+      OptionDTO opt = optionDAO.findByFurnitureId(dto.getFurnitureId());
+      opt.setUser(userDAO.findById(opt.getUserId()));
+      dto.setOption(opt);
     }
     List<PhotoDTO> photos = photoDAO.getPhotosByFurnitureId(dto.getFurnitureId());
     dto.setPhotos(photos);

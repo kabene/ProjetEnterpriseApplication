@@ -213,6 +213,21 @@ public class UserResource {
     return createNodeFromUserList(users);
   }
 
+  /**
+   * GET users/detail/waiting - Get all waiting users.
+   *
+   * @return the list of users
+   * @throws WebApplicationException to send a fail status
+   */
+  @GET
+  @Path("/detail/waiting")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Admin
+  public Response getWaitingUsers() {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/detail/waiting");
+    List<UserDTO> users = userUCC.getAllWaiting();
+    return createNodeFromUserList(users);
+  }
 
   /**
    * GET a specific user's ,admin only details.

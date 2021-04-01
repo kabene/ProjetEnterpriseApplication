@@ -23,6 +23,10 @@ public interface OptionDTO {
 
   void setUserId(int clientId);
 
+  UserDTO getUser();
+
+  void setUser(UserDTO user);
+
   int getFurnitureId();
 
   void setFurnitureId(int furnitureId);

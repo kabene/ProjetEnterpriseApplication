@@ -23,10 +23,34 @@ public interface UserUCC {
    */
   UserDTO register(UserDTO user, AddressDTO address);
 
+  /**
+   * get all users.
+   *
+   * @return list contains the users.
+   */
   List<UserDTO> getAll();
 
+  /**
+   * get all users waiting for registration validation.
+   *
+   * @return list contains the waiting users.
+   */
+  List<UserDTO> getAllWaiting();
+
+  /**
+   * get the users that correspond with the string.
+   *
+   * @param userSearch reg of the search.
+   * @return list contains the users researched.
+   */
   List<UserDTO> getSearchResult(String userSearch);
 
+  /**
+   * get the user searched by his id.
+   *
+   * @param userId the id of the user.
+   * @return User represented by UserDTO.
+   */
   UserDTO getOne(int userId);
 
   /**
