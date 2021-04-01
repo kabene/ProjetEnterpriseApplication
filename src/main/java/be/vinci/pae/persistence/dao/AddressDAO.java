@@ -2,6 +2,7 @@ package be.vinci.pae.persistence.dao;
 
 
 import be.vinci.pae.business.dto.AddressDTO;
+import java.util.List;
 
 public interface AddressDAO {
 
@@ -19,6 +20,13 @@ public interface AddressDAO {
    */
   int getId(AddressDTO address);
 
+  /**
+   * Finds an address with its id.
+   *
+   * @param addressId : the address' id.
+   * @return the address as an AddressDTO
+   */
   AddressDTO findById(int addressId);
 
+  List<AddressDTO> findAll();
 }

@@ -12,7 +12,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FurnitureDAOImpl implements FurnitureDAO {
+public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
 
   @Inject
   private FurnitureFactory furnitureFactory;
@@ -50,20 +50,7 @@ public class FurnitureDAOImpl implements FurnitureDAO {
 
   @Override
   public List<FurnitureDTO> findAll() {
-    List<FurnitureDTO> res = new ArrayList<>();
-    String query = "SELECT f.* FROM satchofurniture.furniture f";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        res.add(toDTO(rs));
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return res;
+    return super.findAll("furniture");
   }
 
   @Override
@@ -129,7 +116,7 @@ public class FurnitureDAOImpl implements FurnitureDAO {
    * @return a dto containing the information from the result set
    * @throws SQLException if an error occurs while reading the result set
    */
-  private FurnitureDTO toDTO(ResultSet rs) throws SQLException {
+  protected FurnitureDTO toDTO(ResultSet rs) throws SQLException {
     FurnitureDTO res = furnitureFactory.getFurnitureDTO();
     res.setFurnitureId(rs.getInt("furniture_id"));
 
