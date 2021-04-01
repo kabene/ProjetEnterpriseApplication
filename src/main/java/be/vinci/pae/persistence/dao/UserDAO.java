@@ -60,6 +60,13 @@ public interface UserDAO {
   List<UserDTO> getAllWaitingUsers();
 
   /**
+   * get all user with confirmed registration validation of the db.
+   *
+   * @return list contains the confirmed users of the db.
+   */
+  List<UserDTO> getAllConfirmedUsers();
+
+  /**
    * find the users that correspond with the string.
    *
    * @param userSearch reg of the search.

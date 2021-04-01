@@ -195,6 +195,27 @@ public class UserDAOImpl implements UserDAO {
   }
 
   /**
+   * get all user with confirmed registration validation of the db.
+   *
+   * @return list contains the confirmed users of the db.
+   */
+  @Override
+  public List<UserDTO> getAllConfirmedUsers() {
+    List<UserDTO> users = new ArrayList<>();
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.waiting = false";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        users.add(toDTO(rs));
+      }
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return users;
+  }
+
+  /**
    * find the users that correspond with the string.
    *
    * @param userSearch reg of the search.
