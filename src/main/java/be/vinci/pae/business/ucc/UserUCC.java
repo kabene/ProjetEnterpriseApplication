@@ -38,6 +38,13 @@ public interface UserUCC {
   List<UserDTO> getAllWaiting();
 
   /**
+   * get all users with confirmed registration validation.
+   *
+   * @return list contains the confirmed users.
+   */
+  List<UserDTO> getAllConfirmed();
+
+  /**
    * get the users that correspond with the string.
    *
    * @param userSearch reg of the search.

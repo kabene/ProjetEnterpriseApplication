@@ -73,6 +73,14 @@
     </td>
 </tr>
 <tr>
+    <td>users/detail/confirmed</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>
+    Renvoie une liste des informations reservees aux admins des ressources de type "user" dont l'inscription a été confirmée.
+    </td>
+</tr>
+<tr>
     <td>users/detail/{id}</td>
     <td>GET</td>
     <td>Admin</td>
