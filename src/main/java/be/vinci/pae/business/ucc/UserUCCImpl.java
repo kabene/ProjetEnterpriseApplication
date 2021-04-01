@@ -128,6 +128,25 @@ public class UserUCCImpl implements UserUCC {
   }
 
   /**
+   * get all users with confirmed registration validation.
+   *
+   * @return list contains the confirmed users.
+   */
+  @Override
+  public List<UserDTO> getAllConfirmed() {
+    List<UserDTO> list;
+    try {
+      dalServices.startTransaction();
+      list = userDAO.getAllConfirmedUsers();
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return list;
+  }
+
+  /**
    * get the users that correspond with the string.
    *
    * @param userSearch reg of the search.

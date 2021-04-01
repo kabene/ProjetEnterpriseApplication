@@ -344,7 +344,7 @@ public class UserUCCImplTest {
   @DisplayName("TEST UserUCC.getAllWaiting : given nothing,"
       + " should return all waiting Users")
   @Test
-  public void test_getAllWaiting_shouldReturnListOfAllUsers() {
+  public void test_getAllWaiting_shouldReturnListOfAllWaitingUsers() {
     List<UserDTO> allWaitingUsers = Arrays.asList(mockUser1, mockUser2);
     Mockito.when(mockUserDAO.getAllWaitingUsers()).thenReturn(allWaitingUsers);
     assertEquals(allWaitingUsers, userUCC.getAllWaiting(),
@@ -379,6 +379,49 @@ public class UserUCCImplTest {
         "If the DAO throws an exception, it should be thrown back");
 
     Mockito.verify(mockUserDAO).getAllWaitingUsers();
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.getConfirmed : given nothing,"
+      + " should return all confirmed Users")
+  @Test
+  public void test_getAllConfirmed_shouldReturnListOfAllConfirmedUsers() {
+    List<UserDTO> allConfirmedUsers = Arrays.asList(mockUser1, mockUser2);
+    Mockito.when(mockUserDAO.getAllConfirmedUsers()).thenReturn(allConfirmedUsers);
+    assertEquals(allConfirmedUsers, userUCC.getAllConfirmed(),
+        "UserUCC.getAllConfirmed should return a List<UserDTO> of all confirmed users");
+    Mockito.verify(mockUserDAO).getAllConfirmedUsers();
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.getAllConfirmed : given nothing,"
+      + " should return empty list of Users")
+  @Test
+  public void test_getAllConfirmed_noUserConfirmed_shouldReturnEmptyListOfUsers() {
+    List<UserDTO> emptyList = new ArrayList<UserDTO>();
+    Mockito.when(mockUserDAO.getAllConfirmedUsers()).thenReturn(emptyList);
+    assertEquals(emptyList, userUCC.getAllConfirmed(),
+        "UserUCC.getAllConfirmed should return a empty List<UserDTO> of user");
+    Mockito.verify(mockUserDAO).getAllConfirmedUsers();
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+  }
+
+  @DisplayName("TEST UserUCC.getAllConfirmed : DAO throws InternalError,"
+      + " should rollback and throw InternalError")
+  @Test
+  public void test_getAllConfirmed_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
+    Mockito.when(mockUserDAO.getAllConfirmedUsers()).thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, () -> userUCC.getAllConfirmed(),
+        "If the DAO throws an exception, it should be thrown back");
+
+    Mockito.verify(mockUserDAO).getAllConfirmedUsers();
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
