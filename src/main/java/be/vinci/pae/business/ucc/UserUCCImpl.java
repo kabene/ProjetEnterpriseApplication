@@ -27,7 +27,6 @@ public class UserUCCImpl implements UserUCC {
   @Inject
   private ConnectionDalServices dalServices;
 
-
   /**
    * Logs in after checking the given credentials.
    *
@@ -53,9 +52,9 @@ public class UserUCCImpl implements UserUCC {
       dalServices.rollbackTransaction();
       throw new ForbiddenException("Error: invalid credentials");
       // no user found with given username
-    } catch (Throwable exception) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw exception;
+      throw e;
     }
   }
 
@@ -84,12 +83,17 @@ public class UserUCCImpl implements UserUCC {
       userDTO = userDAO.findByUsername(userDTO.getUsername());
       dalServices.commitTransaction();
       return userDTO;
-    } catch (Throwable exception) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw exception;
+      throw e;
     }
   }
 
+  /**
+   * get all users.
+   *
+   * @return list contains the users.
+   */
   @Override
   public List<UserDTO> getAll() {
     List<UserDTO> list;
@@ -97,13 +101,38 @@ public class UserUCCImpl implements UserUCC {
       dalServices.startTransaction();
       list = userDAO.getAllUsers();
       dalServices.commitTransaction();
-    } catch (Throwable exception) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw exception;
+      throw e;
     }
     return list;
   }
 
+  /**
+   * get all users waiting for registration validation.
+   *
+   * @return list contains the waiting users.
+   */
+  @Override
+  public List<UserDTO> getAllWaiting() {
+    List<UserDTO> list;
+    try {
+      dalServices.startTransaction();
+      list = userDAO.getAllWaitingUsers();
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return list;
+  }
+
+  /**
+   * get the users that correspond with the string.
+   *
+   * @param userSearch reg of the search.
+   * @return list contains the users researched.
+   */
   @Override
   public List<UserDTO> getSearchResult(String userSearch) {
     List<UserDTO> list;
@@ -118,6 +147,12 @@ public class UserUCCImpl implements UserUCC {
     return list;
   }
 
+  /**
+   * get the user searched by his id.
+   *
+   * @param userId the id of the user.
+   * @return User represented by UserDTO.
+   */
   @Override
   public UserDTO getOne(int userId) {
     UserDTO res = null;
@@ -126,9 +161,9 @@ public class UserUCCImpl implements UserUCC {
       res = userDAO.findById(userId);
       res.setAddress(addressDAO.findById(res.getAddressId()));
       dalServices.commitTransaction();
-    } catch (Throwable exception) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw exception;
+      throw e;
     }
     return res;
   }

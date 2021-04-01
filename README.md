@@ -65,7 +65,7 @@
     </td>
 </tr>
 <tr>
-    <td>users/detail/waiting (non-implémentée)</td>
+    <td>users/detail/waiting</td>
     <td>GET</td>
     <td>Admin</td>
     <td>
