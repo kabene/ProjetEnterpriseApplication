@@ -1,6 +1,5 @@
 package be.vinci.pae.presentation;
 
-import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.ucc.OptionUCC;
@@ -60,7 +59,7 @@ public class OptionRessouce {
     }
     int furnitureId = nodeFurnitureId.asInt();
     int duration = nodeDurationId.asInt();
-    if(duration <= 0 || duration > 5) {
+    if (duration <= 0 || duration > 5) {
       throw new BadRequestException("Error: Malformed request");
     }
     OptionDTO optionDTO = optionUCC.introduceOption(currentUser, furnitureId, duration);
@@ -88,11 +87,16 @@ public class OptionRessouce {
     return Response.ok(optionDTO, MediaType.APPLICATION_JSON).build();
   }
 
+  /**
+   * GET all option resources.
+   *
+   * @return list of option as json.
+   */
   @GET
   @Path("/list")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
-  public Response getByUser(){
+  public Response getByUser() {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /option/list");
     List<OptionDTO> optionDTOs = optionUCC.listOption();
     List<OptionDTO> res = new ArrayList<>();
