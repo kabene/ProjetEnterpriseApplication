@@ -46,7 +46,11 @@ export async function verifyAdmin (){
     return res;
 }
 
+function displayErrorMessage(alertDivId, message) {
+    let div = document.querySelector(`#${alertDivId}`);
+    div.className = "alert alert-danger mx-1";
+    div.innerHTML = `<p>${message}</p>`;
+}
 
 
-
-export {escapeHtml};
+export {escapeHtml, displayErrorMessage};

@@ -1,8 +1,10 @@
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
-import {getUserSessionData} from "../utils/session";
+import {getUserSessionData} from "../utils/session.js";
+import {displayErrorMessage} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
+let mainPage;
 let furnitureList;
 let furnitureMap = [];
 let timeouts = [];
@@ -12,15 +14,18 @@ let pageHTML;
 const FurnitureList = async (id) => {
   currentUser = getUserSessionData();
 
-  pageHTML = generateLoadingAnimation();
+  pageHTML = `
+  <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div>
+  <div id="mainPage" class="col-12">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
+  mainPage = document.querySelector("#mainPage");
 
   await findFurnitureList();
 
   if(!id) {
     pageHTML =  generatePageHtml();
 
-    page.innerHTML = pageHTML;
+    mainPage.innerHTML = pageHTML;
 
     document.querySelectorAll(".toBeClicked").forEach(
         element => element.addEventListener("click", displayShortElements));
@@ -39,13 +44,16 @@ const findFurnitureList = async () => {
     },
   }).then((response) => {
     if (!response.ok) {
-      throw error();
+      throw new Error(
+        response.status + " : " + response.statusText
+      );
     }
     return response.json();
   }).then((data) => {
     furnitureList = data;
   }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
 }
 
@@ -58,7 +66,9 @@ const findOneFurniture = async (id) => {
     },
   }).then((response) => {
     if (!response.ok) {
-      throw error();
+      throw new Error(
+        response.status + " : " + response.statusText
+      );
     }
     return response.json();
   }).then((data) => {
@@ -66,6 +76,7 @@ const findOneFurniture = async (id) => {
     generateCard(data);
   }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
 }
 
@@ -562,14 +573,17 @@ const toAvailable = (e, furniture) => { //TODO
     },
   }).then((response) => {
     if (!response.ok) {
-      throw error();
+      console.log("Erreur de fetch !! :´\n" + response);
+      throw new Error(
+        response.status + " : " + response.statusText
+      );
     }
     return response.json();
   }).then((data) => {
     furnitureMap[data.furnitureId] = data;
     loadCard(data.furnitureId);
   }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
 }
 
@@ -583,7 +597,9 @@ const toRestoration = (e, furniture) => {//TODO
     }
   }).then((response) => {
     if (!response.ok) {
-      throw error();
+      throw new Error(
+        response.status + " : " + response.statusText
+      );
     }
     return response.json();
   }).then((data) => {
@@ -591,6 +607,7 @@ const toRestoration = (e, furniture) => {//TODO
     loadCard(data.furnitureId);
   }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
 }
 
@@ -603,7 +620,9 @@ const withdraw = (e, furniture) => {//TODO
     }
   }).then((response) => {
     if (!response.ok) {
-      throw error();
+      throw new Error(
+        response.status + " : " + response.statusText
+      );
     }
     return response.json();
   }).then((data) => {
@@ -611,11 +630,12 @@ const withdraw = (e, furniture) => {//TODO
     loadCard(data.furnitureId);
   }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
   });
 }
 
 const loadCard = (id) => {
-  page.innerHTML = generatePageHtml(false);
+  mainPage.innerHTML = generatePageHtml(false);
   generateCard(furnitureMap[id]);
   document.querySelectorAll(".toBeClicked").forEach(
     element => element.addEventListener("click", displayShortElements));
