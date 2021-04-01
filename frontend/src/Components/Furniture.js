@@ -20,7 +20,47 @@ const Furniture = async () => {
 
     page.innerHTML = generateTable();
 
-   let submitOption= document.addEventListener("click",document.getElementById())
+    document.querySelectorAll(".btnCreateOption").forEach(element =>{
+        element.addEventListener("click", addOption )
+    });
+    document.querySelectorAll(".")
+}
+const addOption = async (e) => {
+  let furnitureId = e.target.id.substring(3);
+  let duration = e.target.parentElement.parentElement.querySelector("input").value;
+
+  let bundle = {
+    furnitureId: furnitureId,
+    duration: duration,
+  }
+  console.log(bundle);
+  await fetch("/option/", {
+    method: "POST",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+    }).then((response) => {
+      if(!response.ok) {
+        throw new Error(response.status + " : " + response.statusText);
+      }
+    }).then((data) => {
+      refresh(data); //TODO
+    }).catch((err) => {
+      //TODO
+      console.log(err);
+    });
+
+}
+
+const refresh = (data) => {
+  optionList.push(data);
+  page.innerHTML = generateTable();
+
+  document.querySelectorAll(".btnCreateOption").forEach(element =>{
+    element.addEventListener("click", addOption )
+  });
 }
 
 
@@ -155,15 +195,18 @@ const generateItemAndModal = (furniture) => {
 
 
 const getOptionButton = (furniture) => {
-  if (furniture.condition === "available_for_sale" && currentUser !== null /*TODO check if the user is a simple customer*/) {
-    //TODO add events when clicking on button
+  let allreadyUnderOption;
+  optionList.forEach(option=>{
+       allreadyUnderOption = option.furnitureId !== furniture.furnitureId && !option.canceled;
+  });
+
+  if (furniture.condition === "available_for_sale" &&  !allreadyUnderOption && currentUser !== null ) {
     let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , " btnCreateOption btn btn-primary mx-5");
     return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
-  } else if( furniture.condition === "under_option" && optionListfurnitureId) {
-    //TODO add 'annuler option' button + event when clicking on it if the user has booked the furniture
-    return `<button type="button" class="btn btn-primary buttonOptionFurniturePage">annuler l'option</button>`;
+  } else if( furniture.condition === "under_option" && allreadyUnderOption ) {
+    return `<button type="button" id="cancelBtn${furniture.furnitureId}" class="btn cancelOptButton" style="background-color: red">annuler l'option</button>`;
   }else{
-
+    return "";
   }
 }
 
@@ -188,8 +231,8 @@ const generateOptionForm = () => {
     let res = `
   <form>
     <div class="form-group">
-      <label for="sellingPriceInput" class="mr-3">Duree: </label>
-      <input type="number" id="sellingPriceInput" class="w-25" name="sellingPriceInput" min="1" step="1" max="5"> jours
+      <label for="durationInput" class="mr-3">Duree: </label>
+      <input type="number" id="durationInput" class="w-25" name="durationInput" min="1" step="1" max="5"> jours
     </div>
   </form>
   `;

@@ -60,6 +60,9 @@ public class OptionRessouce {
     }
     int furnitureId = nodeFurnitureId.asInt();
     int duration = nodeDurationId.asInt();
+    if(duration <= 0 || duration > 5) {
+      throw new BadRequestException("Error: Malformed request");
+    }
     OptionDTO optionDTO = optionUCC.introduceOption(currentUser, furnitureId, duration);
     ObjectNode resNode = jsonMapper.createObjectNode().putPOJO("option", optionDTO);
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
