@@ -258,9 +258,8 @@ const generateItemAndModal = (furniture) => {
 
 
 const getOptionButton = (furniture) => {
-  if(currentUser) {
   let alreadyUnderOption=false;
-  console.log(optionList);
+  if(currentUser) {
   optionList.forEach(option=>{
       if( option.furnitureId == furniture.furnitureId){
           if( !option.canceled){
