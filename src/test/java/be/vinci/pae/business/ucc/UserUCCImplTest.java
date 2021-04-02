@@ -171,6 +171,10 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
+  /**
+   * Test.
+   * @param role : role.
+   */
   @DisplayName("TEST UserUCC.register : given valid fields, should return matching UserDTO")
   @ParameterizedTest
   @ValueSource(strings = {"customer", "antique_dealer", "admin"})
