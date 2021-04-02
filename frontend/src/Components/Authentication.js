@@ -81,8 +81,8 @@ let pageHTML = `
               <label for="numRegister">Numero*</label>
               <input class="form-control" id="numRegister" type="text" name="numRegister" placeholder="numero" required/>
               
-              <label for="boxRegister">Boite*</label>
-              <input class="form-control" id="boxRegister" type="text" name="boxRegister" placeholder="boite" required/>
+              <label for="boxRegister">Boite</label>
+              <input class="form-control" id="boxRegister" type="text" name="boxRegister" placeholder="boite"/>
               
               <label for="postalRegister">Code postal*</label>
               <input class="form-control" id="postalRegister" type="text" name="postalRegister" placeholder="code postal" required/>
@@ -148,7 +148,7 @@ const validateRegister = () => {
   else if(document.querySelector("#role").value === "") res = false;
   else if(document.querySelector("#streetRegister").value === "") res = false;
   else if(document.querySelector("#numRegister").value === "") res = false;
-  else if(document.querySelector("#boxRegister").value === "") res = false;
+  //else if(document.querySelector("#boxRegister").value === "") res = false;
   else if(document.querySelector("#postalRegister").value === "") res = false;
   else if(document.querySelector("#communeRegister").value === "") res = false;
   else if(document.querySelector("#countryRegister").value === "") res = false;
