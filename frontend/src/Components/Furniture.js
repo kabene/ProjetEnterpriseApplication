@@ -1,5 +1,5 @@
 import { getUserSessionData } from "../utils/session";
-import imageStub from "../img/furnitures/Bureau_1.png";
+import imageStub from "../img/furniture/Bureau_1.png";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
 import {displayErrorMessage} from "../utils/utils.js"
 
