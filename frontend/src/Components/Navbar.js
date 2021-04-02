@@ -35,8 +35,9 @@ const Navbar = async () => {
     if (await verifyAdmin(pers)) {
 
       navbarHtml += `
-                      <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/furnitureList">Rechercher un meuble</button>
+                      <li class="nav-item">
                       <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visits">Demandes de visite</button>
+                      <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/furnitureList">Gestion des meubles</button>
                       <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/users">Gestion des utilisateurs</button>
                       <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furniture">Voir les meubles</button>
                       <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
