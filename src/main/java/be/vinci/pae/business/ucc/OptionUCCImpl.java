@@ -94,8 +94,8 @@ public class OptionUCCImpl implements OptionUCC {
   @Override
   public List<OptionDTO> listOption() {
     List<OptionDTO> dtos;
-    dalServices.startTransaction();
     try {
+      dalServices.startTransaction();
       dtos = optionDAO.findAll();
       dalServices.commitTransaction();
     } catch (Throwable e) {

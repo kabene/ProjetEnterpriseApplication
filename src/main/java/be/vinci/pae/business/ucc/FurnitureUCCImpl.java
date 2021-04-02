@@ -33,8 +33,9 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   @Override
   public FurnitureDTO getOne(int id) {
     FurnitureDTO res;
-    dalServices.startTransaction();
+
     try {
+      dalServices.startTransaction();
       res = furnitureDAO.findById(id);
       completeFurnitureDTO(res);
       dalServices.commitTransaction();
@@ -65,8 +66,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   @Override
   public FurnitureDTO toRestoration(int furnitureId) {
     FurnitureDTO furnitureDTO;
-    dalServices.startTransaction();
     try {
+      dalServices.startTransaction();
       furnitureDTO = furnitureDAO.findById(furnitureId);
       if (!furnitureDTO.getStatus().equals("accepted")) {
         throw new ConflictException(
@@ -86,8 +87,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   @Override
   public FurnitureDTO toAvailable(int furnitureId, double sellingPrice) {
     FurnitureDTO furnitureDTO;
-    dalServices.startTransaction();
     try {
+      dalServices.startTransaction();
       furnitureDTO = furnitureDAO.findById(furnitureId);
       if (!furnitureDTO.getStatus().equals("accepted") && !furnitureDTO.getStatus()
           .equals("in_restoration")) {
@@ -109,8 +110,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   @Override
   public FurnitureDTO withdraw(int furnitureId) {
     FurnitureDTO furnitureDTO;
-    dalServices.startTransaction();
     try {
+      dalServices.startTransaction();
       furnitureDTO = furnitureDAO.findById(furnitureId);
       if (!furnitureDTO.getStatus().equals("available_for_sale") && !furnitureDTO.getStatus()
           .equals("in_restoration")) {
