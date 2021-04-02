@@ -224,9 +224,9 @@ const generateConditionInfos = (condition) => {
       res.classname = "info";
       res.condition = "Accepté";
       break;
-    case "in_restoration":
+    case "in_restauration":
       res.classname = "warning";
-      res.condition = "En restoration";
+      res.condition = "En restauration";
       break;
     case "under_option":
       res.classname = "danger";
@@ -497,13 +497,13 @@ const generateAllTransitionBtns = (furniture) => {
   switch(furniture.condition) {
     case "accepted":
       res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
-      res += generateTransitionModal("ToRestoration", "Indiquer en restoration");
+      res += generateTransitionModal("ToRestauration", "Indiquer en restauration");
       break;
     case "available_for_sale":
       res += generateTransitionModal("ToSold", "Indiquer vendu");
       res += generateTransitionModal("Withdraw", "Retirer de la vente", "danger", "secondary");
       break;
-    case "in_restoration":
+    case "in_restauration":
       res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
       res += generateTransitionModal("Withdraw", "Retirer de la vente", "danger", "secondary");
       break;
@@ -524,8 +524,8 @@ const generateModalBodyFromTransitionId = (transitionId) => {
   switch(transitionId) {
     case "ToAvailable":
       return generateToAvailableForm();
-    case "ToRestoration":
-      return "Voulez-vous vraiment indiquer ce meuble comme allant en restoration ?"
+    case "ToRestauration":
+      return "Voulez-vous vraiment indiquer ce meuble comme allant en restauration ?"
     case "ToSold":
       return "Voulez-vous vraiment indiquer ce meuble comme vendu ?"
     case "Withdraw":
@@ -564,8 +564,8 @@ const findTransitionMethod = (btnId, furniture) => {
   switch(btnId) {
     case "btnToAvailable":
       return (e) => toAvailable(e, furniture);
-    case "btnToRestoration":
-      return (e) => toRestoration(e, furniture);
+    case "btnToRestauration":
+      return (e) => toRestauration(e, furniture);
     case "btnWithdraw":
       return (e) => withdraw(e, furniture);
     default:
@@ -608,9 +608,9 @@ const toAvailable = (e, furniture) => { //TODO
 }
 
 
-const toRestoration = (e, furniture) => {//TODO
+const toRestauration = (e, furniture) => {//TODO
   e.preventDefault();
-  fetch("/furniture/restoration/"+furniture.furnitureId, {
+  fetch("/furniture/restauration/"+furniture.furnitureId, {
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
