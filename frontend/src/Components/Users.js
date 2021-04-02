@@ -67,7 +67,7 @@ const displayShortElements = async (e) => {
   //shrink
   document.querySelector('#largeTable').id = "shortTable";
   timeouts.push(setTimeout( () => document.querySelector('#largeTableContainer').id = "shortTableContainer"
-                    , 1000));
+                    , 750));
   //hide
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
   //display
