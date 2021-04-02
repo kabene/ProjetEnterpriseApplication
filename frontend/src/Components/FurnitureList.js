@@ -139,14 +139,14 @@ const generateAllRows = (notNeededClassName) => {
 }
 
 const generateRow = (furniture, notNeededClassName) => {
-  let conditionHtml;
+  let statusHtml;
   let thumbnailClass;
   if(notNeededClassName === "notNeeded") { //large table
-    conditionHtml = generateColoredCondition(furniture);
+    statusHtml = generateColoredStatus(furniture);
     thumbnailClass = "w-50"
   }else { //short table
-    let infos = generateConditionInfos(furniture.condition);
-    conditionHtml = generateDot(infos.classname);
+    let infos = generateStatusInfos(furniture.status);
+    statusHtml = generateDot(infos.classname);
     thumbnailClass = "w-100"
   }
   let res = `
@@ -154,7 +154,7 @@ const generateRow = (furniture, notNeededClassName) => {
       <th><div id="thumbnail" class="w-25 mx-auto">${generateFavouritePhotoImgTag(furniture)}<div></th>
       <th><p>${furniture.description}</p></th>
       <th class="${notNeededClassName}"><p>${furniture.type}</p></th>
-      <th class="tableCondition text-center" condition="${furniture.condition}">${conditionHtml}</th>
+      <th class="tablestatus text-center" status="${furniture.status}">${statusHtml}</th>
       <th class="${notNeededClassName}">${generateSellerLink(furniture)}</th>
       <th class="${notNeededClassName}">${generateBuyerLink(furniture)}</th>
       <th class="${notNeededClassName}">${generateSellingPriceTableElement(furniture)}</th>
@@ -209,40 +209,40 @@ const generateSpecialPriceTableElement = (furniture) => {
   return res;
 }
 
-const generateConditionInfos = (condition) => {
+const generateStatusInfos = (status) => {
   let res = {
     classname: "",
-    condition: "",
+    status: "",
   }
 
-  switch (condition) {
+  switch (status) {
     case "available_for_sale":
       res.classname = "success";
-      res.condition = "Disponible à la vente";
+      res.status = "Disponible à la vente";
       break;
     case "accepted":
       res.classname = "info";
-      res.condition = "Accepté";
+      res.status = "Accepté";
       break;
     case "in_restoration":
       res.classname = "warning";
-      res.condition = "En restauration";
+      res.status = "En restauration";
       break;
     case "under_option":
       res.classname = "danger";
-      res.condition = "Sous option";
+      res.status = "Sous option";
       break;
     case "sold":
       res.classname = "danger";
-      res.condition = "Vendu";
+      res.status = "Vendu";
       break;
     case "withdrawn":
       res.classname = "dark";
-      res.condition = "Retiré de la vente";
+      res.status = "Retiré de la vente";
       break;
     case "refused":
       res.classname = "dark";
-      res.condition = "Refusé";
+      res.status = "Refusé";
       break;
     case "requested_for_visit":
     case "reserved":
@@ -250,22 +250,22 @@ const generateConditionInfos = (condition) => {
     case "collected":
     default:
       res.classname = "";
-      res.condition = condition;
+      res.status = status;
   }
   return res;
 }
 
-const generateColoredCondition = (furniture) => {
-  let infos = generateConditionInfos(furniture.condition);
-  return `<p class="text-${infos.classname}">${infos.condition}</p>`;
+const generateColoredStatus = (furniture) => {
+  let infos = generateStatusInfos(furniture.status);
+  return `<p class="text-${infos.classname}">${infos.status}</p>`;
 }
 
 //input: "primary", "secondary", "info", etc...
 const generateDot = (colorClassName) => `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
 
-const generateBadgeCondition = (furniture) => {
-  let infos = generateConditionInfos(furniture.condition);
-  let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.condition}</span>`;
+const generateBadgeStatus = (furniture) => {
+  let infos = generateStatusInfos(furniture.status);
+  let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.status}</span>`;
   return res;
 }
 
@@ -300,9 +300,9 @@ const displayShortElements = (e) => {
   }
   element.className = "toBeClicked bg-secondary text-light";
 
-  document.querySelectorAll(".tableCondition").forEach(element => {
-    let condition = element.attributes["condition"].value;
-    let classname = generateConditionInfos(condition).classname;
+  document.querySelectorAll(".tableStatus").forEach(element => {
+    let status = element.attributes["status"].value;
+    let classname = generateStatusInfos(status).classname;
     element.innerHTML = generateDot(classname);
   });
   let id = element.attributes["furnitureId"].value;
@@ -323,10 +323,10 @@ const displayLargeTable = () => {
   document.querySelector("#buttonReturn").className = "btn btn-dark m-3 d-none";
   document.querySelectorAll("#thumbnail").forEach(
     element => element.className = "w-25 mx-auto");
-  document.querySelectorAll(".tableCondition").forEach(element => {
-    let condition = element.getAttribute("condition");
-    let infos = generateConditionInfos(condition);
-    element.innerHTML = `<p class="text-${infos.classname}">${infos.condition}</p>`
+  document.querySelectorAll(".tableStatus").forEach(element => {
+    let status = element.getAttribute("status");
+    let infos = generateStatusInfos(status);
+    element.innerHTML = `<p class="text-${infos.classname}">${infos.status}</p>`
   })
 }
 
@@ -358,7 +358,7 @@ const generateCardHTML = (furniture) => {
               </div>
               <div class="col-md-6 text-left">
                 <h5 id="descriptionCardEntry">${furniture.description}</h5>
-                <p class="proile-rating">ÉTAT : <span id="conditionCardEntry">${generateBadgeCondition(furniture)}</span></p>
+                <p class="proile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(furniture)}</span></p>
               </div>
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -497,7 +497,7 @@ const generateButtonRow = (furniture) => {
 
 const generateAllTransitionBtns = (furniture) => {
   let res = "";
-  switch(furniture.condition) {
+  switch(furniture.status) {
     case "accepted":
       res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
       res += generateTransitionModal("ToRestoration", "Indiquer en restauration");
@@ -579,7 +579,7 @@ const findTransitionMethod = (btnId, furniture) => {
   };
 }
 
-//condition transition methods
+//status transition methods
 
 const toAvailable = (e, furniture) => { //TODO
   e.preventDefault();
