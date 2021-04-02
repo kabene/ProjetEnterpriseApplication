@@ -126,7 +126,7 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
     Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(favouritePhotoId);
     Mockito.when(mockFurnitureDTO1.getTypeId()).thenReturn(typeId);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(condition);
 
     FurnitureDTO actual = furnitureUCC.getOne(furnitureId);
     FurnitureDTO expected = mockFurnitureDTO1;
@@ -230,14 +230,14 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId1);
     Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(favouritePhotoId1);
     Mockito.when(mockFurnitureDTO1.getTypeId()).thenReturn(typeId1);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition1);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(condition1);
 
     Mockito.when(mockFurnitureDTO2.getFurnitureId()).thenReturn(furnitureId2);
     Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getSellerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getFavouritePhotoId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getTypeId()).thenReturn(typeId2);
-    Mockito.when(mockFurnitureDTO2.getCondition()).thenReturn(condition2);
+    Mockito.when(mockFurnitureDTO2.getStatus()).thenReturn(condition2);
 
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(optionUserId);
 
@@ -318,14 +318,14 @@ class FurnitureUCCImplTest {
     List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDAO.updateConditionOnly(mockFurnitureDTO1))
+    Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
         .thenReturn(mockFurnitureDTO1);
 
     Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
 
     Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
 
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingCondition);
     Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(id);
     Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
@@ -339,9 +339,9 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
 
-    Mockito.verify(mockFurnitureDAO).updateConditionOnly(mockFurnitureDTO1);
+    Mockito.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
 
-    Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
+    Mockito.verify(mockFurnitureDTO1).setStatus(expectedEndingCondition);
     Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO1);
     Mockito.verify(mockFurnitureDTO1).setPhotos(emptyList);
   }
@@ -355,7 +355,7 @@ class FurnitureUCCImplTest {
     int id = 1;
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingCondition);
 
     assertThrows(ConflictException.class, () -> {
       furnitureUCC.toRestoration(id);
@@ -421,7 +421,7 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
 
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingCondition);
     Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(id);
     Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
@@ -437,7 +437,7 @@ class FurnitureUCCImplTest {
 
     Mockito.verify(mockFurnitureDAO).updateToAvailable(mockFurnitureDTO1);
 
-    Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
+    Mockito.verify(mockFurnitureDTO1).setStatus(expectedEndingCondition);
     Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO1);
     Mockito.verify(mockFurnitureDTO1).setPhotos(emptyList);
 
@@ -453,7 +453,7 @@ class FurnitureUCCImplTest {
     final double sellingPrice = 149.99;
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingCondition);
 
     assertThrows(ConflictException.class, () -> {
       furnitureUCC.toAvailable(id, sellingPrice);
@@ -520,7 +520,7 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
 
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingCondition);
     Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(id);
     Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
@@ -536,7 +536,7 @@ class FurnitureUCCImplTest {
 
     Mockito.verify(mockFurnitureDAO).updateToWithdrawn(mockFurnitureDTO1);
 
-    Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
+    Mockito.verify(mockFurnitureDTO1).setStatus(expectedEndingCondition);
     Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO1);
     Mockito.verify(mockFurnitureDTO1).setPhotos(emptyList);
   }
@@ -550,7 +550,7 @@ class FurnitureUCCImplTest {
     final int id = 1;
 
     Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingCondition);
 
     assertThrows(ConflictException.class, () -> {
       furnitureUCC.withdraw(id);

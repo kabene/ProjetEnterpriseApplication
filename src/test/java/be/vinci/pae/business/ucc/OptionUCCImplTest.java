@@ -71,19 +71,19 @@ class OptionUCCImplTest {
   public void test_introduceOption_givenValidId_shouldReturnDTO() {
     int furnitureId = 2;
     int duration = 1;
-    String condition = "available_for_sale";
+    String status = "available_for_sale";
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
     Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId, duration))
         .thenReturn(mockOptionDTO1);
 
     assertEquals(mockOptionDTO1, optionUCC.introduceOption(mockUserDTO1, furnitureId, duration),
         "calling the function with valid arguments should return corresponding DTO");
 
-    Mockito.verify(mockFurnitureDTO1).setCondition("under_option");
+    Mockito.verify(mockFurnitureDTO1).setStatus("under_option");
     Mockito.verify(mockOptionDAO).introduceOption(mockUserDTO1, furnitureId, duration);
-    Mockito.verify(mockFurnitureDAO).updateConditionOnly(mockFurnitureDTO1);
+    Mockito.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
@@ -91,23 +91,23 @@ class OptionUCCImplTest {
   }
 
   @DisplayName("TEST OptionUCC.introduceOption : invalid "
-      + "furniture condition, should throw ConflictException")
+      + "furniture status, should throw ConflictException")
   @ParameterizedTest
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted", "in_restoration",
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
-  public void test_introduceOption_givenInvalidCondition_shouldThrowConflict(String condition) {
+  public void test_introduceOption_givenInvalidStatus_shouldThrowConflict(String status) {
     int furnitureId = 2;
     int duration = 2;
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
     Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId, duration))
         .thenReturn(mockOptionDTO1);
 
     assertThrows(ConflictException.class,
         () -> optionUCC.introduceOption(mockUserDTO1, furnitureId, duration),
         "calling the function with furniture id corresponding to resource in"
-            + " invalid condition should throw ConflictException");
+            + " invalid status should throw ConflictException");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
@@ -120,10 +120,10 @@ class OptionUCCImplTest {
   public void test_introduceOption_givenInvalidFurnitureId_shouldThrowNotFound() {
     int furnitureId = 2;
     int duration = 2;
-    String condition = "available_for_sale";
+    String status = "available_for_sale";
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new NotFoundException());
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
     Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId, duration))
         .thenReturn(mockOptionDTO1);
 
@@ -142,10 +142,10 @@ class OptionUCCImplTest {
   public void test_introduceOption_catchesInternalError_shouldThrowInternalError() {
     int furnitureId = 2;
     int duration = 2;
-    String condition = "available_for_sale";
+    String status = "available_for_sale";
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
     Mockito.when(mockOptionDAO.introduceOption(mockUserDTO1, furnitureId, duration))
         .thenThrow(new InternalError());
 
@@ -164,7 +164,7 @@ class OptionUCCImplTest {
     int optionId = 1;
     int furnitureId = 2;
     int userID = 3;
-    String condition = "under_option";
+    String status = "under_option";
 
     Mockito.when(mockOptionDAO.getOption(optionId)).thenReturn(mockOptionDTO1);
     Mockito.when(mockOptionDTO1.isCanceled()).thenReturn(false);
@@ -172,13 +172,13 @@ class OptionUCCImplTest {
     Mockito.when(mockOptionDTO1.getUserId()).thenReturn(userID);
     Mockito.when(mockUserDTO1.getId()).thenReturn(userID);
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
 
     assertEquals(mockOptionDTO1, optionUCC.cancelOption(mockUserDTO1, optionId),
         "nominal, should return OptionDTO");
 
-    Mockito.verify(mockFurnitureDTO1).setCondition("available_for_sale");
-    Mockito.verify(mockFurnitureDAO).updateConditionOnly(mockFurnitureDTO1);
+    Mockito.verify(mockFurnitureDTO1).setStatus("available_for_sale");
+    Mockito.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
     Mockito.verify(mockOptionDAO).cancelOption(optionId);
 
     Mockito.verify(mockDal).startTransaction();
@@ -247,7 +247,7 @@ class OptionUCCImplTest {
   @ParameterizedTest
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted", "in_restoration",
       "available_for_sale", "sold", "reserved", "delivered", "collected", "withdrawn"})
-  public void test_cancelOption_givenInvalidCondition_shouldReturnDTO(String condition) {
+  public void test_cancelOption_givenInvalidStatus_shouldReturnDTO(String status) {
     int optionId = 1;
     int furnitureId = 2;
     int userID = 3;
@@ -258,7 +258,7 @@ class OptionUCCImplTest {
     Mockito.when(mockOptionDTO1.getUserId()).thenReturn(userID);
     Mockito.when(mockUserDTO1.getId()).thenReturn(userID);
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
 
     assertThrows(ConflictException.class, () -> optionUCC.cancelOption(mockUserDTO1, optionId),
         "furniture not under option, should throw ConflictException");

@@ -27,9 +27,9 @@ public interface FurnitureDTO {
 
   void setSeller(UserDTO buyer);
 
-  String getCondition();
+  String getStatus();
 
-  void setCondition(String cond);
+  void setStatus(String cond);
 
   String getSaleWithdrawalDate();
 

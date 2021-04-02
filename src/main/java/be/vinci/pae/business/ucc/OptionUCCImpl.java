@@ -34,11 +34,11 @@ public class OptionUCCImpl implements OptionUCC {
     try {
       dalServices.startTransaction();
       FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
-      if (!furnitureDTO.getCondition().equals("available_for_sale")) {
+      if (!furnitureDTO.getStatus().equals("available_for_sale")) {
         throw new ConflictException("The resource isn't in a the 'available for sale' state");
       }
-      furnitureDTO.setCondition("under_option");
-      furnitureDAO.updateConditionOnly(furnitureDTO);
+      furnitureDTO.setStatus("under_option");
+      furnitureDAO.updateStatusOnly(furnitureDTO);
       opt = optionDAO.introduceOption(user, furnitureId, duration);
       dalServices.commitTransaction();
     } catch (Throwable e) {
@@ -69,11 +69,11 @@ public class OptionUCCImpl implements OptionUCC {
         throw new UnauthorizedException("not allowed to cancel the option");
       }
       FurnitureDTO furnitureDTO = furnitureDAO.findById(opt.getFurnitureId());
-      if (!furnitureDTO.getCondition().equals("under_option")) {
+      if (!furnitureDTO.getStatus().equals("under_option")) {
         throw new ConflictException("The resource is not under option");
       }
-      furnitureDTO.setCondition("available_for_sale");
-      furnitureDAO.updateConditionOnly(furnitureDTO);
+      furnitureDTO.setStatus("available_for_sale");
+      furnitureDAO.updateStatusOnly(furnitureDTO);
 
       optionDAO.cancelOption(optionId);
       opt = optionDAO.getOption(optionId);
