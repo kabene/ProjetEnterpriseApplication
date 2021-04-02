@@ -1,7 +1,7 @@
 import HomePage from "./HomePage.js";
 import Authentication from "./Authentication.js";
-import Furnitures from "./Furnitures.js";
-import Customer from "./Customer.js";
+import Furniture from "./Furniture.js";
+import Users from "./Users.js";
 import Visits from "./Visits.js";
 import ErrorPage from "./ErrorPage.js";
 import FurnitureList from "./FurnitureList.js";
@@ -13,8 +13,8 @@ import { setLayout } from "../utils/render.js";
 const routes = {
     "/": HomePage,
     "/authentication": Authentication,
-    "/furnitures": Furnitures,
-    "/customers": Customer,
+    "/furniture": Furniture,
+    "/users": Users,
     "/visits": Visits,
     "/furnitureList": FurnitureList,
     "/visitRequest": VisitRequest,
@@ -48,6 +48,7 @@ const onNavigateHandler = (e) => {
     let uri;
     e.preventDefault();
     uri = e.target.dataset.uri;
+    removeModals();
     if(uri) {
         console.log("onNavigate : ", uri);
         window.history.pushState({}, uri, window.location.origin + uri);
@@ -63,6 +64,7 @@ const onNavigateHandler = (e) => {
 //onHistoryHandler (arrows <- -> )
 const onHistoryHandler = (e) => {
     console.log("onHistory : ", window.location.pathname);
+    removeModals();
     componentToRender = routes[window.location.pathname];
     if(!componentToRender){
         ErrorPage(window.location.pathname);
@@ -74,6 +76,7 @@ const onHistoryHandler = (e) => {
 const RedirectUrl = (uri, data) => {
     window.history.pushState({}, uri, window.location.origin + uri); 
     console.log(window.location.pathname);
+    removeModals();
     componentToRender = routes[uri];  
     if(!componentToRender){
         ErrorPage(uri);
@@ -117,6 +120,15 @@ const onUserLogin = (data) => {
     setUserSessionData(user);
     setUserLocalData(data.token);
     setLayout();
-  }
+}
+
+const removeModals = () => {
+    let modalArray = document.querySelectorAll(".modal-backdrop");
+    for (let i = 0; i < modalArray.length; i++) {
+        let m = modalArray[i];
+        m.parentNode.removeChild(m);
+    }
+}
+
 
 export {Router, RedirectUrl};

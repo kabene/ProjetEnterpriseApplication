@@ -1,11 +1,9 @@
-package be.vinci.pae.business.authentication;
+package be.vinci.pae.presentation.authentication;
 
 import be.vinci.pae.business.dto.UserDTO;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import be.vinci.pae.utils.Configurate;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Response.Status;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -37,10 +35,10 @@ public class AuthenticationImpl implements Authentication {
     Date date = Date.from(end.toInstant(ZoneOffset.UTC));
     try {
       token =
-          JWT.create().withExpiresAt(date).withIssuer("auth0").withClaim("user", user.getID())
+          JWT.create().withExpiresAt(date).withIssuer("auth0").withClaim("user", user.getId())
               .sign(this.jwtAlgorithm);
     } catch (Exception e) {
-      throw new WebApplicationException("Unable to create token", e, Status.INTERNAL_SERVER_ERROR);
+      throw new InternalError("Error: Unable to create token");
     }
     return token;
   }
