@@ -1,5 +1,9 @@
 import {escapeHtml, displayErrorMessage} from "../utils/utils.js"
-import {getUserSessionData, setUserSessionData, setUserLocalData} from "../utils/session";
+import {
+  getUserSessionData,
+  setUserSessionData,
+  setUserLocalData
+} from "../utils/session";
 import Navbar from "./Navbar";
 import {setLayout} from "../utils/render.js"
 import {RedirectUrl} from "./Router";
@@ -132,10 +136,10 @@ const Authentication = () => {
 }
 
 const validateLogin = (username, password) => {
-   if(username === "" || password === "") {
-     return false;
-   }
-   return true;
+  if (username === "" || password === "") {
+    return false;
+  }
+  return true;
 }
 
 const validateRegister = () => {
@@ -166,7 +170,7 @@ const onLogin = (e) => {
   let password = document.querySelector("#passwordLogin").value;
   let rememberMe = document.querySelector("#rememberMe").checked;
   console.log("remember me: ", rememberMe);
-  if (validateLogin(username,password) === false) {
+  if (validateLogin(username, password) === false) {
     return;
   }
   let user = {
@@ -183,11 +187,11 @@ const onLogin = (e) => {
   })
   .then((response) => {
     if (!response.ok) {
-      if(response.status === 403) {
+      if (response.status === 403) {
         throw new Error("Pseudo ou mot de passe incorrect");
-      }else {
+      } else {
         throw new Error(
-          response.status + " : " + response.statusText);
+            response.status + " : " + response.statusText);
       }
     }
     return response.json();
@@ -249,18 +253,23 @@ const onSignUp = (e) => {
       throw new Error("Error code : " + response.status + " : " + response.statusText)}
     return response.json();
 
-  }).then((data) => onUserRegistration(data))
+  }).then((data) => {
+    if (user.role =="customer") {
+      onUserRegistration(data);
+    } else {
+      displayErrorMessage("errorDiv",new Error("Inscription en attente: vous devez être validé avant de pouvoir vous connecter"));
+    }
+  })
   .catch((err) => {
     console.log("Erreur de fetch !! :\n" + err);
     displayErrorMessage("errorDiv", err);
   });
 }
 const onUserRegistration = (userData) => {
-  console.log("onUserRegistration", userData);
   const user = {...userData, isAutenticated: true};
   setUserSessionData(user);
   setLayout();
-  RedirectUrl("/");
+  RedirectUrl("/")
 }
 
 export default Authentication;

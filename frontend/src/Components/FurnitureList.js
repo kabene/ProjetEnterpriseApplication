@@ -240,8 +240,11 @@ const generateConditionInfos = (condition) => {
       res.classname = "dark";
       res.condition = "Retiré de la vente";
       break;
-    case "requested_for_visit":
     case "refused":
+      res.classname = "dark";
+      res.condition = "Refusé";
+      break;
+    case "requested_for_visit":
     case "reserved":
     case "delivered":
     case "collected":
