@@ -85,8 +85,8 @@ let pageHTML = `
               <label for="numRegister">Numero*</label>
               <input class="form-control" id="numRegister" type="text" name="numRegister" placeholder="numero" required/>
               
-              <label for="boxRegister">Boite*</label>
-              <input class="form-control" id="boxRegister" type="text" name="boxRegister" placeholder="boite" required/>
+              <label for="boxRegister">Boite</label>
+              <input class="form-control" id="boxRegister" type="text" name="boxRegister" placeholder="boite"/>
               
               <label for="postalRegister">Code postal*</label>
               <input class="form-control" id="postalRegister" type="text" name="postalRegister" placeholder="code postal" required/>
@@ -144,34 +144,17 @@ const validateLogin = (username, password) => {
 
 const validateRegister = () => {
   let res = true;
-  if (document.querySelector("#usernameRegister").value === "") {
-    res = false;
-  } else if (document.querySelector("#lastnameRegister").value
-      === "") {
-    res = false;
-  } else if (document.querySelector("#firstnameRegister").value
-      === "") {
-    res = false;
-  } else if (document.querySelector("#emailRegister").value === "") {
-    res = false;
-  } else if (document.querySelector("#passwordRegister").value
-      === "") {
-    res = false;
-  } else if (document.querySelector("#role").value === "") {
-    res = false;
-  } else if (document.querySelector("#streetRegister").value === "") {
-    res = false;
-  } else if (document.querySelector("#numRegister").value === "") {
-    res = false;
-  } else if (document.querySelector("#boxRegister").value === "") {
-    res = false;
-  } else if (document.querySelector("#postalRegister").value === "") {
-    res = false;
-  } else if (document.querySelector("#communeRegister").value === "") {
-    res = false;
-  } else if (document.querySelector("#countryRegister").value === "") {
-    res = false;
-  }
+  if(document.querySelector("#usernameRegister").value === "") res = false;
+  else if(document.querySelector("#lastnameRegister").value === "") res = false;
+  else if(document.querySelector("#firstnameRegister").value === "") res = false;
+  else if(document.querySelector("#emailRegister").value === "") res = false;
+  else if(document.querySelector("#passwordRegister").value === "") res = false;
+  else if(document.querySelector("#role").value === "") res = false;
+  else if(document.querySelector("#streetRegister").value === "") res = false;
+  else if(document.querySelector("#numRegister").value === "") res = false;
+  else if(document.querySelector("#postalRegister").value === "") res = false;
+  else if(document.querySelector("#communeRegister").value === "") res = false;
+  else if(document.querySelector("#countryRegister").value === "") res = false;
   return res;
 }
 
@@ -239,9 +222,8 @@ const onSignUp = (e) => {
   registerForm.className = "was-validated";
   errorDiv.className = "d-none";
 
-  if (validateRegister() === false) {
+  if(!validateRegister()) 
     return;
-  }
 
   let user = {
     username: document.querySelector("#usernameRegister").value,
@@ -261,16 +243,14 @@ const onSignUp = (e) => {
   }
 
   fetch("/users/register", {
-    method: "POST", // *GET, POST, PUT, DELETE, etc.
-    body: JSON.stringify(user), // body data type must match "Content-Type" header
+    method: "POST",
+    body: JSON.stringify(user),
     headers: {
       "Content-Type": "application/json",
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText);
-    }
+      throw new Error("Error code : " + response.status + " : " + response.statusText)}
     return response.json();
 
   }).then((data) => {
