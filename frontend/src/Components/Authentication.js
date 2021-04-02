@@ -148,7 +148,6 @@ const validateRegister = () => {
   else if(document.querySelector("#role").value === "") res = false;
   else if(document.querySelector("#streetRegister").value === "") res = false;
   else if(document.querySelector("#numRegister").value === "") res = false;
-  //else if(document.querySelector("#boxRegister").value === "") res = false;
   else if(document.querySelector("#postalRegister").value === "") res = false;
   else if(document.querySelector("#communeRegister").value === "") res = false;
   else if(document.querySelector("#countryRegister").value === "") res = false;
@@ -219,9 +218,8 @@ const onSignUp = (e) => {
   registerForm.className = "was-validated";
   errorDiv.className = "d-none";
 
-  if(validateRegister() === false) {
+  if(!validateRegister()) 
     return;
-  }
 
   let user = {
     username: document.querySelector("#usernameRegister").value,
@@ -241,16 +239,14 @@ const onSignUp = (e) => {
   }
 
   fetch("/users/register", {
-    method: "POST", // *GET, POST, PUT, DELETE, etc.
-    body: JSON.stringify(user), // body data type must match "Content-Type" header
+    method: "POST",
+    body: JSON.stringify(user),
     headers: {
       "Content-Type": "application/json",
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText);
-    }
+      throw new Error("Error code : " + response.status + " : " + response.statusText)}
     return response.json();
 
   }).then((data) => onUserRegistration(data))
