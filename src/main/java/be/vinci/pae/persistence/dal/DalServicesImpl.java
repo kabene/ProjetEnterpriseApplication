@@ -3,7 +3,6 @@ package be.vinci.pae.persistence.dal;
 import be.vinci.pae.utils.Configurate;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 
@@ -99,7 +98,7 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
     } catch (Exception throwables) {
       //throwables.printStackTrace();
       throw new InternalError(throwables.getMessage());
-    }finally {
+    } finally {
       this.connect.set(null);
     }
   }
