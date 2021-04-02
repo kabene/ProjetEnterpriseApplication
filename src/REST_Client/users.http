@@ -3,8 +3,8 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "other",
-  "password": "azerty"
+  "username": "notExistingUser",
+  "password": "usrpw"
 }
 ###
 
@@ -14,8 +14,8 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "ex",
-  "password": "qwerty"
+  "username": "bazz",
+  "password": "badpwusr"
 }
 ###
 
@@ -24,7 +24,7 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "ex"
+  "username": "bazz"
 }
 ###
 
@@ -33,8 +33,8 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "ex",
-  "password": "azerty",
+  "username": "bazz",
+  "password": "mdpusr.2",
   "rememberMe": true
 }
 
@@ -48,8 +48,8 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "johndoe",
-  "password": "azerty",
+  "username": "bert",
+  "password": "Jaune;10.",
   "rememberMe": true
 }
 > {%
