@@ -39,7 +39,6 @@ class OptionUCCImplTest {
 
   @BeforeEach
   public void init() {
-    Configurate.load("properties/test.properties");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
 
     optionUCC = locator.getService(OptionUCC.class);
