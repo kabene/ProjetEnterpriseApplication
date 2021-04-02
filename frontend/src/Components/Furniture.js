@@ -144,24 +144,27 @@ const getFurnitureList = async () => {
 }
 
 const getOptionList= async () => {
-  let ret = [];
-  await fetch("/option/list", {
-    method: "GET",
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if (!response.ok)
-      throw new Error("Error code : " + response.status + " : " + response.statusText);
-    return response.json();
-  }).then((data) => {
-    ret = data;
-  }).catch((err) => {
+  if(currentUser) {
+    let ret = [];
+    await fetch("/option/list", {
+      method: "GET",
+      headers: {
+        "Authorization": currentUser.token,
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
+      if (!response.ok)
+        throw new Error(
+            "Error code : " + response.status + " : " + response.statusText);
+      return response.json();
+    }).then((data) => {
+      ret = data;
+    }).catch((err) => {
       console.log("Erreur de fetch !! :´<\n" + err);
       displayErrorMessage("errorDiv", err);
-  });
-  return ret;
+    });
+    return ret;
+  }
 }
 
 
@@ -255,6 +258,7 @@ const generateItemAndModal = (furniture) => {
 
 
 const getOptionButton = (furniture) => {
+  if(currentUser) {
   let alreadyUnderOption=false;
   console.log(optionList);
   optionList.forEach(option=>{
@@ -265,14 +269,14 @@ const getOptionButton = (furniture) => {
             }
        }
   }
-  });
 
-  if (furniture.condition === "available_for_sale" && currentUser !== null ) { //place option
+  })};
+  if (furniture.condition === "available_for_sale" && typeof currentUser!=="undefined") { //place option
 
     let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , "btnCreateOption btn btn-primary mx-5");
     return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
   }
-  else if( furniture.condition === "under_option" && alreadyUnderOption ) { //cancel option
+  else if( furniture.condition === "under_option" && alreadyUnderOption && typeof currentUser!=="undefined" ) { //cancel option
     return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn-danger cancelOptButton">annuler l'option</button>`;
   }else{ // nothing
     return "";
