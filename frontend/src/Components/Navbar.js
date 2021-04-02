@@ -7,7 +7,8 @@ let navBar = document.querySelector("#navbar");
 const Navbar = async () => {
 
   let navbarHtml;
-  let pers = getUserSessionData();
+  let pers =await getUserSessionData();
+  console.log(pers);
 //class=navbar navbar-expand-md navbar-light py-0"
   navbarHtml = `
 
