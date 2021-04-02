@@ -63,7 +63,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   }
 
   @Override
-  public FurnitureDTO toRestoration(int furnitureId) {
+  public FurnitureDTO toRestauration(int furnitureId) {
     FurnitureDTO furnitureDTO;
     dalServices.startTransaction();
     try {

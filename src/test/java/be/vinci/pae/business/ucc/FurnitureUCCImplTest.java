@@ -331,7 +331,7 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
     Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
 
-    assertEquals(mockFurnitureDTO1, furnitureUCC.toRestoration(id),
+    assertEquals(mockFurnitureDTO1, furnitureUCC.toRestauration(id),
         "The toRestoration method should return the corresponding dto "
             + "if it is called with a valid id.");
 
@@ -358,7 +358,7 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
 
     assertThrows(ConflictException.class, () -> {
-      furnitureUCC.toRestoration(id);
+      furnitureUCC.toRestauration(id);
     }, "The toRestoration method should throw a ConflictException if it is given "
         + "the id of a piece of furniture in the '" + startingCondition + "' condition.");
 
@@ -376,7 +376,7 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
 
     assertThrows(NotFoundException.class, () -> {
-      furnitureUCC.toRestoration(id);
+      furnitureUCC.toRestauration(id);
     }, "The toRestoration method should throw a NotFoundException "
         + "if it is called with an id that isn't present in the database");
 
@@ -393,7 +393,7 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError("some error"));
 
-    assertThrows(InternalError.class, () -> furnitureUCC.toRestoration(furnitureId),
+    assertThrows(InternalError.class, () -> furnitureUCC.toRestauration(furnitureId),
         "If the DAO throws an exception, it should be thrown back");
 
     Mockito.verify(mockFurnitureDAO).findById(furnitureId);
