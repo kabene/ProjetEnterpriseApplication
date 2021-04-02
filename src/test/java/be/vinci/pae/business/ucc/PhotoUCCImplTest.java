@@ -34,7 +34,6 @@ class PhotoUCCImplTest {
 
   @BeforeAll
   public static void init() {
-    Configurate.load("properties/test.properties");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
 
     photoUCC = locator.getService(PhotoUCC.class);

@@ -174,7 +174,7 @@ public class UserUCCImpl implements UserUCC {
    */
   @Override
   public UserDTO getOne(int userId) {
-    UserDTO res ;
+    UserDTO res;
     try {
       dalServices.startTransaction();
       res = userDAO.findById(userId);
@@ -196,7 +196,7 @@ public class UserUCCImpl implements UserUCC {
    */
   @Override
   public UserDTO validateUser(int userId, boolean value) {
-    UserDTO res ;
+    UserDTO res;
     try {
       dalServices.startTransaction();
       userDAO.setRole(userId, value);

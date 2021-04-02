@@ -46,7 +46,6 @@ public class UserUCCImplTest {
    */
   @BeforeAll
   public static void init() {
-    Configurate.load("properties/test.properties");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     userUCC = locator.getService(UserUCC.class);
 
@@ -172,6 +171,10 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
+  /**
+   * Test.
+   * @param role : role.
+   */
   @DisplayName("TEST UserUCC.register : given valid fields, should return matching UserDTO")
   @ParameterizedTest
   @ValueSource(strings = {"customer", "antique_dealer", "admin"})
