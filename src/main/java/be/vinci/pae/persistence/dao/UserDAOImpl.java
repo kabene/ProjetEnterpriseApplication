@@ -183,7 +183,7 @@ public class UserDAOImpl implements UserDAO {
   public List<UserDTO> getAllWaitingUsers() {
     List<UserDTO> users = new ArrayList<>();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.waiting = true";
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.is_waiting = true";
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
@@ -204,7 +204,7 @@ public class UserDAOImpl implements UserDAO {
   public List<UserDTO> getAllConfirmedUsers() {
     List<UserDTO> users = new ArrayList<>();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.waiting = false";
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.is_waiting = false";
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
@@ -257,10 +257,10 @@ public class UserDAOImpl implements UserDAO {
   public void setRole(int id, boolean value) {
     String query;
     if (value) {
-      query = "UPDATE  satchoFurniture.users u SET waiting = false WHERE  u.user_id = ?";
+      query = "UPDATE  satchoFurniture.users u SET is_waiting = false WHERE  u.user_id = ?";
     } else {
       query = "UPDATE satchoFurniture.users u "
-          + "SET  role = 'customer', waiting = false "
+          + "SET  role = 'customer', is_waiting = false "
           + "WHERE u.user_id = ?";
     }
     PreparedStatement ps = dalServices.makeStatement(query);
@@ -293,7 +293,7 @@ public class UserDAOImpl implements UserDAO {
     userFound.setPassword(rs.getString("password"));
     userFound.setPurchasedFurnitureNbr(rs.getInt("purchased_furniture_nbr"));
     userFound.setSoldFurnitureNbr(rs.getInt("sold_furniture_nbr"));
-    userFound.setWaiting(rs.getBoolean("waiting"));
+    userFound.setWaiting(rs.getBoolean("is_waiting"));
     return userFound;
   }
 

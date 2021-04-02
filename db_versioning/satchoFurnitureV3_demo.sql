@@ -26,9 +26,8 @@ CREATE TABLE satchoFurniture.users
     password                character(60) NOT NULL,
     purchased_furniture_nbr integer       NOT NULL DEFAULT 0,
     sold_furniture_nbr      integer       NOT NULL DEFAULT 0,
-    waiting                 boolean       NOT NULL
+    is_waiting                 boolean       NOT NULL
 );
---TODO: rename waiting to is_waiting
 
 CREATE TABLE satchofurniture.furniture_types
 (
@@ -163,7 +162,7 @@ INTO satchoFurniture.addresses (address_id, street, building_number, unit_number
 VALUES (DEFAULT, 'sente des artistes', '1bis', NULL , '4800', 'Vervier', 'Belgique');
 INSERT 
 INTO satchoFurniture.users (user_id, last_name, first_name, username, email, address_id, registration_date, role, 
-                            password, purchased_furniture_nbr, sold_furniture_nbr, waiting)
+                            password, purchased_furniture_nbr, sold_furniture_nbr, is_waiting)
 VALUES (DEFAULT, 'Satcho', 'Albert', 'bert', 'bert.satcho@gmail.be', 1, now(), 'admin',
         '$2a$04$WWrY8UJlV4bysHDwXVD3.uclmB5AT7oSb78bDd4/6Iq7aHqUrfVhi', 0, 0, 'false');
 
