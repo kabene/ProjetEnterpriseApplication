@@ -200,35 +200,35 @@ INTO satchoFurniture.furniture (furniture_id, seller_id, condition, description,
 VALUES (1, 4, 'accepted', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2);
 INSERT
 INTO satchoFurniture.photos (photo_id, furniture_id, is_on_home_page, is_visible, source)
-VALUES (DEFAULT, 1, true, true, 'img/furnitures/Bahut_2.png');
+VALUES (DEFAULT, 1, true, true, 'img/furniture/Bahut_2.png');
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, condition, description, type_id)
 VALUES (2, 4, 'accepted', 'Large bureau 1m87 cm, deux colonnes de tiroirs', 6);
 INSERT
 INTO satchoFurniture.photos
-VALUES (DEFAULT, 2, true, true, 'img/furnitures/Bureau_1.png');
+VALUES (DEFAULT, 2, true, true, 'img/furniture/Bureau_1.png');
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, condition, description, type_id)
 VALUES (3, 4, 'refused', 'Table jardin en bois brut', 21);
 INSERT
 INTO satchoFurniture.photos
-VALUES (DEFAULT, 3, true, true, 'img/furnitures/table-jardin-recente.jpg');
+VALUES (DEFAULT, 3, true, true, 'img/furniture/table-jardin-recente.jpg');
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, condition, description, type_id)
 VALUES (4, 5, 'accepted', 'Table en chêne, pieds en fer forgé', 21);
 INSERT
 INTO satchoFurniture.photos
-VALUES (DEFAULT, 4, true, true, 'img/furnitures/Table.jpg');
+VALUES (DEFAULT, 4, true, true, 'img/furniture/Table.jpg');
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, condition, description, type_id)
 VALUES (5, 5, 'accepted', 'Secrétaire en acajou, marqueterie', 20);
 INSERT
 INTO satchoFurniture.photos
-VALUES (DEFAULT, 5, true, true, 'img/furnitures/Secretaire.png');
+VALUES (DEFAULT, 5, true, true, 'img/furniture/Secretaire.png');
 
 
 INSERT
