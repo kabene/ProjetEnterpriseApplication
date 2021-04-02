@@ -46,7 +46,6 @@ public class UserUCCImplTest {
    */
   @BeforeAll
   public static void init() {
-    Configurate.load("properties/test.properties");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     userUCC = locator.getService(UserUCC.class);
 
