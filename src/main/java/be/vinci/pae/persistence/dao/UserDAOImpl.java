@@ -259,13 +259,13 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
   }
 
-  @Override
   /**
    * Creates and fills a UserDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information
    * @throws SQLException in case of problem during access to the ResultSet
    */
+  @Override
   protected UserDTO toDTO(ResultSet rs) throws SQLException {
     UserDTO userFound = userFactory.getUserDTO();
     userFound.setId(rs.getInt("user_id"));

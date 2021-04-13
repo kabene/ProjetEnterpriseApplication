@@ -126,13 +126,13 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
     return opt;
   }
 
-  @Override
   /**
    * Creates and fills a OptionDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information
    * @throws SQLException in case of problem during access to the ResultSet
    */
+  @Override
   protected OptionDTO toDTO(ResultSet rs) throws SQLException {
     OptionDTO optionFound = optionFactory.getOptionDTO();
     optionFound.setOptionId(rs.getInt("option_id"));
