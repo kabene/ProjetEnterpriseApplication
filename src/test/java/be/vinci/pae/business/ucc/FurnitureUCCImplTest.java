@@ -54,6 +54,22 @@ class FurnitureUCCImplTest {
   private static PhotoDTO mockPhotoDTO3;
   private static OptionDTO mockOptionDTO;
 
+  private static final int defaultFurnitureId1 = 0;
+  private static final int defaultFurnitureId2 = 1;
+  private static final int defaultUserId1 = 2;
+  private static final int defaultUserId2 = 3;
+  private static final int defaultUserId3 = 4;
+  private static final int defaultPhotoId1 = 5;
+  private static final int defaultPhotoId2 = 6;
+  private static final int defaultPhotoId3 = 7;
+  private static final int defaultOptionId1 = 8;
+  private static final int defaultTypeId1 = 9;
+  private static final int defaultTypeId2 = 10;
+  private static final String defaultType1 = "type 1";
+  private static final String defaultType2 = "type 2";
+  private static final String defaultCondition = "available_for_sale";
+
+
 
   @BeforeAll
   public static void init() {
