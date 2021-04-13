@@ -260,7 +260,6 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
   }
 
-  @Override
   /**
    * Creates and fills a UserDTO object using a ResultSet.
    *

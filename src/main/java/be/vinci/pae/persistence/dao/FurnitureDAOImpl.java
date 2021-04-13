@@ -131,7 +131,6 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     return furnitureDTO;
   }
 
-  @Override
   /**
    * transfers ONE furniture entry from a result set to a dto.
    *
