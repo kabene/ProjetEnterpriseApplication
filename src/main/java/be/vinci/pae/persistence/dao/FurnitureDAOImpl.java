@@ -105,7 +105,6 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     return furnitureDTO;
   }
 
-  @Override
   /**
    * transfers ONE furniture entry from a result set to a dto.
    *
@@ -113,6 +112,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    * @return a dto containing the information from the result set
    * @throws SQLException if an error occurs while reading the result set
    */
+  @Override
   protected FurnitureDTO toDTO(ResultSet rs) throws SQLException {
     FurnitureDTO res = furnitureFactory.getFurnitureDTO();
     res.setFurnitureId(rs.getInt("furniture_id"));

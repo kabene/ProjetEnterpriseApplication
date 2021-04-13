@@ -82,13 +82,13 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
     return res;
   }
 
-  @Override
   /**
    * Creates and fills a PhotoDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information.
    * @throws SQLException in case of problem during access to the ResultSet.
    */
+  @Override
   protected PhotoDTO toDTO(ResultSet rs) throws SQLException {
     PhotoDTO photoFound = photoFactory.getPhotoDTO();
     photoFound.setPhotoId(rs.getInt("photo_id"));
