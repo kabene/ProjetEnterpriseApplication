@@ -4,7 +4,6 @@ import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.OptionFactory;
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
