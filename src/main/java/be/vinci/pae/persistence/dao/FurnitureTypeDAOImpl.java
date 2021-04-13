@@ -34,7 +34,7 @@ public class FurnitureTypeDAOImpl extends AbstractDAO implements FurnitureTypeDA
     return findAll("furniture_type");
   }
 
-
+  @Override
   protected String toDTO(ResultSet rs) throws SQLException {
     return rs.getString("type_name");
   }

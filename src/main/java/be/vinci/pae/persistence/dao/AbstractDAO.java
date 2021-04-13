@@ -14,13 +14,21 @@ public abstract class AbstractDAO {
   protected ConnectionBackendDalServices dalServices;
 
 
-  protected <DTO> List<DTO> findAll(String tableName) {
-    List<DTO> dtoList = new ArrayList<DTO>();
+  /**
+   * Finds all entries in a specific table. This method is inherited by all classes extending
+   * AbstractDAO and is intended to be used to implement findAll() methods.
+   *
+   * @param tableName : the name of the table (db)
+   * @param <Dto>     : The class of Dto to use in the result List
+   * @return a List of 'Dto' containing all found entries
+   */
+  protected <Dto> List<Dto> findAll(String tableName) {
+    List<Dto> dtoList = new ArrayList<Dto>();
     String query = "SELECT t.* FROM satchoFurniture." + tableName + " t";
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
-      while(rs.next()) {
+      while (rs.next()) {
         dtoList.add(toDTO(rs));
       }
       rs.close();
@@ -33,11 +41,11 @@ public abstract class AbstractDAO {
   /**
    * Instantiates and fills a DTO object using an entry from a ResultSet.
    *
-   * @param rs A ResultSet.
-   * @param <DTO> The type of DTO to return.
+   * @param rs    A ResultSet.
+   * @param <Dto> The type of DTO to return.
    * @return A DTO instance filled with information from the result set.
    * @throws SQLException if a problem occurs while reading the result set.
    */
-  protected abstract <DTO> DTO toDTO(ResultSet rs) throws SQLException;
+  protected abstract <Dto> Dto toDTO(ResultSet rs) throws SQLException;
 
 }

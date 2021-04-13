@@ -105,6 +105,7 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
     ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
   }
 
+  @Override
   protected AddressDTO toDTO(ResultSet rs) throws SQLException {
     AddressDTO res = addressFactory.getAddressDTO();
     res.setId(rs.getInt("address_id"));
