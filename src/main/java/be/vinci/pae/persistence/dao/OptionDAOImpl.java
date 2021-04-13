@@ -126,7 +126,7 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
     return opt;
   }
 
-
+  @Override
   /**
    * Creates and fills a OptionDTO object using a ResultSet.
    *
