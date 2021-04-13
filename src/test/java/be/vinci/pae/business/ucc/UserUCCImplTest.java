@@ -325,7 +325,7 @@ public class UserUCCImplTest {
   @Test
   public void test_getAll_emptyDB_shouldReturnEmptyListOfUsers() {
     List<UserDTO> emptyList = new ArrayList<>();
-    Mockito.when(mockUserDAO.getAllUsers()).thenReturn(emptyList);
+    Mockito.when(mockUserDAO.findAll()).thenReturn(emptyList);
     assertEquals(emptyList, userUCC.getAll(),
         "UserUCC.getAll should return a empty List<UserDTO> of all users");
     Mockito.verify(mockUserDAO).findAll();
