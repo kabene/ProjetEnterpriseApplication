@@ -1,5 +1,9 @@
 import {escapeHtml, displayErrorMessage} from "../utils/utils.js"
-import {getUserSessionData, setUserSessionData, setUserLocalData} from "../utils/session";
+import {
+  getUserSessionData,
+  setUserSessionData,
+  setUserLocalData
+} from "../utils/session";
 import Navbar from "./Navbar";
 import {setLayout} from "../utils/render.js"
 import {RedirectUrl} from "./Router";
@@ -81,8 +85,8 @@ let pageHTML = `
               <label for="numRegister">Numero*</label>
               <input class="form-control" id="numRegister" type="text" name="numRegister" placeholder="numero" required/>
               
-              <label for="boxRegister">Boite*</label>
-              <input class="form-control" id="boxRegister" type="text" name="boxRegister" placeholder="boite" required/>
+              <label for="boxRegister">Boite</label>
+              <input class="form-control" id="boxRegister" type="text" name="boxRegister" placeholder="boite"/>
               
               <label for="postalRegister">Code postal*</label>
               <input class="form-control" id="postalRegister" type="text" name="postalRegister" placeholder="code postal" required/>
@@ -132,10 +136,10 @@ const Authentication = () => {
 }
 
 const validateLogin = (username, password) => {
-   if(username === "" || password === "") {
-     return false;
-   }
-   return true;
+  if (username === "" || password === "") {
+    return false;
+  }
+  return true;
 }
 
 const validateRegister = () => {
@@ -148,7 +152,6 @@ const validateRegister = () => {
   else if(document.querySelector("#role").value === "") res = false;
   else if(document.querySelector("#streetRegister").value === "") res = false;
   else if(document.querySelector("#numRegister").value === "") res = false;
-  else if(document.querySelector("#boxRegister").value === "") res = false;
   else if(document.querySelector("#postalRegister").value === "") res = false;
   else if(document.querySelector("#communeRegister").value === "") res = false;
   else if(document.querySelector("#countryRegister").value === "") res = false;
@@ -167,7 +170,7 @@ const onLogin = (e) => {
   let password = document.querySelector("#passwordLogin").value;
   let rememberMe = document.querySelector("#rememberMe").checked;
   console.log("remember me: ", rememberMe);
-  if (validateLogin(username,password) === false) {
+  if (validateLogin(username, password) === false) {
     return;
   }
   let user = {
@@ -184,11 +187,11 @@ const onLogin = (e) => {
   })
   .then((response) => {
     if (!response.ok) {
-      if(response.status === 403) {
+      if (response.status === 403) {
         throw new Error("Pseudo ou mot de passe incorrect");
-      }else {
+      } else {
         throw new Error(
-          response.status + " : " + response.statusText);
+            response.status + " : " + response.statusText);
       }
     }
     return response.json();
@@ -219,9 +222,8 @@ const onSignUp = (e) => {
   registerForm.className = "was-validated";
   errorDiv.className = "d-none";
 
-  if(validateRegister() === false) {
+  if(!validateRegister()) 
     return;
-  }
 
   let user = {
     username: document.querySelector("#usernameRegister").value,
@@ -241,30 +243,33 @@ const onSignUp = (e) => {
   }
 
   fetch("/users/register", {
-    method: "POST", // *GET, POST, PUT, DELETE, etc.
-    body: JSON.stringify(user), // body data type must match "Content-Type" header
+    method: "POST",
+    body: JSON.stringify(user),
     headers: {
       "Content-Type": "application/json",
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText);
-    }
+      throw new Error("Error code : " + response.status + " : " + response.statusText)}
     return response.json();
 
-  }).then((data) => onUserRegistration(data))
+  }).then((data) => {
+    if (user.role =="customer") {
+      onUserRegistration(data);
+    } else {
+      displayErrorMessage("errorDiv",new Error("Inscription en attente: vous devez être validé avant de pouvoir vous connecter"));
+    }
+  })
   .catch((err) => {
     console.log("Erreur de fetch !! :\n" + err);
     displayErrorMessage("errorDiv", err);
   });
 }
 const onUserRegistration = (userData) => {
-  console.log("onUserRegistration", userData);
   const user = {...userData, isAutenticated: true};
   setUserSessionData(user);
   setLayout();
-  RedirectUrl("/");
+  RedirectUrl("/")
 }
 
 export default Authentication;

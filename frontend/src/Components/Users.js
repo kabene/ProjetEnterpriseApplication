@@ -298,7 +298,7 @@ const generateUserCard = (userDetail) => {
 
             <div class="row">
               <div class="col-md-6">
-                <label>status</label>
+                <label>statut</label>
               </div>
               <div class="col-md-6">
                 <p id="waiting">` + status + `</p>

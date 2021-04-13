@@ -3,7 +3,6 @@ package be.vinci.pae.persistence.dal;
 import be.vinci.pae.utils.Configurate;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 
@@ -35,8 +34,7 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
         .get();//Returns the value in the current thread's copy of this thread-local variable.
     try {
       prep = co.prepareStatement(query);
-    } catch (SQLException throwables) {
-      //throwables.printStackTrace();
+    } catch (Exception throwables) {
       throw new InternalError();
     }
     return prep;
@@ -56,8 +54,7 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
       conn.setAutoCommit(false);
       // Sets the current thread's copy of this thread-local variable to the specified value.
       connect.set(conn);
-    } catch (SQLException throwables) {
-      //throwables.printStackTrace();
+    } catch (Exception throwables) {
       throw new InternalError(throwables.getMessage());
     }
 
@@ -76,7 +73,7 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
       conn.commit();
       conn.close();
       this.connect.set(null);
-    } catch (SQLException throwables) {
+    } catch (Exception throwables) {
       //throwables.printStackTrace();
       throw new InternalError(throwables.getMessage());
     }
@@ -88,17 +85,18 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
    */
   @Override
   public void rollbackTransaction() {
+    Connection conn;
     try {
-      Connection conn;
       if ((conn = connect.get()) == null) {
         throw new InternalError("no start");
       }
       conn.rollback();
       conn.close();
       this.connect.set(null);
-    } catch (SQLException throwables) {
-      //throwables.printStackTrace();
+    } catch (Exception throwables) {
       throw new InternalError(throwables.getMessage());
+    } finally {
+      this.connect.set(null);
     }
   }
 

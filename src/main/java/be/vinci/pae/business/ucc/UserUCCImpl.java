@@ -78,6 +78,7 @@ public class UserUCCImpl implements UserUCC {
       User user = (User) userDTO;
       String hashed = user.hashPassword(userDTO.getPassword());
       user.setPassword(hashed);
+      userDTO.setWaiting(!userDTO.getRole().equals("customer"));
       userDAO.register(user, id);
       userDTO = userDAO.findByUsername(userDTO.getUsername());
       dalServices.commitTransaction();
@@ -173,7 +174,7 @@ public class UserUCCImpl implements UserUCC {
    */
   @Override
   public UserDTO getOne(int userId) {
-    UserDTO res = null;
+    UserDTO res;
     try {
       dalServices.startTransaction();
       res = userDAO.findById(userId);
@@ -195,7 +196,7 @@ public class UserUCCImpl implements UserUCC {
    */
   @Override
   public UserDTO validateUser(int userId, boolean value) {
-    UserDTO res = null;
+    UserDTO res;
     try {
       dalServices.startTransaction();
       userDAO.setRole(userId, value);

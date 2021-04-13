@@ -226,7 +226,7 @@ const generateConditionInfos = (condition) => {
       break;
     case "in_restoration":
       res.classname = "warning";
-      res.condition = "En restoration";
+      res.condition = "En restauration";
       break;
     case "under_option":
       res.classname = "danger";
@@ -240,8 +240,11 @@ const generateConditionInfos = (condition) => {
       res.classname = "dark";
       res.condition = "Retiré de la vente";
       break;
-    case "requested_for_visit":
     case "refused":
+      res.classname = "dark";
+      res.condition = "Refusé";
+      break;
+    case "requested_for_visit":
     case "reserved":
     case "delivered":
     case "collected":
@@ -497,7 +500,7 @@ const generateAllTransitionBtns = (furniture) => {
   switch(furniture.condition) {
     case "accepted":
       res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
-      res += generateTransitionModal("ToRestoration", "Indiquer en restoration");
+      res += generateTransitionModal("ToRestoration", "Indiquer en restauration");
       break;
     case "available_for_sale":
       res += generateTransitionModal("ToSold", "Indiquer vendu");
@@ -525,7 +528,7 @@ const generateModalBodyFromTransitionId = (transitionId) => {
     case "ToAvailable":
       return generateToAvailableForm();
     case "ToRestoration":
-      return "Voulez-vous vraiment indiquer ce meuble comme allant en restoration ?"
+      return "Voulez-vous vraiment indiquer ce meuble comme allant en restauration ?"
     case "ToSold":
       return "Voulez-vous vraiment indiquer ce meuble comme vendu ?"
     case "Withdraw":

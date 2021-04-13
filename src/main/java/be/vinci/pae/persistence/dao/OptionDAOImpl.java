@@ -106,7 +106,7 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
 
   @Override
   public OptionDTO findByFurnitureId(int furnitureId) {
-    OptionDTO opt = null;
+    OptionDTO opt;
     String query = "SELECT o.* FROM satchofurniture.options o "
         + "WHERE o.furniture_id = ? AND o.is_canceled = 'false'";
     PreparedStatement ps = dalServices.makeStatement(query);
@@ -138,7 +138,7 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
     optionFound.setOptionId(rs.getInt("option_id"));
     optionFound.setDuration(rs.getInt("duration"));
     optionFound.setDateOption(rs.getDate("date_option").toString());
-    optionFound.setUserId(rs.getInt("client_id"));
+    optionFound.setUserId(rs.getInt("user_id"));
     optionFound.setFurnitureId(rs.getInt("furniture_id"));
     optionFound.setCanceled(rs.getBoolean("is_canceled"));
     return optionFound;

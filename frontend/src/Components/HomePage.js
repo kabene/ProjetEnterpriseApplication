@@ -57,7 +57,7 @@ const getHTMLVisiblePhotos = () => {
 	if (typeof firstPhoto === "undefined") {
 		return `
 		<div class="carousel-item active">
-			<img class="d-block w-50 m-auto" src="` + notFoundPhoto + `" alt="Meuble 1">
+			<img class="d-block img-fluid mx-auto mb-5" src="` + notFoundPhoto + `" alt="Meuble 1">
 		</div>`;
 	}
 	let ret = `
