@@ -36,6 +36,17 @@ class OptionUCCImplTest {
   private static OptionDTO mockOptionDTO2;
   private static FurnitureDTO mockFurnitureDTO1;
   private static UserDTO mockUserDTO1;
+  private static UserDTO mockUserDTO2;
+
+
+  private static final int defaultOptionId1 = 0;
+  private static final int defaultOptionId2 = 1;
+  private static final int defaultFurnitureId1 = 2;
+  private static final int defaultDuration1 = 3;
+  private static final int defaultDuration2 = 4;
+  private static final int defaultUserId1 = 5;
+  private static final int defaultUserId2 = 6;
+  private static final String defaultCondition = "available_for_sale";
 
   @BeforeEach
   public void init() {
@@ -50,7 +61,7 @@ class OptionUCCImplTest {
     mockOptionDTO2 = Mockito.mock(OptionDTO.class);
     mockFurnitureDTO1 = Mockito.mock(FurnitureDTO.class);
     mockUserDTO1 = Mockito.mock(UserDTO.class);
-
+    mockUserDTO2 = Mockito.mock(UserDTO.class);
 
   }
 
@@ -63,6 +74,24 @@ class OptionUCCImplTest {
     Mockito.reset(mockOptionDTO2);
     Mockito.reset(mockFurnitureDTO1);
     Mockito.reset(mockUserDTO1);
+    Mockito.reset(mockUserDTO2);
+
+    Mockito.when(mockOptionDTO1.getOptionId()).thenReturn(defaultOptionId1);
+    Mockito.when(mockOptionDTO1.getFurnitureId()).thenReturn(defaultFurnitureId1);
+    Mockito.when(mockOptionDTO1.getDuration()).thenReturn(defaultDuration1);
+    Mockito.when(mockOptionDTO1.getUserId()).thenReturn(defaultUserId1);
+    Mockito.when(mockOptionDTO1.getUser()).thenReturn(mockUserDTO1);
+
+    Mockito.when(mockOptionDTO2.getOptionId()).thenReturn(defaultOptionId2);
+    Mockito.when(mockOptionDTO2.getFurnitureId()).thenReturn(defaultFurnitureId1);
+    Mockito.when(mockOptionDTO2.getDuration()).thenReturn(defaultDuration2);
+    Mockito.when(mockOptionDTO2.getUserId()).thenReturn(defaultUserId2);
+    Mockito.when(mockOptionDTO2.getUser()).thenReturn(mockUserDTO2);
+
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
+
+    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(defaultFurnitureId1);
+    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(defaultCondition);
   }
 
   @DisplayName("TEST OptionUCC.introduceOption : given valid arguments, should return DTO")
