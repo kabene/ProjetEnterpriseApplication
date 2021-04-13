@@ -56,18 +56,44 @@ class FurnitureUCCImplTest {
 
   private static final int defaultFurnitureId1 = 0;
   private static final int defaultFurnitureId2 = 1;
+
   private static final int defaultUserId1 = 2;
   private static final int defaultUserId2 = 3;
   private static final int defaultUserId3 = 4;
+
   private static final int defaultPhotoId1 = 5;
   private static final int defaultPhotoId2 = 6;
   private static final int defaultPhotoId3 = 7;
+
   private static final int defaultOptionId1 = 8;
+
   private static final int defaultTypeId1 = 9;
   private static final int defaultTypeId2 = 10;
+
+  private static final int defaultBuyerId1 = defaultUserId1;
+  private static UserDTO defaultBuyer1;
+
+  private static final int defaultSellerId1 = defaultUserId2;
+  private static UserDTO defaultSeller1;
+
+  private static final int defaultBuyerId2 = defaultUserId3;
+  private static UserDTO defaultBuyer2;
+
+  private static final int defaultSellerId2 = defaultUserId1;
+  private static UserDTO defaultSeller2;
+
+  private static final int defaultFavouritePhotoId1 = defaultPhotoId1;
+  private static PhotoDTO defaultFavouritePhoto1;
+
+  private static final int defaultFavouritePhotoId2 = defaultPhotoId3;
+  private static PhotoDTO defaultFavouritePhoto2;
+
   private static final String defaultType1 = "type 1";
   private static final String defaultType2 = "type 2";
+
   private static final String defaultCondition = "available_for_sale";
+  private static final double defaultSellingPrice1 = 1.50;
+  private static final double defaultSellingPrice2 = 2.50;
 
 
 
@@ -92,6 +118,14 @@ class FurnitureUCCImplTest {
     mockPhotoDTO2 = Mockito.mock(PhotoImpl.class);
     mockPhotoDTO3 = Mockito.mock(PhotoImpl.class);
     mockOptionDTO = Mockito.mock(OptionImpl.class);
+
+    defaultBuyer1 = mockUserDTO1;
+    defaultSeller1 = mockUserDTO2;
+    defaultBuyer2 = mockUserDTO3;
+    defaultSeller2 = mockUserDTO1;
+
+    defaultFavouritePhoto1 = mockPhotoDTO1;
+    defaultFavouritePhoto2 = mockPhotoDTO3;
   }
 
   @BeforeEach
@@ -111,92 +145,97 @@ class FurnitureUCCImplTest {
     Mockito.reset(mockPhotoDTO2);
     Mockito.reset(mockPhotoDTO3);
     Mockito.reset(mockOptionDTO);
+
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
+
+    Mockito.when(mockUserDAO.findById(defaultUserId1)).thenReturn(mockUserDTO1);
+    Mockito.when(mockUserDAO.findById(defaultUserId2)).thenReturn(mockUserDTO2);
+    Mockito.when(mockUserDAO.findById(defaultUserId3)).thenReturn(mockUserDTO3);
+
+    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId1)).thenReturn(mockPhotoDTO1);
+    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId2)).thenReturn(mockPhotoDTO2);
+    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId3)).thenReturn(mockPhotoDTO3);
+
+    Mockito.when(mockFurnitureTypeDAO.findById(defaultTypeId1)).thenReturn(defaultType1);
+    Mockito.when(mockFurnitureTypeDAO.findById(defaultTypeId2)).thenReturn(defaultType2);
+
+    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(defaultFurnitureId1);
+    Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(defaultBuyerId1);
+    Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(defaultSellerId1);
+    Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(defaultFavouritePhotoId1);
+    Mockito.when(mockFurnitureDTO1.getTypeId()).thenReturn(defaultTypeId1);
+    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(defaultCondition);
+
+    Mockito.when(mockFurnitureDTO2.getFurnitureId()).thenReturn(defaultFurnitureId2);
+    Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(defaultBuyerId2);
+    Mockito.when(mockFurnitureDTO2.getSellerId()).thenReturn(defaultSellerId2);
+    Mockito.when(mockFurnitureDTO2.getFavouritePhotoId()).thenReturn(defaultFavouritePhotoId2);
+    Mockito.when(mockFurnitureDTO2.getTypeId()).thenReturn(defaultTypeId2);
+    Mockito.when(mockFurnitureDTO2.getCondition()).thenReturn(defaultCondition);
+
+    Mockito.when(mockOptionDTO.getOptionId()).thenReturn(defaultOptionId1);
   }
 
   @DisplayName("TEST FurnitureUCC.getOne : given valid id, should return dto "
       + "(containing seller + buyer + favourite photo + 2 photos + type)")
   @Test
   public void test_getOne_givenValidId_shouldReturnFurnitureDTO() {
-    int furnitureId = 1;
-    int buyerId = 1;
-    int sellerId = 2;
-    int typeId = 1;
-    int favouritePhotoId = 1;
     List<PhotoDTO> photos = Arrays.asList(mockPhotoDTO1, mockPhotoDTO2);
-    String type = "type";
-    String condition = "available_for_sale";
 
-    Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId1)).thenReturn(photos);
 
-    Mockito.when(mockUserDAO.findById(buyerId)).thenReturn(mockUserDTO1);
-    Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO2);
-
-    Mockito.when(mockPhotoDAO.getPhotoById(favouritePhotoId)).thenReturn(mockPhotoDTO1);
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(furnitureId)).thenReturn(photos);
-
-    Mockito.when(mockFurnitureTypeDAO.findById(typeId)).thenReturn(type);
-
-    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(furnitureId);
-    Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(buyerId);
-    Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
-    Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(favouritePhotoId);
-    Mockito.when(mockFurnitureDTO1.getTypeId()).thenReturn(typeId);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
-
-    FurnitureDTO actual = furnitureUCC.getOne(furnitureId);
+    FurnitureDTO actual = furnitureUCC.getOne(defaultFurnitureId1);
     FurnitureDTO expected = mockFurnitureDTO1;
     assertEquals(expected, actual,
         "The getOne method should return the corresponding dto if the given id is valid.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
 
-    Mockito.verify(mockFurnitureDAO).findById(furnitureId);
+    Mockito.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
 
-    Mockito.verify(mockUserDAO).findById(buyerId);
-    Mockito.verify(mockUserDAO).findById(sellerId);
+    Mockito.verify(mockUserDAO).findById(defaultBuyerId1);
+    Mockito.verify(mockUserDAO).findById(defaultSellerId1);
 
-    Mockito.verify(mockPhotoDAO).getPhotoById(favouritePhotoId);
-    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(furnitureId);
+    Mockito.verify(mockPhotoDAO).getPhotoById(defaultFavouritePhotoId1);
+    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(defaultFurnitureId1);
 
-    Mockito.verify(mockFurnitureTypeDAO).findById(typeId);
+    Mockito.verify(mockFurnitureTypeDAO).findById(defaultTypeId1);
 
-    Mockito.verify(mockFurnitureDTO1).setBuyer(mockUserDTO1);
-    Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO2);
-    Mockito.verify(mockFurnitureDTO1).setFavouritePhoto(mockPhotoDTO1);
+    Mockito.verify(mockFurnitureDTO1).setBuyer(defaultBuyer1);
+    Mockito.verify(mockFurnitureDTO1).setSeller(defaultSeller1);
+    Mockito.verify(mockFurnitureDTO1).setFavouritePhoto(defaultFavouritePhoto1);
     Mockito.verify(mockFurnitureDTO1).setPhotos(photos);
-    Mockito.verify(mockFurnitureDTO1).setType(type);
+    Mockito.verify(mockFurnitureDTO1).setType(defaultType1);
   }
 
   @DisplayName("TEST FurnitureUCC.getOne : given invalid id, should throw NotFoundException")
   @Test
   public void test_getOne_givenInvalidId_shouldReturnNull() {
-    int furnitureId = 1;
-
-    Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(NotFoundException.class);
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(NotFoundException.class);
 
     assertThrows(NotFoundException.class,
-        () -> furnitureUCC.getOne(furnitureId),
+        () -> furnitureUCC.getOne(defaultFurnitureId1),
         "Calling getOne with an invalid id should throw NotFoundException.");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 
-    Mockito.verify(mockFurnitureDAO).findById(furnitureId);
+    Mockito.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
   }
 
   @DisplayName("TEST UserUCC.getOne : DAO throws InternalError, "
       + "Should rollback and throw InternalError")
   @Test
   public void test_getOne_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-    int furnitureId = 1;
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new InternalError("some error"));
 
-    Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError("some error"));
-
-    assertThrows(InternalError.class, () -> furnitureUCC.getOne(furnitureId),
+    assertThrows(InternalError.class, () -> furnitureUCC.getOne(defaultFurnitureId1),
         "If the DAO throws an exception, it should be thrown back");
 
-    Mockito.verify(mockFurnitureDAO).findById(furnitureId);
+    Mockito.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
@@ -206,55 +245,25 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.getAll : should return list of dto")
   @Test
   public void test_getAll_shouldReturnListOfFurnitureDTOs() {
-    final int furnitureId1 = 1;
-    final int furnitureId2 = 2;
-    final int buyerId1 = 3;
-    final int sellerId1 = 4;
-    final int typeId1 = 5;
-    final int typeId2 = 6;
-    final int favouritePhotoId1 = 7;
     final List<PhotoDTO> photos1 = Arrays.asList(mockPhotoDTO1, mockPhotoDTO2);
     final List<PhotoDTO> photos2 = Arrays.asList(mockPhotoDTO3);
-
-    final String type1 = "type1";
-    final String condition1 = "available_for_sale";
-
-    final String type2 = "type2";
     final String condition2 = "under_option";
-    final int optionUserId = 8;
 
     List<FurnitureDTO> furnitureDTOS = Arrays.asList(mockFurnitureDTO1, mockFurnitureDTO2);
 
     Mockito.when(mockFurnitureDAO.findAll()).thenReturn(furnitureDTOS);
 
-    Mockito.when(mockUserDAO.findById(buyerId1)).thenReturn(mockUserDTO1);
-    Mockito.when(mockUserDAO.findById(sellerId1)).thenReturn(mockUserDTO2);
-    Mockito.when(mockUserDAO.findById(optionUserId)).thenReturn(mockUserDTO3);
+    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId2)).thenReturn(mockOptionDTO);
 
-    Mockito.when(mockPhotoDAO.getPhotoById(favouritePhotoId1)).thenReturn(mockPhotoDTO1);
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(furnitureId1)).thenReturn(photos1);
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(furnitureId2)).thenReturn(photos2);
+    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId1)).thenReturn(photos1);
+    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId2)).thenReturn(photos2);
 
-    Mockito.when(mockFurnitureTypeDAO.findById(typeId1)).thenReturn(type1);
-    Mockito.when(mockFurnitureTypeDAO.findById(typeId2)).thenReturn(type2);
-
-    Mockito.when(mockOptionDAO.findByFurnitureId(furnitureId2)).thenReturn(mockOptionDTO);
-
-    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(furnitureId1);
-    Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(buyerId1);
-    Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId1);
-    Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(favouritePhotoId1);
-    Mockito.when(mockFurnitureDTO1.getTypeId()).thenReturn(typeId1);
-    Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition1);
-
-    Mockito.when(mockFurnitureDTO2.getFurnitureId()).thenReturn(furnitureId2);
     Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getSellerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getFavouritePhotoId()).thenReturn(null);
-    Mockito.when(mockFurnitureDTO2.getTypeId()).thenReturn(typeId2);
     Mockito.when(mockFurnitureDTO2.getCondition()).thenReturn(condition2);
 
-    Mockito.when(mockOptionDTO.getUserId()).thenReturn(optionUserId);
+    Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultUserId3);
 
     List<FurnitureDTO> expected = furnitureDTOS;
     List<FurnitureDTO> actual = furnitureUCC.getAll();
@@ -266,24 +275,24 @@ class FurnitureUCCImplTest {
 
     Mockito.verify(mockFurnitureDAO).findAll();
 
-    Mockito.verify(mockUserDAO).findById(buyerId1);
-    Mockito.verify(mockUserDAO).findById(sellerId1);
+    Mockito.verify(mockUserDAO).findById(defaultBuyerId1);
+    Mockito.verify(mockUserDAO).findById(defaultSellerId1);
 
-    Mockito.verify(mockPhotoDAO).getPhotoById(favouritePhotoId1);
-    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(furnitureId1);
-    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(furnitureId2);
+    Mockito.verify(mockPhotoDAO).getPhotoById(defaultFavouritePhotoId1);
+    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(defaultFurnitureId1);
+    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(defaultFurnitureId2);
 
-    Mockito.verify(mockFurnitureTypeDAO).findById(typeId1);
-    Mockito.verify(mockFurnitureTypeDAO).findById(typeId2);
+    Mockito.verify(mockFurnitureTypeDAO).findById(defaultTypeId1);
+    Mockito.verify(mockFurnitureTypeDAO).findById(defaultTypeId2);
 
-    Mockito.verify(mockFurnitureDTO1).setBuyer(mockUserDTO1);
-    Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO2);
-    Mockito.verify(mockFurnitureDTO1).setFavouritePhoto(mockPhotoDTO1);
+    Mockito.verify(mockFurnitureDTO1).setBuyer(defaultBuyer1);
+    Mockito.verify(mockFurnitureDTO1).setSeller(defaultSeller1);
+    Mockito.verify(mockFurnitureDTO1).setFavouritePhoto(defaultFavouritePhoto1);
     Mockito.verify(mockFurnitureDTO1).setPhotos(photos1);
-    Mockito.verify(mockFurnitureDTO1).setType(type1);
+    Mockito.verify(mockFurnitureDTO1).setType(defaultType1);
 
     Mockito.verify(mockFurnitureDTO2).setPhotos(photos2);
-    Mockito.verify(mockFurnitureDTO2).setType(type2);
+    Mockito.verify(mockFurnitureDTO2).setType(defaultType2);
     Mockito.verify(mockFurnitureDTO2).setOption(mockOptionDTO);
 
     Mockito.verify(mockOptionDTO).setUser(mockUserDTO3);
@@ -326,27 +335,22 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.toRestoration : given valid id, should return dto")
   @Test
   public void test_toRestoration_givenValidId_shouldReturnDTO() {
-    int id = 1;
     final String startingCondition = "accepted";
     final String expectedEndingCondition = "in_restoration";
-    int sellerId = 1;
     List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
 
-    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId1)).thenReturn(emptyList);
+
     Mockito.when(mockFurnitureDAO.updateConditionOnly(mockFurnitureDTO1))
-        .thenReturn(mockFurnitureDTO1);
-
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
-
-    Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
+        .thenReturn(mockFurnitureDTO2);
 
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
-    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(id);
     Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(null);
-    Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
     Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
 
-    assertEquals(mockFurnitureDTO1, furnitureUCC.toRestoration(id),
+    Mockito.when(mockFurnitureDTO2.getFurnitureId()).thenReturn(defaultFurnitureId1);
+
+    assertEquals(mockFurnitureDTO2, furnitureUCC.toRestoration(defaultFurnitureId1),
         "The toRestoration method should return the corresponding dto "
             + "if it is called with a valid id.");
 
@@ -354,11 +358,12 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
 
+    Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
+
     Mockito.verify(mockFurnitureDAO).updateConditionOnly(mockFurnitureDTO1);
 
-    Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
-    Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO1);
-    Mockito.verify(mockFurnitureDTO1).setPhotos(emptyList);
+    Mockito.verify(mockFurnitureDTO2).setSeller(defaultSeller2);
+    Mockito.verify(mockFurnitureDTO2).setPhotos(emptyList);
   }
 
   @DisplayName("TEST FurnitureUCC.toRestoration : given invalid id (invalid condition),"
@@ -367,13 +372,11 @@ class FurnitureUCCImplTest {
   @ValueSource(strings = {"requested_for_visit", "refused", "in_restoration", "available_for_sale",
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_toRestoration_givenInvalidId1_shouldThrowConflict(String startingCondition) {
-    int id = 1;
-
-    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
 
     assertThrows(ConflictException.class, () -> {
-      furnitureUCC.toRestoration(id);
+      furnitureUCC.toRestoration(defaultFurnitureId1);
     }, "The toRestoration method should throw a ConflictException if it is given "
         + "the id of a piece of furniture in the '" + startingCondition + "' condition.");
 
@@ -386,12 +389,10 @@ class FurnitureUCCImplTest {
       + " should throw NotFoundException")
   @Test
   public void test_toRestoration_givenInvalidId2_shouldThrowNotFound() {
-    int id = 1;
-
-    Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(NotFoundException.class);
 
     assertThrows(NotFoundException.class, () -> {
-      furnitureUCC.toRestoration(id);
+      furnitureUCC.toRestoration(defaultFurnitureId1);
     }, "The toRestoration method should throw a NotFoundException "
         + "if it is called with an id that isn't present in the database");
 
@@ -404,14 +405,12 @@ class FurnitureUCCImplTest {
       + "Should rollback and throw InternalError")
   @Test
   public void test_toRestoration_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-    int furnitureId = 1;
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new InternalError("some error"));
 
-    Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError("some error"));
-
-    assertThrows(InternalError.class, () -> furnitureUCC.toRestoration(furnitureId),
+    assertThrows(InternalError.class, () -> furnitureUCC.toRestoration(defaultFurnitureId1),
         "If the DAO throws an exception, it should be thrown back");
 
-    Mockito.verify(mockFurnitureDAO).findById(furnitureId);
+    Mockito.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
@@ -422,27 +421,23 @@ class FurnitureUCCImplTest {
   @ParameterizedTest
   @ValueSource(strings = {"accepted", "in_restoration"})
   public void test_toAvailable_givenValidId_shouldReturnDTO(String startingCondition) {
-    final int id = 1;
     final String expectedEndingCondition = "available_for_sale";
-    final double sellingPrice = 149.99;
-    final int sellerId = 1;
     final List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
 
-    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDAO.updateToAvailable(mockFurnitureDTO1))
-        .thenReturn(mockFurnitureDTO1);
+        .thenReturn(mockFurnitureDTO2);
 
-    Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
+    Mockito.when(mockUserDAO.findById(defaultSellerId1)).thenReturn(mockUserDTO1);
 
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
+    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId1)).thenReturn(emptyList);
 
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
-    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(id);
-    Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(null);
-    Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
-    Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
 
-    assertEquals(mockFurnitureDTO1, furnitureUCC.toAvailable(id, sellingPrice),
+    Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
+    Mockito.when(mockFurnitureDTO2.getSellerId()).thenReturn(defaultSellerId1);
+    Mockito.when(mockFurnitureDTO2.getFavouritePhotoId()).thenReturn(null);
+
+    assertEquals(mockFurnitureDTO2, furnitureUCC.toAvailable(defaultFurnitureId1, defaultSellingPrice1),
         "The toAvailable method should return the corresponding dto "
             + "if it is called with a valid id.");
 
@@ -450,11 +445,12 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
 
+    Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
+
     Mockito.verify(mockFurnitureDAO).updateToAvailable(mockFurnitureDTO1);
 
-    Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
-    Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO1);
-    Mockito.verify(mockFurnitureDTO1).setPhotos(emptyList);
+    Mockito.verify(mockFurnitureDTO2).setSeller(defaultSeller2);
+    Mockito.verify(mockFurnitureDTO2).setPhotos(emptyList);
 
   }
 
@@ -464,14 +460,11 @@ class FurnitureUCCImplTest {
   @ValueSource(strings = {"requested_for_visit", "refused", "available_for_sale",
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_toAvailable_givenInvalidStates_shouldThrowConflict(String startingCondition) {
-    final int id = 1;
-    final double sellingPrice = 149.99;
-
-    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
 
     assertThrows(ConflictException.class, () -> {
-      furnitureUCC.toAvailable(id, sellingPrice);
+      furnitureUCC.toAvailable(defaultFurnitureId1, defaultSellingPrice1);
     }, "The toAvailable method should throw a ConflictException if it is given "
         + "the id of a piece of furniture in the '" + startingCondition + "' condition.");
 
@@ -484,13 +477,10 @@ class FurnitureUCCImplTest {
       + " should throw NotFoundException")
   @Test
   public void test_toAvailable_givenInvalidId_shouldThrowNotFound() {
-    final int id = 1;
-    final double sellingPrice = 149.99;
-
-    Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(NotFoundException.class);
 
     assertThrows(NotFoundException.class, () -> {
-      furnitureUCC.toAvailable(id, sellingPrice);
+      furnitureUCC.toAvailable(defaultFurnitureId1, defaultSellingPrice1);
     }, "The toAvailable method should throw a NotFoundException "
         + "if it is called with an id that isn't present in the database");
 
@@ -503,15 +493,12 @@ class FurnitureUCCImplTest {
       + "Should rollback and throw InternalError")
   @Test
   public void test_toAvailable_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-    int furnitureId = 1;
-    double price = 150;
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new InternalError("some error"));
 
-    Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError("some error"));
-
-    assertThrows(InternalError.class, () -> furnitureUCC.toAvailable(furnitureId, price),
+    assertThrows(InternalError.class, () -> furnitureUCC.toAvailable(defaultFurnitureId1, defaultSellingPrice1),
         "If the DAO throws an exception, it should be thrown back");
 
-    Mockito.verify(mockFurnitureDAO).findById(furnitureId);
+    Mockito.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
@@ -522,26 +509,18 @@ class FurnitureUCCImplTest {
   @ParameterizedTest
   @ValueSource(strings = {"in_restoration", "available_for_sale"})
   public void test_withdraw_givenValidId_shouldReturnDTO(String startingCondition) {
-    final int id = 1;
     final String expectedEndingCondition = "withdrawn";
-    final int sellerId = 1;
     final List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
-
-    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDAO.updateToWithdrawn(mockFurnitureDTO1))
-        .thenReturn(mockFurnitureDTO1);
-
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
-
-    Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
+        .thenReturn(mockFurnitureDTO2);
 
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
-    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(id);
-    Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(null);
-    Mockito.when(mockFurnitureDTO1.getSellerId()).thenReturn(sellerId);
-    Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
 
-    assertEquals(mockFurnitureDTO1, furnitureUCC.withdraw(id),
+    Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
+    Mockito.when(mockFurnitureDTO2.getFavouritePhotoId()).thenReturn(null);
+    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId2)).thenReturn(emptyList);
+
+    assertEquals(mockFurnitureDTO2, furnitureUCC.withdraw(defaultFurnitureId1),
         "The withdraw method should return the corresponding dto "
             + "if it is called with a valid id.");
 
@@ -552,8 +531,8 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockFurnitureDAO).updateToWithdrawn(mockFurnitureDTO1);
 
     Mockito.verify(mockFurnitureDTO1).setCondition(expectedEndingCondition);
-    Mockito.verify(mockFurnitureDTO1).setSeller(mockUserDTO1);
-    Mockito.verify(mockFurnitureDTO1).setPhotos(emptyList);
+    Mockito.verify(mockFurnitureDTO2).setSeller(defaultSeller2);
+    Mockito.verify(mockFurnitureDTO2).setPhotos(emptyList);
   }
 
   @DisplayName("TEST FurnitureUCC.withdraw : given invalid id (invalid condition),"
@@ -562,13 +541,10 @@ class FurnitureUCCImplTest {
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted",
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_withdraw_givenInvalidStates_shouldThrowConflict(String startingCondition) {
-    final int id = 1;
-
-    Mockito.when(mockFurnitureDAO.findById(id)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
 
     assertThrows(ConflictException.class, () -> {
-      furnitureUCC.withdraw(id);
+      furnitureUCC.withdraw(defaultFurnitureId1);
     }, "The withdraw method should throw a ConflictException if it is given "
         + "the id of a piece of furniture in the '" + startingCondition + "' condition.");
 
@@ -581,11 +557,9 @@ class FurnitureUCCImplTest {
       + " should throw NotFoundException")
   @Test
   public void test_withdraw_givenInvalidId_shouldThrowNotFound() {
-    final int id = 1;
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(NotFoundException.class);
 
-    Mockito.when(mockFurnitureDAO.findById(id)).thenThrow(NotFoundException.class);
-
-    assertThrows(NotFoundException.class, () -> furnitureUCC.withdraw(id),
+    assertThrows(NotFoundException.class, () -> furnitureUCC.withdraw(defaultFurnitureId1),
         "The withdraw method should throw a NotFoundException "
             + "if it is called with an id that isn't present in the database");
 
@@ -598,14 +572,12 @@ class FurnitureUCCImplTest {
       + "Should rollback and throw InternalError")
   @Test
   public void test_withdraw_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-    int furnitureId = 1;
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new InternalError("some error"));
 
-    Mockito.when(mockFurnitureDAO.findById(furnitureId)).thenThrow(new InternalError("some error"));
-
-    assertThrows(InternalError.class, () -> furnitureUCC.withdraw(furnitureId),
+    assertThrows(InternalError.class, () -> furnitureUCC.withdraw(defaultFurnitureId1),
         "If the DAO throws an exception, it should be thrown back");
 
-    Mockito.verify(mockFurnitureDAO).findById(furnitureId);
+    Mockito.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
