@@ -77,7 +77,7 @@ public class FurnitureResource {
   public Response getAll() {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/");
     List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
-    List<FurnitureDTO> res = furnitureDTOs.stream()
+    List<FurnitureDTO> res = furnitureDTOs.parallelStream()
         .filter((dto) -> dto.getStatus().equals("available_for_sale") ||
             dto.getStatus().equals("sold"))
         .map((dto) -> Json.filterPublicJsonView(dto, FurnitureDTO.class))
