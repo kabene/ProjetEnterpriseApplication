@@ -93,7 +93,6 @@ class FurnitureUCCImplTest {
   private static final Status defaultStatus = Status.AVAILABLE_FOR_SALE;
   private static final double defaultSellingPrice1 = 1.50;
 
-
   @BeforeAll
   public static void init() {
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
