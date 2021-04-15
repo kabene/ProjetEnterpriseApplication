@@ -82,7 +82,7 @@ const importAllFurnitureImg = () => {
 }
 
 /**
- * finds furniture image src from loaded images array ( -> return value from importAllFurnitureImg() )
+ * finds furniture image src from loaded images array and filename ( -> return value from importAllFurnitureImg() )
  * 
  * @param {string} filename 
  * @param {Array[*]} images 
@@ -93,6 +93,20 @@ const findFurnitureImgSrcFromFilename = (filename, images) => {
       return imageNotFound;
     }
     return images[filename].default;
-  }
+}
 
-export {escapeHtml, removeTimeouts, generateLoadingAnimation, verifyAdmin, displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename};
+/**
+ * finds favourite image src from loaded images array and Furniture object
+ * @param {Furniture object} furniture 
+ * @param {Array[*]} images 
+ * @returns <img/> src
+ */
+const findFavImgSrc = (furniture, images) => {
+    if(!furniture.favouritePhoto) {
+      return imageNotFound;
+    }
+    return findFurnitureImgSrcFromFilename(furniture.favouritePhoto.source, images);
+}
+
+export {escapeHtml, removeTimeouts, generateLoadingAnimation, verifyAdmin,
+     displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc};

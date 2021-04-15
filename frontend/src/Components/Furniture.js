@@ -1,7 +1,6 @@
 import { getUserSessionData } from "../utils/session";
-import imageNotFound from "../img/notFoundPhoto.png";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename} from "../utils/utils.js"
+import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc} from "../utils/utils.js"
 
 
 let page = document.querySelector("#page");
@@ -205,7 +204,7 @@ const generateAllItemsAndModals = () => {
 const generateItemAndModal = (furniture) => {
     let item = `
         <div>
-            <img class="imageFurniturePage" src="${findFavImgSrc(furniture)}" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
+            <img class="imageFurniturePage" src="${findFavImgSrc(furniture, images)}" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
             <p class="text-center">` + furniture.description + `</p>`
             + getOptionButton(furniture) +
         `</div>`;
@@ -281,9 +280,6 @@ const getOptionButton = (furniture) => {
   }
 }
 
-
-
-
 const getTabPhotoToRender = (furniture) => {
     return furniture.photos;
 }
@@ -299,13 +295,5 @@ const generateOptionForm = () => {
   `;
     return res;
 }
-
-const findFavImgSrc = (furniture) => {
-  if(!furniture.favouritePhoto) {
-    return imageNotFound;
-  }
-  return findFurnitureImgSrcFromFilename(furniture.favouritePhoto.source, images);
-}
-
 
 export default Furniture;

@@ -1,7 +1,7 @@
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {getUserSessionData} from "../utils/session.js";
-import {displayErrorMessage} from "../utils/utils.js"
+import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -10,6 +10,7 @@ let furnitureMap = [];
 let timeouts = [];
 let currentUser;
 let pageHTML;
+let images = importAllFurnitureImg();
 
 const FurnitureList = async (id) => {
   currentUser = getUserSessionData();
@@ -154,7 +155,7 @@ const generateRow = (furniture, notNeededClassName) => {
       <th><div id="thumbnail" class="w-25 mx-auto">${generateFavouritePhotoImgTag(furniture)}<div></th>
       <th><p>${furniture.description}</p></th>
       <th class="${notNeededClassName}"><p>${furniture.type}</p></th>
-      <th class="tablestatus text-center" status="${furniture.status}">${statusHtml}</th>
+      <th class="tableStatus text-center" status="${furniture.status}">${statusHtml}</th>
       <th class="${notNeededClassName}">${generateSellerLink(furniture)}</th>
       <th class="${notNeededClassName}">${generateBuyerLink(furniture)}</th>
       <th class="${notNeededClassName}">${generateSellingPriceTableElement(furniture)}</th>
@@ -164,13 +165,7 @@ const generateRow = (furniture, notNeededClassName) => {
 }
 
 const generateFavouritePhotoImgTag = (furniture) => {
-  let res = "";
-  if (furniture.favouritePhoto) {
-    res = `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail photoId=${furniture.favouritePhoto.photoId}"/>`;
-  } else {
-    // TODO: default img if no favourite
-  }
-  return res;
+  return `<img class="img-fluid" src="${findFavImgSrc(furniture, images)}" alt="thumbnail id:${furniture.favouritePhoto.photoId}"/>`;
 }
 
 const generateSellerLink = (furniture) => {
@@ -261,7 +256,9 @@ const generateColoredStatus = (furniture) => {
 }
 
 //input: "primary", "secondary", "info", etc...
-const generateDot = (colorClassName) => `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
+const generateDot = (colorClassName) =>{
+  return `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
+} 
 
 const generateBadgeStatus = (furniture) => {
   let infos = generateStatusInfos(furniture.status);
@@ -403,7 +400,7 @@ const generateCardHTML = (furniture) => {
 const generatePhotoList = (furniture) => {
   let photos = "";
   furniture.photos.forEach(photo => {
-    photos += `<img class="img-fluid flex-grow-1 p-1" src="${photo.source}" alt="photo of id ${photo.photoId}"/>`;
+    photos += `<img class="img-fluid flex-grow-1 p-1" src="${findFurnitureImgSrcFromFilename(photo.source, images)}" alt="photo id:${photo.photoId}"/>`;
   });
   let res = `<div class="d-flex flex-lg-fill">${photos}</div>`;
   return res;
