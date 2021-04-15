@@ -50,7 +50,7 @@ public interface UserDAO {
    *
    * @return list contains the users of the db.
    */
-  List<UserDTO> getAllUsers();
+  List<UserDTO> findAll();
 
   /**
    * get all user waiting for registration validation of the db.

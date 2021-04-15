@@ -3,17 +3,14 @@ package be.vinci.pae.persistence.dao;
 import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import org.apache.commons.text.StringEscapeUtils;
 
-public class AddressDAOImpl implements AddressDAO {
-
-  @Inject
-  private ConnectionBackendDalServices dalServices;
+public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
 
   @Inject
   private AddressFactory addressFactory;
@@ -93,6 +90,12 @@ public class AddressDAOImpl implements AddressDAO {
     return res;
   }
 
+
+  @Override
+  public List<AddressDTO> findAll() {
+    return findAll("addresses");
+  }
+
   private void addressToRequest(AddressDTO address, PreparedStatement ps) throws SQLException {
     ps.setString(1, StringEscapeUtils.escapeHtml4(address.getStreet()));
     ps.setString(2, StringEscapeUtils.escapeHtml4(address.getBuildingNumber()));
@@ -102,7 +105,8 @@ public class AddressDAOImpl implements AddressDAO {
     ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
   }
 
-  private AddressDTO toDTO(ResultSet rs) throws SQLException {
+  @Override
+  protected AddressDTO toDTO(ResultSet rs) throws SQLException {
     AddressDTO res = addressFactory.getAddressDTO();
     res.setId(rs.getInt("address_id"));
     res.setStreet(rs.getString("street"));

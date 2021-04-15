@@ -311,10 +311,10 @@ public class UserUCCImplTest {
   @Test
   public void test_getAll_shouldReturnListOfAllUsers() {
     List<UserDTO> allUsers = Arrays.asList(mockUser1, mockUser2);
-    Mockito.when(mockUserDAO.getAllUsers()).thenReturn(allUsers);
+    Mockito.when(mockUserDAO.findAll()).thenReturn(allUsers);
     assertEquals(allUsers, userUCC.getAll(),
         "UserUCC.getAll should return a List<UserDTO> of all users");
-    Mockito.verify(mockUserDAO).getAllUsers();
+    Mockito.verify(mockUserDAO).findAll();
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
@@ -325,10 +325,10 @@ public class UserUCCImplTest {
   @Test
   public void test_getAll_emptyDB_shouldReturnEmptyListOfUsers() {
     List<UserDTO> emptyList = new ArrayList<>();
-    Mockito.when(mockUserDAO.getAllUsers()).thenReturn(emptyList);
+    Mockito.when(mockUserDAO.findAll()).thenReturn(emptyList);
     assertEquals(emptyList, userUCC.getAll(),
         "UserUCC.getAll should return a empty List<UserDTO> of all users");
-    Mockito.verify(mockUserDAO).getAllUsers();
+    Mockito.verify(mockUserDAO).findAll();
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).commitTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
@@ -338,12 +338,12 @@ public class UserUCCImplTest {
       + " should rollback and throw InternalError")
   @Test
   public void test_getAll_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-    Mockito.when(mockUserDAO.getAllUsers()).thenThrow(new InternalError());
+    Mockito.when(mockUserDAO.findAll()).thenThrow(new InternalError());
 
     assertThrows(InternalError.class, () -> userUCC.getAll(),
         "If the DAO throws an exception, it should be thrown back");
 
-    Mockito.verify(mockUserDAO).getAllUsers();
+    Mockito.verify(mockUserDAO).findAll();
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();

@@ -1,16 +1,12 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
-import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
-public class FurnitureTypeDAOImpl implements FurnitureTypeDAO {
-
-  @Inject
-  ConnectionBackendDalServices dalServices;
+public class FurnitureTypeDAOImpl extends AbstractDAO implements FurnitureTypeDAO {
 
   @Override
   public String findById(int id) {
@@ -31,5 +27,15 @@ public class FurnitureTypeDAOImpl implements FurnitureTypeDAO {
       throw new InternalError(e.getMessage());
     }
     return res;
+  }
+
+  @Override
+  public List<String> findAll() {
+    return findAll("furniture_type");
+  }
+
+  @Override
+  protected String toDTO(ResultSet rs) throws SQLException {
+    return rs.getString("type_name");
   }
 }

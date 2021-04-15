@@ -116,7 +116,7 @@ class FurnitureUCCImplTest {
     Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO2);
 
     Mockito.when(mockPhotoDAO.getPhotoById(favouritePhotoId)).thenReturn(mockPhotoDTO1);
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(furnitureId)).thenReturn(photos);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(furnitureId)).thenReturn(photos);
 
     Mockito.when(mockFurnitureTypeDAO.findById(typeId)).thenReturn(type);
 
@@ -141,7 +141,7 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockUserDAO).findById(sellerId);
 
     Mockito.verify(mockPhotoDAO).getPhotoById(favouritePhotoId);
-    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(furnitureId);
+    Mockito.verify(mockPhotoDAO).findAllByFurnitureId(furnitureId);
 
     Mockito.verify(mockFurnitureTypeDAO).findById(typeId);
 
@@ -216,8 +216,8 @@ class FurnitureUCCImplTest {
     Mockito.when(mockUserDAO.findById(optionUserId)).thenReturn(mockUserDTO3);
 
     Mockito.when(mockPhotoDAO.getPhotoById(favouritePhotoId1)).thenReturn(mockPhotoDTO1);
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(furnitureId1)).thenReturn(photos1);
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(furnitureId2)).thenReturn(photos2);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(furnitureId1)).thenReturn(photos1);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(furnitureId2)).thenReturn(photos2);
 
     Mockito.when(mockFurnitureTypeDAO.findById(typeId1)).thenReturn(type1);
     Mockito.when(mockFurnitureTypeDAO.findById(typeId2)).thenReturn(type2);
@@ -254,8 +254,8 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockUserDAO).findById(sellerId1);
 
     Mockito.verify(mockPhotoDAO).getPhotoById(favouritePhotoId1);
-    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(furnitureId1);
-    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(furnitureId2);
+    Mockito.verify(mockPhotoDAO).findAllByFurnitureId(furnitureId1);
+    Mockito.verify(mockPhotoDAO).findAllByFurnitureId(furnitureId2);
 
     Mockito.verify(mockFurnitureTypeDAO).findById(typeId1);
     Mockito.verify(mockFurnitureTypeDAO).findById(typeId2);
@@ -320,7 +320,7 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDAO.updateConditionOnly(mockFurnitureDTO1))
         .thenReturn(mockFurnitureDTO1);
 
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(id)).thenReturn(emptyList);
 
     Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
 
@@ -418,7 +418,7 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
 
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(id)).thenReturn(emptyList);
 
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
     Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(id);
@@ -515,7 +515,7 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDAO.updateToWithdrawn(mockFurnitureDTO1))
         .thenReturn(mockFurnitureDTO1);
 
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(id)).thenReturn(emptyList);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(id)).thenReturn(emptyList);
 
     Mockito.when(mockUserDAO.findById(sellerId)).thenReturn(mockUserDTO1);
 
