@@ -96,7 +96,6 @@ class FurnitureUCCImplTest {
   private static final double defaultSellingPrice2 = 2.50;
 
 
-
   @BeforeAll
   public static void init() {
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
@@ -230,7 +229,8 @@ class FurnitureUCCImplTest {
       + "Should rollback and throw InternalError")
   @Test
   public void test_getOne_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new InternalError("some error"));
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1))
+        .thenThrow(new InternalError("some error"));
 
     assertThrows(InternalError.class, () -> furnitureUCC.getOne(defaultFurnitureId1),
         "If the DAO throws an exception, it should be thrown back");
@@ -405,7 +405,8 @@ class FurnitureUCCImplTest {
       + "Should rollback and throw InternalError")
   @Test
   public void test_toRestoration_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new InternalError("some error"));
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1))
+        .thenThrow(new InternalError("some error"));
 
     assertThrows(InternalError.class, () -> furnitureUCC.toRestoration(defaultFurnitureId1),
         "If the DAO throws an exception, it should be thrown back");
@@ -437,7 +438,8 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO2.getSellerId()).thenReturn(defaultSellerId1);
     Mockito.when(mockFurnitureDTO2.getFavouritePhotoId()).thenReturn(null);
 
-    assertEquals(mockFurnitureDTO2, furnitureUCC.toAvailable(defaultFurnitureId1, defaultSellingPrice1),
+    assertEquals(mockFurnitureDTO2,
+        furnitureUCC.toAvailable(defaultFurnitureId1, defaultSellingPrice1),
         "The toAvailable method should return the corresponding dto "
             + "if it is called with a valid id.");
 
@@ -493,9 +495,11 @@ class FurnitureUCCImplTest {
       + "Should rollback and throw InternalError")
   @Test
   public void test_toAvailable_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new InternalError("some error"));
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1))
+        .thenThrow(new InternalError("some error"));
 
-    assertThrows(InternalError.class, () -> furnitureUCC.toAvailable(defaultFurnitureId1, defaultSellingPrice1),
+    assertThrows(InternalError.class,
+        () -> furnitureUCC.toAvailable(defaultFurnitureId1, defaultSellingPrice1),
         "If the DAO throws an exception, it should be thrown back");
 
     Mockito.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
@@ -572,7 +576,8 @@ class FurnitureUCCImplTest {
       + "Should rollback and throw InternalError")
   @Test
   public void test_withdraw_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new InternalError("some error"));
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1))
+        .thenThrow(new InternalError("some error"));
 
     assertThrows(InternalError.class, () -> furnitureUCC.withdraw(defaultFurnitureId1),
         "If the DAO throws an exception, it should be thrown back");
