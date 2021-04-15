@@ -1,8 +1,9 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
-import {displayErrorMessage} from "../utils/utils.js";
+import {displayErrorMessage, importAllFurnitureImg} from "../utils/utils.js";
 
 let page = document.querySelector("#page");
 let visiblePhotos;
+let images = importAllFurnitureImg();
 
 const HomePage = async () => {
 
@@ -62,12 +63,12 @@ const getHTMLVisiblePhotos = () => {
 	}
 	let ret = `
 		<div class="carousel-item active">
-			<img class="d-block w-50 m-auto" src="` + firstPhoto.src + `" alt="Meuble 1" onError="this.src='` + notFoundPhoto + `'">
+			<img class="d-block w-50 m-auto" src="` + findFurnitureImgSrcFromFilename(firstPhoto.source) + `" alt="Meuble 1" onError="this.src='` + notFoundPhoto + `'">
 		</div>`;
 	visiblePhotoTmp.forEach(photo => {
 		ret += `
 		<div class="carousel-item">
-			<img class="d-block w-50 m-auto" src="` + photo.src + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+			<img class="d-block w-50 m-auto" src="` + findFurnitureImgSrcFromFilename(photo.source) + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
 		</div>`;
 	});
 	return ret;
@@ -95,6 +96,11 @@ const getVisiblePhotos = () => {
 	return ret;
 }
 
-
+const findFurnitureImgSrcFromFilename = (filename) => {
+	if(!images[filename]) {
+	  return notFoundPhoto;
+	}
+	return images[filename].default;
+  }
 
 export default HomePage;
