@@ -114,6 +114,7 @@
     <td>Aucun</td>
     <td>
     Renvoie les informations publiques d'une ressource de type "furniture".
+    (La ressource doit être dans l'état 'disponible à la vente' ou 'vendu')
     </td>
 </tr>
 
@@ -131,7 +132,8 @@
     <td>GET</td>
     <td>Aucun</td>
     <td>
-    Renvoie une liste contenant les informations publiques de toutes les ressources de type "furniture".
+    Renvoie une liste contenant les informations publiques de toutes les ressources de type "furniture" 
+    étant dans l'état 'disponible à la vente' ou 'vendu'.
     </td>
 </tr>
 
