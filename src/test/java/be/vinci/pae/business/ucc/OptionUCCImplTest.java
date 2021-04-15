@@ -242,7 +242,8 @@ class OptionUCCImplTest {
   public void test_cancelOption_givenInvalidCondition_shouldThrowConflict(String condition) {
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(condition);
 
-    assertThrows(ConflictException.class, () -> optionUCC.cancelOption(mockUserDTO1, defaultOptionId1),
+    assertThrows(ConflictException.class,
+        () -> optionUCC.cancelOption(mockUserDTO1, defaultOptionId1),
         "furniture not under option, should throw ConflictException");
 
     Mockito.verify(mockDal).startTransaction();
