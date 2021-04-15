@@ -1,5 +1,5 @@
 import { getUserSessionData } from "../utils/session";
-import imageStub from "../img/furniture/Bureau_1.png";
+import imageNotFound from "../img/notFoundPhoto.png";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
 import {displayErrorMessage, importAllFurnitureImg} from "../utils/utils.js"
 
@@ -202,18 +202,11 @@ const generateAllItemsAndModals = () => {
     return res;
 }
 
-const findFavImgSrc = (furniture) => {
-  if(!furniture.favouritePhoto) {
-    return imageStub;
-  }
-  return images[furniture.favouritePhoto.source].default;
-}
-
 const generateItemAndModal = (furniture) => {
     let item = `
         <div>
             <img class="imageFurniturePage" src="${findFavImgSrc(furniture)}" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
-            <p>` + furniture.description + `</p>`
+            <p class="text-center">` + furniture.description + `</p>`
             + getOptionButton(furniture) +
         `</div>`;
 
@@ -239,7 +232,7 @@ const generateItemAndModal = (furniture) => {
                                     for (let i = 0; i < tabPhotoToRender.length; i++) {
                                         modal += `
                                         <div class="carousel-item active text-center">
-                                            <img class="w-75" src="` + imageStub + `" alt="Photo meuble">
+                                            <img class="w-75" src="` + imageNotFound + `" alt="Photo meuble">
                                         </div>`;
                                     }
     modal+=
@@ -312,6 +305,17 @@ const generateOptionForm = () => {
   </form>
   `;
     return res;
+}
+
+const findFurnitureImgSrcFromFilename = (filename) => {
+  return images[filename].default;
+}
+
+const findFavImgSrc = (furniture) => {
+  if(!furniture.favouritePhoto) {
+    return imageNotFound;
+  }
+  return findFurnitureImgSrcFromFilename(furniture.favouritePhoto.source);
 }
 
 
