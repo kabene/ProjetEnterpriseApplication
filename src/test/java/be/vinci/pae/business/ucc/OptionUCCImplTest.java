@@ -10,7 +10,7 @@ import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.OptionDAO;
-import be.vinci.pae.utils.Configurate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -282,7 +282,7 @@ class OptionUCCImplTest {
   @DisplayName("TEST OptionUCC.listOption : empty db, should return empty list of DTOs")
   @Test
   public void test_listOption_emptyDB_shouldReturnEmptyDTOList() {
-    List<OptionDTO> emptyLst = Arrays.asList();
+    List<OptionDTO> emptyLst = new ArrayList<>();
 
     Mockito.when(mockOptionDAO.findAll()).thenReturn(emptyLst);
 

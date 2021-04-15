@@ -16,7 +16,6 @@ import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
-import be.vinci.pae.utils.Configurate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
