@@ -127,7 +127,7 @@ class OptionUCCImplTest {
   @ParameterizedTest
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted", "in_restoration",
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
-  public void test_introduceOption_givenInvalidCondition_shouldThrowConflict(String status) {
+  public void test_introduceOption_givenInvalidStatus_shouldThrowConflict(String status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
 
     assertThrows(ConflictException.class,
@@ -239,7 +239,7 @@ class OptionUCCImplTest {
   @ParameterizedTest
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted", "in_restoration",
       "available_for_sale", "sold", "reserved", "delivered", "collected", "withdrawn"})
-  public void test_cancelOption_givenInvalidCondition_shouldThrowConflict(String status) {
+  public void test_cancelOption_givenInvalidStatus_shouldThrowConflict(String status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
 
     assertThrows(ConflictException.class,
