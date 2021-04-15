@@ -1,5 +1,5 @@
 "use strict";
-
+import imageNotFound from "../img/notFoundPhoto.png";
 import {getUserSessionData} from "./session";
 
 /**
@@ -81,4 +81,18 @@ const importAllFurnitureImg = () => {
     return images;
 }
 
-export {escapeHtml, removeTimeouts, generateLoadingAnimation, verifyAdmin, displayErrorMessage, importAllFurnitureImg};
+/**
+ * finds furniture image src from loaded images array ( -> return value from importAllFurnitureImg() )
+ * 
+ * @param {string} filename 
+ * @param {Array[*]} images 
+ * @returns <img/> src
+ */
+const findFurnitureImgSrcFromFilename = (filename, images) => {
+    if(!images[filename]) {
+      return imageNotFound;
+    }
+    return images[filename].default;
+  }
+
+export {escapeHtml, removeTimeouts, generateLoadingAnimation, verifyAdmin, displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename};
