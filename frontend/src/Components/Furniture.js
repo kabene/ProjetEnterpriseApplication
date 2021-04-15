@@ -1,15 +1,14 @@
 import { getUserSessionData } from "../utils/session";
 import imageStub from "../img/furniture/Bureau_1.png";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {displayErrorMessage} from "../utils/utils.js"
+import {displayErrorMessage, importAllFurnitureImg} from "../utils/utils.js"
 
 
 let page = document.querySelector("#page");
 let furnitureList;
 let currentUser;
 let optionList;
-
-
+let images = importAllFurnitureImg();
 
 const Furniture = async () => {
     currentUser = getUserSessionData();
@@ -203,10 +202,17 @@ const generateAllItemsAndModals = () => {
     return res;
 }
 
+const findFavImgSrc = (furniture) => {
+  if(!furniture.favouritePhoto) {
+    return imageStub;
+  }
+  return images[furniture.favouritePhoto.source].default;
+}
+
 const generateItemAndModal = (furniture) => {
     let item = `
         <div>
-            <img class="imageFurniturePage" src="` + imageStub /*furniture.favouritePhoto.source*/ +`" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
+            <img class="imageFurniturePage" src="${findFavImgSrc(furniture)}" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
             <p>` + furniture.description + `</p>`
             + getOptionButton(furniture) +
         `</div>`;
