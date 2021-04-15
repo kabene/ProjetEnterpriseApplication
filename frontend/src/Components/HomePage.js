@@ -7,7 +7,8 @@ let images = importAllFurnitureImg();
 
 const HomePage = async () => {
 
-	visiblePhotos = getVisiblePhotos();
+	visiblePhotos;
+	await getVisiblePhotos();
 	console.log(visiblePhotos);
 
 	page.innerHTML = getPageHTML();
@@ -74,9 +75,8 @@ const getHTMLVisiblePhotos = () => {
 	return ret;
 }
 
-const getVisiblePhotos = () => {
-	let ret = [];
-	fetch("/photos/homePage", {
+const getVisiblePhotos = async () => {
+	await fetch("/photos/homePage", {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -87,13 +87,11 @@ const getVisiblePhotos = () => {
 		}
 		return response.json();
 	}).then((data) => {
-		ret = data;
+		visiblePhotos = data;
 	}).catch((err) => {
         console.log("Erreur de fetch !! :´<\n" + err);
         displayErrorMessage("errorDiv", err);
       });
-
-	return ret;
 }
 
 const findFurnitureImgSrcFromFilename = (filename) => {
