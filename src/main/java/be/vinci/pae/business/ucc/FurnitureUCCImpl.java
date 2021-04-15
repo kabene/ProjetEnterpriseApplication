@@ -148,7 +148,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       dto.setFavouritePhoto(favPhoto);
     }
     if (dto.getCondition().equals("under_option")) {
-      OptionDTO opt = optionDAO.findByFurnitureId(dto.getFurnitureId());
+      int furnitureId = dto.getFurnitureId();
+      OptionDTO opt = optionDAO.findByFurnitureId(furnitureId);
       opt.setUser(userDAO.findById(opt.getUserId()));
       dto.setOption(opt);
     }
