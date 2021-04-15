@@ -232,7 +232,7 @@ const generateItemAndModal = (furniture) => {
                                     for (let i = 0; i < tabPhotoToRender.length; i++) {
                                         modal += `
                                         <div class="carousel-item active text-center">
-                                            <img class="w-75" src="` + imageNotFound + `" alt="Photo meuble">
+                                            <img class="w-75" src="${findFurnitureImgSrcFromFilename(tabPhotoToRender[i].source)}" alt="Photo meuble">
                                         </div>`;
                                     }
     modal+=
@@ -285,14 +285,7 @@ const getOptionButton = (furniture) => {
 
 
 const getTabPhotoToRender = (furniture) => {
-    let photos = furniture.photos;
-    let photosToRender = [furniture.favouritePhoto];
-    let favId = furniture.favouritePhotoId;
-    photos.forEach(p => {
-        if (p.visible && p.photoId != favId)
-            photosToRender.push(p);
-    })
-    return photosToRender;
+    return furniture.photos;
 }
 
 const generateOptionForm = () => {
@@ -308,6 +301,9 @@ const generateOptionForm = () => {
 }
 
 const findFurnitureImgSrcFromFilename = (filename) => {
+  if(!images[filename]) {
+    return imageNotFound;
+  }
   return images[filename].default;
 }
 
