@@ -78,7 +78,7 @@ class PhotoUCCImplTest {
       + " should return an empty list.")
   @Test
   void test_getAllVisibleHomePageWithEmptyDataBase_shouldReturnEmptyList() {
-    List<PhotoDTO> photoDTOS = new ArrayList<PhotoDTO>();
+    List<PhotoDTO> photoDTOS = new ArrayList<>();
 
     Mockito.when(mockPhotoDAO.getAllHomePageVisiblePhotos()).thenReturn(photoDTOS);
 

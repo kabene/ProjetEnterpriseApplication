@@ -85,7 +85,7 @@ const importAllFurnitureImg = () => {
  * finds furniture image src from loaded images array and filename ( -> return value from importAllFurnitureImg() )
  * 
  * @param {string} filename 
- * @param {Array[*]} images 
+ * @param {Array} images
  * @returns <img/> src
  */
 const findFurnitureImgSrcFromFilename = (filename, images) => {
@@ -97,8 +97,8 @@ const findFurnitureImgSrcFromFilename = (filename, images) => {
 
 /**
  * finds favourite image src from loaded images array and Furniture object
- * @param {Furniture object} furniture 
- * @param {Array[*]} images 
+ * @param {*} furniture
+ * @param {Array} images
  * @returns <img/> src
  */
 const findFavImgSrc = (furniture, images) => {

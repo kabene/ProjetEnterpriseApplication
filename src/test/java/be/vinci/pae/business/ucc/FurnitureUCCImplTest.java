@@ -22,6 +22,7 @@ import be.vinci.pae.persistence.dao.PhotoDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -240,7 +241,7 @@ class FurnitureUCCImplTest {
   @Test
   public void test_getAll_shouldReturnListOfFurnitureDTOs() {
     final List<PhotoDTO> photos1 = Arrays.asList(mockPhotoDTO1, mockPhotoDTO2);
-    final List<PhotoDTO> photos2 = Arrays.asList(mockPhotoDTO3);
+    final List<PhotoDTO> photos2 = Collections.singletonList(mockPhotoDTO3);
     final String status2 = "under_option";
 
     final List<FurnitureDTO> expected = Arrays.asList(mockFurnitureDTO1, mockFurnitureDTO2);
