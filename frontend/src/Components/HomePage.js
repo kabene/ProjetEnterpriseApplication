@@ -20,9 +20,9 @@ const getPageHTML = () => {
         <div id="errorDiv" class="d-none"></div>
     </div>
     <div class="row mx-0 pt-5">
-        <div class="col-2"></div>
-        <div class="col-8">` + getCarousel() + `</div>
-        <div class="col-2"></div>
+        <div class="col-2 col-lg-4"></div>
+        <div class="col-8 col-lg-4">` + getCarousel() + `</div>
+        <div class="col-2 col-lg-4"></div>
     </div>
     `;
 }
@@ -31,7 +31,6 @@ const getCarousel = () => {
 	return `<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 						<ol class="carousel-indicators bg-secondary"> ` + getHTMLCarouselIndicators() + ` </ol>
 						<div class="carousel-inner">
-							
 							` + getHTMLVisiblePhotos() + `
 						</div>
 						<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -64,12 +63,12 @@ const getHTMLVisiblePhotos = () => {
 	}
 	let ret = `
 		<div class="carousel-item active">
-			<img class="d-block w-50 m-auto" src="` + findFurnitureImgSrcFromFilename(firstPhoto.source) + `" alt="Meuble 1" onError="this.src='` + notFoundPhoto + `'">
+			<img class="d-block img-fluid mx-auto mb-5" src="` + findFurnitureImgSrcFromFilename(firstPhoto.source) + `" alt="Meuble 1" onError="this.src='` + notFoundPhoto + `'">
 		</div>`;
 	visiblePhotoTmp.forEach(photo => {
 		ret += `
 		<div class="carousel-item">
-			<img class="d-block w-50 m-auto" src="` + findFurnitureImgSrcFromFilename(photo.source) + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+			<img class="d-block img-fluid mx-auto mb-5" src="` + findFurnitureImgSrcFromFilename(photo.source) + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
 		</div>`;
 	});
 	return ret;
