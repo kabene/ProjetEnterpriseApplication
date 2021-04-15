@@ -31,7 +31,7 @@ import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
 @Path("/option")
-public class OptionRessouce {
+public class OptionResource {
 
   @Inject
   private OptionUCC optionUCC;

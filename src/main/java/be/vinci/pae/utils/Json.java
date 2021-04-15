@@ -34,9 +34,8 @@ public class Json {
     try {
       String adminOnlyItemAsString = jsonMapper.writerWithView(view)
           .writeValueAsString(item);
-      T res =  jsonMapper.readerWithView(view).forType(targetClass)
+      return jsonMapper.readerWithView(view).forType(targetClass)
           .readValue(adminOnlyItemAsString);
-      return res;
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       return null;

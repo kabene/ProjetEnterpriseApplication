@@ -27,9 +27,9 @@ public class Configurate {
   }
 
   /**
-   * successfull loading of the file any question ? https://crunchify.com/java-properties-file-how-to-read-config-properties-values-in-java/
+   * successful loading of the file any question ? https://crunchify.com/java-properties-file-how-to-read-config-properties-values-in-java/
    *
-   * @param pathname to the .propreperties.
+   * @param pathname to the .properties.
    */
   public static void load(String pathname) {
     FileInputStream file;

@@ -10,7 +10,7 @@ public class FurnitureTypeDAOImpl extends AbstractDAO implements FurnitureTypeDA
 
   @Override
   public String findById(int id) {
-    String res = "";
+    String res;
     String query = "SELECT t.* FROM satchofurniture.furniture_types t WHERE t.type_id = ?";
     try {
       PreparedStatement ps = dalServices.makeStatement(query);

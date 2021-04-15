@@ -23,7 +23,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO findById(int id) {
-    FurnitureDTO res = null;
+    FurnitureDTO res;
     String query = "SELECT f.* FROM satchofurniture.furniture f WHERE f.furniture_id = ?";
 
     try {

@@ -34,10 +34,7 @@ public class PhotoResource {
   public Response getPresentHomePage() {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /photo/homePage");
     List<PhotoDTO> photoDTOS = photoUCC.getAllHomePageVisiblePhotos();
-    List<PhotoDTO> res = new ArrayList<>();
-    for (PhotoDTO dto : photoDTOS) {
-      res.add(dto);
-    }
+    List<PhotoDTO> res = new ArrayList<>(photoDTOS);
     return Response.ok(res).build();
   }
 

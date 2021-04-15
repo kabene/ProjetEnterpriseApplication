@@ -23,7 +23,7 @@ public abstract class AbstractDAO {
    * @return a List of 'Dto' containing all found entries
    */
   protected <T> List<T> findAll(String tableName) {
-    List<T> dtoList = new ArrayList<T>();
+    List<T> dtoList = new ArrayList<>();
     String query = "SELECT t.* FROM satchoFurniture." + tableName + " t";
     try {
       PreparedStatement ps = dalServices.makeStatement(query);

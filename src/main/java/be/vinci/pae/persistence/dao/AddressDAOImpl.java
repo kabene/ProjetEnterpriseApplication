@@ -17,9 +17,9 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
 
 
   /**
-   * Create a newAdress.
+   * Create a newAddress.
    *
-   * @param address AdressDTO describe the address.
+   * @param address AddressDTO describe the address.
    */
   @Override
   public void addAddress(AddressDTO address) {
@@ -29,24 +29,24 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
     try {
       addressToRequest(address, ps);
       ps.execute();
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException e) {
+      throw new InternalError(e);
     }
     try {
       ps.close();
     } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
+      throw new InternalError(e);
     }
   }
 
   /**
    * get the id of the address.
    *
-   * @param address AdressDTO describe the address.
+   * @param address AddressDTO describe the address.
    */
   @Override
   public int getId(AddressDTO address) {
-    int id = 0;
+    int id;
     try {
       String query = "SELECT a.address_id FROM satchofurniture.addresses a WHERE "
           + "a.street = ? "
@@ -73,7 +73,7 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
 
   @Override
   public AddressDTO findById(int addressId) {
-    AddressDTO res = null;
+    AddressDTO res;
     String query = "SELECT a.* FROM satchoFurniture.addresses a WHERE a.address_id = ?";
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
