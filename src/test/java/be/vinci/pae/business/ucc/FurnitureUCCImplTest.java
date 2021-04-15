@@ -182,7 +182,7 @@ class FurnitureUCCImplTest {
   public void test_getOne_givenValidId_shouldReturnFurnitureDTO() {
     List<PhotoDTO> photos = Arrays.asList(mockPhotoDTO1, mockPhotoDTO2);
 
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId1)).thenReturn(photos);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId1)).thenReturn(photos);
 
     FurnitureDTO actual = furnitureUCC.getOne(defaultFurnitureId1);
     FurnitureDTO expected = mockFurnitureDTO1;
@@ -199,7 +199,7 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockUserDAO).findById(defaultSellerId1);
 
     Mockito.verify(mockPhotoDAO).getPhotoById(defaultFavouritePhotoId1);
-    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(defaultFurnitureId1);
+    Mockito.verify(mockPhotoDAO).findAllByFurnitureId(defaultFurnitureId1);
 
     Mockito.verify(mockFurnitureTypeDAO).findById(defaultTypeId1);
 
@@ -255,8 +255,8 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId2)).thenReturn(mockOptionDTO);
 
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId1)).thenReturn(photos1);
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId2)).thenReturn(photos2);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId1)).thenReturn(photos1);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId2)).thenReturn(photos2);
 
     Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getSellerId()).thenReturn(null);
@@ -279,8 +279,8 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockUserDAO).findById(defaultSellerId1);
 
     Mockito.verify(mockPhotoDAO).getPhotoById(defaultFavouritePhotoId1);
-    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(defaultFurnitureId1);
-    Mockito.verify(mockPhotoDAO).getPhotosByFurnitureId(defaultFurnitureId2);
+    Mockito.verify(mockPhotoDAO).findAllByFurnitureId(defaultFurnitureId1);
+    Mockito.verify(mockPhotoDAO).findAllByFurnitureId(defaultFurnitureId2);
 
     Mockito.verify(mockFurnitureTypeDAO).findById(defaultTypeId1);
     Mockito.verify(mockFurnitureTypeDAO).findById(defaultTypeId2);
@@ -339,7 +339,7 @@ class FurnitureUCCImplTest {
     final String expectedEndingCondition = "in_restoration";
     List<PhotoDTO> emptyList = new ArrayList<PhotoDTO>();
 
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId1)).thenReturn(emptyList);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId1)).thenReturn(emptyList);
 
     Mockito.when(mockFurnitureDAO.updateConditionOnly(mockFurnitureDTO1))
         .thenReturn(mockFurnitureDTO2);
@@ -429,7 +429,7 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockUserDAO.findById(defaultSellerId1)).thenReturn(mockUserDTO1);
 
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId1)).thenReturn(emptyList);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId1)).thenReturn(emptyList);
 
     Mockito.when(mockFurnitureDTO1.getCondition()).thenReturn(startingCondition);
 
@@ -518,7 +518,7 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getFavouritePhotoId()).thenReturn(null);
-    Mockito.when(mockPhotoDAO.getPhotosByFurnitureId(defaultFurnitureId2)).thenReturn(emptyList);
+    Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId2)).thenReturn(emptyList);
 
     assertEquals(mockFurnitureDTO2, furnitureUCC.withdraw(defaultFurnitureId1),
         "The withdraw method should return the corresponding dto "

@@ -153,7 +153,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       opt.setUser(userDAO.findById(opt.getUserId()));
       dto.setOption(opt);
     }
-    List<PhotoDTO> photos = photoDAO.getPhotosByFurnitureId(dto.getFurnitureId());
+    List<PhotoDTO> photos = photoDAO.findAllByFurnitureId(dto.getFurnitureId());
     dto.setPhotos(photos);
     String type = furnitureTypeDAO.findById(dto.getTypeId());
     dto.setType(type);

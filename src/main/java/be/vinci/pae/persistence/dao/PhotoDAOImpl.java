@@ -3,7 +3,6 @@ package be.vinci.pae.persistence.dao;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.factories.PhotoFactory;
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,15 +10,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoDAOImpl implements PhotoDAO {
+public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
 
-  @Inject
-  private ConnectionBackendDalServices dalServices;
   @Inject
   private PhotoFactory photoFactory;
 
   @Override
-  public List<PhotoDTO> getPhotosByFurnitureId(int furnitureId) {
+  public List<PhotoDTO> findAllByFurnitureId(int furnitureId) {
     List<PhotoDTO> res = new ArrayList<>();
     String query = "SELECT p.* FROM satchofurniture.photos p WHERE p.furniture_id = ?";
     try {
@@ -58,6 +55,10 @@ public class PhotoDAOImpl implements PhotoDAO {
     return res;
   }
 
+  public List<PhotoDTO> findAll() {
+    return findAll("photos");
+  }
+
   /**
    * Make a query to the database to get all the photos visible on the home page's carousel.
    *
@@ -81,15 +82,14 @@ public class PhotoDAOImpl implements PhotoDAO {
     return res;
   }
 
-
-
   /**
    * Creates and fills a PhotoDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information.
    * @throws SQLException in case of problem during access to the ResultSet.
    */
-  private PhotoDTO toDTO(ResultSet rs) throws SQLException {
+  @Override
+  protected PhotoDTO toDTO(ResultSet rs) throws SQLException {
     PhotoDTO photoFound = photoFactory.getPhotoDTO();
     photoFound.setPhotoId(rs.getInt("photo_id"));
     photoFound.setFurnitureId(rs.getInt("furniture_id"));

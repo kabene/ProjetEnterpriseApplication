@@ -99,7 +99,7 @@ public class UserUCCImpl implements UserUCC {
     List<UserDTO> list;
     try {
       dalServices.startTransaction();
-      list = userDAO.getAllUsers();
+      list = userDAO.findAll();
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
