@@ -17,7 +17,7 @@ const FurnitureList = async (id) => {
 
   pageHTML = `
   <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
-  <div id="mainPage" class="col-12">${generateLoadingAnimation()}</div>`;
+  <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
 
@@ -89,7 +89,7 @@ const removeTimeouts = () => {
 
 const generatePageHtml = (largeTable = true) => {
   let tableSize = "large";
-  let notNeededClassName = "notNeeded";
+  let notNeededClassName = "notNeeded align-middle";
   let shortElementClassName = "shortElement d-none";
   if(largeTable === false) {
     tableSize = "short";
@@ -97,16 +97,16 @@ const generatePageHtml = (largeTable = true) => {
     shortElementClassName = "shortElement";
   }
   let res = `
-  <div id="${tableSize}TableContainer">
+  <div id="${tableSize}TableContainer" class="px-0">
     <div>
       <button type="button" id="buttonReturn" class="btn btn-dark m-3 ${shortElementClassName}">Retour à la liste</button>
-      <table id="${tableSize}Table" class="table table-hover border border-1">
+      <table id="${tableSize}Table" class="table table-hover border border-1 text-center">
         <thead class="table-secondary">
-          <tr>
-            <th></th>
-            <th>Description</th>
+          <tr class="">
+            <th class="w-25"></th>
+            <th class="align-middle">Description</th>
             <th class="${notNeededClassName}">Type</th>
-            <th>État</th>
+            <th class="align-middle">État</th>
             <th class="${notNeededClassName}">Vendeur</th>
             <th class="${notNeededClassName}">Acheteur</th>
             <th class="${notNeededClassName}">Prix de vente</th>
@@ -141,25 +141,25 @@ const generateAllRows = (notNeededClassName) => {
 
 const generateRow = (furniture, notNeededClassName) => {
   let statusHtml;
-  let thumbnailClass;
-  if(notNeededClassName === "notNeeded") { //large table
+  let thumbnailClass = "mx-auto";
+  if(!notNeededClassName.includes("d-none")) { //large table
     statusHtml = generateColoredStatus(furniture);
-    thumbnailClass = "w-50"
+    thumbnailClass += " w-50"
   }else { //short table
     let infos = generateStatusInfos(furniture.status);
     statusHtml = generateDot(infos.classname);
-    thumbnailClass = "w-100"
+    thumbnailClass += " w-100"
   }
   let res = `
     <tr class="toBeClicked" furnitureId="${furniture.furnitureId}">
-      <th><div id="thumbnail" class="w-25 mx-auto">${generateFavouritePhotoImgTag(furniture)}<div></th>
-      <th><p>${furniture.description}</p></th>
+      <th><div id="thumbnail" class="${thumbnailClass}">${generateFavouritePhotoImgTag(furniture)}<div></th>
+      <th class="align-middle"><p>${furniture.description}</p></th>
       <th class="${notNeededClassName}"><p>${furniture.type}</p></th>
-      <th class="tableStatus text-center" status="${furniture.status}">${statusHtml}</th>
-      <th class="${notNeededClassName}">${generateSellerLink(furniture)}</th>
-      <th class="${notNeededClassName}">${generateBuyerLink(furniture)}</th>
-      <th class="${notNeededClassName}">${generateSellingPriceTableElement(furniture)}</th>
-      <th class="${notNeededClassName}">${generateSpecialPriceTableElement(furniture)}</th>
+      <th class="tableStatus text-center align-middle" status="${furniture.status}">${statusHtml}</th>
+      <th class="${notNeededClassName}"><p>${generateSellerLink(furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateBuyerLink(furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateSellingPriceTableElement(furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateSpecialPriceTableElement(furniture)}</p></th>
     </tr>`;
   return res;
 }
@@ -317,7 +317,7 @@ const displayLargeTable = () => {
   document.querySelectorAll(".toBeClicked").forEach(element => element.className = "toBeClicked");
   document.querySelector("#buttonReturn").className = "btn btn-dark m-3 d-none";
   document.querySelectorAll("#thumbnail").forEach(
-    element => element.className = "w-25 mx-auto");
+    element => element.className = "w-50 mx-auto");
   document.querySelectorAll(".tableStatus").forEach(element => {
     let status = element.getAttribute("status");
     let infos = generateStatusInfos(status);
@@ -326,7 +326,7 @@ const displayLargeTable = () => {
 }
 
 const displayLargeElements = () => {
-  document.querySelectorAll('.notNeeded').forEach(element => element.className = "notNeeded");
+  document.querySelectorAll('.notNeeded').forEach(element => element.className = "notNeeded align-middle");
 }
 
 const generateCard = (furniture) => {
