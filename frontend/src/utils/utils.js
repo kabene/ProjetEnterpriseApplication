@@ -60,8 +60,12 @@ return `
 function displayErrorMessage(alertDivId, error) {
     let message = error.message;
     let div = document.querySelector(`#${alertDivId}`);
-    div.className = "alert alert-danger mx-1";
-    div.innerHTML = `<p>${message}</p>`;
+    div.className = "mx-1";
+    div.innerHTML = `
+    <div class="alert alert-danger alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>${message}</p>
+    </div>`;
 }
 
 /**
