@@ -204,21 +204,28 @@
     <th>Droit(s) requit(s)</th>
     <th>Operation</th>
 </tr>
-
 <tr>
-    <td>option/</td>
+    <td>options/</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>
+        Renvoie une liste de toutes les ressources de type option.
+    </td>
+</tr>
+<tr>
+    <td>options/</td>
     <td>POST</td>
-    <td>Droit(s) requit(s)</td>
+    <td>Admin</td>
     <td>
     Renvoie l'option crée
     </td>
 </tr>
 <tr>
-    <td>option/cancel/{id}</td>
+    <td>options/cancel/{id}</td>
     <td>PATCH</td>
-    <td>Droit(s) requit(s)</td>
+    <td>Admin</td>
     <td>
-    Renvoie l'option modifiée 
+    Annule une ressource de type option et renvoie l'option modifiée. 
     </td>
 </tr>
 

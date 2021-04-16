@@ -46,7 +46,7 @@ const cancelOption= (e)=>{
     }
   });
 
-   fetch("/option/cancel/"+optionId,{
+   fetch("/options/cancel/"+optionId,{
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -78,7 +78,7 @@ const addOption =  (e) => {
     duration: duration,
   }
   console.log(bundle);
-   fetch("/option/", {
+   fetch("/options/", {
     method: "POST",
     body: JSON.stringify(bundle),
     headers: {
@@ -135,7 +135,7 @@ const getFurnitureList = async () => {
 const getOptionList= async () => {
   if(currentUser) {
     let ret = [];
-    await fetch("/option/list", {
+    await fetch("/options/", {
       method: "GET",
       headers: {
         "Authorization": currentUser.token,
