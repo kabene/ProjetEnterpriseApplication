@@ -185,7 +185,7 @@ const generateBuyerLink = (furniture) => {
 }
 
 const generateUserLink = (user) => {
-  return `<a href="#" userId="${user.userId}" class="userLink">${user.username}</a>`;
+  return `<a href="#" userId="${user.id}" class="userLink">${user.username}</a>`;
 }
 
 const generateSellingPriceTableElement = (furniture) => {
@@ -266,7 +266,7 @@ const generateBadgeStatus = (furniture) => {
   return res;
 }
 
-const displayShortElements = (e) => {
+const displayShortElements = async (e) => {
   removeTimeouts();
   //hide large table
   let largeTable = document.querySelector('#largeTable');
@@ -302,11 +302,20 @@ const displayShortElements = (e) => {
   });
   let id = element.attributes["furnitureId"].value;
   if(!furnitureMap[id]) {
-    findOneFurniture(id);
+    await findOneFurniture(id);
   }else {
     console.log("found furniture in map");
     generateCard(furnitureMap[id]);
   }
+  document.querySelectorAll(".userLink").forEach((link) => link.addEventListener("click", onUserLinkClicked))
+}
+
+const onUserLinkClicked = (e) => {
+  e.preventDefault();
+  let link = e.target;
+  let userId = link.getAttribute("userid");
+  console.log(`Linking to user card (id: ${userId})`);
+  RedirectUrl("/users", userId);
 }
 
 const displayLargeTable = () => {
