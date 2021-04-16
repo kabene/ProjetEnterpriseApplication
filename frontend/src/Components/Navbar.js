@@ -1,13 +1,12 @@
 import logo from "../img/logoAE_v2.png";
 import {getUserSessionData} from "../utils/session.js";
 import {escapeHtml} from "../utils/utils.js";
-import {verifyAdmin} from "../utils/utils.js";
 
 let navBar = document.querySelector("#navbar");
-const Navbar = async () => {
+const Navbar = () => {
 
   let navbarHtml;
-  let pers =await getUserSessionData();
+  let pers = getUserSessionData();
   console.log(pers);
 //class=navbar navbar-expand-md navbar-light py-0"
   navbarHtml = `
@@ -32,7 +31,7 @@ const Navbar = async () => {
   } else {
     var userPrintable = escapeHtml(pers.user.username);
 
-    if (await verifyAdmin(pers)) {
+    if (pers.isAdmin === true) {
 
       navbarHtml += `
                       <li class="nav-item">

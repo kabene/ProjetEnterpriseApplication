@@ -36,6 +36,9 @@ const FurnitureList = async (id) => {
   }
 }
 
+/**
+ * Loads the furnitureList & furnitureMap from backend 
+ */
 const findFurnitureList = async () => {
   return fetch("/furniture/detail", {
     method: "GET",
@@ -52,33 +55,23 @@ const findFurnitureList = async () => {
     return response.json();
   }).then((data) => {
     furnitureList = data;
+    furnitureList.forEach(furniture => {
+      furnitureMap[furniture.furnitureId] = furniture;
+    });
   }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
     displayErrorMessage("errorDiv", err);
   });
 }
 
-const findOneFurniture = async (id) => {
-  return fetch(`/furniture/detail/${id}`, {
-    method: "GET",
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(
-        response.status + " : " + response.statusText
-      );
-    }
-    return response.json();
-  }).then((data) => {
-    furnitureMap[data.furnitureId] = data;
-    generateCard(data);
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
-    displayErrorMessage("errorDiv", err);
-  });
+/**
+ * Reloads the page and re-fetch furniture information.
+ * Displays loading animation while awaiting the fetch. 
+ */
+const reloadPage = async () => {
+  mainPage.innerHTML = generateLoadingAnimation();
+  await findFurnitureList();
+  mainPage = generatePageHtml();
 }
 
 const removeTimeouts = () => {
@@ -301,13 +294,14 @@ const displayShortElements = async (e) => {
     element.innerHTML = generateDot(classname);
   });
   let id = element.attributes["furnitureId"].value;
-  if(!furnitureMap[id]) {
-    await findOneFurniture(id);
+  let furniture = furnitureMap[id];
+  if(!furniture) await reloadPage();
+  if(furniture) {
+    generateCard(furniture);
+    document.querySelectorAll(".userLink").forEach((link) => link.addEventListener("click", onUserLinkClicked))
   }else {
-    console.log("found furniture in map");
-    generateCard(furnitureMap[id]);
+    displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
   }
-  document.querySelectorAll(".userLink").forEach((link) => link.addEventListener("click", onUserLinkClicked))
 }
 
 const onUserLinkClicked = (e) => {

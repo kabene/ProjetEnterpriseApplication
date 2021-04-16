@@ -18,10 +18,14 @@ function escapeHtml(text) {
         .replace(/\//g, "&#047;");
 }
 
-async function verifyAdmin (){
-    let token = getUserSessionData().token;
-    let res = false;
-    let result;
+/**
+ * Finds current user's personal information via GET users/me
+ * @param {string} token : jwt
+ * 
+ */
+async function fetchMe (token){
+    if(!token) token = getUserSessionData().token;
+    let res;
     await fetch("/users/me", {
         method: "GET",
         headers: {
@@ -29,16 +33,12 @@ async function verifyAdmin (){
             "Content-Type": "application/json",
         },
     }).then((response) => {
-        if (!response.ok) {
-            res = false;
+        if (response.ok) {
+            return response.json();   
         }
-        return response.json();
     })
     .then((data) => {
-        result = data.role;
-        if (result === "admin") {
-            res = true;
-        }
+        res = data;
     })
     .catch((err) => {
         console.log("Erreur de fetch !! :´\n" + err);
@@ -112,6 +112,6 @@ const findFavImgSrc = (furniture, images) => {
     return findFurnitureImgSrcFromFilename(furniture.favouritePhoto.source, images);
 }
 
-export {escapeHtml, removeTimeouts, generateLoadingAnimation, verifyAdmin,
+export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
      displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, 
      findFavImgSrc};

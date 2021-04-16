@@ -15,9 +15,7 @@ const Users = async (id) => {
 
   page.innerHTML = generateLoadingAnimation();
 
-  waitingUsersList = await getWaitingUserList();
-  confirmedUsersList = await getConfirmedUsersList();
-  console.log(confirmedUsersList);
+  await getUserLists();
 
   page.innerHTML = generateUsersPage();
 
@@ -34,6 +32,31 @@ const Users = async (id) => {
 
 
 /********************  Business methods  **********************/
+
+const getUserLists = async () => {
+
+  const waiting = () => new Promise(resolve => {
+    console.log("GET users/waiting");
+    getWaitingUserList().then((data) => {
+      waitingUsersList = data;
+      console.log(waitingUsersList);
+      resolve();
+    });
+  });
+
+  const confirmed = () => new Promise(resolve => {
+    console.log("GET users/confirmed");
+    getConfirmedUsersList().then((data) => {
+      confirmedUsersList = data;
+      console.log(confirmedUsersList);
+      resolve();
+    });
+  });
+
+  //await Promise.all([waiting(), confirmed()]);
+  await waiting();
+  await confirmed();
+}
 
 /**
  * Called when clicking a row in the body table.
@@ -64,7 +87,7 @@ const onRowClick = (e) => {
 }
 
 /**
- * Shrink the large table, hide the not needed element in the table.
+ * Shrink the large table, hide the not needed element in the table and display the user card needed.
  */
 const displayShortElements = () => {
   removeTimeouts(timeouts);
