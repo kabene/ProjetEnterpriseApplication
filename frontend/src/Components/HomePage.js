@@ -1,12 +1,12 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
-import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename} from "../utils/utils.js";
+import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, generateLoadingAnimation} from "../utils/utils.js";
 
 let page = document.querySelector("#page");
 let visiblePhotos;
 let images = importAllFurnitureImg();
 
 const HomePage = async () => {
-
+	page.innerHTML = generateLoadingAnimation();
 	visiblePhotos;
 	await getVisiblePhotos();
 	console.log(visiblePhotos);
