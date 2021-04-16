@@ -10,7 +10,7 @@ let timeouts = [];
 let userDetail;
 let valueButtonValid;
 
-const Users = async () => {
+const Users = async (id) => {
   currentUser = getUserSessionData();
 
   page.innerHTML = generateLoadingAnimation();
@@ -24,6 +24,11 @@ const Users = async () => {
   document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
   document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
+
+  if(id) {
+    displayShortElements();
+    await displayUserCardById(id);
+  }
 }
 
 
@@ -35,10 +40,10 @@ const Users = async () => {
  * Display the short elements if the table is large, else just refresh the user card.
  */
 const onRowClick = (e) => {
-  if (document.querySelector('#shortTableContainer') !== null)
-    displayUserCard(e);
-  else
-    displayShortElements(e);
+  if (document.querySelector('#shortTableContainer') == null) {
+    displayShortElements();
+  }
+  onUserClickHandler(e);
 }
 
 /**
@@ -59,10 +64,9 @@ const onRowClick = (e) => {
 }
 
 /**
- * Called when clicking on the rows of the large table's body.
- * Shrink the large table, hide the not needed element in the table and display the user card needed.
+ * Shrink the large table, hide the not needed element in the table.
  */
-const displayShortElements = async (e) => {
+const displayShortElements = () => {
   removeTimeouts(timeouts);
   //shrink
   document.querySelector('#largeTable').id = "shortTable";
@@ -72,21 +76,28 @@ const displayShortElements = async (e) => {
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
   //display
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
-  await displayUserCard(e);
 }
 
 /**
  * Called when clicking on one of the rows of the table's body (large or short).
  * Display the card of the user that has been clicked on the table.
  */
-const displayUserCard = async (e) => {
-  let userCardDiv = document.querySelector("#userCardDiv");
-  userCardDiv.innerHTML = generateLoadingAnimation();
+const onUserClickHandler = async (e) => {
   //get the tr element
   let element = e.target;
   while (!element.className.includes("toBeClicked"))
     element = element.parentElement;
   let userId = element.attributes["userId"].value;
+  await displayUserCardById(userId);
+}
+
+/**
+ * Displays the card of the corresponding user
+ * @param {*} userId the user's id 
+ */
+const displayUserCardById = async (userId) => {
+  let userCardDiv = document.querySelector("#userCardDiv");
+  userCardDiv.innerHTML = generateLoadingAnimation();
   //generate the user card
   userDetail = await clientDetail(userId);
   userCardDiv.innerHTML = generateUserCard(userDetail);
