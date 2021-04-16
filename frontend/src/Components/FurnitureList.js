@@ -1,7 +1,7 @@
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {getUserSessionData} from "../utils/session.js";
-import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc} from "../utils/utils.js"
+import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc, generateLoadingAnimation} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -265,8 +265,6 @@ const generateBadgeStatus = (furniture) => {
   let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.status}</span>`;
   return res;
 }
-
-const generateLoadingAnimation = () => `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
 
 const displayShortElements = (e) => {
   removeTimeouts();

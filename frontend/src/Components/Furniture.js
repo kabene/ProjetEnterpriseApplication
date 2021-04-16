@@ -1,6 +1,6 @@
 import { getUserSessionData } from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc} from "../utils/utils.js"
+import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc, generateLoadingAnimation} from "../utils/utils.js"
 
 
 let page = document.querySelector("#page");
@@ -110,15 +110,6 @@ const refresh = (data, status) => {
   document.querySelectorAll(".cancelOptButton").forEach(element=>{
     element.addEventListener("click",cancelOption);
   })
-}
-
-
-
-const generateLoadingAnimation = () => {
-    return `
-        <div class="text-center">
-            <h2>Loading <div class="spinner-border"></div></h2>
-        </div>`
 }
 
 const getFurnitureList = async () => {
