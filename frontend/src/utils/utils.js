@@ -108,16 +108,6 @@ const findFavImgSrc = (furniture, images) => {
     return findFurnitureImgSrcFromFilename(furniture.favouritePhoto.source, images);
 }
 
-/**
- * @returns html code for a loading animation
- */
-const generateLoadingAnimation = () => {
-    return `
-        <div class="text-center">
-            <h2>Loading <div class="spinner-border"></div></h2>
-        </div>`
-}
-
 export {escapeHtml, removeTimeouts, generateLoadingAnimation, verifyAdmin,
      displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, 
-     findFavImgSrc, generateLoadingAnimation};
+     findFavImgSrc};
