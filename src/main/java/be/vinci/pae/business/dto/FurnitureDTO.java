@@ -1,6 +1,7 @@
 package be.vinci.pae.business.dto;
 
 import be.vinci.pae.business.pojos.FurnitureImpl;
+import be.vinci.pae.business.pojos.Status;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.List;
 
@@ -27,9 +28,9 @@ public interface FurnitureDTO {
 
   void setSeller(UserDTO buyer);
 
-  String getStatus();
+  Status getStatus();
 
-  void setStatus(String cond);
+  void setStatus(Status status);
 
   String getSaleWithdrawalDate();
 

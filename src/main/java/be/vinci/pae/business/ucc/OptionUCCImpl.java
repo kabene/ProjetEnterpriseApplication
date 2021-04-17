@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.pojos.Status;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
@@ -34,10 +35,10 @@ public class OptionUCCImpl implements OptionUCC {
     try {
       dalServices.startTransaction();
       FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
-      if (!furnitureDTO.getStatus().equals("available_for_sale")) {
+      if (!furnitureDTO.getStatus().equals(Status.AVAILABLE_FOR_SALE)) {
         throw new ConflictException("The resource isn't in a the 'available for sale' state");
       }
-      furnitureDTO.setStatus("under_option");
+      furnitureDTO.setStatus(Status.UNDER_OPTION);
       furnitureDAO.updateStatusOnly(furnitureDTO);
       opt = optionDAO.introduceOption(user, furnitureId, duration);
       dalServices.commitTransaction();
@@ -69,10 +70,10 @@ public class OptionUCCImpl implements OptionUCC {
         throw new UnauthorizedException("not allowed to cancel the option");
       }
       FurnitureDTO furnitureDTO = furnitureDAO.findById(opt.getFurnitureId());
-      if (!furnitureDTO.getStatus().equals("under_option")) {
+      if (!furnitureDTO.getStatus().equals(Status.UNDER_OPTION)) {
         throw new ConflictException("The resource is not under option");
       }
-      furnitureDTO.setStatus("available_for_sale");
+      furnitureDTO.setStatus(Status.AVAILABLE_FOR_SALE);
       furnitureDAO.updateStatusOnly(furnitureDTO);
 
       optionDAO.cancelOption(optionId);

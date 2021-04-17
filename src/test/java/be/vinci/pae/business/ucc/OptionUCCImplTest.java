@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.pojos.Status;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
@@ -46,7 +47,7 @@ class OptionUCCImplTest {
   private static final int defaultDuration2 = 4;
   private static final int defaultUserId1 = 5;
   private static final int defaultUserId2 = 6;
-  private static final String defaultStatus = "available_for_sale";
+  private static final Status defaultStatus = Status.toEnum("available_for_sale");
 
   @BeforeEach
   public void init() {
@@ -112,7 +113,7 @@ class OptionUCCImplTest {
         optionUCC.introduceOption(mockUserDTO1, defaultFurnitureId1, defaultDuration1),
         "calling the function with valid arguments should return corresponding DTO");
 
-    Mockito.verify(mockFurnitureDTO1).setStatus("under_option");
+    Mockito.verify(mockFurnitureDTO1).setStatus(Status.toEnum("under_option"));
     Mockito.verify(mockOptionDAO)
         .introduceOption(mockUserDTO1, defaultFurnitureId1, defaultDuration1);
     Mockito.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
@@ -128,7 +129,7 @@ class OptionUCCImplTest {
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted", "in_restoration",
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_introduceOption_givenInvalidStatus_shouldThrowConflict(String status) {
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(status));
 
     assertThrows(ConflictException.class,
         () -> optionUCC.introduceOption(mockUserDTO1, defaultFurnitureId1, defaultDuration1),
@@ -177,12 +178,12 @@ class OptionUCCImplTest {
   @Test
   public void test_cancelOption_givenValidArgs_shouldReturnDTO() {
     String status = "under_option";
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(status));
 
     assertEquals(mockOptionDTO1, optionUCC.cancelOption(mockUserDTO1, defaultOptionId1),
         "nominal, should return OptionDTO");
 
-    Mockito.verify(mockFurnitureDTO1).setStatus("available_for_sale");
+    Mockito.verify(mockFurnitureDTO1).setStatus(Status.toEnum("available_for_sale"));
     Mockito.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
     Mockito.verify(mockOptionDAO).cancelOption(defaultOptionId1);
 
@@ -240,7 +241,7 @@ class OptionUCCImplTest {
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted", "in_restoration",
       "available_for_sale", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_cancelOption_givenInvalidStatus_shouldThrowConflict(String status) {
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(status));
 
     assertThrows(ConflictException.class,
         () -> optionUCC.cancelOption(mockUserDTO1, defaultOptionId1),

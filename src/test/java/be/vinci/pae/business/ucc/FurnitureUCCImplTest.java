@@ -7,10 +7,7 @@ import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
-import be.vinci.pae.business.pojos.FurnitureImpl;
-import be.vinci.pae.business.pojos.OptionImpl;
-import be.vinci.pae.business.pojos.PhotoImpl;
-import be.vinci.pae.business.pojos.UserImpl;
+import be.vinci.pae.business.pojos.*;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.main.TestBinder;
@@ -89,7 +86,7 @@ class FurnitureUCCImplTest {
   private static final String defaultType1 = "type 1";
   private static final String defaultType2 = "type 2";
 
-  private static final String defaultStatus = "available_for_sale";
+  private static final Status defaultStatus = Status.AVAILABLE_FOR_SALE;
   private static final double defaultSellingPrice1 = 1.50;
 
 
@@ -242,7 +239,7 @@ class FurnitureUCCImplTest {
   public void test_getAll_shouldReturnListOfFurnitureDTOs() {
     final List<PhotoDTO> photos1 = Arrays.asList(mockPhotoDTO1, mockPhotoDTO2);
     final List<PhotoDTO> photos2 = Collections.singletonList(mockPhotoDTO3);
-    final String status2 = "under_option";
+    final Status status2 = Status.UNDER_OPTION;
 
     final List<FurnitureDTO> expected = Arrays.asList(mockFurnitureDTO1, mockFurnitureDTO2);
 
@@ -329,8 +326,8 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.toRestoration : given valid id, should return dto")
   @Test
   public void test_toRestoration_givenValidId_shouldReturnDTO() {
-    final String startingStatus = "accepted";
-    final String expectedEndingStatus = "in_restoration";
+    final Status startingStatus = Status.ACCEPTED;
+    final Status expectedEndingStatus = Status.IN_RESTORATION;
     List<PhotoDTO> emptyList = new ArrayList<>();
 
     Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId1)).thenReturn(emptyList);
@@ -367,7 +364,7 @@ class FurnitureUCCImplTest {
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_toRestoration_givenInvalidId1_shouldThrowConflict(String startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(startingStatus));
 
     assertThrows(ConflictException.class, () -> furnitureUCC.toRestoration(defaultFurnitureId1),
         "The toRestoration method should throw a ConflictException if it is given "
@@ -415,7 +412,7 @@ class FurnitureUCCImplTest {
   @ParameterizedTest
   @ValueSource(strings = {"accepted", "in_restoration"})
   public void test_toAvailable_givenValidId_shouldReturnDTO(String startingStatus) {
-    final String expectedEndingStatus = "available_for_sale";
+    final Status expectedEndingStatus = Status.AVAILABLE_FOR_SALE;
     final List<PhotoDTO> emptyList = new ArrayList<>();
 
     Mockito.when(mockFurnitureDAO.updateToAvailable(mockFurnitureDTO1))
@@ -425,7 +422,7 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId1)).thenReturn(emptyList);
 
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(startingStatus));
 
     Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getSellerId()).thenReturn(defaultSellerId1);
@@ -456,7 +453,7 @@ class FurnitureUCCImplTest {
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_toAvailable_givenInvalidStates_shouldThrowConflict(String startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(startingStatus));
 
     assertThrows(ConflictException.class,
         () -> furnitureUCC.toAvailable(defaultFurnitureId1, defaultSellingPrice1),
@@ -506,12 +503,12 @@ class FurnitureUCCImplTest {
   @ParameterizedTest
   @ValueSource(strings = {"in_restoration", "available_for_sale"})
   public void test_withdraw_givenValidId_shouldReturnDTO(String startingStatus) {
-    final String expectedEndingCondition = "withdrawn";
+    final Status expectedEndingCondition = Status.WITHDRAWN;
     final List<PhotoDTO> emptyList = new ArrayList<>();
     Mockito.when(mockFurnitureDAO.updateToWithdrawn(mockFurnitureDTO1))
         .thenReturn(mockFurnitureDTO2);
 
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(startingStatus));
 
     Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getFavouritePhotoId()).thenReturn(null);
@@ -538,7 +535,7 @@ class FurnitureUCCImplTest {
   @ValueSource(strings = {"requested_for_visit", "refused", "accepted",
       "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
   public void test_withdraw_givenInvalidStates_shouldThrowConflict(String startingStatus) {
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(startingStatus));
 
     assertThrows(ConflictException.class, () ->
             furnitureUCC.withdraw(defaultFurnitureId1),

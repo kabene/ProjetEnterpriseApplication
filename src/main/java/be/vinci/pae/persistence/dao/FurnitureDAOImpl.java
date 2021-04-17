@@ -2,6 +2,7 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.factories.FurnitureFactory;
+import be.vinci.pae.business.pojos.Status;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -56,7 +57,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
         + "WHERE furniture_id = ? ";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setString(1, furnitureDTO.getStatus());
+      ps.setString(1, furnitureDTO.getStatus().getValue());
       ps.setInt(2, furnitureDTO.getFurnitureId());
       ps.execute();
       ps.close();
@@ -74,7 +75,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
         + "WHERE furniture_id = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setString(1, furnitureDTO.getStatus());
+      ps.setString(1, furnitureDTO.getStatus().getValue());
       ps.setDouble(2, furnitureDTO.getSellingPrice());
       ps.setInt(3, furnitureDTO.getFurnitureId());
       ps.execute();
@@ -94,7 +95,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     PreparedStatement ps = dalServices.makeStatement(query);
     Date saleWithdrawalDate = new Date(new java.util.Date().getTime()); //now
     try {
-      ps.setString(1, furnitureDTO.getStatus());
+      ps.setString(1, furnitureDTO.getStatus().getValue());
       ps.setDate(2, saleWithdrawalDate);
       ps.setInt(3, furnitureDTO.getFurnitureId());
       ps.execute();
@@ -127,7 +128,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
       res.setSellerId(sellerId);
     }
 
-    res.setStatus(rs.getString("status"));
+    res.setStatus(Status.toEnum(rs.getString("status")));
 
     Date saleWithdrawalDate = rs.getDate("sale_withdrawal_date");
     if (saleWithdrawalDate != null) {
