@@ -6,7 +6,7 @@ import java.util.List;
 public interface FurnitureUCC {
 
   /**
-   * get the piece of furniture searched by its id
+   * get the piece of furniture searched by its id.
    *
    * @param id the furniture id.
    * @return Furniture represented bu FurnitureDTO.
