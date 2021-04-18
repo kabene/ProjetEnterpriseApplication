@@ -27,7 +27,7 @@ public class Configurate {
   }
 
   /**
-   * successful loading of the file any question ? https://crunchify.com/java-properties-file-how-to-read-config-properties-values-in-java/
+   * load a properties file
    *
    * @param pathname to the .properties.
    */
