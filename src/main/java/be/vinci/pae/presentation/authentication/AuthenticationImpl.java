@@ -14,8 +14,15 @@ public class AuthenticationImpl implements Authentication {
       .HMAC256(Configurate.getConfiguration("JWTSecret"));
 
 
+  /**
+   * create a JWT that expires in a short time.
+   * the token's lifetime is specified in the prod.properties file.
+   *
+   * @param user the user who tries to authenticate.
+   * @return generated JWT.
+   */
   @Override
-  public String createToken(UserDTO user) {
+  public String createShortToken(UserDTO user) {
     LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
     LocalDateTime end = now.plusHours(
         Integer.parseInt(Configurate.getConfiguration("lengthShortJWT"))
@@ -23,6 +30,13 @@ public class AuthenticationImpl implements Authentication {
     return getTokenFromExpirationDate(user, end);
   }
 
+  /**
+   * create a JWT that expires in a long time.
+   * the token's lifetime is specified in the prod.properties file.
+   *
+   * @param user the user who tries to authenticate.
+   * @return generated JWT.
+   */
   @Override
   public String createLongToken(UserDTO user) {
     LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);

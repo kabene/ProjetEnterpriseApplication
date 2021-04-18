@@ -20,9 +20,29 @@ public interface FurnitureDAO {
    */
   List<FurnitureDTO> findAll();
 
+  /**
+   * updates the status of a piece of furniture into the database.
+   *
+   * @param furnitureDTO the furnitureDTO to modify
+   * @return the furniture modified.
+   */
   FurnitureDTO updateStatusOnly(FurnitureDTO furnitureDTO);
 
+  /**
+   * updates the status of the piece of furniture to AVAILABLE_FOR_SALE and sets the selling price
+   * into the database.
+   *
+   * @param furnitureDTO the furnitureDTO to modify
+   * @return the furniture modified.
+   */
   FurnitureDTO updateToAvailable(FurnitureDTO furnitureDTO);
 
+  /**
+   * updates the status of the piece of furniture to WITHDRAWN and sets the sale_withdrawal_date
+   * into the database.
+   *
+   * @param furnitureDTO the furnitureDTO to modify
+   * @return the furniture modified.
+   */
   FurnitureDTO updateToWithdrawn(FurnitureDTO furnitureDTO);
 }

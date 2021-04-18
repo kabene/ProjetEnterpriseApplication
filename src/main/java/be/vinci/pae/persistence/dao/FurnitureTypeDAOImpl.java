@@ -47,7 +47,13 @@ public class FurnitureTypeDAOImpl extends AbstractDAO implements FurnitureTypeDA
 
 
 
-  //TODO
+  /**
+   * Creates a string containing a furnitureType using a ResultSet.
+   *
+   * @param rs : the ResultSet containing the information
+   * @return a string containing the information from the result set
+   * @throws SQLException in case of problem during access to the ResultSet
+   */
   @Override
   protected String toDTO(ResultSet rs) throws SQLException {
     return rs.getString("type_name");

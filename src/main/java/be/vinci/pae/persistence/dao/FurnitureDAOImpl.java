@@ -55,6 +55,12 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     return super.findAll("furniture");
   }
 
+  /**
+   * updates the status of a piece of furniture into the database.
+   *
+   * @param furnitureDTO the furnitureDTO to modify
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO updateStatusOnly(FurnitureDTO furnitureDTO) {
     String query = "UPDATE satchofurniture.furniture "
@@ -72,6 +78,13 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     return furnitureDTO;
   }
 
+  /**
+   * updates the status of the piece of furniture to AVAILABLE_FOR_SALE and sets the selling price
+   * into the database.
+   *
+   * @param furnitureDTO the furnitureDTO to modify
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO updateToAvailable(FurnitureDTO furnitureDTO) {
     String query = "UPDATE satchofurniture.furniture "
@@ -91,6 +104,13 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     return furnitureDTO;
   }
 
+  /**
+   * updates the status of the piece of furniture to WITHDRAWN and sets the sale_withdrawal_date
+   * into the database.
+   *
+   * @param furnitureDTO the furnitureDTO to modify
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO updateToWithdrawn(FurnitureDTO furnitureDTO) {
     String query = "UPDATE satchofurniture.furniture "

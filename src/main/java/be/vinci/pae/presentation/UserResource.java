@@ -99,7 +99,7 @@ public class UserResource {
     if (rememberMe) {
       token = authentication.createLongToken(userDTO);
     } else {
-      token = authentication.createToken(userDTO);
+      token = authentication.createShortToken(userDTO);
     }
     ObjectNode resNode = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
@@ -168,7 +168,7 @@ public class UserResource {
     UserDTO userDTO = userUCC.register(user, user.getAddress());
     userDTO = Json.filterPublicJsonView(userDTO, UserDTO.class);
     String token;
-    token = authentication.createToken(userDTO);
+    token = authentication.createShortToken(userDTO);
     ObjectNode resNode = jsonMapper.createObjectNode().put("token", token).putPOJO("user", userDTO);
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
 
