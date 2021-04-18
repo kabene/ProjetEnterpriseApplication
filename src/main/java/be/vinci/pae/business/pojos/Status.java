@@ -23,6 +23,12 @@ public enum Status {
     return this.value;
   }
 
+  /**
+   * convert a string to a Enum type.
+   *
+   * @param s string to convert
+   * @return the status in a Enum type
+   */
   public static Status toEnum(String s) {
     switch (s) {
       case "requested_for_visit" :
