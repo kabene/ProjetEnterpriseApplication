@@ -99,8 +99,6 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
     return res;
   }
 
-
-
   /**
    * Creates and fills a PhotoDTO object using a ResultSet.
    *

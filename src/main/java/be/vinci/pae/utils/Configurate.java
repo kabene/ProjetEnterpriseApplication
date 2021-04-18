@@ -12,10 +12,10 @@ public class Configurate {
   private static Map<String, Object> dependencies = new HashMap<>();
 
   /**
-   * get configuration should give a string that contains the config file.
+   * Finds a value in the loaded .properties file (given a specific key).
    *
-   * @param key string .properties.
-   * @return a string who represent the value.
+   * @param key : Key value
+   * @return the corresponding value as a String
    */
   public static String getConfiguration(String key) {
     if (dependencies.containsKey(key)) {
@@ -27,7 +27,7 @@ public class Configurate {
   }
 
   /**
-   * successful loading of the file any question ? https://crunchify.com/java-properties-file-how-to-read-config-properties-values-in-java/
+   * Loads a properties file.
    *
    * @param pathname to the .properties.
    */

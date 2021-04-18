@@ -9,7 +9,7 @@
 <tr>
     <th>URI</th>
     <th>Methode</th>
-    <th>Droit(s) requit(s)</th>
+    <th>Droits requis</th>
     <th>Operation</th>
 </tr>
 
@@ -96,7 +96,6 @@
     Renvoie le user DTO et set le waiting du user précis à false et si la validation est positive il le garde son role si non il set le role à customer.
     </td>
 </tr>
-
 </table>
 
 <table style="caption-side: top">
@@ -104,7 +103,7 @@
 <tr>
     <th>URI</th>
     <th>Methode</th>
-    <th>Droit(s) requit(s)</th>
+    <th>Droits requis</th>
     <th>Operation</th>
 </tr>
 
@@ -181,7 +180,7 @@
 <tr>
     <th>URI</th>
     <th>Methode</th>
-    <th>Droit(s) requit(s)</th>
+    <th>Droits requis</th>
     <th>Operation</th>
 </tr>
 
@@ -201,24 +200,20 @@
 <tr>
     <th>URI</th>
     <th>Methode</th>
-    <th>Droit(s) requit(s)</th>
+    <th>Droits requis</th>
     <th>Operation</th>
 </tr>
 <tr>
     <td>options/</td>
     <td>GET</td>
     <td>Admin</td>
-    <td>
-        Renvoie une liste de toutes les ressources de type option.
-    </td>
+    <td>Renvoie une liste de toutes les ressources de type option.</td>
 </tr>
 <tr>
     <td>options/</td>
     <td>POST</td>
     <td>Admin</td>
-    <td>
-    Renvoie l'option crée
-    </td>
+    <td>Renvoie l'option crée</td>
 </tr>
 <tr>
     <td>options/cancel/{id}</td>
@@ -228,5 +223,4 @@
     Annule une ressource de type option et renvoie l'option modifiée. 
     </td>
 </tr>
-
 </table>
