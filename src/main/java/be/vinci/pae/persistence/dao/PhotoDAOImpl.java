@@ -67,10 +67,6 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
     return res;
   }
 
-  public List<PhotoDTO> findAll() {
-    return findAll("photos");
-  }
-
   /**
    * Finds all entries of photos in the DB.
    *
