@@ -126,8 +126,8 @@ class OptionUCCImplTest {
   @DisplayName("TEST OptionUCC.introduceOption : invalid "
       + "furniture status, should throw ConflictException")
   @ParameterizedTest
-  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED", "IN_RESTORATION",
-      "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED",
+      "IN_RESTORATION", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
   public void test_introduceOption_givenInvalidStatus_shouldThrowConflict(Status status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
 
@@ -238,8 +238,9 @@ class OptionUCCImplTest {
   @DisplayName("TEST OptionUCC.cancelOption : on furniture "
       + "not under option, should throw ConflictException")
   @ParameterizedTest
-  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED", "IN_RESTORATION",
-      "AVAILABLE_FOR_SALE", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED",
+      "IN_RESTORATION", "AVAILABLE_FOR_SALE", "SOLD", "RESERVED", "DELIVERED", "COLLECTED",
+      "WITHDRAWN"})
   public void test_cancelOption_givenInvalidStatus_shouldThrowConflict(Status status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
 

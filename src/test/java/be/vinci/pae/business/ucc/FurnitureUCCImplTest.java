@@ -365,7 +365,8 @@ class FurnitureUCCImplTest {
       + " should throw ConflictException")
   @ParameterizedTest
   @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "IN_RESTORATION",
-      "AVAILABLE_FOR_SALE", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+      "AVAILABLE_FOR_SALE", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED",
+      "WITHDRAWN"})
   public void test_toRestoration_givenInvalidId1_shouldThrowConflict(Status startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
@@ -453,8 +454,8 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.toAvailable : given invalid id (invalid status),"
       + " should throw ConflictException")
   @ParameterizedTest
-  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED","AVAILABLE_FOR_SALE", "UNDER_OPTION",
-      "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED","AVAILABLE_FOR_SALE",
+      "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
   public void test_toAvailable_givenInvalidStates_shouldThrowConflict(Status startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
@@ -536,8 +537,8 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.withdraw : given invalid id (invalid status),"
       + " should throw ConflictException")
   @ParameterizedTest
-  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED", "UNDER_OPTION", "SOLD",
-      "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED",
+      "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
   public void test_withdraw_givenInvalidStates_shouldThrowConflict(Status startingStatus) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
 
