@@ -204,38 +204,38 @@ const generateStatusInfos = (status) => {
   }
 
   switch (status) {
-    case "available_for_sale":
+    case "AVAILABLE_FOR_SALE":
       res.classname = "success";
       res.status = "Disponible à la vente";
       break;
-    case "accepted":
+    case "ACCEPTED":
       res.classname = "info";
       res.status = "Accepté";
       break;
-    case "in_restoration":
+    case "IN_RESTORATION":
       res.classname = "warning";
       res.status = "En restauration";
       break;
-    case "under_option":
+    case "UNDER_OPTION":
       res.classname = "danger";
       res.status = "Sous option";
       break;
-    case "sold":
+    case "SOLD":
       res.classname = "danger";
       res.status = "Vendu";
       break;
-    case "withdrawn":
+    case "WITHDRAWN":
       res.classname = "dark";
       res.status = "Retiré de la vente";
       break;
-    case "refused":
+    case "REFUSED":
       res.classname = "dark";
       res.status = "Refusé";
       break;
-    case "requested_for_visit":
-    case "reserved":
-    case "delivered":
-    case "collected":
+    case "REQUESTED_FOR_VISIT":
+    case "RESERVED":
+    case "DELIVERED":
+    case "COLLECTED":
     default:
       res.classname = "";
       res.status = status;
@@ -496,26 +496,26 @@ const generateButtonRow = (furniture) => {
 const generateAllTransitionBtns = (furniture) => {
   let res = "";
   switch(furniture.status) {
-    case "accepted":
+    case "ACCEPTED":
       res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
       res += generateTransitionModal("ToRestoration", "Indiquer en restauration");
       break;
-    case "available_for_sale":
+    case "AVAILABLE_FOR_SALE":
       res += generateTransitionModal("ToSold", "Indiquer vendu");
       res += generateTransitionModal("Withdraw", "Retirer de la vente", "danger", "secondary");
       break;
-    case "in_restoration":
+    case "IN_RESTORATION":
       res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
       res += generateTransitionModal("Withdraw", "Retirer de la vente", "danger", "secondary");
       break;
-    case "under_option":
-    case "sold":
-    case "withdrawn":
-    case "requested_for_visit":
-    case "refused":
-    case "reserved":
-    case "delivered":
-    case "collected":
+    case "UNDER_OPTION":
+    case "SOLD":
+    case "WITHDRAWN":
+    case "REQUESTED_FOR_VISIT":
+    case "REFUSED":
+    case "RESERVED":
+    case "DELIVERED":
+    case "COLLECTED":
     default:
   }
   return res;
