@@ -20,7 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -126,10 +126,10 @@ class OptionUCCImplTest {
   @DisplayName("TEST OptionUCC.introduceOption : invalid "
       + "furniture status, should throw ConflictException")
   @ParameterizedTest
-  @ValueSource(strings = {"requested_for_visit", "refused", "accepted", "in_restoration",
-      "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
-  public void test_introduceOption_givenInvalidStatus_shouldThrowConflict(String status) {
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(status));
+  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED", "IN_RESTORATION",
+      "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+  public void test_introduceOption_givenInvalidStatus_shouldThrowConflict(Status status) {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
 
     assertThrows(ConflictException.class,
         () -> optionUCC.introduceOption(mockUserDTO1, defaultFurnitureId1, defaultDuration1),
@@ -238,10 +238,10 @@ class OptionUCCImplTest {
   @DisplayName("TEST OptionUCC.cancelOption : on furniture "
       + "not under option, should throw ConflictException")
   @ParameterizedTest
-  @ValueSource(strings = {"requested_for_visit", "refused", "accepted", "in_restoration",
-      "available_for_sale", "sold", "reserved", "delivered", "collected", "withdrawn"})
-  public void test_cancelOption_givenInvalidStatus_shouldThrowConflict(String status) {
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(status));
+  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED", "IN_RESTORATION",
+      "AVAILABLE_FOR_SALE", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+  public void test_cancelOption_givenInvalidStatus_shouldThrowConflict(Status status) {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
 
     assertThrows(ConflictException.class,
         () -> optionUCC.cancelOption(mockUserDTO1, defaultOptionId1),

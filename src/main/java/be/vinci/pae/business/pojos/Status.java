@@ -1,7 +1,7 @@
 package be.vinci.pae.business.pojos;
 
 public enum Status {
-  REQUEST_FOR_VISIT("requested_for_visit"),
+  REQUESTED_FOR_VISIT("requested_for_visit"),
   REFUSED("refused"),
   ACCEPTED("accepted"),
   IN_RESTORATION("in_restoration"),
@@ -32,7 +32,7 @@ public enum Status {
   public static Status toEnum(String s) {
     switch (s) {
       case "requested_for_visit" :
-        return Status.REQUEST_FOR_VISIT;
+        return Status.REQUESTED_FOR_VISIT;
       case "refused" :
         return Status.REFUSED;
       case "accepted" :

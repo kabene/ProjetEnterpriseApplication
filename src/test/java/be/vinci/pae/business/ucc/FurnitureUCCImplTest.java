@@ -32,7 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 
 class FurnitureUCCImplTest {
@@ -364,11 +364,11 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.toRestoration : given invalid id (invalid status),"
       + " should throw ConflictException")
   @ParameterizedTest
-  @ValueSource(strings = {"requested_for_visit", "refused", "in_restoration", "available_for_sale",
-      "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
-  public void test_toRestoration_givenInvalidId1_shouldThrowConflict(String startingStatus) {
+  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "IN_RESTORATION",
+      "AVAILABLE_FOR_SALE", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+  public void test_toRestoration_givenInvalidId1_shouldThrowConflict(Status startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(startingStatus));
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
 
     assertThrows(ConflictException.class, () -> furnitureUCC.toRestoration(defaultFurnitureId1),
         "The toRestoration method should throw a ConflictException if it is given "
@@ -414,8 +414,8 @@ class FurnitureUCCImplTest {
 
   @DisplayName("TEST FurnitureUCC.toAvailable : given valid id, should return dto")
   @ParameterizedTest
-  @ValueSource(strings = {"accepted", "in_restoration"})
-  public void test_toAvailable_givenValidId_shouldReturnDTO(String startingStatus) {
+  @EnumSource(value = Status.class, names = {"ACCEPTED", "IN_RESTORATION"})
+  public void test_toAvailable_givenValidId_shouldReturnDTO(Status startingStatus) {
     final Status expectedEndingStatus = Status.AVAILABLE_FOR_SALE;
     final List<PhotoDTO> emptyList = new ArrayList<>();
 
@@ -426,7 +426,7 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId1)).thenReturn(emptyList);
 
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(startingStatus));
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
 
     Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getSellerId()).thenReturn(defaultSellerId1);
@@ -453,11 +453,11 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.toAvailable : given invalid id (invalid status),"
       + " should throw ConflictException")
   @ParameterizedTest
-  @ValueSource(strings = {"requested_for_visit", "refused", "available_for_sale",
-      "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
-  public void test_toAvailable_givenInvalidStates_shouldThrowConflict(String startingStatus) {
+  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED","AVAILABLE_FOR_SALE", "UNDER_OPTION",
+      "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+  public void test_toAvailable_givenInvalidStates_shouldThrowConflict(Status startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(startingStatus));
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
 
     assertThrows(ConflictException.class,
         () -> furnitureUCC.toAvailable(defaultFurnitureId1, defaultSellingPrice1),
@@ -505,14 +505,14 @@ class FurnitureUCCImplTest {
 
   @DisplayName("TEST FurnitureUCC.withdraw : given valid id, should return dto")
   @ParameterizedTest
-  @ValueSource(strings = {"in_restoration", "available_for_sale"})
-  public void test_withdraw_givenValidId_shouldReturnDTO(String startingStatus) {
+  @EnumSource(value = Status.class, names = {"IN_RESTORATION", "AVAILABLE_FOR_SALE"})
+  public void test_withdraw_givenValidId_shouldReturnDTO(Status startingStatus) {
     final Status expectedEndingCondition = Status.WITHDRAWN;
     final List<PhotoDTO> emptyList = new ArrayList<>();
     Mockito.when(mockFurnitureDAO.updateToWithdrawn(mockFurnitureDTO1))
         .thenReturn(mockFurnitureDTO2);
 
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(startingStatus));
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
 
     Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getFavouritePhotoId()).thenReturn(null);
@@ -536,10 +536,10 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.withdraw : given invalid id (invalid status),"
       + " should throw ConflictException")
   @ParameterizedTest
-  @ValueSource(strings = {"requested_for_visit", "refused", "accepted",
-      "under_option", "sold", "reserved", "delivered", "collected", "withdrawn"})
-  public void test_withdraw_givenInvalidStates_shouldThrowConflict(String startingStatus) {
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(Status.toEnum(startingStatus));
+  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED", "UNDER_OPTION", "SOLD",
+      "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+  public void test_withdraw_givenInvalidStates_shouldThrowConflict(Status startingStatus) {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
 
     assertThrows(ConflictException.class, () ->
             furnitureUCC.withdraw(defaultFurnitureId1),
