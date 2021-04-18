@@ -1,12 +1,12 @@
-import {escapeHtml, displayErrorMessage} from "../utils/utils.js"
+import {displayErrorMessage} from "../utils/utils.js"
 import {
   getUserSessionData,
   setUserSessionData,
   setUserLocalData
 } from "../utils/session";
 import Navbar from "./Navbar";
-import {setLayout} from "../utils/render.js"
 import {RedirectUrl} from "./Router";
+import {fetchMe} from "../utils/utils.js";
 
 let loginForm;
 let registerForm;
@@ -203,14 +203,14 @@ const onLogin = (e) => {
   });
 }
 
-const onUserLogin = (data, rememberMe) => {
-  console.log("Logged in !!\n", data)
-  const user = {...data, isAutenticated: true};
-  setUserSessionData(user);
+const onUserLogin = async (data, rememberMe) => {
+  let user = await fetchMe(data.token);
+  const bundle = {...data, isAutenticated: true, isAdmin: user.role === "admin"};
+  setUserSessionData(bundle);
   if (rememberMe === true) {
     setUserLocalData(data.token);
   }
-  setLayout();
+  Navbar();
   RedirectUrl("/");
 }
 
@@ -268,8 +268,8 @@ const onSignUp = (e) => {
 const onUserRegistration = (userData) => {
   const user = {...userData, isAutenticated: true};
   setUserSessionData(user);
-  setLayout();
-  RedirectUrl("/")
+  Navbar();
+  RedirectUrl("/");
 }
 
 export default Authentication;

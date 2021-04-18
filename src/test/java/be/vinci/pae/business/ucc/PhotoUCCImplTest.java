@@ -5,7 +5,6 @@ import be.vinci.pae.business.pojos.PhotoImpl;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.PhotoDAO;
-import be.vinci.pae.utils.Configurate;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeAll;
@@ -63,9 +62,8 @@ class PhotoUCCImplTest {
 
     Mockito.when(mockPhotoDAO.getAllHomePageVisiblePhotos()).thenReturn(photoDTOS);
 
-    List<PhotoDTO> expected = photoDTOS;
     List<PhotoDTO> actual = photoUCC.getAllHomePageVisiblePhotos();
-    assertEquals(expected, actual,
+    assertEquals(photoDTOS, actual,
         "called photoUCC.getAllHomePageVisiblePhotos(),"
             + " should have return all visible photo on home page.");
 
@@ -80,13 +78,12 @@ class PhotoUCCImplTest {
       + " should return an empty list.")
   @Test
   void test_getAllVisibleHomePageWithEmptyDataBase_shouldReturnEmptyList() {
-    List<PhotoDTO> photoDTOS = new ArrayList<PhotoDTO>();
+    List<PhotoDTO> photoDTOS = new ArrayList<>();
 
     Mockito.when(mockPhotoDAO.getAllHomePageVisiblePhotos()).thenReturn(photoDTOS);
 
-    List<PhotoDTO> expected = photoDTOS;
     List<PhotoDTO> actual = photoUCC.getAllHomePageVisiblePhotos();
-    assertEquals(expected, actual,
+    assertEquals(photoDTOS, actual,
         "called photoUCC.getAllHomePageVisiblePhotos() without any data present,"
             + " should have return an empty list.");
 

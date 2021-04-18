@@ -2,6 +2,7 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.factories.FurnitureFactory;
+import be.vinci.pae.business.pojos.Status;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -23,7 +24,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO findById(int id) {
-    FurnitureDTO res = null;
+    FurnitureDTO res;
     String query = "SELECT f.* FROM satchofurniture.furniture f WHERE f.furniture_id = ?";
 
     try {
@@ -44,19 +45,30 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     return res;
   }
 
+  /**
+   * Finds all entries of furniture in the DB.
+   *
+   * @return a list of furnitureDTO
+   */
   @Override
   public List<FurnitureDTO> findAll() {
     return super.findAll("furniture");
   }
 
+  /**
+   * updates the status of a piece of furniture into the database.
+   *
+   * @param furnitureDTO the furnitureDTO to modify
+   * @return the furniture modified.
+   */
   @Override
-  public FurnitureDTO updateConditionOnly(FurnitureDTO furnitureDTO) {
+  public FurnitureDTO updateStatusOnly(FurnitureDTO furnitureDTO) {
     String query = "UPDATE satchofurniture.furniture "
-        + "SET condition = ? "
+        + "SET status = ? "
         + "WHERE furniture_id = ? ";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setString(1, furnitureDTO.getCondition());
+      ps.setString(1, furnitureDTO.getStatus().getValue());
       ps.setInt(2, furnitureDTO.getFurnitureId());
       ps.execute();
       ps.close();
@@ -66,15 +78,22 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     return furnitureDTO;
   }
 
+  /**
+   * updates the status of the piece of furniture to AVAILABLE_FOR_SALE and sets the selling price
+   * into the database.
+   *
+   * @param furnitureDTO the furnitureDTO to modify
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO updateToAvailable(FurnitureDTO furnitureDTO) {
     String query = "UPDATE satchofurniture.furniture "
-        + "SET condition = ?, "
+        + "SET status = ?, "
         + "selling_price = ? "
         + "WHERE furniture_id = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setString(1, furnitureDTO.getCondition());
+      ps.setString(1, furnitureDTO.getStatus().getValue());
       ps.setDouble(2, furnitureDTO.getSellingPrice());
       ps.setInt(3, furnitureDTO.getFurnitureId());
       ps.execute();
@@ -85,16 +104,23 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     return furnitureDTO;
   }
 
+  /**
+   * updates the status of the piece of furniture to WITHDRAWN and sets the sale_withdrawal_date
+   * into the database.
+   *
+   * @param furnitureDTO the furnitureDTO to modify
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO updateToWithdrawn(FurnitureDTO furnitureDTO) {
     String query = "UPDATE satchofurniture.furniture "
-        + "SET condition = ?, "
+        + "SET status = ?, "
         + "sale_withdrawal_date = ? "
         + "WHERE furniture_id = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
     Date saleWithdrawalDate = new Date(new java.util.Date().getTime()); //now
     try {
-      ps.setString(1, furnitureDTO.getCondition());
+      ps.setString(1, furnitureDTO.getStatus().getValue());
       ps.setDate(2, saleWithdrawalDate);
       ps.setInt(3, furnitureDTO.getFurnitureId());
       ps.execute();
@@ -127,7 +153,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
       res.setSellerId(sellerId);
     }
 
-    res.setCondition(rs.getString("condition"));
+    res.setStatus(Status.toEnum(rs.getString("status")));
 
     Date saleWithdrawalDate = rs.getDate("sale_withdrawal_date");
     if (saleWithdrawalDate != null) {

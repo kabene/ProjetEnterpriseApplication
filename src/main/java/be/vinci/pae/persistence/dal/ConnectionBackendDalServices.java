@@ -7,7 +7,7 @@ public interface ConnectionBackendDalServices {
   /**
    * Provides a PreparedStatement for the given SQL query.
    *
-   * @param query String represt the query.
+   * @param query String representing the query.
    * @return send preparedStatement filled first.
    */
   PreparedStatement makeStatement(String query);

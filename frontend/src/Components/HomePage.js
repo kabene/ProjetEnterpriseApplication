@@ -1,12 +1,14 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
-import {displayErrorMessage} from "../utils/utils.js";
+import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, generateLoadingAnimation} from "../utils/utils.js";
 
 let page = document.querySelector("#page");
 let visiblePhotos;
+let images = importAllFurnitureImg();
 
 const HomePage = async () => {
-
-	visiblePhotos = getVisiblePhotos();
+	page.innerHTML = generateLoadingAnimation();
+	visiblePhotos;
+	await getVisiblePhotos();
 	console.log(visiblePhotos);
 
 	page.innerHTML = getPageHTML();
@@ -18,9 +20,9 @@ const getPageHTML = () => {
         <div id="errorDiv" class="d-none"></div>
     </div>
     <div class="row mx-0 pt-5">
-        <div class="col-2"></div>
-        <div class="col-8">` + getCarousel() + `</div>
-        <div class="col-2"></div>
+        <div class="col-2 col-lg-4"></div>
+        <div class="col-8 col-lg-4">` + getCarousel() + `</div>
+        <div class="col-2 col-lg-4"></div>
     </div>
     `;
 }
@@ -29,7 +31,6 @@ const getCarousel = () => {
 	return `<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 						<ol class="carousel-indicators bg-secondary"> ` + getHTMLCarouselIndicators() + ` </ol>
 						<div class="carousel-inner">
-							
 							` + getHTMLVisiblePhotos() + `
 						</div>
 						<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -62,20 +63,19 @@ const getHTMLVisiblePhotos = () => {
 	}
 	let ret = `
 		<div class="carousel-item active">
-			<img class="d-block w-50 m-auto" src="` + firstPhoto.src + `" alt="Meuble 1" onError="this.src='` + notFoundPhoto + `'">
+			<img class="d-block img-fluid mx-auto mb-5" src="` + findFurnitureImgSrcFromFilename(firstPhoto.source, images) + `" alt="Meuble 1" onError="this.src='` + notFoundPhoto + `'">
 		</div>`;
 	visiblePhotoTmp.forEach(photo => {
 		ret += `
 		<div class="carousel-item">
-			<img class="d-block w-50 m-auto" src="` + photo.src + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+			<img class="d-block img-fluid mx-auto mb-5" src="` + findFurnitureImgSrcFromFilename(photo.source, images) + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
 		</div>`;
 	});
 	return ret;
 }
 
-const getVisiblePhotos = () => {
-	let ret = [];
-	fetch("/photos/homePage", {
+const getVisiblePhotos = async () => {
+	await fetch("/photos/homePage", {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -86,15 +86,11 @@ const getVisiblePhotos = () => {
 		}
 		return response.json();
 	}).then((data) => {
-		ret = data;
+		visiblePhotos = data;
 	}).catch((err) => {
         console.log("Erreur de fetch !! :´<\n" + err);
         displayErrorMessage("errorDiv", err);
       });
-
-	return ret;
 }
-
-
 
 export default HomePage;

@@ -3,6 +3,7 @@ package be.vinci.pae.presentation;
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.filters.Admin;
 import be.vinci.pae.utils.Json;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Singleton
 @Path("/furniture")
@@ -40,6 +42,10 @@ public class FurnitureResource {
   public Response getById(@PathParam("id") int id) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/" + id);
     FurnitureDTO furnitureDTO = furnitureUCC.getOne(id);
+    if (!furnitureDTO.getStatus().getValue().equals("available_for_sale") &&
+        !furnitureDTO.getStatus().getValue().equals("sold")) {
+      throw new ConflictException("Unavailable resource (inaccessible status)");
+    }
     furnitureDTO = Json.filterPublicJsonView(furnitureDTO, FurnitureDTO.class);
     return Response.ok(furnitureDTO).build();
   }
@@ -72,11 +78,11 @@ public class FurnitureResource {
   public Response getAll() {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/");
     List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
-    List<FurnitureDTO> res = new ArrayList<>();
-    for (FurnitureDTO dto : furnitureDTOs) {
-      FurnitureDTO filteredDTO = Json.filterPublicJsonView(dto, FurnitureDTO.class);
-      res.add(filteredDTO);
-    }
+    List<FurnitureDTO> res = furnitureDTOs.parallelStream()
+        .filter((dto) -> dto.getStatus().getValue().equals("available_for_sale")
+            || dto.getStatus().getValue().equals("sold"))
+        .map((dto) -> Json.filterPublicJsonView(dto, FurnitureDTO.class))
+        .collect(Collectors.toList());
     return Response.ok(res).build();
   }
 

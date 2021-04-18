@@ -46,7 +46,7 @@ public interface UserDAO {
   boolean usernameAlreadyTaken(String username);
 
   /**
-   * getAllusers of the db.
+   * getAllUsers of the db.
    *
    * @return list contains the users of the db.
    */

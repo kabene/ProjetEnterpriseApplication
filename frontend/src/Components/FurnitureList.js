@@ -1,7 +1,7 @@
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {getUserSessionData} from "../utils/session.js";
-import {displayErrorMessage} from "../utils/utils.js"
+import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc, generateLoadingAnimation} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -10,13 +10,14 @@ let furnitureMap = [];
 let timeouts = [];
 let currentUser;
 let pageHTML;
+let images = importAllFurnitureImg();
 
 const FurnitureList = async (id) => {
   currentUser = getUserSessionData();
 
   pageHTML = `
   <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
-  <div id="mainPage" class="col-12">${generateLoadingAnimation()}</div>`;
+  <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
 
@@ -35,6 +36,9 @@ const FurnitureList = async (id) => {
   }
 }
 
+/**
+ * Loads the furnitureList & furnitureMap from backend 
+ */
 const findFurnitureList = async () => {
   return fetch("/furniture/detail", {
     method: "GET",
@@ -51,33 +55,23 @@ const findFurnitureList = async () => {
     return response.json();
   }).then((data) => {
     furnitureList = data;
+    furnitureList.forEach(furniture => {
+      furnitureMap[furniture.furnitureId] = furniture;
+    });
   }).catch((err) => {
     console.log("Erreur de fetch !! :´\n" + err);
     displayErrorMessage("errorDiv", err);
   });
 }
 
-const findOneFurniture = async (id) => {
-  return fetch(`/furniture/detail/${id}`, {
-    method: "GET",
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(
-        response.status + " : " + response.statusText
-      );
-    }
-    return response.json();
-  }).then((data) => {
-    furnitureMap[data.furnitureId] = data;
-    generateCard(data);
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
-    displayErrorMessage("errorDiv", err);
-  });
+/**
+ * Reloads the page and re-fetch furniture information.
+ * Displays loading animation while awaiting the fetch. 
+ */
+const reloadPage = async () => {
+  mainPage.innerHTML = generateLoadingAnimation();
+  await findFurnitureList();
+  mainPage = generatePageHtml();
 }
 
 const removeTimeouts = () => {
@@ -88,7 +82,7 @@ const removeTimeouts = () => {
 
 const generatePageHtml = (largeTable = true) => {
   let tableSize = "large";
-  let notNeededClassName = "notNeeded";
+  let notNeededClassName = "notNeeded align-middle";
   let shortElementClassName = "shortElement d-none";
   if(largeTable === false) {
     tableSize = "short";
@@ -96,16 +90,16 @@ const generatePageHtml = (largeTable = true) => {
     shortElementClassName = "shortElement";
   }
   let res = `
-  <div id="${tableSize}TableContainer">
+  <div id="${tableSize}TableContainer" class="px-0">
     <div>
       <button type="button" id="buttonReturn" class="btn btn-dark m-3 ${shortElementClassName}">Retour à la liste</button>
-      <table id="${tableSize}Table" class="table table-hover border border-1">
+      <table id="${tableSize}Table" class="table table-hover border border-1 text-center">
         <thead class="table-secondary">
-          <tr>
-            <th></th>
-            <th>Description</th>
+          <tr class="">
+            <th class="w-25"></th>
+            <th class="align-middle">Description</th>
             <th class="${notNeededClassName}">Type</th>
-            <th>État</th>
+            <th class="align-middle">État</th>
             <th class="${notNeededClassName}">Vendeur</th>
             <th class="${notNeededClassName}">Acheteur</th>
             <th class="${notNeededClassName}">Prix de vente</th>
@@ -139,38 +133,32 @@ const generateAllRows = (notNeededClassName) => {
 }
 
 const generateRow = (furniture, notNeededClassName) => {
-  let conditionHtml;
-  let thumbnailClass;
-  if(notNeededClassName === "notNeeded") { //large table
-    conditionHtml = generateColoredCondition(furniture);
-    thumbnailClass = "w-50"
+  let statusHtml;
+  let thumbnailClass = "mx-auto";
+  if(!notNeededClassName.includes("d-none")) { //large table
+    statusHtml = generateColoredStatus(furniture);
+    thumbnailClass += " w-50"
   }else { //short table
-    let infos = generateConditionInfos(furniture.condition);
-    conditionHtml = generateDot(infos.classname);
-    thumbnailClass = "w-100"
+    let infos = generateStatusInfos(furniture.status);
+    statusHtml = generateDot(infos.classname);
+    thumbnailClass += " w-100"
   }
   let res = `
     <tr class="toBeClicked" furnitureId="${furniture.furnitureId}">
-      <th><div id="thumbnail" class="w-25 mx-auto">${generateFavouritePhotoImgTag(furniture)}<div></th>
-      <th><p>${furniture.description}</p></th>
+      <th><div id="thumbnail" class="${thumbnailClass}">${generateFavouritePhotoImgTag(furniture)}<div></th>
+      <th class="align-middle"><p>${furniture.description}</p></th>
       <th class="${notNeededClassName}"><p>${furniture.type}</p></th>
-      <th class="tableCondition text-center" condition="${furniture.condition}">${conditionHtml}</th>
-      <th class="${notNeededClassName}">${generateSellerLink(furniture)}</th>
-      <th class="${notNeededClassName}">${generateBuyerLink(furniture)}</th>
-      <th class="${notNeededClassName}">${generateSellingPriceTableElement(furniture)}</th>
-      <th class="${notNeededClassName}">${generateSpecialPriceTableElement(furniture)}</th>
+      <th class="tableStatus text-center align-middle" status="${furniture.status}">${statusHtml}</th>
+      <th class="${notNeededClassName}"><p>${generateSellerLink(furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateBuyerLink(furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateSellingPriceTableElement(furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateSpecialPriceTableElement(furniture)}</p></th>
     </tr>`;
   return res;
 }
 
 const generateFavouritePhotoImgTag = (furniture) => {
-  let res = "";
-  if (furniture.favouritePhoto) {
-    res = `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail photoId=${furniture.favouritePhoto.photoId}"/>`;
-  } else {
-    // TODO: default img if no favourite
-  }
-  return res;
+  return `<img class="img-fluid" src="${findFavImgSrc(furniture, images)}" alt="thumbnail id:${furniture.favouritePhoto.photoId}"/>`;
 }
 
 const generateSellerLink = (furniture) => {
@@ -190,7 +178,7 @@ const generateBuyerLink = (furniture) => {
 }
 
 const generateUserLink = (user) => {
-  return `<a href="#" userId="${user.userId}" class="userLink">${user.username}</a>`;
+  return `<a href="#" userId="${user.id}" class="userLink">${user.username}</a>`;
 }
 
 const generateSellingPriceTableElement = (furniture) => {
@@ -209,69 +197,69 @@ const generateSpecialPriceTableElement = (furniture) => {
   return res;
 }
 
-const generateConditionInfos = (condition) => {
+const generateStatusInfos = (status) => {
   let res = {
     classname: "",
-    condition: "",
+    status: "",
   }
 
-  switch (condition) {
-    case "available_for_sale":
+  switch (status) {
+    case "AVAILABLE_FOR_SALE":
       res.classname = "success";
-      res.condition = "Disponible à la vente";
+      res.status = "Disponible à la vente";
       break;
-    case "accepted":
+    case "ACCEPTED":
       res.classname = "info";
-      res.condition = "Accepté";
+      res.status = "Accepté";
       break;
-    case "in_restoration":
+    case "IN_RESTORATION":
       res.classname = "warning";
-      res.condition = "En restauration";
+      res.status = "En restauration";
       break;
-    case "under_option":
+    case "UNDER_OPTION":
       res.classname = "danger";
-      res.condition = "Sous option";
+      res.status = "Sous option";
       break;
-    case "sold":
+    case "SOLD":
       res.classname = "danger";
-      res.condition = "Vendu";
+      res.status = "Vendu";
       break;
-    case "withdrawn":
+    case "WITHDRAWN":
       res.classname = "dark";
-      res.condition = "Retiré de la vente";
+      res.status = "Retiré de la vente";
       break;
-    case "refused":
+    case "REFUSED":
       res.classname = "dark";
-      res.condition = "Refusé";
+      res.status = "Refusé";
       break;
-    case "requested_for_visit":
-    case "reserved":
-    case "delivered":
-    case "collected":
+    case "REQUESTED_FOR_VISIT":
+    case "RESERVED":
+    case "DELIVERED":
+    case "COLLECTED":
     default:
       res.classname = "";
-      res.condition = condition;
+      res.status = status;
   }
   return res;
 }
 
-const generateColoredCondition = (furniture) => {
-  let infos = generateConditionInfos(furniture.condition);
-  return `<p class="text-${infos.classname}">${infos.condition}</p>`;
+const generateColoredStatus = (furniture) => {
+  let infos = generateStatusInfos(furniture.status);
+  return `<p class="text-${infos.classname}">${infos.status}</p>`;
 }
 
 //input: "primary", "secondary", "info", etc...
-const generateDot = (colorClassName) => `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
+const generateDot = (colorClassName) =>{
+  return `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
+} 
 
-const generateBadgeCondition = (furniture) => {
-  let infos = generateConditionInfos(furniture.condition);
-  let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.condition}</span>`;
+const generateBadgeStatus = (furniture) => {
+  let infos = generateStatusInfos(furniture.status);
+  let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.status}</span>`;
   return res;
 }
 
-const generateLoadingAnimation = () => `<div class="text-center"><h2>Loading <div class="spinner-border"></div></h2></div>`;
-
-const displayShortElements = (e) => {
+const displayShortElements = async (e) => {
   removeTimeouts();
   //hide large table
   let largeTable = document.querySelector('#largeTable');
@@ -300,18 +288,28 @@ const displayShortElements = (e) => {
   }
   element.className = "toBeClicked bg-secondary text-light";
 
-  document.querySelectorAll(".tableCondition").forEach(element => {
-    let condition = element.attributes["condition"].value;
-    let classname = generateConditionInfos(condition).classname;
+  document.querySelectorAll(".tableStatus").forEach(element => {
+    let status = element.attributes["status"].value;
+    let classname = generateStatusInfos(status).classname;
     element.innerHTML = generateDot(classname);
   });
   let id = element.attributes["furnitureId"].value;
-  if(!furnitureMap[id]) {
-    findOneFurniture(id);
+  let furniture = furnitureMap[id];
+  if(!furniture) await reloadPage();
+  if(furniture) {
+    generateCard(furniture);
+    document.querySelectorAll(".userLink").forEach((link) => link.addEventListener("click", onUserLinkClicked))
   }else {
-    console.log("found furniture in map");
-    generateCard(furnitureMap[id]);
+    displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
   }
+}
+
+const onUserLinkClicked = (e) => {
+  e.preventDefault();
+  let link = e.target;
+  let userId = link.getAttribute("userid");
+  console.log(`Linking to user card (id: ${userId})`);
+  RedirectUrl("/users", userId);
 }
 
 const displayLargeTable = () => {
@@ -322,16 +320,16 @@ const displayLargeTable = () => {
   document.querySelectorAll(".toBeClicked").forEach(element => element.className = "toBeClicked");
   document.querySelector("#buttonReturn").className = "btn btn-dark m-3 d-none";
   document.querySelectorAll("#thumbnail").forEach(
-    element => element.className = "w-25 mx-auto");
-  document.querySelectorAll(".tableCondition").forEach(element => {
-    let condition = element.getAttribute("condition");
-    let infos = generateConditionInfos(condition);
-    element.innerHTML = `<p class="text-${infos.classname}">${infos.condition}</p>`
+    element => element.className = "w-50 mx-auto");
+  document.querySelectorAll(".tableStatus").forEach(element => {
+    let status = element.getAttribute("status");
+    let infos = generateStatusInfos(status);
+    element.innerHTML = `<p class="text-${infos.classname}">${infos.status}</p>`
   })
 }
 
 const displayLargeElements = () => {
-  document.querySelectorAll('.notNeeded').forEach(element => element.className = "notNeeded");
+  document.querySelectorAll('.notNeeded').forEach(element => element.className = "notNeeded align-middle");
 }
 
 const generateCard = (furniture) => {
@@ -358,7 +356,7 @@ const generateCardHTML = (furniture) => {
               </div>
               <div class="col-md-6 text-left">
                 <h5 id="descriptionCardEntry">${furniture.description}</h5>
-                <p class="proile-rating">ÉTAT : <span id="conditionCardEntry">${generateBadgeCondition(furniture)}</span></p>
+                <p class="proile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(furniture)}</span></p>
               </div>
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -403,7 +401,7 @@ const generateCardHTML = (furniture) => {
 const generatePhotoList = (furniture) => {
   let photos = "";
   furniture.photos.forEach(photo => {
-    photos += `<img class="img-fluid flex-grow-1 p-1" src="${photo.source}" alt="photo of id ${photo.photoId}"/>`;
+    photos += `<img class="img-fluid flex-grow-1 p-1" src="${findFurnitureImgSrcFromFilename(photo.source, images)}" alt="photo id:${photo.photoId}"/>`;
   });
   let res = `<div class="d-flex flex-lg-fill">${photos}</div>`;
   return res;
@@ -497,27 +495,27 @@ const generateButtonRow = (furniture) => {
 
 const generateAllTransitionBtns = (furniture) => {
   let res = "";
-  switch(furniture.condition) {
-    case "accepted":
+  switch(furniture.status) {
+    case "ACCEPTED":
       res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
       res += generateTransitionModal("ToRestoration", "Indiquer en restauration");
       break;
-    case "available_for_sale":
+    case "AVAILABLE_FOR_SALE":
       res += generateTransitionModal("ToSold", "Indiquer vendu");
       res += generateTransitionModal("Withdraw", "Retirer de la vente", "danger", "secondary");
       break;
-    case "in_restoration":
+    case "IN_RESTORATION":
       res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
       res += generateTransitionModal("Withdraw", "Retirer de la vente", "danger", "secondary");
       break;
-    case "under_option":
-    case "sold":
-    case "withdrawn":
-    case "requested_for_visit":
-    case "refused":
-    case "reserved":
-    case "delivered":
-    case "collected":
+    case "UNDER_OPTION":
+    case "SOLD":
+    case "WITHDRAWN":
+    case "REQUESTED_FOR_VISIT":
+    case "REFUSED":
+    case "RESERVED":
+    case "DELIVERED":
+    case "COLLECTED":
     default:
   }
   return res;
@@ -579,7 +577,7 @@ const findTransitionMethod = (btnId, furniture) => {
   };
 }
 
-//condition transition methods
+//status transition methods
 
 const toAvailable = (e, furniture) => { //TODO
   e.preventDefault();

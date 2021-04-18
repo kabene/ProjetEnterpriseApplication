@@ -34,7 +34,7 @@ const Router = () => {
 const onLoadHandler = async (e) => {
     let url = window.location.pathname;
     console.log("onLoad : ", url);
-    getRememberMe(); // logs in if remember me
+    await getRememberMe(); // logs in if remember me
     componentToRender = routes[url];
     if(!componentToRender){
         ErrorPage(url)
@@ -88,12 +88,13 @@ const RedirectUrl = (uri, data) => {
         componentToRender(data);
 };
 
-const getRememberMe = () => {
+const getRememberMe = async () => {
     let sessionData = getUserSessionData();
     if(!sessionData) {
         let token = getUserLocalData();
         if(token) {
-            fetch("/users/login", {
+            console.log("GET /users/login");
+            await fetch("/users/login", {
                 method: "GET",
                 headers: {
                     Authorization: token
@@ -116,8 +117,7 @@ const getRememberMe = () => {
 
 const onUserLogin = (data) => {
     console.log("Logged in via remember me token : ", data)
-    const user = {...data, isAutenticated: true};
-    setUserSessionData(user);
+    
     setUserLocalData(data.token);
     setLayout();
 }
@@ -129,6 +129,5 @@ const removeModals = () => {
         m.parentNode.removeChild(m);
     }
 }
-
 
 export {Router, RedirectUrl};

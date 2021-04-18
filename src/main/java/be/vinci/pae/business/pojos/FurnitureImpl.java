@@ -25,7 +25,7 @@ public class FurnitureImpl implements FurnitureDTO {
   @JsonView(Views.AdminOnly.class)
   private UserDTO seller;
   @JsonView(Views.Public.class)
-  private String condition;
+  private Status status;
   @JsonView(Views.AdminOnly.class)
   private String saleWithdrawalDate;
   @JsonView(Views.Public.class)
@@ -105,13 +105,13 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public String getCondition() {
-    return condition;
+  public Status getStatus() {
+    return status;
   }
 
   @Override
-  public void setCondition(String cond) {
-    this.condition = cond;
+  public void setStatus(Status status) {
+    this.status = status;
   }
 
   @Override

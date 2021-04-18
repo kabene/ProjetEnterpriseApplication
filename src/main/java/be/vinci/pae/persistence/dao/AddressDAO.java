@@ -7,16 +7,16 @@ import java.util.List;
 public interface AddressDAO {
 
   /**
-   * Create a newAdress.
+   * Create a newAddress.
    *
-   * @param address AdressDTO describe the adress.
+   * @param address AddressDTO describe the address.
    */
   void addAddress(AddressDTO address);
 
   /**
    * get the id of the address.
    *
-   * @param address AdressDTO describe the adress.
+   * @param address AddressDTO describe the address.
    */
   int getId(AddressDTO address);
 
@@ -28,5 +28,10 @@ public interface AddressDAO {
    */
   AddressDTO findById(int addressId);
 
+  /**
+   * Finds all entries of addresses in the DB.
+   *
+   * @return a list of addressDTO
+   */
   List<AddressDTO> findAll();
 }

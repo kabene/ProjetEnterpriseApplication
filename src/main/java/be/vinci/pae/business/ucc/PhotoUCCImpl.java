@@ -4,8 +4,6 @@ import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import jakarta.inject.Inject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoUCCImpl implements PhotoUCC {
@@ -23,7 +21,7 @@ public class PhotoUCCImpl implements PhotoUCC {
    */
   @Override
   public List<PhotoDTO> getAllHomePageVisiblePhotos() {
-    List<PhotoDTO> res = new ArrayList<>();
+    List<PhotoDTO> res;
     try {
       dalServices.startTransaction();
       res = photoDAO.getAllHomePageVisiblePhotos();

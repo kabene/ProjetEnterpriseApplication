@@ -30,12 +30,32 @@ import org.glassfish.jersey.server.ContainerRequest;
 
 
 @Singleton
-@Path("/option")
-public class OptionRessouce {
+@Path("/options")
+public class OptionResource {
 
   @Inject
   private OptionUCC optionUCC;
   private final ObjectMapper jsonMapper = new ObjectMapper();
+
+  /**
+   * GET all option resources.
+   *
+   * @return list of option as json.
+   */
+  @GET
+  @Path("/")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public Response findAll() {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /option/list");
+    List<OptionDTO> optionDTOs = optionUCC.listOption();
+    List<OptionDTO> res = new ArrayList<>();
+    for (OptionDTO dto : optionDTOs) {
+      OptionDTO filteredDTO = Json.filterPublicJsonView(dto, OptionDTO.class);
+      res.add(filteredDTO);
+    }
+    return Response.ok(res).build();
+  }
 
   /**
    * POST a new option resource.
@@ -85,27 +105,6 @@ public class OptionRessouce {
     OptionDTO optionDTO = optionUCC.cancelOption(currentUser, optionId);
     optionDTO = Json.filterPublicJsonView(optionDTO, OptionDTO.class);
     return Response.ok(optionDTO, MediaType.APPLICATION_JSON).build();
-  }
-
-  /**
-   * GET all option resources.
-   *
-   * @return list of option as json.
-   */
-  @GET
-  @Path("/list")
-  @Produces(MediaType.APPLICATION_JSON)
-  @Authorize
-  public Response getByUser() {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /option/list");
-    List<OptionDTO> optionDTOs = optionUCC.listOption();
-    List<OptionDTO> res = new ArrayList<>();
-    for (OptionDTO dto : optionDTOs) {
-      OptionDTO filteredDTO = Json.filterPublicJsonView(dto, OptionDTO.class);
-      res.add(filteredDTO);
-    }
-    return Response.ok(res).build();
-
   }
 
 

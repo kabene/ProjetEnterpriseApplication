@@ -1,5 +1,5 @@
 "use strict";
-
+import imageNotFound from "../img/notFoundPhoto.png";
 import {getUserSessionData} from "./session";
 
 /**
@@ -18,10 +18,14 @@ function escapeHtml(text) {
         .replace(/\//g, "&#047;");
 }
 
-async function verifyAdmin (){
-    let token = getUserSessionData().token;
-    let res = false;
-    let result;
+/**
+ * Finds current user's personal information via GET users/me
+ * @param {string} token : jwt
+ * 
+ */
+async function fetchMe (token){
+    if(!token) token = getUserSessionData().token;
+    let res;
     await fetch("/users/me", {
         method: "GET",
         headers: {
@@ -29,16 +33,12 @@ async function verifyAdmin (){
             "Content-Type": "application/json",
         },
     }).then((response) => {
-        if (!response.ok) {
-            res = false;
+        if (response.ok) {
+            return response.json();   
         }
-        return response.json();
     })
     .then((data) => {
-        result = data.role;
-        if (result === "admin") {
-            res = true;
-        }
+        res = data;
     })
     .catch((err) => {
         console.log("Erreur de fetch !! :´\n" + err);
@@ -56,11 +56,62 @@ return `
         <h2>Loading <div class="spinner-border"></div></h2>
     </div>`
 }
+
 function displayErrorMessage(alertDivId, error) {
     let message = error.message;
     let div = document.querySelector(`#${alertDivId}`);
-    div.className = "alert alert-danger mx-1";
-    div.innerHTML = `<p>${message}</p>`;
+    div.className = "mx-1";
+    div.innerHTML = `
+    <div class="alert alert-danger alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>${message}</p>
+    </div>`;
 }
 
-export {escapeHtml, removeTimeouts, generateLoadingAnimation, verifyAdmin, displayErrorMessage};
+/**
+ * Loads all images (.png / .jpg / jpeg / .svg) from the src/img/furniture folder
+ * 
+ * @author Webpack documentation: https://webpack.js.org/guides/dependency-management/#require-context
+ * 
+ * key = filename
+ * use the entries' default attribute in <img/> tags
+ * 
+ * @returns an array containing all images 
+ */
+const importAllFurnitureImg = () => {
+    let r = require.context('../img/furniture', true, /\.(png|jpe?g|svg)$/);
+    let images = {};
+    r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
+    return images;
+}
+
+/**
+ * finds furniture image src from loaded images array and filename ( -> return value from importAllFurnitureImg() )
+ * 
+ * @param {string} filename 
+ * @param {Array} images
+ * @returns <img/> src
+ */
+const findFurnitureImgSrcFromFilename = (filename, images) => {
+    if(!images[filename]) {
+      return imageNotFound;
+    }
+    return images[filename].default;
+}
+
+/**
+ * finds favourite image src from loaded images array and Furniture object
+ * @param {*} furniture
+ * @param {Array} images
+ * @returns <img/> src
+ */
+const findFavImgSrc = (furniture, images) => {
+    if(!furniture.favouritePhoto) {
+      return imageNotFound;
+    }
+    return findFurnitureImgSrcFromFilename(furniture.favouritePhoto.source, images);
+}
+
+export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
+     displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, 
+     findFavImgSrc};

@@ -17,9 +17,9 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
 
 
   /**
-   * Create a newAdress.
+   * Create a newAddress.
    *
-   * @param address AdressDTO describe the address.
+   * @param address AddressDTO describe the address.
    */
   @Override
   public void addAddress(AddressDTO address) {
@@ -29,24 +29,24 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
     try {
       addressToRequest(address, ps);
       ps.execute();
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException e) {
+      throw new InternalError(e);
     }
     try {
       ps.close();
     } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
+      throw new InternalError(e);
     }
   }
 
   /**
    * get the id of the address.
    *
-   * @param address AdressDTO describe the address.
+   * @param address AddressDTO describe the address.
    */
   @Override
   public int getId(AddressDTO address) {
-    int id = 0;
+    int id;
     try {
       String query = "SELECT a.address_id FROM satchofurniture.addresses a WHERE "
           + "a.street = ? "
@@ -71,9 +71,15 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
     return id;
   }
 
+  /**
+   * Finds an address with its id.
+   *
+   * @param addressId : the address' id.
+   * @return the address as an AddressDTO
+   */
   @Override
   public AddressDTO findById(int addressId) {
-    AddressDTO res = null;
+    AddressDTO res;
     String query = "SELECT a.* FROM satchoFurniture.addresses a WHERE a.address_id = ?";
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
@@ -90,7 +96,11 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
     return res;
   }
 
-
+  /**
+   * Finds all entries of addresses in the DB.
+   *
+   * @return a list of addressDTO
+   */
   @Override
   public List<AddressDTO> findAll() {
     return findAll("addresses");
@@ -105,6 +115,15 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
     ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
   }
 
+
+
+  /**
+   * Creates and fills an AddressDTO object using a ResultSet.
+   *
+   * @param rs : the ResultSet containing the information.
+   * @return a dto containing the information from the result set
+   * @throws SQLException in case of problem during access to the ResultSet.
+   */
   @Override
   protected AddressDTO toDTO(ResultSet rs) throws SQLException {
     AddressDTO res = addressFactory.getAddressDTO();

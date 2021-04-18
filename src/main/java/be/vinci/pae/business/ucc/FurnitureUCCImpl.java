@@ -4,6 +4,7 @@ import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.pojos.Status;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
@@ -30,6 +31,12 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   private ConnectionDalServices dalServices;
 
 
+  /**
+   * get the piece of furniture searched by its id.
+   *
+   * @param id the furniture id.
+   * @return Furniture represented bu FurnitureDTO.
+   */
   @Override
   public FurnitureDTO getOne(int id) {
     FurnitureDTO res;
@@ -46,6 +53,11 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     return res;
   }
 
+  /**
+   * get all the furniture.
+   *
+   * @return list contains furniture.
+   */
   @Override
   public List<FurnitureDTO> getAll() {
     List<FurnitureDTO> dtos;
@@ -63,18 +75,24 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     return dtos;
   }
 
+  /**
+   * set the status of the furniture to IN_RESTORATION.
+   *
+   * @param furnitureId the furniture id.
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO toRestoration(int furnitureId) {
     FurnitureDTO furnitureDTO;
     try {
       dalServices.startTransaction();
       furnitureDTO = furnitureDAO.findById(furnitureId);
-      if (!furnitureDTO.getCondition().equals("accepted")) {
+      if (!furnitureDTO.getStatus().equals(Status.ACCEPTED)) {
         throw new ConflictException(
             "The resource cannot change from its current state to the 'in_restoration' state");
       }
-      furnitureDTO.setCondition("in_restoration");
-      furnitureDTO = furnitureDAO.updateConditionOnly(furnitureDTO);
+      furnitureDTO.setStatus(Status.IN_RESTORATION);
+      furnitureDTO = furnitureDAO.updateStatusOnly(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
     } catch (Throwable e) {
@@ -84,18 +102,25 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     return furnitureDTO;
   }
 
+  /**
+   * set the status of the furniture to AVAILABLE_FOR_SALE and set its selling price.
+   *
+   * @param furnitureId the furniture id.
+   * @param sellingPrice the selling price of the furniture.
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO toAvailable(int furnitureId, double sellingPrice) {
     FurnitureDTO furnitureDTO;
     try {
       dalServices.startTransaction();
       furnitureDTO = furnitureDAO.findById(furnitureId);
-      if (!furnitureDTO.getCondition().equals("accepted") && !furnitureDTO.getCondition()
-          .equals("in_restoration")) {
+      if (!furnitureDTO.getStatus().equals(Status.ACCEPTED) && !furnitureDTO.getStatus()
+          .equals(Status.IN_RESTORATION)) {
         throw new ConflictException(
             "The resource cannot change from its current state to the 'available_for_sale' state");
       }
-      furnitureDTO.setCondition("available_for_sale");
+      furnitureDTO.setStatus(Status.AVAILABLE_FOR_SALE);
       furnitureDTO.setSellingPrice(sellingPrice);
       furnitureDTO = furnitureDAO.updateToAvailable(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
@@ -107,18 +132,24 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     return furnitureDTO;
   }
 
+  /**
+   * set the status of the furniture to WITHDRAWN.
+   *
+   * @param furnitureId the furniture id.
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO withdraw(int furnitureId) {
     FurnitureDTO furnitureDTO;
     try {
       dalServices.startTransaction();
       furnitureDTO = furnitureDAO.findById(furnitureId);
-      if (!furnitureDTO.getCondition().equals("available_for_sale") && !furnitureDTO.getCondition()
-          .equals("in_restoration")) {
+      if (!furnitureDTO.getStatus().equals(Status.AVAILABLE_FOR_SALE) && !furnitureDTO.getStatus()
+          .equals(Status.IN_RESTORATION)) {
         throw new ConflictException(
             "The resource isn't in a withdrawable state");
       }
-      furnitureDTO.setCondition("withdrawn");
+      furnitureDTO.setStatus(Status.WITHDRAWN);
       furnitureDTO = furnitureDAO.updateToWithdrawn(furnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
@@ -147,9 +178,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       PhotoDTO favPhoto = photoDAO.getPhotoById(dto.getFavouritePhotoId());
       dto.setFavouritePhoto(favPhoto);
     }
-    if (dto.getCondition().equals("under_option")) {
-      int furnitureId = dto.getFurnitureId();
-      OptionDTO opt = optionDAO.findByFurnitureId(furnitureId);
+    if (dto.getStatus().equals(Status.UNDER_OPTION)) {
+      OptionDTO opt = optionDAO.findByFurnitureId(dto.getFurnitureId());
       opt.setUser(userDAO.findById(opt.getUserId()));
       dto.setOption(opt);
     }

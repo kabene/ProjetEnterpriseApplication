@@ -393,7 +393,7 @@ body, .search-bar {
   overflow-x: auto;
 }
 #shortTable {
-  width: 15em;
+  width: 20em;
   transition: 1s;
 }
 

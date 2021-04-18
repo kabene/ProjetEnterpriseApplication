@@ -30,7 +30,7 @@ public interface PhotoDAO {
   List<PhotoDTO> findAll();
 
   /**
-   * Finds all visible photos to display on the homepage
+   * Finds all visible photos to display on the homepage.
    *
    * @return a list containing all the photos visible on the home page's carousel.
    */

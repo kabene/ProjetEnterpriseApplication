@@ -1,15 +1,13 @@
 import { getUserSessionData } from "../utils/session";
-import imageStub from "../img/furnitures/Bureau_1.png";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {displayErrorMessage} from "../utils/utils.js"
+import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc, generateLoadingAnimation} from "../utils/utils.js"
 
 
 let page = document.querySelector("#page");
 let furnitureList;
 let currentUser;
 let optionList;
-
-
+let images = importAllFurnitureImg();
 
 const Furniture = async () => {
     currentUser = getUserSessionData();
@@ -48,7 +46,7 @@ const cancelOption= (e)=>{
     }
   });
 
-   fetch("/option/cancel/"+optionId,{
+   fetch("/options/cancel/"+optionId,{
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -60,7 +58,7 @@ const cancelOption= (e)=>{
     }
     return response.json();
   }).then((data) => {
-    refresh(data, "available_for_sale");
+    refresh(data, "AVAILABLE_FOR_SALE");
   }).catch((err) => {
      console.log("Erreur de fetch !! :´<\n" + err);
      displayErrorMessage("errorDiv", err);
@@ -80,7 +78,7 @@ const addOption =  (e) => {
     duration: duration,
   }
   console.log(bundle);
-   fetch("/option/", {
+   fetch("/options/", {
     method: "POST",
     body: JSON.stringify(bundle),
     headers: {
@@ -93,7 +91,7 @@ const addOption =  (e) => {
       }
       return response.json();
     }).then((data) => {
-      refresh(data.option, "under_option");
+      refresh(data.option, "UNDER_OPTION");
     }).catch((err) => {
      console.log("Erreur de fetch !! :´<\n" + err);
      displayErrorMessage("errorDiv", err);
@@ -101,9 +99,9 @@ const addOption =  (e) => {
 
 }
 
-const refresh = (data, condition) => {
+const refresh = (data, status) => {
   optionList.push(data);
-  updateFurnitureList(data.furnitureId, condition)
+  updateFurnitureList(data.furnitureId, status)
   page.innerHTML = generateTable();
 
   document.querySelectorAll(".btnCreateOption").forEach(element =>{
@@ -112,15 +110,6 @@ const refresh = (data, condition) => {
   document.querySelectorAll(".cancelOptButton").forEach(element=>{
     element.addEventListener("click",cancelOption);
   })
-}
-
-
-
-const generateLoadingAnimation = () => {
-    return `
-        <div class="text-center">
-            <h2>Loading <div class="spinner-border"></div></h2>
-        </div>`
 }
 
 const getFurnitureList = async () => {
@@ -146,7 +135,7 @@ const getFurnitureList = async () => {
 const getOptionList= async () => {
   if(currentUser) {
     let ret = [];
-    await fetch("/option/list", {
+    await fetch("/options/", {
       method: "GET",
       headers: {
         "Authorization": currentUser.token,
@@ -168,10 +157,10 @@ const getOptionList= async () => {
 }
 
 
-const updateFurnitureList = (furnitureId, condition) => {
+const updateFurnitureList = (furnitureId, status) => {
     furnitureList.forEach(furniture => {
         if (furniture.furnitureId === furnitureId) {
-            furniture.condition = condition;
+            furniture.status = status;
         }
     })
 }
@@ -206,8 +195,8 @@ const generateAllItemsAndModals = () => {
 const generateItemAndModal = (furniture) => {
     let item = `
         <div>
-            <img class="imageFurniturePage" src="` + imageStub /*furniture.favouritePhoto.source*/ +`" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
-            <p>` + furniture.description + `</p>`
+            <img class="imageFurniturePage" src="${findFavImgSrc(furniture, images)}" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
+            <p class="text-center">` + furniture.description + `</p>`
             + getOptionButton(furniture) +
         `</div>`;
 
@@ -233,7 +222,7 @@ const generateItemAndModal = (furniture) => {
                                     for (let i = 0; i < tabPhotoToRender.length; i++) {
                                         modal += `
                                         <div class="carousel-item active text-center">
-                                            <img class="w-75" src="` + imageStub + `" alt="Photo meuble">
+                                            <img class="w-75" src="${findFurnitureImgSrcFromFilename(tabPhotoToRender[i].source, images)}" alt="Photo meuble">
                                         </div>`;
                                     }
     modal+=
@@ -270,30 +259,20 @@ const getOptionButton = (furniture) => {
   }
 
   })};
-  if (furniture.condition === "available_for_sale" && typeof currentUser!=="undefined") { //place option
+  if (furniture.status === "AVAILABLE_FOR_SALE" && typeof currentUser!=="undefined") { //place option
 
     let sendBtn = generateCloseBtn("Confirmer", "btn"+furniture.furnitureId , "btnCreateOption btn btn-primary mx-5");
     return  generateModalPlusTriggerBtn("modal_"+furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
   }
-  else if( furniture.condition === "under_option" && alreadyUnderOption && typeof currentUser!=="undefined" ) { //cancel option
+  else if( furniture.status === "UNDER_OPTION" && alreadyUnderOption && typeof currentUser!=="undefined" ) { //cancel option
     return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn-danger cancelOptButton">annuler l'option</button>`;
   }else{ // nothing
     return "";
   }
 }
 
-
-
-
 const getTabPhotoToRender = (furniture) => {
-    let photos = furniture.photos;
-    let photosToRender = [furniture.favouritePhoto];
-    let favId = furniture.favouritePhotoId;
-    photos.forEach(p => {
-        if (p.visible && p.photoId != favId)
-            photosToRender.push(p);
-    })
-    return photosToRender;
+    return furniture.photos;
 }
 
 const generateOptionForm = () => {
@@ -307,6 +286,5 @@ const generateOptionForm = () => {
   `;
     return res;
 }
-
 
 export default Furniture;

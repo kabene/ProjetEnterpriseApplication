@@ -9,7 +9,7 @@
 <tr>
     <th>URI</th>
     <th>Methode</th>
-    <th>Droit(s) requit(s)</th>
+    <th>Droits requis</th>
     <th>Operation</th>
 </tr>
 
@@ -96,7 +96,6 @@
     Renvoie le user DTO et set le waiting du user précis à false et si la validation est positive il le garde son role si non il set le role à customer.
     </td>
 </tr>
-
 </table>
 
 <table style="caption-side: top">
@@ -104,7 +103,7 @@
 <tr>
     <th>URI</th>
     <th>Methode</th>
-    <th>Droit(s) requit(s)</th>
+    <th>Droits requis</th>
     <th>Operation</th>
 </tr>
 
@@ -114,6 +113,7 @@
     <td>Aucun</td>
     <td>
     Renvoie les informations publiques d'une ressource de type "furniture".
+    (La ressource doit être dans l'état 'disponible à la vente' ou 'vendu')
     </td>
 </tr>
 
@@ -131,7 +131,8 @@
     <td>GET</td>
     <td>Aucun</td>
     <td>
-    Renvoie une liste contenant les informations publiques de toutes les ressources de type "furniture".
+    Renvoie une liste contenant les informations publiques de toutes les ressources de type "furniture" 
+    étant dans l'état 'disponible à la vente' ou 'vendu'.
     </td>
 </tr>
 
@@ -179,7 +180,7 @@
 <tr>
     <th>URI</th>
     <th>Methode</th>
-    <th>Droit(s) requit(s)</th>
+    <th>Droits requis</th>
     <th>Operation</th>
 </tr>
 
@@ -199,25 +200,27 @@
 <tr>
     <th>URI</th>
     <th>Methode</th>
-    <th>Droit(s) requit(s)</th>
+    <th>Droits requis</th>
     <th>Operation</th>
 </tr>
-
 <tr>
-    <td>option/</td>
+    <td>options/</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>Renvoie une liste de toutes les ressources de type option.</td>
+</tr>
+<tr>
+    <td>options/</td>
     <td>POST</td>
-    <td>Droit(s) requit(s)</td>
-    <td>
-    Renvoie l'option crée
-    </td>
+    <td>Admin</td>
+    <td>Renvoie l'option crée</td>
 </tr>
 <tr>
-    <td>option/cancel/{id}</td>
+    <td>options/cancel/{id}</td>
     <td>PATCH</td>
-    <td>Droit(s) requit(s)</td>
+    <td>Admin</td>
     <td>
-    Renvoie l'option modifiée 
+    Annule une ressource de type option et renvoie l'option modifiée. 
     </td>
 </tr>
-
 </table>
