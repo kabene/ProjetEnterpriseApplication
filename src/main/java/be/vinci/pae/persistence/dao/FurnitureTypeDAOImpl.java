@@ -8,6 +8,12 @@ import java.util.List;
 
 public class FurnitureTypeDAOImpl extends AbstractDAO implements FurnitureTypeDAO {
 
+  /**
+   * Finds one furniture type with its id.
+   *
+   * @param id : the type's id
+   * @return the type label as a String
+   */
   @Override
   public String findById(int id) {
     String res;
@@ -29,11 +35,19 @@ public class FurnitureTypeDAOImpl extends AbstractDAO implements FurnitureTypeDA
     return res;
   }
 
+  /**
+   * Finds all types in the DB.
+   *
+   * @return the types as a List of Strings.
+   */
   @Override
   public List<String> findAll() {
     return findAll("furniture_type");
   }
 
+
+
+  //TODO
   @Override
   protected String toDTO(ResultSet rs) throws SQLException {
     return rs.getString("type_name");

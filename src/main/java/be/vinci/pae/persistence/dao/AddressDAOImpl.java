@@ -71,6 +71,12 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
     return id;
   }
 
+  /**
+   * Finds an address with its id.
+   *
+   * @param addressId : the address' id.
+   * @return the address as an AddressDTO
+   */
   @Override
   public AddressDTO findById(int addressId) {
     AddressDTO res;
@@ -90,7 +96,11 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
     return res;
   }
 
-
+  /**
+   * Finds all entries of addresses in the DB.
+   *
+   * @return a list of addressDTO
+   */
   @Override
   public List<AddressDTO> findAll() {
     return findAll("addresses");
@@ -105,6 +115,15 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
     ps.setString(6, StringEscapeUtils.escapeHtml4(address.getCountry()));
   }
 
+
+
+  /**
+   * Creates and fills an AddressDTO object using a ResultSet.
+   *
+   * @param rs : the ResultSet containing the information.
+   * @return a dto containing the information from the result set
+   * @throws SQLException in case of problem during access to the ResultSet.
+   */
   @Override
   protected AddressDTO toDTO(ResultSet rs) throws SQLException {
     AddressDTO res = addressFactory.getAddressDTO();

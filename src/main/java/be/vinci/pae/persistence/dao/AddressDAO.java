@@ -28,5 +28,10 @@ public interface AddressDAO {
    */
   AddressDTO findById(int addressId);
 
+  /**
+   * Finds all entries of addresses in the DB.
+   *
+   * @return a list of addressDTO
+   */
   List<AddressDTO> findAll();
 }

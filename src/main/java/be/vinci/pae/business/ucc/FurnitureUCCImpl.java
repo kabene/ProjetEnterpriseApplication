@@ -31,6 +31,12 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   private ConnectionDalServices dalServices;
 
 
+  /**
+   * get the piece of furniture searched by its id
+   *
+   * @param id the furniture id.
+   * @return Furniture represented bu FurnitureDTO.
+   */
   @Override
   public FurnitureDTO getOne(int id) {
     FurnitureDTO res;
@@ -47,6 +53,11 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     return res;
   }
 
+  /**
+   * get all the furniture.
+   *
+   * @return list contains furniture.
+   */
   @Override
   public List<FurnitureDTO> getAll() {
     List<FurnitureDTO> dtos;
@@ -64,6 +75,12 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     return dtos;
   }
 
+  /**
+   * set the status of the furniture to IN_RESTORATION.
+   *
+   * @param furnitureId the furniture id.
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO toRestoration(int furnitureId) {
     FurnitureDTO furnitureDTO;
@@ -85,6 +102,13 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     return furnitureDTO;
   }
 
+  /**
+   * set the status of the furniture to AVAILABLE_FOR_SALE and set its selling price.
+   *
+   * @param furnitureId the furniture id.
+   * @param sellingPrice the selling price of the furniture.
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO toAvailable(int furnitureId, double sellingPrice) {
     FurnitureDTO furnitureDTO;
@@ -108,6 +132,12 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     return furnitureDTO;
   }
 
+  /**
+   * set the status of the furniture to WITHDRAWN.
+   *
+   * @param furnitureId the furniture id.
+   * @return the furniture modified.
+   */
   @Override
   public FurnitureDTO withdraw(int furnitureId) {
     FurnitureDTO furnitureDTO;

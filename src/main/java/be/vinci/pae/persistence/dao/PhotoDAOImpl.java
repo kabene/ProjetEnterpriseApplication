@@ -15,6 +15,12 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
   @Inject
   private PhotoFactory photoFactory;
 
+  /**
+   * Finds all photos for a given furniture id.
+   *
+   * @param furnitureId : the furniture id.
+   * @return a list of photoDTO
+   */
   @Override
   public List<PhotoDTO> findAllByFurnitureId(int furnitureId) {
     List<PhotoDTO> res = new ArrayList<>();
@@ -34,6 +40,12 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
     return res;
   }
 
+  /**
+   * Finds one photo by id.
+   *
+   * @param photoId : the researched photoId.
+   * @return one instance of PhotoDTO
+   */
   @Override
   public PhotoDTO getPhotoById(int photoId) {
     PhotoDTO res;
@@ -55,6 +67,11 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
     return res;
   }
 
+  /**
+   * Finds all entries of photos in the DB.
+   *
+   * @return a list of photoDTO
+   */
   public List<PhotoDTO> findAll() {
     return findAll("photos");
   }
@@ -82,10 +99,13 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
     return res;
   }
 
+
+
   /**
    * Creates and fills a PhotoDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information.
+   * @return a dto containing the information from the result set
    * @throws SQLException in case of problem during access to the ResultSet.
    */
   @Override

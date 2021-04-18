@@ -13,7 +13,11 @@ public interface FurnitureDAO {
    */
   FurnitureDTO findById(int id);
 
-
+  /**
+   * Finds all entries of furniture in the DB.
+   *
+   * @return a list of furnitureDTO
+   */
   List<FurnitureDTO> findAll();
 
   FurnitureDTO updateStatusOnly(FurnitureDTO furnitureDTO);

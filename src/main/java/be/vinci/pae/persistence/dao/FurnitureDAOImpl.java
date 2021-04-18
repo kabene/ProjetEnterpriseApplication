@@ -45,6 +45,11 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     return res;
   }
 
+  /**
+   * Finds all entries of furniture in the DB.
+   *
+   * @return a list of furnitureDTO
+   */
   @Override
   public List<FurnitureDTO> findAll() {
     return super.findAll("furniture");
