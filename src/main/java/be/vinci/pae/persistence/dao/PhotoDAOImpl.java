@@ -100,6 +100,17 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
   }
 
   /**
+   * updates the is_visible column of an entry in the database.
+   *
+   * @param dto : dto containing the id and new is_visible flag.
+   * @return dto containing modified entry
+   */
+  @Override
+  public PhotoDTO updateIsVisible(PhotoDTO dto) {
+    return null; //TODO: stub
+  }
+
+  /**
    * Creates and fills a PhotoDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information.

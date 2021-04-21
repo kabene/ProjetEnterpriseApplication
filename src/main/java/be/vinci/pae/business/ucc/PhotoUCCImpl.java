@@ -42,7 +42,18 @@ public class PhotoUCCImpl implements PhotoUCC {
    */
   @Override
   public PhotoDTO patchVisibility(int id, boolean visibility) {
-    return null; //TODO: generated stub
+    PhotoDTO res;
+    try {
+      dalServices.startTransaction();
+      PhotoDTO foundDto = photoDAO.getPhotoById(id);
+      foundDto.setVisible(visibility);
+      res = photoDAO.updateIsVisible(foundDto);
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return res;
   }
 
 }

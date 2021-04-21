@@ -35,4 +35,12 @@ public interface PhotoDAO {
    * @return a list containing all the photos visible on the home page's carousel.
    */
   List<PhotoDTO> getAllHomePageVisiblePhotos();
+
+  /**
+   * updates the is_visible column of an entry in the database.
+   *
+   * @param dto : dto containing the id and new is_visible flag.
+   * @return dto containing modified entry
+   */
+  PhotoDTO updateIsVisible(PhotoDTO dto);
 }
