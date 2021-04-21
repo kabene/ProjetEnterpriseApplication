@@ -73,7 +73,6 @@ public class FurnitureResource {
    * @return http response containing a list of pieces of furniture in json format
    */
   @GET
-  @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getAll() {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/");
