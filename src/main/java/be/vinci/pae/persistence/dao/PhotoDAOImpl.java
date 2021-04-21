@@ -102,12 +102,24 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
   /**
    * updates the is_visible column of an entry in the database.
    *
-   * @param dto : dto containing the id and new is_visible flag.
+   * @param photoDTO : dto containing the id and new is_visible flag.
    * @return dto containing modified entry
    */
   @Override
-  public PhotoDTO updateIsVisible(PhotoDTO dto) {
-    return null; //TODO: stub
+  public PhotoDTO updateIsVisible(PhotoDTO photoDTO) {
+    String query = "UPDATE satchofurniture.photos "
+        + "SET is_visible = ? "
+        + "WHERE photo_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setBoolean(1, photoDTO.isVisible());
+      ps.setInt(2, photoDTO.getPhotoId());
+      ps.execute();
+      ps.close();
+    } catch(SQLException e) {
+      throw new InternalError(e);
+    }
+    return photoDTO;
   }
 
   /**

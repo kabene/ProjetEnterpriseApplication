@@ -1,10 +1,12 @@
 package be.vinci.pae.presentation;
 
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.ucc.PhotoUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.filters.Admin;
+import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -40,7 +42,7 @@ public class PhotoResource {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /photos/homePage");
     List<PhotoDTO> photoDTOS = photoUCC.getAllHomePageVisiblePhotos();
     List<PhotoDTO> res = new ArrayList<>(photoDTOS);
-    return Response.ok(res).build();
+    return Response.ok(Json.filterPublicJsonView(res, List.class)).build();
   }
 
   /**
@@ -61,6 +63,6 @@ public class PhotoResource {
     }
     Boolean visibility = reqNode.get("visibility").asBoolean();
     PhotoDTO dto = photoUCC.patchVisibility(id, visibility);
-    return Response.ok(dto).build();
+    return Response.ok(Json.filterAdminOnlyJsonView(dto, PhotoDTO.class)).build();
   }
 }
