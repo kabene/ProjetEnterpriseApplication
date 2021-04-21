@@ -1,6 +1,5 @@
 package be.vinci.pae.presentation;
 
-import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.ucc.PhotoUCC;
 import be.vinci.pae.exceptions.BadRequestException;
@@ -61,7 +60,7 @@ public class PhotoResource {
     if(reqNode == null || reqNode.get("visibility") == null) {
       throw new BadRequestException("Error: malformed request");
     }
-    Boolean visibility = reqNode.get("visibility").asBoolean();
+    boolean visibility = reqNode.get("visibility").asBoolean();
     PhotoDTO dto = photoUCC.patchVisibility(id, visibility);
     return Response.ok(Json.filterAdminOnlyJsonView(dto, PhotoDTO.class)).build();
   }
