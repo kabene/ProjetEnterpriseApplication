@@ -13,4 +13,12 @@ public interface PhotoUCC {
    */
   List<PhotoDTO> getAllHomePageVisiblePhotos();
 
+  /**
+   * updates one photo's visibility by id.
+   *
+   * @param id : the photo's id
+   * @param visibility : the photo's new visibility flag.
+   * @return the modified resource as PhotoDTO
+   */
+  PhotoDTO patchVisibility(int id, boolean visibility);
 }

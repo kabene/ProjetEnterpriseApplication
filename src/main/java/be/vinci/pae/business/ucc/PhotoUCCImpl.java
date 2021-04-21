@@ -32,4 +32,17 @@ public class PhotoUCCImpl implements PhotoUCC {
     }
     return res;
   }
+
+  /**
+   * updates one photo's visibility by id.
+   *
+   * @param id         : the photo's id
+   * @param visibility : the photo's new visibility flag.
+   * @return the modified resource as PhotoDTO
+   */
+  @Override
+  public PhotoDTO patchVisibility(int id, boolean visibility) {
+    return null; //TODO: generated stub
+  }
+
 }

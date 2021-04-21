@@ -2,11 +2,16 @@ package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.ucc.PhotoUCC;
+import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
+import be.vinci.pae.presentation.filters.Admin;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -32,10 +37,30 @@ public class PhotoResource {
   @Path("/homePage")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getPresentHomePage() {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /photo/homePage");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /photos/homePage");
     List<PhotoDTO> photoDTOS = photoUCC.getAllHomePageVisiblePhotos();
     List<PhotoDTO> res = new ArrayList<>(photoDTOS);
     return Response.ok(res).build();
   }
 
+  /**
+   * PATCH one photo's visibility.
+   *
+   * @param id : the photo's id
+   * @param reqNode : request body as JsonNode
+   * @return http response containing modified resource
+   */
+  @PATCH
+  @Path("/visibility/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response patchVisibilityById(@PathParam("id") int id, JsonNode reqNode) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /photos/visibility/"+id);
+    if(reqNode == null || reqNode.get("visibility") == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    Boolean visibility = reqNode.get("visibility").asBoolean();
+    PhotoDTO dto = photoUCC.patchVisibility(id, visibility);
+    return Response.ok(dto).build();
+  }
 }
