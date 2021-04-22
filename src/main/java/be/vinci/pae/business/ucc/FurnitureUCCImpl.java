@@ -161,6 +161,36 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   }
 
   /**
+   * updates the favourite photo id of a specific piece of furniture.
+   *
+   * @param furnitureId : the furniture id
+   * @param photoId     : the new favourite photo id
+   * @return the updated furniture
+   */
+  @Override
+  public FurnitureDTO updateFavouritePhoto(int furnitureId, int photoId) {
+    FurnitureDTO furnitureDTO;
+    try {
+      dalServices.startTransaction();
+      FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(furnitureId);
+      PhotoDTO foundPhotoDTO = photoDAO.getPhotoById(photoId);
+      if(foundPhotoDTO.getFurnitureId() != foundFurnitureDTO.getFurnitureId()) {
+        throw new ConflictException("Error: The photo doesn't belong to the specified piece of furniture");
+      }
+      foundFurnitureDTO.setFavouritePhoto(foundPhotoDTO);
+      foundFurnitureDTO.setFavouritePhotoId(foundPhotoDTO.getPhotoId());
+
+      furnitureDTO = furnitureDAO.updateFavouritePhoto(foundFurnitureDTO);
+      completeFurnitureDTO(furnitureDTO);
+      dalServices.commitTransaction();
+    }catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return furnitureDTO;
+  }
+
+  /**
    * Completes the FurnitureDTO given as an argument with it's references in the db.
    *
    * @param dto : the FurnitureDTO to complete

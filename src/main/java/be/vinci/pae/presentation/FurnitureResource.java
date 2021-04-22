@@ -164,5 +164,29 @@ public class FurnitureResource {
     FurnitureDTO furnitureDTO = furnitureUCC.withdraw(id);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
+
+  /**
+   * PATCH one piece of furniture's favourite photo
+   *
+   * @param furnitureId : the furniture id
+   * @param reqNode : request body
+   * @return http response containing updated furniture resource
+   */
+  @PATCH
+  @Path("/favouritePhoto/{furnitureId}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response updateFavouritePhoto(@PathParam("furnitureId") int furnitureId,
+      JsonNode reqNode) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
+        .log(Level.INFO, "PATCH /furniture/favouritePhoto/" + furnitureId);
+    if(reqNode == null || reqNode.get("photoId") == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    int photoId = reqNode.get("photoId").asInt();
+    FurnitureDTO furnitureDTO = furnitureUCC.updateFavouritePhoto(furnitureId, photoId);
+    furnitureDTO = Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class);
+    return Response.ok(furnitureDTO).build();
+  }
 }
 
