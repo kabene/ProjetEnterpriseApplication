@@ -153,7 +153,6 @@
     Modifie l'état d'une ressource de type 'furniture' vers 'in_restoration', et renvoie les informations mises à jour.
     </td>
 </tr>
-
 <tr>
     <td>furniture/available/{id}</td>
     <td>PATCH</td>
@@ -163,13 +162,20 @@
     Le body de la requête contient un double 'selling_price'.
     </td>
 </tr>
-
 <tr>
     <td>furniture/withdraw/{id}</td>
     <td>PATCH</td>
     <td>Admin</td>
     <td>
     Modifie l'état d'une ressource de type 'furniture' vers 'withdrawn', et renvoie les informations mises à jour.
+    </td>
+</tr>
+<tr>
+    <td>furniture/favouritePhoto/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+    Modifie la photo favorite d'une ressource de type 'furniture', et renvoie les informations mises à jour.
     </td>
 </tr>
 
