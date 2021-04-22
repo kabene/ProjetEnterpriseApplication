@@ -189,10 +189,19 @@
     <td>GET</td>
     <td>Aucun</td>
     <td>
-    Renvoie une liste de toutes les information sur les ressources de type "photo" qui sont visible dans la home page.
+        Renvoie une liste de toutes les information sur les ressources 
+        de type "photo" qui sont visible dans la home page.
     </td>
 </tr>
-
+<tr>
+    <td>photos/visibility/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+        Modifie la visibilité d'une ressource de type "photo" 
+        (Renvoie la ressource modifiée au format json)
+    </td>
+</tr>
 </table>
 
 <table style="caption-side: top">
