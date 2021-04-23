@@ -187,5 +187,6 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     dto.setPhotos(photos);
     String type = furnitureTypeDAO.findById(dto.getTypeId());
     dto.setType(type);
+    //todo add request into furniture
   }
 }
