@@ -85,7 +85,7 @@ CREATE TABLE satchofurniture.photos
     furniture_id    integer      NOT NULL REFERENCES satchofurniture.furniture (furniture_id),
     is_on_home_page boolean      NOT NULL,
     is_visible      boolean      NOT NULL,
-    source          varchar(200) NOT NULL
+    source          text         NOT NULL
 );
 
 ALTER TABLE satchofurniture.furniture
