@@ -88,6 +88,8 @@ public interface FurnitureDTO {
 
   void setRequestId(Integer requestId);
 
+  Double getPurchasePrice();
+
   void setPurchasePrice(Double purchasePrice);
 
   String getCustomerWithdrawalDate();
