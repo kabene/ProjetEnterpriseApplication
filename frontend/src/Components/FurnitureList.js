@@ -339,7 +339,10 @@ const generateCard = (furniture) => {
   addTransitionBtnListeners(furniture);
   document.querySelectorAll(".favRadio").forEach((element) => {
     element.addEventListener("click", onFavRadioSelected);
-  })
+  });
+  document.querySelectorAll(".visibleCheckbox").forEach((element) => {
+    element.addEventListener("click", onVisibleCheckClicked);
+  });
 }
 
 const changeContainerId = () => {
@@ -406,17 +409,27 @@ const generatePhotoList = (furniture) => {
   furniture.photos.forEach(photo => {
     let favRadioName = `radioFav${photo.photoId}`;
     let visibleCheckName = `checkboxVisible${photo.photoId}`;
+    let homePageCheckName = `checkboxHomepage${photo.photoId}`;
     
     let favChecked = ``;
     if(photo.photoId === furniture.favouritePhoto.photoId) {
-      favChecked = `checked`
+      favChecked = `checked`;
     }
 
     let visibleCheckedOriginaly = false;
+    let homePageCheckedOriginaly = false;
     let visibileChecked = ``;
+    let homePageChecked = ``;
     if(photo.isVisible) {
-      visibileChecked = `checked`
+      visibileChecked = `checked`;
       visibleCheckedOriginaly = true;
+
+      if(photo.onHomePage && photo.isVisible) {
+        homePageChecked = `checked`;
+        homePageCheckedOriginaly = true;
+      }
+    }else {
+      homePageChecked = `disabled`;
     }
 
     photos += `
@@ -427,13 +440,18 @@ const generatePhotoList = (furniture) => {
         </div>
         <div class="text-left col-6">
           <label class="form-check-label" for="${favRadioName}">
-            <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" ${favChecked}>
+            <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId=${photo.photoId} ${favChecked}>
             Photo favorite
           </label>
           <br/>
           <label class="form-check-label" for="${visibleCheckName}">
-            <input id="${visibleCheckName}" type="checkbox" class="form-check-input" name="${visibleCheckName}" checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
+            <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
             Visible
+          </label>
+          <br/>
+          <label class="form-check-label" for="${homePageCheckName}">
+            <input id="${homePageCheckName}" type="checkbox" class="form-check-input" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
+            Affiché sur la page d'accueil
           </label>
         </div>
       </div>
@@ -459,6 +477,19 @@ const unselectAllFavRadioExcept = (radioId) => {
       element.checked = false;
     }
   })
+}
+
+const onVisibleCheckClicked = (e) => {
+  let photoId = e.target.getAttribute("photoid");
+  let homepageCheckbox = document.querySelector(`#checkboxHomepage${photoId}`);
+  
+  if(!e.target.checked) {
+    homepageCheckbox.checked = false;
+    homepageCheckbox.disabled = true;
+    e.target.checked = false;
+  }else {
+    homepageCheckbox.disabled = false;
+  }
 }
 
 const generateCardLabelKeyEntry = (label, id, value) => {
