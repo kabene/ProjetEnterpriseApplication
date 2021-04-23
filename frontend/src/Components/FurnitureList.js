@@ -337,6 +337,9 @@ const generateCard = (furniture) => {
   let cardHTML = generateCardHTML(furniture);
   furnitureCardDiv.innerHTML = cardHTML;
   addTransitionBtnListeners(furniture);
+  document.querySelectorAll(".favRadio").forEach((element) => {
+    element.addEventListener("click", onFavRadioSelected);
+  })
 }
 
 const changeContainerId = () => {
@@ -401,10 +404,61 @@ const generateCardHTML = (furniture) => {
 const generatePhotoList = (furniture) => {
   let photos = "";
   furniture.photos.forEach(photo => {
-    photos += `<img class="img-fluid flex-grow-1 p-1" src="${findFurnitureImgSrcFromFilename(photo.source, images)}" alt="photo id:${photo.photoId}"/>`;
+    let favRadioName = `radioFav${photo.photoId}`;
+    let visibleCheckName = `checkboxVisible${photo.photoId}`;
+    
+    let favChecked = ``;
+    if(photo.photoId === furniture.favouritePhoto.photoId) {
+      favChecked = `checked`
+    }
+
+    let visibleCheckedOriginaly = false;
+    let visibileChecked = ``;
+    if(photo.isVisible) {
+      visibileChecked = `checked`
+      visibleCheckedOriginaly = true;
+    }
+
+    photos += `
+    <div class="p-1 w-50 container">
+      <div class="row px-0">
+        <div class="col-6">
+          <img class="img-fluid" src="${findFurnitureImgSrcFromFilename(photo.source, images)}" alt="photo id:${photo.photoId}"/>
+        </div>
+        <div class="text-left col-6">
+          <label class="form-check-label" for="${favRadioName}">
+            <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" ${favChecked}>
+            Photo favorite
+          </label>
+          <br/>
+          <label class="form-check-label" for="${visibleCheckName}">
+            <input id="${visibleCheckName}" type="checkbox" class="form-check-input" name="${visibleCheckName}" checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
+            Visible
+          </label>
+        </div>
+      </div>
+    </div>`;
   });
-  let res = `<div class="d-flex flex-lg-fill">${photos}</div>`;
+  let res = `
+  <form>
+    <input id="originalFav${furniture.furnitureId}" type="hidden" class="originalFav" value="${furniture.favouritePhoto.photoId}">
+    <div class="form-check d-flex flex-lg-fill flex-row">
+      ${photos}
+    </div>
+  </form>`;
   return res;
+}
+
+const onFavRadioSelected = (e) => {
+  unselectAllFavRadioExcept(e.target.id);
+}
+
+const unselectAllFavRadioExcept = (radioId) => {
+  document.querySelectorAll(".favRadio").forEach((element) => {
+    if(element.id !== radioId){
+      element.checked = false;
+    }
+  })
 }
 
 const generateCardLabelKeyEntry = (label, id, value) => {
