@@ -194,8 +194,9 @@ const generateAllItemsAndModals = () => {
 
 const generateItemAndModal = (furniture) => {
     let item = `
-        <div>
-            <img class="imageFurniturePage" src="${findFavImgSrc(furniture, images)}" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
+        <div>`
+            + getTag(furniture) +
+            `<img class="imageFurniturePage" src="${findFavImgSrc(furniture, images)}" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
             <p class="text-center">` + furniture.description + `</p>`
             + getOptionButton(furniture) +
         `</div>`;
@@ -244,6 +245,23 @@ const generateItemAndModal = (furniture) => {
     return item + modal;
 }
 
+const getTag = (furniture) => {
+  let ret;
+  if (furniture.status=="SOLD")
+    ret = `<span className="badge badgeSold">VENDU !</span>`;
+  else if (furniture.status=="UNDER_OPTION") {
+    let optionId;
+    optionList.forEach(option=>{
+      if(option.furnitureId == furnitureId ) {
+        if (!option.isCanceled){
+          optionId = option.optionId;
+        }
+      }
+    });
+    ret = `<span className="badge badgeUnderOption">Sous option durant ` + optionId.duration + ` jours</span>`;
+  }
+  return ret;
+}
 
 
 const getOptionButton = (furniture) => {
