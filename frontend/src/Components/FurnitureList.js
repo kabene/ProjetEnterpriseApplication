@@ -1,6 +1,6 @@
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
-import {getUserSessionData} from "../utils/session.js";
+import {getUserLocalData, getUserSessionData} from "../utils/session.js";
 import {
   displayErrorMessage,
   importAllFurnitureImg,
@@ -358,7 +358,6 @@ const generateCard = (furniture) => {
   addImage(furniture);
 }
 
-
 const changeContainerId = () => {
   document.querySelector('#largeTableContainer').id = "shortTableContainer";
 }
@@ -419,8 +418,8 @@ const generateCardHTML = (furniture) => {
   return res;
 }
 
-const addImgForm=(furniture)=>{
-  let res=`<div className="row text-left">
+const addImgForm = () => {
+  let res = `<div className="row text-left">
     <div className="col-md-6">
       <label> Ajouter une photo:</label>
     </div>
@@ -433,28 +432,43 @@ const addImgForm=(furniture)=>{
   return res;
 }
 
-const addImage=(furniture)=>{
-
-  document.getElementById("addImg").addEventListener("change",()=>{
-    var FR= new FileReader();
+const addImage = (furniture) => {
+  document.getElementById("addImg").addEventListener("change", () => {
+    var FR = new FileReader();
     let bas;
     var file = document.querySelector('input[type=file]').files[0];
-    FR.addEventListener("load", function(e) {
-      bas= e.target.result ;
+    FR.addEventListener("load", function (e) {
+      bas = e.target.result;
+      document.getElementById("sendImg").addEventListener("click",
+          fetching(bas, furniture.furnitureId))
     });
-    if(file) {
+    if (file) {
       FR.readAsDataURL(file);
     }
-    let send=document.getElementById("sendImg");
-    send.addEventListener("click",fetchimg(bas,furniture.furnitureId));
+    addImgForm();
   });
 }
-function fetchimg( base64,furnitureId){
 
-  //TODO fetch the img
+function fetching(base64, furnitureId) {
+  let toSend = {
+    source: base64,
+    furnitureId: furnitureId
+  }
+  let pers = getUserSessionData();
+  fetch("/photos/add", {
+    method: "POST",
+    body: JSON.stringify(toSend),
+    headers: {
+      Authorization: pers.token,
+      "Content-Type": "application/json",
+    }
+  }).then((res) => {
+    console.log(res);
+  }).catch((err) => {
+    console.log("Erreur de fetch !! :\n" + err);
+    displayErrorMessage("errorDiv", err);
+  });
 }
-
-
 
 const generatePhotoList = (furniture) => {
   let photos = "";
@@ -491,7 +505,6 @@ const generateBuyingPriceCardEntry = (furniture) => {
 const generateBuyingDateCardEntry = (furniture) => {
   return "";//TODO
 }
-
 
 const generateUserCardEntry = (label, id, user) => {
   let res = `
@@ -653,7 +666,6 @@ const findTransitionMethod = (btnId, furniture) => {
 
 //status transition methods
 
-
 const toAvailable = (e, furniture) => { //TODO
   e.preventDefault();
   let sellingPrice = e.target.parentElement.parentElement.querySelector(
@@ -739,14 +751,10 @@ const loadCard = (id) => {
       displayLargeTable);
 }
 
-const sendImg= (e,base64)=>{
+const sendImg = (e, base64) => {
   e.preventDefault();
   fetch()
 
 }
-
-
-
-
 
 export default FurnitureList;

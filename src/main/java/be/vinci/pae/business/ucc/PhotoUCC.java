@@ -13,4 +13,11 @@ public interface PhotoUCC {
    */
   List<PhotoDTO> getAllHomePageVisiblePhotos();
 
+  /**
+   *
+   * @param furnitureId
+   * @param source
+   * @return
+   */
+  PhotoDTO add(Integer furnitureId, String source);
 }

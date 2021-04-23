@@ -35,4 +35,13 @@ public interface PhotoDAO {
    * @return a list containing all the photos visible on the home page's carousel.
    */
   List<PhotoDTO> getAllHomePageVisiblePhotos();
+
+  /**
+   * Inserts a new photo in the database.
+   *
+   * @param furnitureId : the photo's furniture id
+   * @param source : the photo's source as base 64
+   * @return id of the inserted photo
+   */
+  int insert(int furnitureId, String source);
 }
