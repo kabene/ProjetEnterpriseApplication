@@ -1,3 +1,4 @@
+import notFoundPhoto from "../img/notFoundPhoto.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {getUserSessionData} from "../utils/session.js";
@@ -158,6 +159,8 @@ const generateRow = (furniture, notNeededClassName) => {
 }
 
 const generateFavouritePhotoImgTag = (furniture) => {
+  if (!furniture.favouritePhoto)
+    return `<img class="img-fluid" src="${findFavImgSrc(furniture, notFoundPhoto)}" alt="thumbnail id:${notFoundPhoto}"/>`;
   return `<img class="img-fluid" src="${findFavImgSrc(furniture, images)}" alt="thumbnail id:${furniture.favouritePhoto.photoId}"/>`;
 }
 
