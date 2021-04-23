@@ -356,7 +356,6 @@ const generateCard = (furniture) => {
   furnitureCardDiv.innerHTML = cardHTML;
   addTransitionBtnListeners(furniture);
   addImage(furniture);
-
 }
 
 
@@ -408,7 +407,7 @@ const generateCardHTML = (furniture) => {
               ${generateButtonRow(furniture)}
             </div>       
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-              ${addImgForm(furniture)}
+              ${addImgForm()}
               ${generatePhotoList(furniture)}
             </div>
           </div>
@@ -427,26 +426,34 @@ const addImgForm=(furniture)=>{
     </div>
     <div className="col-md-6">
       <input type='file' id='addImg'>
-        <button className="btn btn-primary" id="addImg"></button>
-    </div>
+      <button class="btn btn-primary" id="sendImg"> Ajouter</button>
+    </div>  
+    <hr/>
   </div>`;
   return res;
 }
 
 const addImage=(furniture)=>{
+
   document.getElementById("addImg").addEventListener("change",()=>{
     var FR= new FileReader();
-    var base64;
+    let bas;
     var file = document.querySelector('input[type=file]').files[0];
     FR.addEventListener("load", function(e) {
-      base64= e.target.result ;
+      bas= e.target.result ;
     });
     if(file) {
       FR.readAsDataURL(file);
     }
+    let send=document.getElementById("sendImg");
+    send.addEventListener("click",fetchimg(bas,furniture.furnitureId));
   });
-
 }
+function fetchimg( base64,furnitureId){
+
+  //TODO fetch the img
+}
+
 
 
 const generatePhotoList = (furniture) => {
