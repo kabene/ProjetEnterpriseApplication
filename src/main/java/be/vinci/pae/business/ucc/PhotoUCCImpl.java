@@ -1,7 +1,6 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.PhotoDTO;
-import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.PhotoDAO;
