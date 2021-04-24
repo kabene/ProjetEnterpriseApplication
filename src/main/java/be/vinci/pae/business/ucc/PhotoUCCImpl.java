@@ -1,6 +1,8 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.PhotoDTO;
+import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import jakarta.inject.Inject;
@@ -34,43 +36,28 @@ public class PhotoUCCImpl implements PhotoUCC {
   }
 
   /**
-   * updates one photo's visibility by id.
+   * updates one photo's isVisible by id.
    *
    * @param id         : the photo's id
-   * @param visibility : the photo's new visibility flag.
+   * @param isVisible : the photo's new isVisible flag.
    * @return the modified resource as PhotoDTO
    */
   @Override
-  public PhotoDTO patchVisibility(int id, boolean visibility) {
+  public PhotoDTO patchDisplayFlags(int id, boolean isVisible, boolean isOnHomePage) {
     PhotoDTO res;
     try {
       dalServices.startTransaction();
       PhotoDTO foundDto = photoDAO.getPhotoById(id);
-      foundDto.setVisible(visibility);
-      res = photoDAO.updateIsVisible(foundDto);
-      dalServices.commitTransaction();
-    } catch (Throwable e) {
-      dalServices.rollbackTransaction();
-      throw e;
-    }
-    return res;
-  }
+      if (!isVisible && isOnHomePage) {
+        throw new ConflictException(
+            "Error: impossible flag configuration "
+                + "(non-visible photos cannot be displayed on the homepage)");
+      }
+      //TODO: verify origin
+      foundDto.setVisible(isVisible);
+      foundDto.setOnHomePage(isOnHomePage);
 
-  /**
-   * updates a photo's "onHomePage" flag by id.
-   *
-   * @param photoId    : the photo's id
-   * @param onHomePage : new 'onHomePage' flag
-   * @return the modified resource as PhotoDTO
-   */
-  @Override
-  public PhotoDTO patchOnHomePage(int photoId, boolean onHomePage) {
-    PhotoDTO res;
-    try {
-      dalServices.startTransaction();
-      PhotoDTO foundDTO = photoDAO.getPhotoById(photoId);
-      foundDTO.setOnHomePage(onHomePage);
-      res = photoDAO.updateOnHomePage(foundDTO);
+      res = photoDAO.updateDisplayFlags(foundDto);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();

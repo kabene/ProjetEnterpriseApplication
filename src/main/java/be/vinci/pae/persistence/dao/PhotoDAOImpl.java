@@ -100,43 +100,22 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
   }
 
   /**
-   * updates the is_visible column of an entry in the database.
+   * updates the 'is_visible' and 'is_on_home_page' columns of an entry in the database.
    *
-   * @param photoDTO : dto containing the id and new is_visible flag.
+   * @param photoDTO : dto containing the id and new is_visible and is_on_home_page flags.
    * @return dto containing modified entry
    */
   @Override
-  public PhotoDTO updateIsVisible(PhotoDTO photoDTO) {
+  public PhotoDTO updateDisplayFlags(PhotoDTO photoDTO) {
     String query = "UPDATE satchofurniture.photos "
-        + "SET is_visible = ? "
+        + "SET is_visible = ?, "
+        + "is_on_home_page = ? "
         + "WHERE photo_id = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setBoolean(1, photoDTO.isVisible());
-      ps.setInt(2, photoDTO.getPhotoId());
-      ps.execute();
-      ps.close();
-    } catch(SQLException e) {
-      throw new InternalError(e);
-    }
-    return photoDTO;
-  }
-
-  /**
-   * updates the is_on_home_page column of a photo entry in the database.
-   *
-   * @param photoDTO : dto containing the id and new is_on_home_page flag.
-   * @return dto containing modified entry
-   */
-  @Override
-  public PhotoDTO updateOnHomePage(PhotoDTO photoDTO) {
-    String query = "UPDATE satchofurniture.photos "
-        + "SET is_onHomePage = ? "
-        + "WHERE photo_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setBoolean(1, photoDTO.isOnHomePage());
-      ps.setInt(2, photoDTO.getPhotoId());
+      ps.setBoolean(2, photoDTO.isOnHomePage());
+      ps.setInt(3, photoDTO.getPhotoId());
       ps.execute();
       ps.close();
     } catch(SQLException e) {

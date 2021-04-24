@@ -45,44 +45,28 @@ public class PhotoResource {
   }
 
   /**
-   * PATCH one photo's visibility.
+   * PATCH one photo's isVisible and isOnHomePage flags.
    *
-   * @param id : the photo's id
+   * @param id      : the photo's id
    * @param reqNode : request body as JsonNode
    * @return http response containing modified resource
    */
   @PATCH
-  @Path("/visibility/{id}")
+  @Path("/displayFlags/{id}")
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
-  public Response patchVisibilityById(@PathParam("id") int id, JsonNode reqNode) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /photos/visibility/"+id);
-    if(reqNode == null || reqNode.get("visibility") == null) {
+  public Response patchDisplayFlagsById(@PathParam("id") int id, JsonNode reqNode) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /photos/visibility/" + id);
+    if (reqNode == null || reqNode.get("isVisible") == null) {
       throw new BadRequestException("Error: malformed request");
     }
-    boolean visibility = reqNode.get("visibility").asBoolean();
-    PhotoDTO dto = photoUCC.patchVisibility(id, visibility);
-    return Response.ok(Json.filterAdminOnlyJsonView(dto, PhotoDTO.class)).build();
-  }
+    if (reqNode == null || reqNode.get("isOnHomePage") == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    boolean isVisible = reqNode.get("visibility").asBoolean();
+    boolean isOnHomePage = reqNode.get("visibility").asBoolean();
 
-  /**
-   * PATCH a photo's "onHomePage" flag.
-   *
-   * @param photoId : the photo's id (path parameter)
-   * @param reqNode : the request body as JsonNode
-   * @return http response containing modified resource
-   */
-  @PATCH
-  @Path("/homePage/{id}")
-  @Admin
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response patchOnHomePage(@PathParam("id") int photoId, JsonNode reqNode) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /photos/homePage/" + photoId);
-    if(reqNode == null || reqNode.get("onHomePage") == null) {
-      throw new BadRequestException("Error: malformed request");
-    }
-    boolean onHomePage = reqNode.get("onHomePage").asBoolean();
-    PhotoDTO photoDTO = photoUCC.patchOnHomePage(photoId, onHomePage);
-    return Response.ok(Json.filterAdminOnlyJsonView(photoDTO, PhotoDTO.class)).build();
+    PhotoDTO dto = photoUCC.patchDisplayFlags(id, isVisible, isOnHomePage);
+    return Response.ok(Json.filterAdminOnlyJsonView(dto, PhotoDTO.class)).build();
   }
 }

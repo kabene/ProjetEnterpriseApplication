@@ -19,3 +19,21 @@ Authorization: {{jwt}}
   "visibility": false
 }
 ###
+
+PATCH {{baseUrl}}/photos/homePage/1
+Content-Type: application/json
+Authorization: {{jwt}}
+
+{
+  "onHomePage": false
+}
+###
+
+PATCH {{baseUrl}}/photos/homePage/1
+Content-Type: application/json
+Authorization: {{jwt}}
+
+{
+  "onHomePage": true
+}
+###
