@@ -21,4 +21,13 @@ public interface PhotoUCC {
    * @return the modified resource as PhotoDTO
    */
   PhotoDTO patchVisibility(int id, boolean visibility);
+
+  /**
+   * updates a photo's "onHomePage" flag by id.
+   *
+   * @param photoId : the photo's id
+   * @param onHomePage : new 'onHomePage' flag
+   * @return the modified resource as PhotoDTO
+   */
+  PhotoDTO patchOnHomePage(int photoId, boolean onHomePage);
 }

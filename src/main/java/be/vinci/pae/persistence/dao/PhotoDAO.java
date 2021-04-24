@@ -43,4 +43,12 @@ public interface PhotoDAO {
    * @return dto containing modified entry
    */
   PhotoDTO updateIsVisible(PhotoDTO dto);
+
+  /**
+   * updates the is_on_home_page column of a photo entry in the database.
+   *
+   * @param photoDTO : dto containing the id and new is_on_home_page flag.
+   * @return dto containing modified entry
+   */
+  PhotoDTO updateOnHomePage(PhotoDTO photoDTO);
 }

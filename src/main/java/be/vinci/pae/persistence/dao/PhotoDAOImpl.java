@@ -123,6 +123,29 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
   }
 
   /**
+   * updates the is_on_home_page column of a photo entry in the database.
+   *
+   * @param photoDTO : dto containing the id and new is_on_home_page flag.
+   * @return dto containing modified entry
+   */
+  @Override
+  public PhotoDTO updateOnHomePage(PhotoDTO photoDTO) {
+    String query = "UPDATE satchofurniture.photos "
+        + "SET is_onHomePage = ? "
+        + "WHERE photo_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setBoolean(1, photoDTO.isOnHomePage());
+      ps.setInt(2, photoDTO.getPhotoId());
+      ps.execute();
+      ps.close();
+    } catch(SQLException e) {
+      throw new InternalError(e);
+    }
+    return photoDTO;
+  }
+
+  /**
    * Creates and fills a PhotoDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information.

@@ -64,4 +64,25 @@ public class PhotoResource {
     PhotoDTO dto = photoUCC.patchVisibility(id, visibility);
     return Response.ok(Json.filterAdminOnlyJsonView(dto, PhotoDTO.class)).build();
   }
+
+  /**
+   * PATCH a photo's "onHomePage" flag.
+   *
+   * @param photoId : the photo's id (path parameter)
+   * @param reqNode : the request body as JsonNode
+   * @return http response containing modified resource
+   */
+  @PATCH
+  @Path("/homePage/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response patchOnHomePage(@PathParam("id") int photoId, JsonNode reqNode) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /photos/homePage/" + photoId);
+    if(reqNode == null || reqNode.get("onHomePage") == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    boolean onHomePage = reqNode.get("onHomePage").asBoolean();
+    PhotoDTO photoDTO = photoUCC.patchOnHomePage(photoId, onHomePage);
+    return Response.ok(Json.filterAdminOnlyJsonView(photoDTO, PhotoDTO.class)).build();
+  }
 }

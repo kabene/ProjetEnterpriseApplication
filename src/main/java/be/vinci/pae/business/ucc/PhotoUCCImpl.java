@@ -56,4 +56,27 @@ public class PhotoUCCImpl implements PhotoUCC {
     return res;
   }
 
+  /**
+   * updates a photo's "onHomePage" flag by id.
+   *
+   * @param photoId    : the photo's id
+   * @param onHomePage : new 'onHomePage' flag
+   * @return the modified resource as PhotoDTO
+   */
+  @Override
+  public PhotoDTO patchOnHomePage(int photoId, boolean onHomePage) {
+    PhotoDTO res;
+    try {
+      dalServices.startTransaction();
+      PhotoDTO foundDTO = photoDAO.getPhotoById(photoId);
+      foundDTO.setOnHomePage(onHomePage);
+      res = photoDAO.updateOnHomePage(foundDTO);
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return res;
+  }
+
 }
