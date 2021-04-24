@@ -35,45 +35,6 @@ CREATE TABLE satchofurniture.furniture_types
     type_name varchar(50)   NOT NULL
 );
 
-CREATE TABLE satchofurniture.furniture
-(
-    furniture_id         SERIAL         PRIMARY KEY,
-    buyer_id             integer        NULL REFERENCES satchofurniture.users(user_id),
-    seller_id            integer        NOT NULL REFERENCES satchofurniture.users (user_id),
-    status            varchar(50)    NOT NULL,
-    sale_withdrawal_date date           NULL,
-    description          varchar(200)   NOT NULL,
-    type_id              integer        NOT NULL REFERENCES satchofurniture.furniture_types (type_id),
-    favourite_photo_id   integer        NULL,
-    selling_price        float          NULL,
-    special_sale_price   float          NULL,
-    date_of_sale         date           NULL,
-    is_to_pick_up        boolean        NULL,
-    pick_up_date         date           NULL
-);
-
-CREATE TABLE satchoFurniture.options(
-    option_id       SERIAL      PRIMARY KEY,
-    duration        integer     NOT NULL,
-    date_option     timestamp   NOT NULL,
-    user_id         integer     NOT NULL REFERENCES satchoFurniture.users (user_id),
-    furniture_id    integer     NOT NULL REFERENCES satchoFurniture.furniture (furniture_id),
-    is_canceled     boolean     NOT NULL
-
-);
-
-CREATE TABLE satchofurniture.photos
-(
-    photo_id        SERIAL       PRIMARY KEY,
-    furniture_id    integer      NOT NULL REFERENCES satchofurniture.furniture (furniture_id),
-    is_on_home_page boolean      NOT NULL,
-    is_visible      boolean      NOT NULL,
-    source          varchar(200) NOT NULL
-);
-
-ALTER TABLE satchofurniture.furniture
-    ADD FOREIGN KEY (favourite_photo_id) REFERENCES satchofurniture.photos (photo_id);
-
 CREATE TABLE satchofurniture.requests_for_visit
 (
     request_id          SERIAL          PRIMARY KEY,
@@ -86,17 +47,49 @@ CREATE TABLE satchofurniture.requests_for_visit
     user_id             integer         NOT NULL REFERENCES satchoFurniture.users (user_id)
 );
 
-CREATE TABLE satchofurniture.furniture_on_offer
+CREATE TABLE satchofurniture.furniture
 (
-    furniture_id                integer     NOT NULL REFERENCES satchoFurniture.furniture (furniture_id),
-    request_id                  integer     NOT NULL REFERENCES satchoFurniture.requests_for_visit (request_id),
-    purchase_price              float       NULL,
-    customer_withdrawal_date    date        NULL,
-    deposit_date                date        NULL,
-    suitable                    boolean     NULL,
-    availabe_for_sale           boolean     NULL,
-    PRIMARY KEY (furniture_id, request_id)
+    furniture_id         SERIAL         PRIMARY KEY,
+    buyer_id             integer        NULL REFERENCES satchofurniture.users(user_id),
+    seller_id            integer        NOT NULL REFERENCES satchofurniture.users (user_id),
+    status               varchar(50)    NOT NULL,
+    sale_withdrawal_date date           NULL,
+    description          varchar(200)   NOT NULL,
+    type_id              integer        NOT NULL REFERENCES satchofurniture.furniture_types (type_id),
+    favourite_photo_id   integer        NULL,
+    selling_price        float          NULL,
+    special_sale_price   float          NULL,
+    date_of_sale         date           NULL,
+    is_to_pick_up        boolean        NULL,
+    pick_up_date         date           NULL,
+    request_id           integer        NULL REFERENCES satchoFurniture.requests_for_visit (request_id),
+    purchase_price       float          NULL,
+    customer_withdrawal_date    date    NULL,
+    deposit_date         date           NULL,
+    suitable             boolean        NULL,
+    available_for_sale   boolean        NULL
 );
+
+CREATE TABLE satchoFurniture.options(
+                                        option_id       SERIAL      PRIMARY KEY,
+                                        duration        integer     NOT NULL,
+                                        date_option     timestamp   NOT NULL,
+                                        user_id         integer     NOT NULL REFERENCES satchoFurniture.users (user_id),
+                                        furniture_id    integer     NOT NULL REFERENCES satchoFurniture.furniture (furniture_id),
+                                        is_canceled     boolean     NOT NULL
+);
+
+CREATE TABLE satchofurniture.photos
+(
+    photo_id        SERIAL       PRIMARY KEY,
+    furniture_id    integer      NOT NULL REFERENCES satchofurniture.furniture (furniture_id),
+    is_on_home_page boolean      NOT NULL,
+    is_visible      boolean      NOT NULL,
+    source          text         NOT NULL
+);
+
+ALTER TABLE satchofurniture.furniture
+    ADD FOREIGN KEY (favourite_photo_id) REFERENCES satchofurniture.photos (photo_id);
 
 SET datestyle = dmy;
 
@@ -157,11 +150,11 @@ VALUES (24,'Valet muet');
 
 
 -- 2. Les utilisateurs, dont le rôle est patron et/ou neveu, inscription le 22/03/2021 :
-INSERT 
+INSERT
 INTO satchoFurniture.addresses (address_id, street, building_number, unit_number, postcode, commune, country)
 VALUES (DEFAULT, 'sente des artistes', '1bis', NULL , '4800', 'Vervier', 'Belgique');
-INSERT 
-INTO satchoFurniture.users (user_id, last_name, first_name, username, email, address_id, registration_date, role, 
+INSERT
+INTO satchoFurniture.users (user_id, last_name, first_name, username, email, address_id, registration_date, role,
                             password, purchased_furniture_nbr, sold_furniture_nbr, is_waiting)
 VALUES (DEFAULT, 'Satcho', 'Albert', 'bert', 'bert.satcho@gmail.be', 1, now(), 'admin',
         '$2a$04$WWrY8UJlV4bysHDwXVD3.uclmB5AT7oSb78bDd4/6Iq7aHqUrfVhi', 0, 0, 'false');
@@ -194,41 +187,6 @@ VALUES (DEFAULT, 'Ile', 'Basile', 'bazz', 'bas.ile@gmail.be', 5, now(), 'custome
 
 
 -- 4. Les demandes de visite, dont vous trouverez les meubles à la page suivante.
-INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (1, 4, 'accepted', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2);
-INSERT
-INTO satchoFurniture.photos (photo_id, furniture_id, is_on_home_page, is_visible, source)
-VALUES (DEFAULT, 1, true, true, 'Bahut_2.png');
-
-INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (2, 4, 'accepted', 'Large bureau 1m87 cm, deux colonnes de tiroirs', 6);
-INSERT
-INTO satchoFurniture.photos
-VALUES (DEFAULT, 2, true, true, 'Bureau_1.png');
-
-INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (3, 4, 'refused', 'Table jardin en bois brut', 21);
-INSERT
-INTO satchoFurniture.photos
-VALUES (DEFAULT, 3, true, true, 'table-jardin-recente.jpg');
-
-INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (4, 5, 'accepted', 'Table en chêne, pieds en fer forgé', 21);
-INSERT
-INTO satchoFurniture.photos
-VALUES (DEFAULT, 4, true, true, 'Table.jpg');
-
-INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (5, 5, 'accepted', 'Secrétaire en acajou, marqueterie', 20);
-INSERT
-INTO satchoFurniture.photos
-VALUES (DEFAULT, 5, true, true, 'Secretaire.png');
-
 
 INSERT
 INTO satchoFurniture.requests_for_visit (request_id, request_date, time_slot, address_id, visit_date_time, explanatory_note, status, user_id)
@@ -244,21 +202,36 @@ VALUES (3, '25-03-21', 'tous les jours de 15h à 18h', 5, '29-03-21 15:00:00', N
 
 
 INSERT
-INTO satchoFurniture.furniture_on_offer (furniture_id, request_id, purchase_price, customer_withdrawal_date, deposit_date, suitable, availabe_for_sale)
-VALUES (1, 1, 200.00, '30-03-21', NULL, true, false);
+INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id, request_id, purchase_price, customer_withdrawal_date, deposit_date, suitable, available_for_sale)
+VALUES (1, 4, 'accepted', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2, 1, 200.00, '30-03-21', NULL, true, false);
+INSERT
+INTO satchoFurniture.photos (photo_id, furniture_id, is_on_home_page, is_visible, source)
+VALUES (DEFAULT, 1, true, true, 'Bahut_2.png');
 
 INSERT
-INTO satchoFurniture.furniture_on_offer
-VALUES (2, 1, 159.00, '30-03-21', NULL, true, false);
+INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id, request_id, purchase_price, customer_withdrawal_date, deposit_date, suitable, available_for_sale)
+VALUES (2, 4, 'accepted', 'Large bureau 1m87 cm, deux colonnes de tiroirs', 6, 1, 159.00, '30-03-21', NULL, true, false);
+INSERT
+INTO satchoFurniture.photos
+VALUES (DEFAULT, 2, true, true, 'Bureau_1.png');
 
 INSERT
-INTO satchoFurniture.furniture_on_offer
-VALUES (3, 2, NULL, NULL, NULL, false, false);
+INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id, request_id, purchase_price, customer_withdrawal_date, deposit_date, suitable, available_for_sale)
+VALUES (3, 4, 'refused', 'Table jardin en bois brut', 21, 2, NULL, NULL, NULL, false, false);
+INSERT
+INTO satchoFurniture.photos
+VALUES (DEFAULT, 3, true, true, 'table-jardin-recente.jpg');
 
 INSERT
-INTO satchoFurniture.furniture_on_offer
-VALUES (4, 3, 140.00, '29-03-21', NULL, true, false);
+INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id, request_id, purchase_price, customer_withdrawal_date, deposit_date, suitable, available_for_sale)
+VALUES (4, 5, 'accepted', 'Table en chêne, pieds en fer forgé', 21, 3, 140.00, '29-03-21', NULL, true, false);
+INSERT
+INTO satchoFurniture.photos
+VALUES (DEFAULT, 4, true, true, 'Table.jpg');
 
 INSERT
-INTO satchoFurniture.furniture_on_offer
-VALUES (5, 3, 90.00, '29-03-21', NULL, true, false);
+INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id, request_id, purchase_price, customer_withdrawal_date, deposit_date, suitable, available_for_sale)
+VALUES (5, 5, 'accepted', 'Secrétaire en acajou, marqueterie', 20, 3, 90.00, '29-03-21', NULL, true, false);
+INSERT
+INTO satchoFurniture.photos
+VALUES (DEFAULT, 5, true, true, 'Secretaire.png');

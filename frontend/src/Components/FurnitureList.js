@@ -1,8 +1,8 @@
+import notFoundPhoto from "../img/notFoundPhoto.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {getUserSessionData} from "../utils/session.js";
 import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc, generateLoadingAnimation} from "../utils/utils.js"
-import notFoundPhoto from "../img/notFoundPhoto.png";
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -161,7 +161,7 @@ const generateRow = (furniture, notNeededClassName) => {
 
 /**
  * used in list
- * @param {*} furniture 
+ * @param {*} furniture
  * @returns html
  */
 const generateFavouritePhotoImgTag = (furniture) => {
@@ -173,7 +173,7 @@ const generateFavouritePhotoImgTag = (furniture) => {
 
 /**
  * used in card
- * @param {*} furniture 
+ * @param {*} furniture
  * @returns html
  */
 const generateCardFavouritePhotoImgTag = (furniture) => {
@@ -458,7 +458,7 @@ const generatePhotoList = (furniture) => {
     let favRadioName = `radioFav${photo.photoId}`;
     let visibleCheckName = `checkboxVisible${photo.photoId}`;
     let homePageCheckName = `checkboxHomepage${photo.photoId}`;
-    
+
     let favChecked = ``;
     if(photo.photoId === furniture.favouritePhoto.photoId) {
       favChecked = `checked`;
@@ -531,7 +531,7 @@ const unselectAllFavRadioExcept = (radioId) => {
 const onVisibleCheckClicked = (e) => {
   let photoId = e.target.getAttribute("photoid");
   let homepageCheckbox = document.querySelector(`#checkboxHomepage${photoId}`);
-  
+
   if(!e.target.checked) {
     homepageCheckbox.checked = false;
     homepageCheckbox.disabled = true;
@@ -575,8 +575,8 @@ const findSelectedFav = () => {
 
 /**
  * Finds all photos having at least one modified display flag
- * 
- * @returns {Array} list of object 
+ *
+ * @returns {Array} list of object
  * {
  *   photoId,
  *   isVisible,
@@ -620,9 +620,9 @@ const findAllPhotosForFlagUpdate = () => {
 
 /**
  * [Fetch] PATCH new favourite photo
- * 
- * @param {int} furnitureId 
- * @param {int} favPhotoId 
+ *
+ * @param {int} furnitureId
+ * @param {int} favPhotoId
  * @returns {*} new photo obj.
  */
 const patchNewFav = async (furnitureId, favPhotoId) => {
@@ -649,13 +649,13 @@ const patchNewFav = async (furnitureId, favPhotoId) => {
 
 /**
  * [Fetch] PATCH new display flags for one photo
- * 
+ *
  * @param {
  *  photoId,
  *  isVisible,
  *  isOnHomePage,
  * } bundle
- * @return new photo (fetch response) 
+ * @return new photo (fetch response)
  */
 const patchDisplayFlags = async (bundle) => {
   let addr = "/photos/displayFlags/"+bundle.photoId;
@@ -678,8 +678,8 @@ const patchDisplayFlags = async (bundle) => {
 }
 
 /**
- * Performs all necesary fetches for photo display flags and updates furnitureMap accordingly. 
- * 
+ * Performs all necesary fetches for photo display flags and updates furnitureMap accordingly.
+ *
  * @param {Array} array result of findAllPhotosForFlagUpdate()
  */
 const patchDisplayFlagsAllPhotos = async (array) => {
@@ -698,9 +698,9 @@ const patchDisplayFlagsAllPhotos = async (array) => {
 
 /**
  * Finds the index of the first occurence of a photo in an array by id.
- * 
- * @param {Array} photoArray 
- * @param {int} photoId 
+ *
+ * @param {Array} photoArray
+ * @param {int} photoId
  * @returns {int} index of photoId in photoArray or
  */
 const findPhotoIndexById = (photoArray, photoId) => {

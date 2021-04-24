@@ -217,6 +217,36 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     if (pickUpDate != null) {
       res.setPickUpDate(pickUpDate.toString());
     }
+
+    Integer requestId = rs.getInt("request_id");
+    if (requestId != null) {
+      res.setRequestId(requestId);
+    }
+
+    Double purchasePrice = rs.getDouble("purchase_price");
+    if (purchasePrice != null) {
+      res.setPurchasePrice(purchasePrice);
+    }
+
+    String customerWithdrawalDate = rs.getString("customer_withdrawal_date");
+    if (customerWithdrawalDate != null) {
+      res.setCustomerWithdrawalDate(customerWithdrawalDate);
+    }
+
+    String depositDate = rs.getString("deposit_date");
+    if (depositDate != null) {
+      res.setDepositDate(depositDate);
+    }
+
+    Boolean suitable = rs.getBoolean("request_id");
+    if (suitable != null) {
+      res.setSuitable(suitable);
+    }
+
+    Boolean availableForSale = rs.getBoolean("availableForSale");
+    if (availableForSale != null) {
+      res.setAvailableForSale(availableForSale);
+    }
     return res;
   }
 }
