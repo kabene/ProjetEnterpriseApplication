@@ -485,6 +485,11 @@ const addImgForm = () => {
   return res;
 }
 
+/**
+ * load the image and transform it to base64  then  listen the click on accept to send the image
+ * 
+ * @param {*} furniture 
+ */
 const addImage = (furniture) => {
   document.getElementById("addImg").addEventListener("change", () => {
     var FR = new FileReader();
@@ -493,7 +498,10 @@ const addImage = (furniture) => {
       if (typeof (FR) != "undefined") {
         FR.addEventListener("load", function (e) {
           bas = e.target.result;
-          document.getElementById("sendImg").addEventListener("click", fetching(bas, furniture.furnitureId));
+          document.getElementById("sendImg").addEventListener("click",(e) => {
+            e.preventDefault();
+            fetching(bas, furniture.furnitureId);
+          });
         });
         if (file) {
           FR.readAsDataURL(file);
@@ -520,7 +528,8 @@ function fetching(base64, furnitureId) {
       "Content-Type": "application/json",
     }
   }).then((res) => {
-    console.log(res);
+    furnitureMap[furnitureId].photos.push(res);
+    loadCard(furnitureId);
   }).catch((err) => {
     console.log("Erreur de fetch !! :\n" + err);
     displayErrorMessage("errorDiv", err);
