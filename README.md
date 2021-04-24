@@ -184,7 +184,7 @@
     <th>Operation</th>
 </tr>
 <tr>
-    <td>photos/add</td>
+    <td>photos/</td>
     <td>POST</td>
     <td>Admin</td>
     <td>

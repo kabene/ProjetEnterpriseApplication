@@ -122,6 +122,8 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
         throw new InternalError();
       }
       id = rs.getInt(1);
+      rs.close();
+      ps.close();
     } catch (SQLException e) {
       throw new InternalError(e);
     }

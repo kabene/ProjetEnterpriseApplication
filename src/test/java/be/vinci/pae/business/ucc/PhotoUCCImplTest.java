@@ -27,6 +27,10 @@ class PhotoUCCImplTest {
   private static PhotoDAO mockPhotoDAO;
   private static ConnectionDalServices mockDal;
 
+  private static final int defaultFurnitureId1=1;
+  private static final int defaultFurnitureId2=2;
+  private static final String defaultSourceA="a";
+  private static final String defaultSourceB="b";
   private static PhotoDTO mockPhotoDTO1;
   private static PhotoDTO mockPhotoDTO2;
   private static PhotoDTO mockPhotoDTO3;
@@ -74,6 +78,7 @@ class PhotoUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
+
   @DisplayName("TEST PhotoUCC.getAllHomePageVisiblePhotos without any data present:"
       + " should return an empty list.")
   @Test
@@ -107,6 +112,22 @@ class PhotoUCCImplTest {
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST PhotoUCC.insert: DAO throws InternalError,"+"Should rollback and throw InternalError")
+  @Test
+  void  test_add_ShouldReturnImage(){
+    Mockito.when(mockPhotoDAO.insert(defaultFurnitureId1,defaultSourceA)).thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, () -> photoUCC.add(defaultFurnitureId1,defaultSourceA),
+        "If the DAO throws an exception, it should be thrown back");
+
+    Mockito.verify(mockPhotoDAO).insert(defaultFurnitureId1,defaultSourceA);
+
+
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).commitTransaction();
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
 }

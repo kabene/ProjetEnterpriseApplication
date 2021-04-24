@@ -459,7 +459,7 @@ function fetching(base64, furnitureId) {
     furnitureId: furnitureId
   }
   let pers = getUserSessionData();
-  fetch("/photos/add", {
+  fetch("/photos/", {
     method: "POST",
     body: JSON.stringify(toSend),
     headers: {
