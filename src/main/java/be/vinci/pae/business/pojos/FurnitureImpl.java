@@ -52,6 +52,19 @@ public class FurnitureImpl implements FurnitureDTO {
   private String pickUpDate;
   @JsonView(Views.AdminOnly.class)
   private OptionDTO option;
+  @JsonView(Views.AdminOnly.class)
+  private Integer requestId;
+  //TODO add request
+  @JsonView(Views.AdminOnly.class)
+  private Double purchasePrice;
+  @JsonView(Views.AdminOnly.class)
+  private String customerWithdrawalDate;
+  @JsonView(Views.AdminOnly.class)
+  private String depositDate;
+  @JsonView(Views.AdminOnly.class)
+  private Boolean suitable;
+  @JsonView(Views.AdminOnly.class)
+  private Boolean availableForSale;
 
 
   @Override
@@ -242,5 +255,65 @@ public class FurnitureImpl implements FurnitureDTO {
   @Override
   public void setOption(OptionDTO option) {
     this.option = option;
+  }
+
+  @Override
+  public Integer getRequestId() {
+    return this.requestId;
+  }
+
+  @Override
+  public void setRequestId(Integer requestId) {
+    this.requestId = requestId;
+  }
+
+  @Override
+  public Double getPurchasePrice() {
+    return this.purchasePrice;
+  }
+
+  @Override
+  public void setPurchasePrice(Double purchasePrice) {
+    this.purchasePrice = purchasePrice;
+  }
+
+  @Override
+  public String getCustomerWithdrawalDate() {
+    return customerWithdrawalDate;
+  }
+
+  @Override
+  public void setCustomerWithdrawalDate(String customerWithdrawalDate) {
+    this.customerWithdrawalDate = customerWithdrawalDate;
+  }
+
+  @Override
+  public String getDepositDate() {
+    return depositDate = depositDate;
+  }
+
+  @Override
+  public void setDepositDate(String depositDate) {
+    this.depositDate = depositDate;
+  }
+
+  @Override
+  public Boolean isSuitable() {
+    return this.suitable;
+  }
+
+  @Override
+  public void setSuitable(Boolean isSuitable) {
+    this.suitable = isSuitable;
+  }
+
+  @Override
+  public Boolean isAvailableForSale() {
+    return this.availableForSale;
+  }
+
+  @Override
+  public void setAvailableForSale(Boolean isAvailableForSale) {
+    this.availableForSale = isAvailableForSale;
   }
 }
