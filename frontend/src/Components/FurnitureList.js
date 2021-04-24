@@ -1,3 +1,4 @@
+import notFoundPhoto from "../img/notFoundPhoto.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {getUserLocalData, getUserSessionData} from "../utils/session.js";
@@ -167,8 +168,9 @@ const generateRow = (furniture, notNeededClassName) => {
 }
 
 const generateFavouritePhotoImgTag = (furniture) => {
-  return `<img class="img-fluid" src="${findFavImgSrc(furniture,
-      images)}" alt="thumbnail id:${furniture.favouritePhoto.photoId}"/>`;
+  if (!furniture.favouritePhoto)
+    return `<img class="img-fluid" src= ${notFoundPhoto} alt=notFoundPhoto/>`;
+  return `<img class="img-fluid" src=${furniture.favouritePhoto.source} alt=thumbnail id:${furniture.favouritePhoto.photoId}/>`;
 }
 
 const generateSellerLink = (furniture) => {
@@ -752,12 +754,6 @@ const loadCard = (id) => {
       element => element.addEventListener("click", displayShortElements));
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
-}
-
-const sendImg = (e, base64) => {
-  e.preventDefault();
-  fetch()
-
 }
 
 export default FurnitureList;
