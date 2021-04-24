@@ -126,8 +126,8 @@ class PhotoUCCImplTest {
 
 
     Mockito.verify(mockDal).startTransaction();
-    Mockito.verify(mockDal).commitTransaction();
-    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
 }
