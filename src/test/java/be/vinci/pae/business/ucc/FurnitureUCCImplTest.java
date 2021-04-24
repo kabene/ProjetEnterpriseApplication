@@ -33,6 +33,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 class FurnitureUCCImplTest {
@@ -453,7 +454,7 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.toAvailable : given invalid id (invalid status),"
       + " should throw ConflictException")
   @ParameterizedTest
-  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED","AVAILABLE_FOR_SALE",
+  @EnumSource(value = Status.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "AVAILABLE_FOR_SALE",
       "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
   public void test_toAvailable_givenInvalidStates_shouldThrowConflict(Status startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
@@ -566,7 +567,7 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST UserUCC.withdraw : DAO throws InternalError, "
+  @DisplayName("TEST FurnitureUCC.withdraw : DAO throws InternalError, "
       + "Should rollback and throw InternalError")
   @Test
   public void test_withdraw_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
@@ -582,4 +583,112 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
+
+  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : given valid ids, should return dto")
+  @Test
+  public void test_updateFavouritePhoto_givenValidArgs_shouldReturnDTO() {
+    Mockito.when(mockFurnitureDAO.updateFavouritePhoto(mockFurnitureDTO1))
+        .thenReturn(mockFurnitureDTO2);
+
+    assertEquals(mockFurnitureDTO2,
+        furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1));
+
+    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
+
+    InOrder inOrder = Mockito
+        .inOrder(mockDal, mockFurnitureDAO, mockUserDAO, mockPhotoDAO, mockFurnitureTypeDAO);
+
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockFurnitureDAO).updateFavouritePhoto(mockFurnitureDTO1);
+    inOrder.verify(mockDal).commitTransaction();
+    inOrder.verifyNoMoreInteractions();
+  }
+
+  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : "
+      + "given invalid furnitureId, should throw NotFoundException")
+  @Test
+  public void test_updateFavouritePhoto_givenInvalidFurnitureId_shouldThrowNotFound() {
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new NotFoundException());
+
+    assertThrows(NotFoundException.class, () -> {
+      furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
+    });
+
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+
+    InOrder inOrder = Mockito
+        .inOrder(mockDal, mockFurnitureDAO, mockUserDAO, mockPhotoDAO, mockFurnitureTypeDAO);
+
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto :"
+      + " given invalid photoId, should throw NotFoundException")
+  @Test
+  public void test_updateFavouritePhoto_givenInvalidPhotoId_shouldThrowNotFound() {
+    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId1)).thenThrow(new NotFoundException());
+
+    assertThrows(NotFoundException.class, () -> {
+      furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
+    });
+
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+
+    InOrder inOrder = Mockito
+        .inOrder(mockDal, mockFurnitureDAO, mockUserDAO, mockPhotoDAO, mockFurnitureTypeDAO);
+
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : "
+      + "given not matching ids, should throw ConflictException")
+  @Test
+  public void test_updateFavouritePhoto_givenNotMatchingIds_shouldThrowConflict() {
+    Mockito.when(mockPhotoDTO1.getFurnitureId()).thenReturn(defaultFurnitureId2);
+
+    assertThrows(ConflictException.class, () -> {
+      furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
+    });
+
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+
+    InOrder inOrder = Mockito
+        .inOrder(mockDal, mockFurnitureDAO, mockUserDAO, mockPhotoDAO, mockFurnitureTypeDAO);
+
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockDal).rollbackTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : "
+      + "catches InternalError, should throw it back after rollback")
+  @Test
+  public void test_updateFavouritePhoto_catchesInternalError_shouldThrowInternal() {
+    Mockito.when(mockFurnitureDAO.updateFavouritePhoto(mockFurnitureDTO1))
+        .thenThrow(new InternalError());
+
+    assertThrows(InternalError.class, () -> {
+      furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
+    });
+
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+
+    InOrder inOrder = Mockito
+        .inOrder(mockDal, mockFurnitureDAO, mockUserDAO, mockPhotoDAO, mockFurnitureTypeDAO);
+
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockFurnitureDAO).updateFavouritePhoto(mockFurnitureDTO1);
+    inOrder.verify(mockDal).rollbackTransaction();
+  }
+
 }

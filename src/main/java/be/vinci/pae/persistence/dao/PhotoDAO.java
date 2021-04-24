@@ -44,4 +44,13 @@ public interface PhotoDAO {
    * @return id of the inserted photo
    */
   int insert(int furnitureId, String source);
+
+  /**
+   * updates the 'is_visible' and 'is_on_home_page' columns of an entry in the database.
+   *
+   * @param dto : dto containing the id and new is_visible and is_on_home_page flags.
+   * @return dto containing modified entry
+   */
+  PhotoDTO updateDisplayFlags(PhotoDTO dto);
+
 }

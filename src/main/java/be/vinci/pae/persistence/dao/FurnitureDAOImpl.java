@@ -124,7 +124,31 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
       ps.setDate(2, saleWithdrawalDate);
       ps.setInt(3, furnitureDTO.getFurnitureId());
       ps.execute();
+      ps.close();
       furnitureDTO.setSaleWithdrawalDate(saleWithdrawalDate.toString());
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return furnitureDTO;
+  }
+
+  /**
+   * updates the favourite photo of a specific entry in the furniture table.
+   *
+   * @param furnitureDTO : the furnitureDTO to modify (containing new favourite photo id)
+   * @return the modified furniture.
+   */
+  @Override
+  public FurnitureDTO updateFavouritePhoto(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET favourite_photo_id = ? "
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, furnitureDTO.getFavouritePhotoId());
+      ps.setInt(2, furnitureDTO.getFurnitureId());
+      ps.execute();
+      ps.close();
     } catch (SQLException e) {
       throw new InternalError(e);
     }
@@ -194,13 +218,13 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
       res.setPickUpDate(pickUpDate.toString());
     }
 
-    Integer requestId = rs.getInt("request_id");
-    if (requestId != null) {
+    int requestId = rs.getInt("request_id");
+    if (requestId != 0) {
       res.setRequestId(requestId);
     }
 
-    Double purchasePrice = rs.getDouble("purchase_price");
-    if (purchasePrice != null) {
+    double purchasePrice = rs.getDouble("purchase_price");
+    if (purchasePrice != 0) {
       res.setPurchasePrice(purchasePrice);
     }
 
@@ -214,15 +238,12 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
       res.setDepositDate(depositDate);
     }
 
-    Boolean suitable = rs.getBoolean("request_id");
-    if (suitable != null) {
-      res.setSuitable(suitable);
-    }
+    Boolean suitable = rs.getBoolean("suitable");
+    res.setSuitable(suitable);
 
-    Boolean availableForSale = rs.getBoolean("availableForSale");
-    if (availableForSale != null) {
-      res.setAvailableForSale(availableForSale);
-    }
+    Boolean availableForSale = rs.getBoolean("available_for_sale");
+    res.setAvailableForSale(availableForSale);
+
     return res;
   }
 }

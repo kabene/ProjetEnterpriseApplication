@@ -18,6 +18,7 @@ let timeouts = [];
 let currentUser;
 let pageHTML;
 let images = importAllFurnitureImg();
+let openTab = "infos";
 
 const FurnitureList = async (id) => {
   currentUser = getUserSessionData();
@@ -167,10 +168,28 @@ const generateRow = (furniture, notNeededClassName) => {
   return res;
 }
 
+/**
+ * used in list
+ * @param {*} furniture
+ * @returns html
+ */
 const generateFavouritePhotoImgTag = (furniture) => {
-  if (!furniture.favouritePhoto)
-    return `<img class="img-fluid" src= ${notFoundPhoto} alt=notFoundPhoto/>`;
-  return `<img class="img-fluid" src=${furniture.favouritePhoto.source} alt=thumbnail id:${furniture.favouritePhoto.photoId}/>`;
+  if(!furniture.favouritePhoto) {
+    return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
+  }
+  return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" furnitureId="${furniture.furnitureId}" id="list-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
+}
+
+/**
+ * used in card
+ * @param {*} furniture
+ * @returns html
+ */
+const generateCardFavouritePhotoImgTag = (furniture) => {
+  if(!furniture.favouritePhoto) {
+    return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
+  }
+  return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" furnitureId="${furniture.furnitureId}" id="card-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
 }
 
 const generateSellerLink = (furniture) => {
@@ -330,6 +349,7 @@ const onUserLinkClicked = (e) => {
 }
 
 const displayLargeTable = () => {
+  openTab = "infos";
   document.querySelector('#shortTableContainer').id = "largeTableContainer";
   timeouts.push(setTimeout(displayLargeElements, 750));
   document.querySelectorAll(".shortElement").forEach(
@@ -357,6 +377,19 @@ const generateCard = (furniture) => {
   let cardHTML = generateCardHTML(furniture);
   furnitureCardDiv.innerHTML = cardHTML;
   addTransitionBtnListeners(furniture);
+  document.querySelectorAll(".favRadio").forEach((element) => {
+    element.addEventListener("click", onFavRadioSelected);
+  });
+  document.querySelectorAll(".visibleCheckbox").forEach((element) => {
+    element.addEventListener("click", onVisibleCheckClicked);
+  });
+  document.querySelector("#saveBtnPhoto").addEventListener("click", onSaveModifPhotos);
+  document.querySelector("#home-tab").addEventListener("click", () => {
+    openTab = "infos";
+  });
+  document.querySelector("#profile-tab").addEventListener("click", () => {
+    openTab = "photos";
+  });
   addImage(furniture);
 }
 
@@ -365,6 +398,24 @@ const changeContainerId = () => {
 }
 
 const generateCardHTML = (furniture) => {
+  const openTabObject = {
+    ariaSelected: "true",
+    tabClassname: "show active",
+    aClassname: "active",
+  }
+
+  const closedTabObject = {
+    ariaSelected: "false",
+    tabClassname: "",
+    aClassname: "",
+  }
+
+  let infoTab = openTabObject;
+  let photoTab = closedTabObject;
+  if(openTab === "photos"){
+    infoTab = closedTabObject;
+    photoTab = openTabObject;
+  }
   let res = `
   <div class="container emp-profile">
     <form>
@@ -373,7 +424,7 @@ const generateCardHTML = (furniture) => {
           <div class="profile-head">
             <div class="row">
               <div class="col-md-6">
-                <p>${generateFavouritePhotoImgTag(furniture)}</p>
+                <p>${generateCardFavouritePhotoImgTag(furniture)}</p>
               </div>
               <div class="col-md-6 text-left">
                 <h5 id="descriptionCardEntry">${furniture.description}</h5>
@@ -383,10 +434,10 @@ const generateCardHTML = (furniture) => {
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item">
-                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Information</a>
+                <a class="nav-link ${infoTab.aClassname}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${infoTab.ariaSelected}">Information</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Photos</a>
+                <a class="nav-link ${photoTab.aClassname}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${photoTab.ariaSelected}">Photos</a>
               </li>
             </ul>
           </div>
@@ -396,7 +447,7 @@ const generateCardHTML = (furniture) => {
       <div class="row">
         <div class="col-md-8">
           <div class="tab-content profile-tab" id="myTabContent">
-            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="tab-pane fade ${infoTab.tabClassname}" id="home" role="tabpanel" aria-labelledby="home-tab">
               ${generateTypeCardEntry(furniture)}
               ${generateBuyingPriceCardEntry(furniture)}
               ${generateBuyingDateCardEntry(furniture)}
@@ -407,7 +458,7 @@ const generateCardHTML = (furniture) => {
               ${generateSaleWithdrawalDateCardEntry(furniture)}
               ${generateButtonRow(furniture)}
             </div>       
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="tab-pane fade ${photoTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
               ${addImgForm()}
               ${generatePhotoList(furniture)}
             </div>
@@ -479,10 +530,256 @@ function fetching(base64, furnitureId) {
 const generatePhotoList = (furniture) => {
   let photos = "";
   furniture.photos.forEach(photo => {
-    photos += `<img class="img-fluid flex-grow-1 p-1" src=" ${photo.source}" alt="photo id:${photo.photoId}"/>`;
+    let favRadioName = `radioFav${photo.photoId}`;
+    let visibleCheckName = `checkboxVisible${photo.photoId}`;
+    let homePageCheckName = `checkboxHomepage${photo.photoId}`;
+
+    let favChecked = ``;
+    if(photo.photoId === furniture.favouritePhoto.photoId) {
+      favChecked = `checked`;
+    }
+
+    let visibleCheckedOriginaly = false;
+    let homePageCheckedOriginaly = false;
+    let visibileChecked = ``;
+    let homePageChecked = ``;
+    if(photo.isVisible) {
+      visibileChecked = `checked`;
+      visibleCheckedOriginaly = true;
+
+      if(photo.onHomePage && photo.isVisible) {
+        homePageChecked = `checked`;
+        homePageCheckedOriginaly = true;
+      }
+    }else {
+      homePageChecked = `disabled`;
+    }
+
+    photos += `
+    <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
+      <div class="row px-0">
+        <div class="col-6">
+          <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+        </div>
+        <div class="text-left col-6">
+          <label class="form-check-label" for="${favRadioName}">
+            <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId="${photo.photoId}" furnitureid="${photo.furnitureId}" ${favChecked}>
+            Photo favorite
+          </label>
+          <br/>
+          <label class="form-check-label" for="${visibleCheckName}">
+            <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
+            Visible
+          </label>
+          <br/>
+          <label class="form-check-label" for="${homePageCheckName}">
+            <input id="${homePageCheckName}" type="checkbox" class="form-check-input homepageCheckbox" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
+            Affiché sur la page d'accueil
+          </label>
+        </div>
+      </div>
+    </div>`;
   });
-  let res = `<div class="d-flex flex-lg-fill">${photos}</div>`;
+  let res = `
+  <form>
+    <input id="originalFav${furniture.furnitureId}" type="hidden" class="originalFav" value="${furniture.favouritePhoto.photoId}">
+    <div class="form-check d-flex flex-lg-fill flex-row">
+      ${photos}
+    </div>
+    <button id="saveBtnPhoto" class="btn btn-primary my-5 float-right">Enregistrer les modifications</button>
+  </form>`;
   return res;
+}
+
+const onFavRadioSelected = (e) => {
+  unselectAllFavRadioExcept(e.target.id);
+}
+
+const unselectAllFavRadioExcept = (radioId) => {
+  document.querySelectorAll(".favRadio").forEach((element) => {
+    if(element.id !== radioId){
+      element.checked = false;
+    }
+  })
+}
+
+const onVisibleCheckClicked = (e) => {
+  let photoId = e.target.getAttribute("photoid");
+  let homepageCheckbox = document.querySelector(`#checkboxHomepage${photoId}`);
+
+  if(!e.target.checked) {
+    homepageCheckbox.checked = false;
+    homepageCheckbox.disabled = true;
+    e.target.checked = false;
+  }else {
+    homepageCheckbox.disabled = false;
+  }
+}
+
+const onSaveModifPhotos = async (e) => {
+  e.preventDefault();
+  let cardFavImg = document.querySelector("#card-fav-photo");
+  let originalFavId = cardFavImg.getAttribute("original_fav_id");
+  let furnitureId = cardFavImg.getAttribute("furnitureid");
+  //fav
+  let selectedFavId = findSelectedFav();
+  if(originalFavId != selectedFavId) {
+    let newFurniture = await patchNewFav(furnitureId, selectedFavId);
+    furnitureMap[furnitureId] = newFurniture;
+  }
+  //display flags
+  let modifiedPhotoArray = findAllPhotosForFlagUpdate();
+  await patchDisplayFlagsAllPhotos(modifiedPhotoArray);
+  //refresh card
+  loadCard(furnitureId);
+}
+
+/**
+ * Finds the selected favourite photo (between all radio buttons)
+ * @returns photoId
+ */
+const findSelectedFav = () => {
+  let res = null;
+  document.querySelectorAll(".favRadio").forEach((radioBtn) => {
+    if(radioBtn.checked) {
+      res = radioBtn.getAttribute("photoid");
+    }
+  });
+  return res;
+}
+
+/**
+ * Finds all photos having at least one modified display flag
+ *
+ * @returns {Array} list of object
+ * {
+ *   photoId,
+ *   isVisible,
+ *   isOnHomePage,
+ * },
+ */
+const findAllPhotosForFlagUpdate = () => {
+  let arrayFound = new Array();
+  document.querySelectorAll(".photo-list-container").forEach((container) => {
+    let visibleCheckbox = container.querySelector(".visibleCheckbox");
+    let homepageCheckbox = container.querySelector(".homepageCheckbox");
+    let photoId = container.getAttribute("photoid");
+    let isModified = false;
+
+    let visibleChecked = "false";
+    let homepageChecked = "false";
+    if(visibleCheckbox.checked) {
+      visibleChecked = "true";
+    }
+    if(!homepageCheckbox.disabled && homepageCheckbox.checked) {
+      homepageChecked = "true";
+    }
+
+    if(visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
+      isModified = true;
+    } else if(homepageCheckbox.getAttribute("checked_originaly") != homepageChecked) {
+      isModified = true;
+    }
+
+    if(isModified) {
+      let bundle = {
+        photoId: photoId,
+        isVisible: visibleCheckbox.checked,
+        isOnHomePage: homepageCheckbox.checked,
+      }
+      arrayFound.push(bundle);
+    }
+  });
+  return arrayFound;
+}
+
+/**
+ * [Fetch] PATCH new favourite photo
+ *
+ * @param {int} furnitureId
+ * @param {int} favPhotoId
+ * @returns {*} new photo obj.
+ */
+const patchNewFav = async (furnitureId, favPhotoId) => {
+  let bundle =  {
+    photoId: favPhotoId,
+  };
+  let response = await fetch("/furniture/favouritePhoto/"+furnitureId, {
+    method: "PATCH",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  });
+  if(!response.ok) {
+    displayErrorMessage("errorDiv", new Error(
+      response.status + " : " + response.statusText
+    ));
+    return;
+  }
+  let data = await response.json();
+  return data;
+}
+
+/**
+ * [Fetch] PATCH new display flags for one photo
+ *
+ * @param {
+ *  photoId,
+ *  isVisible,
+ *  isOnHomePage,
+ * } bundle
+ * @return new photo (fetch response)
+ */
+const patchDisplayFlags = async (bundle) => {
+  let addr = "/photos/displayFlags/"+bundle.photoId;
+  let response = await fetch(addr, {
+    method: "PATCH",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  });
+  if(!response.ok) {
+    displayErrorMessage("errorDiv", new Error(
+      response.status + " : " + response.statusText
+    ));
+    return;
+  }
+  let data = await response.json();
+  return data;
+}
+
+/**
+ * Performs all necesary fetches for photo display flags and updates furnitureMap accordingly.
+ *
+ * @param {Array} array result of findAllPhotosForFlagUpdate()
+ */
+const patchDisplayFlagsAllPhotos = async (array) => {
+  for(const obj of array) {
+    let newPhoto = await patchDisplayFlags(obj);
+    //update furnitureMap
+    if(newPhoto){
+      let furnitureId = newPhoto.furnitureId;
+      let photoIndex = findPhotoIndexById(furnitureMap[furnitureId].photos, newPhoto.photoId);
+      if(photoIndex != -1){
+        furnitureMap[furnitureId].photos[photoIndex] = newPhoto;
+      }
+    }
+  }
+}
+
+/**
+ * Finds the index of the first occurence of a photo in an array by id.
+ *
+ * @param {Array} photoArray
+ * @param {int} photoId
+ * @returns {int} index of photoId in photoArray or
+ */
+const findPhotoIndexById = (photoArray, photoId) => {
+  return photoArray.findIndex((photo) => photo.photoId === photoId);
 }
 
 const generateCardLabelKeyEntry = (label, id, value) => {
@@ -747,13 +1044,18 @@ const withdraw = (e, furniture) => {//TODO
   });
 }
 
-const loadCard = (id) => {
+const loadCard = (furnitureId) => {
   mainPage.innerHTML = generatePageHtml(false);
-  generateCard(furnitureMap[id]);
+  generateCard(furnitureMap[furnitureId]);
   document.querySelectorAll(".toBeClicked").forEach(
-      element => element.addEventListener("click", displayShortElements));
-  document.querySelector("#buttonReturn").addEventListener("click",
-      displayLargeTable);
+    (element) => {
+      let elementFurnId = element.getAttribute("furnitureid");
+      if(elementFurnId == furnitureId) {
+        element.className = "toBeClicked bg-secondary text-light";
+      }
+      element.addEventListener("click", displayShortElements)
+    });
+  document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
 }
 
 export default FurnitureList;
