@@ -484,7 +484,7 @@ const generatePhotoList = (furniture) => {
     <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
       <div class="row px-0">
         <div class="col-6">
-          <img class="img-fluid" src="${findFurnitureImgSrcFromFilename(photo.source, images)}" alt="photo id:${photo.photoId}"/>
+          <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
         </div>
         <div class="text-left col-6">
           <label class="form-check-label" for="${favRadioName}">
