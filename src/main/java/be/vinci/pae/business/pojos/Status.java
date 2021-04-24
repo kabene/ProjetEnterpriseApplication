@@ -57,4 +57,15 @@ public enum Status {
         return null;
     }
   }
+
+  /**
+   * Verifies if the current Status instance is publicly available for non-admin users.
+   *
+   * @return whether the current Status instance is publicly available
+   */
+  public boolean isPubliclyAvailable() {
+    return this.equals(Status.AVAILABLE_FOR_SALE)
+        || this.equals(Status.SOLD)
+        || this.equals(Status.UNDER_OPTION);
+  }
 }

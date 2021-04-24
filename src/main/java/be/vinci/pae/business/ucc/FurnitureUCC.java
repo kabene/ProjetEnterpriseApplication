@@ -44,4 +44,13 @@ public interface FurnitureUCC {
    * @return the furniture modified.
    */
   FurnitureDTO withdraw(int furnitureId);
+
+  /**
+   * updates the favourite photo id of a specific piece of furniture.
+   * 
+   * @param furnitureId : the furniture id
+   * @param photoId : the new favourite photo id
+   * @return the updated furniture
+   */
+  FurnitureDTO updateFavouritePhoto(int furnitureId, int photoId);
 }
