@@ -124,6 +124,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
       ps.setDate(2, saleWithdrawalDate);
       ps.setInt(3, furnitureDTO.getFurnitureId());
       ps.execute();
+      ps.close();
       furnitureDTO.setSaleWithdrawalDate(saleWithdrawalDate.toString());
     } catch (SQLException e) {
       throw new InternalError(e);
@@ -147,6 +148,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
       ps.setInt(1, furnitureDTO.getFavouritePhotoId());
       ps.setInt(2, furnitureDTO.getFurnitureId());
       ps.execute();
+      ps.close();
     } catch (SQLException e) {
       throw new InternalError(e);
     }
