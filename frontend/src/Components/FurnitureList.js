@@ -512,6 +512,9 @@ const generateAllTransitionBtns = (furniture) => {
       res += generateTransitionModal("Withdraw", "Retirer de la vente", "danger", "secondary");
       break;
     case "UNDER_OPTION":
+      res += generateTransitionModal("ToSold", "Indiquer vendu");
+      res += generateTransitionModal("ToAvailable", "Annuler l'option en cours");
+      break;
     case "SOLD":
     case "WITHDRAWN":
     case "REQUESTED_FOR_VISIT":
