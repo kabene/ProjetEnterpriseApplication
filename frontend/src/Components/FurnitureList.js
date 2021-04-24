@@ -514,26 +514,27 @@ const addImage = (furniture) => {
   });
 }
 
-function fetching(base64, furnitureId) {
+const fetching = async (base64, furnitureId) => {
   let toSend = {
     source: base64,
     furnitureId: furnitureId
   }
   let pers = getUserSessionData();
-  fetch("/photos/", {
+  let response = await fetch("/photos/", {
     method: "POST",
     body: JSON.stringify(toSend),
     headers: {
       Authorization: pers.token,
       "Content-Type": "application/json",
     }
-  }).then((res) => {
-    furnitureMap[furnitureId].photos.push(res);
-    loadCard(furnitureId);
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
+  if(!response.ok) {
+    displayErrorMessage("errorDiv", new Error("Erreur de fetch :<"));
+    return;
+  }
+  let data = await response.json();
+  furnitureMap[furnitureId].photos.push(data);
+  loadCard(furnitureId);
 }
 
 const generatePhotoList = (furniture) => {
