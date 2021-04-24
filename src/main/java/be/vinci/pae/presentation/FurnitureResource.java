@@ -166,7 +166,7 @@ public class FurnitureResource {
   }
 
   /**
-   * PATCH one piece of furniture's favourite photo
+   * PATCH one piece of furniture's favourite photo.
    *
    * @param furnitureId : the furniture id
    * @param reqNode     : request body

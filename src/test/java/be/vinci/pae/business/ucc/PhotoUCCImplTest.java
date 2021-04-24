@@ -161,7 +161,7 @@ class PhotoUCCImplTest {
   }
 
   /**
-   * MethodSource for test_patchDisplayFlags_nominalScenario_shouldReturnDTO
+   * MethodSource for test_patchDisplayFlags_nominalScenario_shouldReturnDTO.
    *
    * @return Stream of Arguments
    */

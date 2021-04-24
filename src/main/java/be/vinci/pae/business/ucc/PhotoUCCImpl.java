@@ -36,10 +36,11 @@ public class PhotoUCCImpl implements PhotoUCC {
   }
 
   /**
-   * updates one photo's isVisible by id.
+   * updates one photo's display flags (isVisible & isOnHomePage) by id.
    *
-   * @param id         : the photo's id
-   * @param isVisible : the photo's new isVisible flag.
+   * @param id : the photo's id
+   * @param isVisible : the photo's new visibility flag.
+   * @param isOnHomePage : the photo's new isOnHomePage flag.
    * @return the modified resource as PhotoDTO
    */
   @Override
