@@ -63,8 +63,10 @@ public class PhotoResource {
     if (reqNode == null || reqNode.get("isOnHomePage") == null) {
       throw new BadRequestException("Error: malformed request");
     }
-    boolean isVisible = reqNode.get("visibility").asBoolean();
-    boolean isOnHomePage = reqNode.get("visibility").asBoolean();
+    boolean isVisible = reqNode.get("isVisible").asBoolean();
+    boolean isOnHomePage = reqNode.get("isOnHomePage").asBoolean();
+
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "isVisible: " + isVisible + "  -  isOnHomePage: " + isOnHomePage);
 
     PhotoDTO dto = photoUCC.patchDisplayFlags(id, isVisible, isOnHomePage);
     return Response.ok(Json.filterAdminOnlyJsonView(dto, PhotoDTO.class)).build();
