@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
+import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -10,7 +11,8 @@ public class PhotoUCCImpl implements PhotoUCC {
 
   @Inject
   private PhotoDAO photoDAO;
-
+  @Inject
+  private FurnitureDAO furnitureDAO;
   @Inject
   private ConnectionDalServices dalServices;
 
@@ -45,6 +47,7 @@ public class PhotoUCCImpl implements PhotoUCC {
     PhotoDTO res;
     try {
       dalServices.startTransaction();
+      furnitureDAO.findById(furnitureId);
       int id = photoDAO.insert(furnitureId, source);
       res = photoDAO.getPhotoById(id);
       dalServices.commitTransaction();
