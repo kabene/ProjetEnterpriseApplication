@@ -37,6 +37,15 @@ public interface PhotoDAO {
   List<PhotoDTO> getAllHomePageVisiblePhotos();
 
   /**
+   * Inserts a new photo in the database.
+   *
+   * @param furnitureId : the photo's furniture id
+   * @param source : the photo's source as base 64
+   * @return id of the inserted photo
+   */
+  int insert(int furnitureId, String source);
+
+  /**
    * updates the 'is_visible' and 'is_on_home_page' columns of an entry in the database.
    *
    * @param dto : dto containing the id and new is_visible and is_on_home_page flags.

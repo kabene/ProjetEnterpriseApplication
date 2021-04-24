@@ -63,12 +63,12 @@ const getHTMLVisiblePhotos = () => {
 	}
 	let ret = `
 		<div class="carousel-item active">
-			<img class="d-block img-fluid mx-auto mb-5" src="` + findFurnitureImgSrcFromFilename(firstPhoto.source, images) + `" alt="Meuble 1" onError="this.src='` + notFoundPhoto + `'">
+			<img class="d-block img-fluid mx-auto mb-5" src="` + firstPhoto.source + `" alt="Meuble 1" onError="this.src='` + notFoundPhoto + `'">
 		</div>`;
 	visiblePhotoTmp.forEach(photo => {
 		ret += `
 		<div class="carousel-item">
-			<img class="d-block img-fluid mx-auto mb-5" src="` + findFurnitureImgSrcFromFilename(photo.source, images) + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+			<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
 		</div>`;
 	});
 	return ret;

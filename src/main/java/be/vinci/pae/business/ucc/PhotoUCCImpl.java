@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
+import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -11,7 +12,8 @@ public class PhotoUCCImpl implements PhotoUCC {
 
   @Inject
   private PhotoDAO photoDAO;
-
+  @Inject
+  private FurnitureDAO furnitureDAO;
   @Inject
   private ConnectionDalServices dalServices;
 
@@ -26,6 +28,29 @@ public class PhotoUCCImpl implements PhotoUCC {
     try {
       dalServices.startTransaction();
       res = photoDAO.getAllHomePageVisiblePhotos();
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return res;
+  }
+
+  /**
+   * Add a photo.
+   *
+   * @param furnitureId id of the furniture linked to the picture.
+   * @param source      the base64 img.
+   * @return the photoDTO.
+   */
+  @Override
+  public PhotoDTO add(Integer furnitureId, String source) {
+    PhotoDTO res;
+    try {
+      dalServices.startTransaction();
+      furnitureDAO.findById(furnitureId);
+      int id = photoDAO.insert(furnitureId, source);
+      res = photoDAO.getPhotoById(id);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();

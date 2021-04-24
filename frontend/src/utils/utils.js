@@ -109,7 +109,7 @@ const findFavImgSrc = (furniture, images) => {
     if(!furniture.favouritePhoto) {
       return imageNotFound;
     }
-    return findFurnitureImgSrcFromFilename(furniture.favouritePhoto.source, images);
+    return furniture.favouritePhoto.source;
 }
 
 export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,

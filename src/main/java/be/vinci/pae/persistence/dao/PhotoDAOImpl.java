@@ -100,6 +100,37 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
   }
 
   /**
+   * Inserts a new photo in the database.
+   *
+   * @param furnitureId : the photo's furniture id
+   * @param source      : the photo's source as base 64
+   * @return a photoDTO containing the inserted entry.
+   */
+  @Override
+  public int insert(int furnitureId, String source) {
+    int id;
+    String query = "INSERT INTO satchofurniture.photos "
+        + "(furniture_id, is_on_home_page, is_visible, source)"
+        + "VALUES( ?, FALSE, FALSE, ?) "
+        + "RETURNING photo_id";
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setInt(1, furnitureId);
+      ps.setString(2, source);
+      ResultSet rs = ps.executeQuery();
+      if (!rs.next()) {
+        throw new InternalError();
+      }
+      id = rs.getInt(1);
+      rs.close();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return id;
+  }
+
+  /**
    * updates the 'is_visible' and 'is_on_home_page' columns of an entry in the database.
    *
    * @param photoDTO : dto containing the id and new is_visible and is_on_home_page flags.

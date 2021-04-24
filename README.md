@@ -189,7 +189,14 @@
     <th>Droits requis</th>
     <th>Operation</th>
 </tr>
-
+<tr>
+    <td>photos/</td>
+    <td>POST</td>
+    <td>Admin</td>
+    <td>
+      Ajoute une image a la base de donnée.
+    </td>
+</tr>
 <tr>
     <td>photos/homePage</td>
     <td>GET</td>

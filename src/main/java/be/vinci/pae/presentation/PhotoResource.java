@@ -9,8 +9,10 @@ import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -43,6 +45,27 @@ public class PhotoResource {
     List<PhotoDTO> res = new ArrayList<>(photoDTOS);
     return Response.ok(Json.filterPublicJsonView(res, List.class)).build();
   }
+
+  /**
+   * POST Add photo to the db.
+   *
+   * @param photo photo input.
+   * @return status code.
+   */
+  @POST
+  @Path("/")
+  @Admin
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response add(PhotoDTO photo) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/register");
+    if (photo == null || photo.getFurnitureId() == null || photo.getSource() == null) {
+      throw new BadRequestException("Error: Malformed request");
+    }
+    PhotoDTO photoDTO = photoUCC.add(photo.getFurnitureId(), photo.getSource());
+    return Response.ok(Json.filterAdminOnlyJsonView(photoDTO, PhotoDTO.class)).build();
+  }
+
 
   /**
    * PATCH one photo's isVisible and isOnHomePage flags.

@@ -2,38 +2,12 @@
 GET {{baseUrl}}/photos/homePage
 ###
 
-PATCH {{baseUrl}}/photos/visibility/1
-Content-Type: application/json
+POST {{baseUrl}}/photos/add
 Authorization: {{jwt}}
+Content-Type: application/json
 
 {
-  "visibility": true
-}
-###
-
-PATCH {{baseUrl}}/photos/visibility/1
-Content-Type: application/json
-Authorization: {{jwt}}
-
-{
-  "visibility": false
-}
-###
-
-PATCH {{baseUrl}}/photos/homePage/1
-Content-Type: application/json
-Authorization: {{jwt}}
-
-{
-  "onHomePage": false
-}
-###
-
-PATCH {{baseUrl}}/photos/homePage/1
-Content-Type: application/json
-Authorization: {{jwt}}
-
-{
-  "onHomePage": true
+  "furnitureId": 1,
+  "source": "source"
 }
 ###

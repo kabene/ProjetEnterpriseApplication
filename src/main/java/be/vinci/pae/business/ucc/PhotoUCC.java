@@ -14,6 +14,14 @@ public interface PhotoUCC {
   List<PhotoDTO> getAllHomePageVisiblePhotos();
 
   /**
+   * Add a photo.
+   * @param furnitureId id of the furniture linked to the picture.
+   * @param source the base64 img.
+   * @return the photoDTO.
+   */
+  PhotoDTO add(Integer furnitureId, String source);
+
+  /**
    * updates one photo's display flags (isVisible & isOnHomePage) by id.
    *
    * @param id : the photo's id
