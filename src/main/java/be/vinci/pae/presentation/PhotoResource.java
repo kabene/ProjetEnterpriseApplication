@@ -45,6 +45,11 @@ public class PhotoResource {
     return Response.ok(res).build();
   }
 
+  /**
+   *  POST Add photo to the db.
+   * @param photo photo input.
+   * @return status code.
+   */
   @POST
   @Path("/add")
   @Admin

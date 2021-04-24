@@ -437,14 +437,18 @@ const addImage = (furniture) => {
     var FR = new FileReader();
     let bas;
     var file = document.querySelector('input[type=file]').files[0];
-    FR.addEventListener("load", function (e) {
-      bas = e.target.result;
-      document.getElementById("sendImg").addEventListener("click",
-          fetching(bas, furniture.furnitureId))
-    });
-    if (file) {
-      FR.readAsDataURL(file);
-    }
+      if (typeof (FR) != "undefined") {
+        FR.addEventListener("load", function (e) {
+          bas = e.target.result;
+          document.getElementById("sendImg").addEventListener("click", fetching(bas, furniture.furnitureId));
+        });
+        if (file) {
+          FR.readAsDataURL(file);
+        }
+        //addImgForm();
+      }else{
+        throw new Error('le navigateur ne supporte pas FileReader');
+      }
     addImgForm();
   });
 }
