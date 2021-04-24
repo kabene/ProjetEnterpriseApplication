@@ -200,11 +200,11 @@
     </td>
 </tr>
 <tr>
-    <td>photos/visibility/{id}</td>
+    <td>photos/displayFlags/{id}</td>
     <td>PATCH</td>
     <td>Admin</td>
     <td>
-        Modifie la visibilité d'une ressource de type "photo" 
+        Modifie les flags 'isVisible' et 'isOnHomePage' d'une ressource de type "photo" 
         (Renvoie la ressource modifiée au format json)
     </td>
 </tr>
