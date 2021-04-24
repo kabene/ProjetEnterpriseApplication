@@ -473,8 +473,7 @@ function fetching(base64, furnitureId) {
 const generatePhotoList = (furniture) => {
   let photos = "";
   furniture.photos.forEach(photo => {
-    photos += `<img class="img-fluid flex-grow-1 p-1" src="${findFurnitureImgSrcFromFilename(
-        photo.source, images)}" alt="photo id:${photo.photoId}"/>`;
+    photos += `<img class="img-fluid flex-grow-1 p-1" src=" ${photo.source}" alt="photo id:${photo.photoId}"/>`;
   });
   let res = `<div class="d-flex flex-lg-fill">${photos}</div>`;
   return res;
