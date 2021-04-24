@@ -223,15 +223,9 @@ INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, ty
 VALUES (5, 5, 'accepted', 'Secrétaire en acajou, marqueterie', 20);
 
 INSERT
-INTO satchoFurniture.photos
-VALUES (DEFAULT, 4, true, true, 'Table.jpg');
-
-INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
 VALUES (5, 5, 'accepted', 'Secrétaire en acajou, marqueterie', 20);
-INSERT
-INTO satchoFurniture.photos
-VALUES (DEFAULT, 5, true, true, 'Secretaire.png');
+
 
 
 INSERT
