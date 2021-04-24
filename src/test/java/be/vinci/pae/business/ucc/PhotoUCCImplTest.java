@@ -26,12 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PhotoUCCImplTest {
 
-
   private static PhotoUCC photoUCC;
   private static PhotoDAO mockPhotoDAO;
   private static FurnitureDAO mockFurnitureDAO;
   private static ConnectionDalServices mockDal;
-  
+
   private static final String defaultSource1 = "a";
   private static final String defaultSource2 = "b";
   private static final String defaultSource3 = "c";
@@ -43,7 +42,7 @@ class PhotoUCCImplTest {
   private static PhotoDTO mockPhotoDTO1;
   private static PhotoDTO mockPhotoDTO2;
   private static PhotoDTO mockPhotoDTO3;
-  
+
   private static FurnitureDTO mockFurnitureDTO1;
   private static FurnitureDTO mockFurnitureDTO2;
 
@@ -62,7 +61,7 @@ class PhotoUCCImplTest {
     mockPhotoDTO1 = Mockito.mock(PhotoImpl.class);
     mockPhotoDTO2 = Mockito.mock(PhotoImpl.class);
     mockPhotoDTO3 = Mockito.mock(PhotoImpl.class);
-    
+
     mockFurnitureDTO1 = Mockito.mock(FurnitureDTO.class);
     mockFurnitureDTO2 = Mockito.mock(FurnitureDTO.class);
   }
@@ -152,7 +151,8 @@ class PhotoUCCImplTest {
   @DisplayName("TEST PhotoUCC.insert: nominal : should return DTO")
   @Test
   void test_add_nominal_shouldReturnDTO() {
-    Mockito.when(mockPhotoDAO.insert(defaultFurnitureId1, defaultSource1)).thenReturn(defaultPhotoId1);
+    Mockito.when(mockPhotoDAO.insert(defaultFurnitureId1, defaultSource1))
+        .thenReturn(defaultPhotoId1);
 
     assertEquals(mockPhotoDTO1, photoUCC.add(defaultFurnitureId1, defaultSource1),
         "The nominal case should return a dto");
