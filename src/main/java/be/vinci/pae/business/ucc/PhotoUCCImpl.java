@@ -35,8 +35,9 @@ public class PhotoUCCImpl implements PhotoUCC {
 
   /**
    * Add a photo.
+   *
    * @param furnitureId id of the furniture linked to the picture.
-   * @param source the base64 img.
+   * @param source      the base64 img.
    * @return the photoDTO.
    */
   @Override
@@ -47,7 +48,7 @@ public class PhotoUCCImpl implements PhotoUCC {
       int id = photoDAO.insert(furnitureId, source);
       res = photoDAO.getPhotoById(id);
       dalServices.commitTransaction();
-    }catch (Throwable e) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }

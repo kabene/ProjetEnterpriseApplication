@@ -118,11 +118,11 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
       ps.setInt(1, furnitureId);
       ps.setString(2, source);
       ResultSet rs = ps.executeQuery();
-      if(!rs.next()) {
+      if (!rs.next()) {
         throw new InternalError();
       }
       id = rs.getInt(1);
-    } catch(SQLException e) {
+    } catch (SQLException e) {
       throw new InternalError(e);
     }
     return id;

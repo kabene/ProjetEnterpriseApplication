@@ -46,7 +46,8 @@ public class PhotoResource {
   }
 
   /**
-   *  POST Add photo to the db.
+   * POST Add photo to the db.
+   *
    * @param photo photo input.
    * @return status code.
    */
@@ -55,15 +56,14 @@ public class PhotoResource {
   @Admin
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response add(PhotoDTO photo){
+  public Response add(PhotoDTO photo) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/register");
-    if(photo ==null|| photo.getFurnitureId()==null|| photo.getSource()==null ){
+    if (photo == null || photo.getFurnitureId() == null || photo.getSource() == null) {
       throw new BadRequestException("Error: Malformed request");
     }
-    PhotoDTO photoDTO=photoUCC.add(photo.getFurnitureId(),photo.getSource());
+    PhotoDTO photoDTO = photoUCC.add(photo.getFurnitureId(), photo.getSource());
     return Response.ok(Json.filterAdminOnlyJsonView(photoDTO, PhotoDTO.class)).build();
   }
-
 
 
 }
