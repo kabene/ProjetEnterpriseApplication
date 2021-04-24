@@ -105,7 +105,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   /**
    * set the status of the furniture to AVAILABLE_FOR_SALE and set its selling price.
    *
-   * @param furnitureId the furniture id.
+   * @param furnitureId  the furniture id.
    * @param sellingPrice the selling price of the furniture.
    * @return the furniture modified.
    */
@@ -174,8 +174,9 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       dalServices.startTransaction();
       FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(furnitureId);
       PhotoDTO foundPhotoDTO = photoDAO.getPhotoById(photoId);
-      if(foundPhotoDTO.getFurnitureId() != foundFurnitureDTO.getFurnitureId()) {
-        throw new ConflictException("Error: The photo doesn't belong to the specified piece of furniture");
+      if (foundPhotoDTO.getFurnitureId() != foundFurnitureDTO.getFurnitureId()) {
+        throw new ConflictException(
+            "Error: The photo doesn't belong to the specified piece of furniture");
       }
       foundFurnitureDTO.setFavouritePhoto(foundPhotoDTO);
       foundFurnitureDTO.setFavouritePhotoId(foundPhotoDTO.getPhotoId());
@@ -183,7 +184,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       furnitureDTO = furnitureDAO.updateFavouritePhoto(foundFurnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
-    }catch (Throwable e) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }

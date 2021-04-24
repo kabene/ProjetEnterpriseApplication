@@ -169,7 +169,7 @@ public class FurnitureResource {
    * PATCH one piece of furniture's favourite photo
    *
    * @param furnitureId : the furniture id
-   * @param reqNode : request body
+   * @param reqNode     : request body
    * @return http response containing updated furniture resource
    */
   @PATCH
@@ -180,7 +180,7 @@ public class FurnitureResource {
       JsonNode reqNode) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
         .log(Level.INFO, "PATCH /furniture/favouritePhoto/" + furnitureId);
-    if(reqNode == null || reqNode.get("photoId") == null) {
+    if (reqNode == null || reqNode.get("photoId") == null) {
       throw new BadRequestException("Error: malformed request");
     }
     int photoId = reqNode.get("photoId").asInt();
