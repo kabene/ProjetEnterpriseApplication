@@ -606,7 +606,8 @@ class FurnitureUCCImplTest {
     inOrder.verifyNoMoreInteractions();
   }
 
-  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : given invalid furnitureId, should throw NotFoundException")
+  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : "
+      + "given invalid furnitureId, should throw NotFoundException")
   @Test
   public void test_updateFavouritePhoto_givenInvalidFurnitureId_shouldThrowNotFound() {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new NotFoundException());
@@ -625,7 +626,8 @@ class FurnitureUCCImplTest {
     inOrder.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : given invalid photoId, should throw NotFoundException")
+  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto :"
+      + " given invalid photoId, should throw NotFoundException")
   @Test
   public void test_updateFavouritePhoto_givenInvalidPhotoId_shouldThrowNotFound() {
     Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId1)).thenThrow(new NotFoundException());
@@ -645,7 +647,8 @@ class FurnitureUCCImplTest {
     inOrder.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : given not matching ids, should throw ConflictException")
+  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : "
+      + "given not matching ids, should throw ConflictException")
   @Test
   public void test_updateFavouritePhoto_givenNotMatchingIds_shouldThrowConflict() {
     Mockito.when(mockPhotoDTO1.getFurnitureId()).thenReturn(defaultFurnitureId2);
@@ -665,10 +668,12 @@ class FurnitureUCCImplTest {
     inOrder.verify(mockDal).rollbackTransaction();
   }
 
-  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : catches InternalError, should throw it back after rollback")
+  @DisplayName("TEST FurnitureUCC.updateFavouritePhoto : "
+      + "catches InternalError, should throw it back after rollback")
   @Test
   public void test_updateFavouritePhoto_catchesInternalError_shouldThrowInternal() {
-    Mockito.when(mockFurnitureDAO.updateFavouritePhoto(mockFurnitureDTO1)).thenThrow(new InternalError());
+    Mockito.when(mockFurnitureDAO.updateFavouritePhoto(mockFurnitureDTO1))
+        .thenThrow(new InternalError());
 
     assertThrows(InternalError.class, () -> {
       furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
