@@ -7,11 +7,7 @@ import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.FurnitureStatus;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
-import be.vinci.pae.persistence.dao.FurnitureDAO;
-import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
-import be.vinci.pae.persistence.dao.OptionDAO;
-import be.vinci.pae.persistence.dao.PhotoDAO;
-import be.vinci.pae.persistence.dao.UserDAO;
+import be.vinci.pae.persistence.dao.*;
 import jakarta.inject.Inject;
 import java.util.List;
 
@@ -27,6 +23,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   private FurnitureTypeDAO furnitureTypeDAO;
   @Inject
   private OptionDAO optionDAO;
+  @Inject
+  private RequestForVisitDAO requestForVisitDAO;
   @Inject
   private ConnectionDalServices dalServices;
 
@@ -187,6 +185,6 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     dto.setPhotos(photos);
     String type = furnitureTypeDAO.findById(dto.getTypeId());
     dto.setType(type);
-    //todo add request into furniture
+    dto.setRequest(requestForVisitDAO.findByRequestId(dto.getRequestId()));
   }
 }

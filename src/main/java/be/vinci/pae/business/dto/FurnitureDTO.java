@@ -88,6 +88,10 @@ public interface FurnitureDTO {
 
   void setRequestId(Integer requestId);
 
+  RequestForVisitDTO getRequest();
+
+  void setRequest(RequestForVisitDTO request);
+
   Double getPurchasePrice();
 
   void setPurchasePrice(Double purchasePrice);

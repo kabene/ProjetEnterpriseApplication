@@ -1,9 +1,6 @@
 package be.vinci.pae.business.pojos;
 
-import be.vinci.pae.business.dto.FurnitureDTO;
-import be.vinci.pae.business.dto.OptionDTO;
-import be.vinci.pae.business.dto.PhotoDTO;
-import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.dto.*;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -65,6 +62,8 @@ public class FurnitureImpl implements FurnitureDTO {
   private Boolean suitable;
   @JsonView(Views.AdminOnly.class)
   private Boolean availableForSale;
+  @JsonView(Views.AdminOnly.class)
+  private RequestForVisitDTO request;
 
 
   @Override
@@ -268,6 +267,16 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
+  public RequestForVisitDTO getRequest() {
+    return this.request;
+  }
+
+  @Override
+  public void setRequest(RequestForVisitDTO request) {
+    this.request = request;
+  }
+
+  @Override
   public Double getPurchasePrice() {
     return this.purchasePrice;
   }
@@ -289,7 +298,7 @@ public class FurnitureImpl implements FurnitureDTO {
 
   @Override
   public String getDepositDate() {
-    return depositDate = depositDate;
+    return depositDate;
   }
 
   @Override
