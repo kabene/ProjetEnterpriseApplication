@@ -171,6 +171,15 @@
     </td>
 </tr>
 <tr>
+    <td>furniture/sold/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+    Modifie l'état d'une ressource de type 'furniture' vers 'sold', et renvoie les informations mises à jour. 
+    Le champ 'specialSalePrice' est optionnel dans le body de la requête.
+    </td>
+</tr>
+<tr>
     <td>furniture/favouritePhoto/{id}</td>
     <td>PATCH</td>
     <td>Admin</td>
