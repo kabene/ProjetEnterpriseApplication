@@ -223,7 +223,7 @@ const generateSellingPriceTableElement = (furniture) => {
 const generateSpecialPriceTableElement = (furniture) => {
   let res = "";
   if (furniture.specialSalePrice) {
-    res = `<p>${furniture.specialSalePrice}</p>`;
+    res = `<p>${furniture.specialSalePrice}€</p>`;
   }
   return res;
 }
@@ -454,6 +454,7 @@ const generateCardHTML = (furniture) => {
               ${generateBuyingDateCardEntry(furniture)}
               ${generateSellerCardEntry(furniture)}
               ${generateSellingPriceCardEntry(furniture)}
+              ${generateSpecialSalePriceCardEntry(furniture)}
               ${generateBuyerCardEntry(furniture)}
               ${generateOptionCardEntry(furniture)}
               ${generateSaleWithdrawalDateCardEntry(furniture)}
@@ -868,6 +869,14 @@ const generateSellingPriceCardEntry = (furniture) => {
   if (furniture.sellingPrice) {
     return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry",
         furniture.sellingPrice + "€");
+  }
+  return "";
+}
+
+const generateSpecialSalePriceCardEntry = (furniture) => {
+  if (furniture.specialSalePrice) {
+    return generateCardLabelKeyEntry("Prix de vente spécial", "specialSalePriceCardEntry",
+        furniture.specialSalePrice + "€");
   }
   return "";
 }

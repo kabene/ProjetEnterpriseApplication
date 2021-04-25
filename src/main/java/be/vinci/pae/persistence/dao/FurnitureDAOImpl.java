@@ -255,7 +255,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
 
     double specialSalePrice = rs.getInt("special_sale_price");
     if (specialSalePrice != 0) {
-      res.setSellingPrice(specialSalePrice);
+      res.setSpecialSalePrice(specialSalePrice);
     }
 
     Date dateOfSale = rs.getDate("date_of_sale");
