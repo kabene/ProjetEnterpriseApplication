@@ -1,6 +1,10 @@
 package be.vinci.pae.business.pojos;
 
-import be.vinci.pae.business.dto.*;
+import be.vinci.pae.business.dto.FurnitureDTO;
+import be.vinci.pae.business.dto.OptionDTO;
+import be.vinci.pae.business.dto.PhotoDTO;
+import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

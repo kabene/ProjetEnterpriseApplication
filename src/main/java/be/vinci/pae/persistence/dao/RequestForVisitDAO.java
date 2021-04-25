@@ -16,7 +16,7 @@ public interface RequestForVisitDAO {
   /**
    * finds all entries of requests_for_visit belonging to the user.
    *
-   * @param userId, the id of the user.
+   * @param userId the id of the user.
    * @return a list of RequestForVisitDTO .
    */
   List<RequestForVisitDTO> findByUserId(int userId);
@@ -24,7 +24,7 @@ public interface RequestForVisitDAO {
   /**
    * find a request_for_visit.
    *
-   * @param idRequest, the id of the request for visit.
+   * @param idRequest the id of the request for visit.
    * @return RequestForVisitDTO that represent the request for visit.
    */
   RequestForVisitDTO findByRequestId(int idRequest);
@@ -32,14 +32,14 @@ public interface RequestForVisitDAO {
   /**
    * cancel a request for visit.
    *
-   * @param idRequest, the id of the request for visit to cancel.
+   * @param idRequest the id of the request for visit to cancel.
    */
   void cancelRequest(int idRequest);
 
   /**
    * accept a request for visit.
    *
-   * @param idRequest, the id of the request for visit to accept.
+   * @param idRequest the id of the request for visit to accept.
    */
   void acceptRequest(int idRequest);
 

@@ -65,7 +65,7 @@ public class RequestForVisitResource {
    * PATCH (cancels) a request_for_visit by id.
    *
    * @param requestId the id of the request for visit.
-   * @param request the request context.
+   * @param request   the request context.
    * @return the modified resource as json.
    */
   @PATCH
@@ -88,7 +88,7 @@ public class RequestForVisitResource {
    * PATCH (accept) a request_for_visit by id.
    *
    * @param requestId the id of the request for visit.
-   * @param request the request context.
+   * @param request   the request context.
    * @return the modified resource as json.
    */
   @PATCH

@@ -30,7 +30,7 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
   /**
    * Finds all entries of request_for_visit belonging to the user.
    *
-   * @param userId
+   * @param userId the id of the user.
    * @return a list of RequestForVisitDTO .
    */
   @Override
@@ -54,14 +54,14 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
   /**
    * find a request_for_visit.
    *
-   * @param idRequest, the id of the request for visit.
+   * @param idRequest the id of the request for visit.
    * @return RequestForVisitDTO that represent the request for visit.
    */
   @Override
   public RequestForVisitDTO findByRequestId(int idRequest) {
     RequestForVisitDTO requestFound;
-    String query = "SELECT * FROM satchoFurniture.requests_for_visit " +
-        "WHERE request_id=?";
+    String query = "SELECT * FROM satchoFurniture.requests_for_visit "
+        + "WHERE request_id=?";
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, idRequest);
@@ -81,12 +81,12 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
   /**
    * cancel a request for visit.
    *
-   * @param idRequest
+   * @param idRequest the id of the request for visit.
    */
   @Override
   public void cancelRequest(int idRequest) {
-    String query = "UPDATE satchoFurniture.requests_for_visit SET status='canceled'" +
-        "WHERE request_id=?";
+    String query = "UPDATE satchoFurniture.requests_for_visit SET status='canceled'"
+        + "WHERE request_id=?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setInt(1, idRequest);
@@ -100,12 +100,12 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
   /**
    * accept a request for visit.
    *
-   * @param idRequest
+   * @param idRequest the id of the request for visit.
    */
   @Override
   public void acceptRequest(int idRequest) {
-    String query = "UPDATE satchoFurniture.requests_for_visit SET status='confirmed'" +
-        "WHERE request_id=?";
+    String query = "UPDATE satchoFurniture.requests_for_visit SET status='confirmed'"
+        + "WHERE request_id=?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setInt(1, idRequest);
