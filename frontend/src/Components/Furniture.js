@@ -260,7 +260,8 @@ const getTag = (furniture) => {
     });
     ret = `<span className="badge badgeUnderOption">Sous option durant ` + optionId.duration + ` jours</span>`;
   }
-  return ret;
+  else
+    ret = `<span className="badge badgeSold">Error</span>`;
 }
 
 
