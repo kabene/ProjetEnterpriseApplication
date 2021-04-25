@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class OptionUCCImplTest {
   private static final int defaultUserId2 = 6;
   private static final FurnitureStatus defaultStatus = FurnitureStatus.toEnum("available_for_sale");
 
-  @BeforeEach
+  @BeforeAll
   public void init() {
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
 

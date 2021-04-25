@@ -1,26 +1,9 @@
 package be.vinci.pae.main;
 
-import be.vinci.pae.business.ucc.FurnitureUCC;
-import be.vinci.pae.business.ucc.FurnitureUCCImpl;
-import be.vinci.pae.business.ucc.OptionUCC;
-import be.vinci.pae.business.ucc.OptionUCCImpl;
-import be.vinci.pae.business.ucc.PhotoUCC;
-import be.vinci.pae.business.ucc.PhotoUCCImpl;
-import be.vinci.pae.business.ucc.UserUCCImpl;
+import be.vinci.pae.business.ucc.*;
 import be.vinci.pae.persistence.dal.DalServicesImpl;
-import be.vinci.pae.persistence.dao.AddressDAO;
-import be.vinci.pae.persistence.dao.FurnitureDAO;
-import be.vinci.pae.persistence.dao.FurnitureDAOImpl;
-import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
-import be.vinci.pae.persistence.dao.FurnitureTypeDAOImpl;
-import be.vinci.pae.persistence.dao.OptionDAO;
-import be.vinci.pae.persistence.dao.OptionDAOImpl;
-import be.vinci.pae.persistence.dao.PhotoDAO;
-import be.vinci.pae.persistence.dao.PhotoDAOImpl;
-import be.vinci.pae.business.ucc.UserUCC;
+import be.vinci.pae.persistence.dao.*;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
-import be.vinci.pae.persistence.dao.UserDAO;
-import be.vinci.pae.persistence.dao.UserDAOImpl;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.ext.Provider;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -52,6 +35,10 @@ public class TestBinder extends AbstractBinder {
     //options
     bind(OptionUCCImpl.class).to(OptionUCC.class).in(Singleton.class);
     bind(Mockito.mock(OptionDAOImpl.class)).to(OptionDAO.class);
+
+    //request_for_visit
+    bind(RequestForVisitUCCImpl.class).to(RequestForVisitUCC.class).in(Singleton.class);
+    bind(Mockito.mock(RequestForVisitDAOImpl.class)).to(RequestForVisitDAO.class);
 
     //other services
     bind(Mockito.mock(DalServicesImpl.class)).to(ConnectionDalServices.class);
