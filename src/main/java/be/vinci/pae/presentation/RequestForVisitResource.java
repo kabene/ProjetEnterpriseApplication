@@ -80,7 +80,7 @@ public class RequestForVisitResource {
     UserDTO currentUser = (UserDTO) request.getProperty("user");
     RequestForVisitDTO requestForVisitDTO = requestForVisitUCC
         .cancelRequest(requestId, currentUser.getId());
-    requestForVisitDTO = Json.filterPublicJsonView(requestForVisitDTO, RequestForVisitDTO.class);
+    requestForVisitDTO = Json.filterAdminOnlyJsonView(requestForVisitDTO, RequestForVisitDTO.class);
     return Response.ok(requestForVisitDTO, MediaType.APPLICATION_JSON).build();
   }
 
@@ -103,7 +103,7 @@ public class RequestForVisitResource {
     UserDTO currentUser = (UserDTO) request.getProperty("user");
     RequestForVisitDTO requestForVisitDTO = requestForVisitUCC
         .acceptRequest(requestId, currentUser.getId());
-    requestForVisitDTO = Json.filterPublicJsonView(requestForVisitDTO, RequestForVisitDTO.class);
+    requestForVisitDTO = Json.filterAdminOnlyJsonView(requestForVisitDTO, RequestForVisitDTO.class);
     return Response.ok(requestForVisitDTO, MediaType.APPLICATION_JSON).build();
   }
 

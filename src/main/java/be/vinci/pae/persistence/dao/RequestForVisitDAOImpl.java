@@ -3,6 +3,7 @@ package be.vinci.pae.persistence.dao;
 import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.factories.RequestForVisitFactory;
 import be.vinci.pae.business.pojos.RequestStatus;
+import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 
 import java.sql.PreparedStatement;
@@ -35,8 +36,7 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
   @Override
   public List<RequestForVisitDTO> findByUserId(int userId) {
     List<RequestForVisitDTO> requestList = new ArrayList<RequestForVisitDTO>();
-    String query = "SELECT t.* FROM satchoFurniture.requests_for_visit t " +
-        "WHERE t.user_id = ?";
+    String query = "SELECT * FROM satchoFurniture.requests_for_visit WHERE user_id=?";
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, userId);
@@ -60,13 +60,17 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
   @Override
   public RequestForVisitDTO findByRequestId(int idRequest) {
     RequestForVisitDTO requestFound;
-    String query = "SELECT t.* FROM satchoFurniture.requests_for_visit t " +
-        "WHERE t.request_id = ?";
+    String query = "SELECT * FROM satchoFurniture.requests_for_visit " +
+        "WHERE request_id=?";
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, idRequest);
       ResultSet rs = ps.executeQuery();
-      requestFound = toDTO(rs);
+      if (rs.next()) {
+        requestFound = toDTO(rs);
+      } else {
+        throw new NotFoundException("Error: request for visit not found");
+      }
       rs.close();
     } catch (SQLException e) {
       throw new InternalError(e);
@@ -81,8 +85,8 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
    */
   @Override
   public void cancelRequest(int idRequest) {
-    String query = "UPDATE satchoFurniture.requests_for_visit o SET status=canceled" +
-        "WHERE request_id = ?";
+    String query = "UPDATE satchoFurniture.requests_for_visit SET status='canceled'" +
+        "WHERE request_id=?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setInt(1, idRequest);
@@ -100,8 +104,8 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
    */
   @Override
   public void acceptRequest(int idRequest) {
-    String query = "UPDATE satchoFurniture.requests_for_visit o SET status=confirmed" +
-        "WHERE request_id = ?";
+    String query = "UPDATE satchoFurniture.requests_for_visit SET status='confirmed'" +
+        "WHERE request_id=?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setInt(1, idRequest);
