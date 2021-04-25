@@ -23,11 +23,11 @@ public enum RequestStatus {
    */
   public static RequestStatus toEnum(String s) {
     switch (s) {
-      case "waiting" :
+      case "waiting":
         return RequestStatus.WAITING;
-      case "canceled" :
+      case "canceled":
         return RequestStatus.CANCELED;
-      case "confirmed" :
+      case "confirmed":
         return RequestStatus.CONFIRMED;
       default:
         return null;
