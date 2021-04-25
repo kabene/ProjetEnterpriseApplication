@@ -51,7 +51,7 @@ class OptionUCCImplTest {
   private static final FurnitureStatus defaultStatus = FurnitureStatus.toEnum("available_for_sale");
 
   @BeforeAll
-  public void init() {
+  public static void init() {
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
 
     optionUCC = locator.getService(OptionUCC.class);
