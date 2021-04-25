@@ -211,7 +211,7 @@
     <td>options/</td>
     <td>POST</td>
     <td>Admin</td>
-    <td>Renvoie l'option crée</td>
+    <td>Crée une ressource de type option et la renvoie.</td>
 </tr>
 <tr>
     <td>options/cancel/{id}</td>
