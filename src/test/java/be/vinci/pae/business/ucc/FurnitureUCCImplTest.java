@@ -783,7 +783,8 @@ class FurnitureUCCImplTest {
     String role = "antique_dealer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
     assertThrows(ConflictException.class, () ->
-            furnitureUCC.toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
+            furnitureUCC
+                .toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
         "A valid call of toSold() with specialSalePrice should "
             + "return the corresponding dto");
 
@@ -833,7 +834,8 @@ class FurnitureUCCImplTest {
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
 
     assertThrows(ConflictException.class, () ->
-            furnitureUCC.toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
+            furnitureUCC
+                .toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
         "A call to toSold() with invalid furniture status (with specialSalePrice) should "
             + "throw ConflictException");
 
@@ -854,7 +856,8 @@ class FurnitureUCCImplTest {
     String role = "customer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
     assertThrows(ConflictException.class, () ->
-            furnitureUCC.toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
+            furnitureUCC
+                .toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
         "A call of toSold() with specialSalePrice (non antique dealer buyer) should "
             + "throw ConflictException");
 
@@ -877,7 +880,8 @@ class FurnitureUCCImplTest {
         .thenThrow(new NotFoundException());
 
     assertThrows(NotFoundException.class, () ->
-            furnitureUCC.toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
+            furnitureUCC
+                .toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
         "A call of toSold() with invalid buyer username should "
             + "throw NotFoundException");
 
@@ -943,7 +947,8 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDAO.updateToSoldWithSpecialSale(mockFurnitureDTO1))
         .thenThrow(new InternalError());
     assertThrows(InternalError.class, () ->
-            furnitureUCC.toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
+            furnitureUCC
+                .toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
         "A call to toSold() catching an InternalError should "
             + "throw it back");
 
