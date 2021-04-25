@@ -176,14 +176,25 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       dalServices.startTransaction();
       UserDTO buyer = userDAO.findByUsername(buyerUsername);
       FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(furnitureId);
-      if(specialSalePrice != null && !buyer.getRole().equals("antique_dealer")) {
+      if (specialSalePrice != null && !buyer.getRole().equals("antique_dealer")) {
         throw new ConflictException("Error: only antique dealers can make special sales");
+      }
+      if (!foundFurnitureDTO.getStatus().equals(Status.AVAILABLE_FOR_SALE) && !foundFurnitureDTO
+          .getStatus().equals(Status.UNDER_OPTION)) {
+        throw new ConflictException("Error: invalid furniture status");
+      }
+      if (foundFurnitureDTO.getStatus().equals(Status.UNDER_OPTION)) {
+        OptionDTO optionDTO = optionDAO.findByFurnitureId(foundFurnitureDTO.getFurnitureId());
+        if (optionDTO.getUserId() != buyer.getId()) {
+          throw new ConflictException(
+              "Error: piece of furniture already under option, only one user allowed to buy it");
+        }
       }
       foundFurnitureDTO.setBuyerId(buyer.getId());
       foundFurnitureDTO.setStatus(Status.SOLD);
-      if(specialSalePrice == null) {
+      if (specialSalePrice == null) {
         furnitureDAO.updateToSold(foundFurnitureDTO);
-      }else {
+      } else {
         foundFurnitureDTO.setSpecialSalePrice(specialSalePrice);
         furnitureDAO.updateToSoldWithSpecialSale(foundFurnitureDTO);
       }
