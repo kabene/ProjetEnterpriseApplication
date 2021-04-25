@@ -369,7 +369,7 @@ class FurnitureUCCImplTest {
   @EnumSource(value = FurnitureStatus.class, names = {"REQUESTED_FOR_VISIT", "REFUSED",
       "IN_RESTORATION", "AVAILABLE_FOR_SALE", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED",
       "COLLECTED", "WITHDRAWN"})
-  public void test_toRestoration_givenInvalidId1_shouldThrowConflict (FurnitureStatus startingStatus) {
+  public void test_toRest_givenInvalidId_shouldThrowConflict(FurnitureStatus startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
 
@@ -459,7 +459,7 @@ class FurnitureUCCImplTest {
   @EnumSource(value = FurnitureStatus.class, names = {"REQUESTED_FOR_VISIT", "REFUSED",
       "AVAILABLE_FOR_SALE","UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED",
       "WITHDRAWN"})
-  public void test_toAvailable_givenInvalidStates_shouldThrowConflict (FurnitureStatus startingStatus) {
+  public void test_toAv_givenInvalidStates_shouldThrowConflict(FurnitureStatus startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
 
