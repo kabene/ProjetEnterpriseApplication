@@ -1,6 +1,6 @@
 package be.vinci.pae.business.pojos;
 
-public enum Status {
+public enum FurnitureStatus {
   REQUESTED_FOR_VISIT("requested_for_visit"),
   REFUSED("refused"),
   ACCEPTED("accepted"),
@@ -15,7 +15,7 @@ public enum Status {
 
   private final String value;
 
-  Status(String s) {
+  FurnitureStatus(String s) {
     this.value = s;
   }
 
@@ -29,30 +29,30 @@ public enum Status {
    * @param s string to convert
    * @return the status in a Enum type
    */
-  public static Status toEnum(String s) {
+  public static FurnitureStatus toEnum(String s) {
     switch (s) {
       case "requested_for_visit" :
-        return Status.REQUESTED_FOR_VISIT;
+        return FurnitureStatus.REQUESTED_FOR_VISIT;
       case "refused" :
-        return Status.REFUSED;
+        return FurnitureStatus.REFUSED;
       case "accepted" :
-        return Status.ACCEPTED;
+        return FurnitureStatus.ACCEPTED;
       case "in_restoration" :
-        return Status.IN_RESTORATION;
+        return FurnitureStatus.IN_RESTORATION;
       case "available_for_sale" :
-        return Status.AVAILABLE_FOR_SALE;
+        return FurnitureStatus.AVAILABLE_FOR_SALE;
       case "under_option" :
-        return Status.UNDER_OPTION;
+        return FurnitureStatus.UNDER_OPTION;
       case "sold" :
-        return Status.SOLD;
+        return FurnitureStatus.SOLD;
       case "reserved" :
-        return Status.RESERVED;
+        return FurnitureStatus.RESERVED;
       case "delivered" :
-        return Status.DELIVERED;
+        return FurnitureStatus.DELIVERED;
       case "collected" :
-        return Status.COLLECTED;
+        return FurnitureStatus.COLLECTED;
       case "withdrawn" :
-        return Status.WITHDRAWN;
+        return FurnitureStatus.WITHDRAWN;
       default:
         return null;
     }
