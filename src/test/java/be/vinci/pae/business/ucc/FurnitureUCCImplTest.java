@@ -21,10 +21,12 @@ import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
 import be.vinci.pae.persistence.dao.OptionDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeAll;
@@ -364,10 +366,11 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.toRestoration : given invalid id (invalid status),"
       + " should throw ConflictException")
   @ParameterizedTest
-  @EnumSource(value = FurnitureStatus.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "IN_RESTORATION",
-      "AVAILABLE_FOR_SALE", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED",
-      "WITHDRAWN"})
-  public void test_toRestoration_givenInvalidId1_shouldThrowConflict(FurnitureStatus startingStatus) {
+  @EnumSource(value = FurnitureStatus.class, names = {"REQUESTED_FOR_VISIT", "REFUSED",
+      "IN_RESTORATION", "AVAILABLE_FOR_SALE", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED",
+      "COLLECTED", "WITHDRAWN"})
+  public void test_toRestoration_givenInvalidId1_shouldThrowConflict
+      (FurnitureStatus startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
 
@@ -454,9 +457,11 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.toAvailable : given invalid id (invalid status),"
       + " should throw ConflictException")
   @ParameterizedTest
-  @EnumSource(value = FurnitureStatus.class, names = {"REQUESTED_FOR_VISIT", "REFUSED","AVAILABLE_FOR_SALE",
-      "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
-  public void test_toAvailable_givenInvalidStates_shouldThrowConflict(FurnitureStatus startingStatus) {
+  @EnumSource(value = FurnitureStatus.class, names = {"REQUESTED_FOR_VISIT", "REFUSED",
+      "AVAILABLE_FOR_SALE","UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED",
+      "WITHDRAWN"})
+  public void test_toAvailable_givenInvalidStates_shouldThrowConflict
+      (FurnitureStatus startingStatus) {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
 

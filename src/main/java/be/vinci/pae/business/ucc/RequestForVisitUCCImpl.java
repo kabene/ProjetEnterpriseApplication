@@ -114,7 +114,8 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
         throw new ConflictException("The request status can not be modified");
       }
       if (request.getUserId() != idCurrentUser) {
-        throw new UnauthorizedException("The requests do not belong to the user that called the request");
+        throw new UnauthorizedException("The requests do not belong to the user "
+            + "that called the request");
       }
       requestForVisitDAO.acceptRequest(idRequest);
       completeFurnitureDTO(request);

@@ -148,8 +148,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     try {
       dalServices.startTransaction();
       furnitureDTO = furnitureDAO.findById(furnitureId);
-      if (!furnitureDTO.getStatus().equals(FurnitureStatus.AVAILABLE_FOR_SALE) && !furnitureDTO.getStatus()
-          .equals(FurnitureStatus.IN_RESTORATION)) {
+      if (!furnitureDTO.getStatus().equals(FurnitureStatus.AVAILABLE_FOR_SALE) &&
+          !furnitureDTO.getStatus().equals(FurnitureStatus.IN_RESTORATION)) {
         throw new ConflictException(
             "The resource isn't in a withdrawable state");
       }
