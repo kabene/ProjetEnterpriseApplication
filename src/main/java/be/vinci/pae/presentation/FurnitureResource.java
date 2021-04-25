@@ -167,6 +167,14 @@ public class FurnitureResource {
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 
+  /**
+   * PATCH one piece of furniture to the 'sold' status. (specialSalePrice is optional in the request
+   * body)
+   *
+   * @param furnitureId : the furniture id.
+   * @param reqNode     : the request body as JsonNode
+   * @return http response containing the modified resource
+   */
   @PATCH
   @Path("/sold/{id}")
   @Admin
@@ -174,12 +182,12 @@ public class FurnitureResource {
   public Response toSold(@PathParam("id") int furnitureId, JsonNode reqNode) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
         .log(Level.INFO, "PATCH /furniture/sold/" + furnitureId);
-    if(reqNode == null || reqNode.get("buyerUsername") == null) {
+    if (reqNode == null || reqNode.get("buyerUsername") == null) {
       throw new BadRequestException("Error: malformed request");
     }
     String buyerUsername = reqNode.get("buyerUsername").asText();
     Double specialSalePrice = null;
-    if(reqNode.get("specialSalePrice") != null) {
+    if (reqNode.get("specialSalePrice") != null) {
       specialSalePrice = reqNode.get("specialSalePrice").asDouble();
     }
     FurnitureDTO furnitureDTO = furnitureUCC.toSold(furnitureId, buyerUsername, specialSalePrice);

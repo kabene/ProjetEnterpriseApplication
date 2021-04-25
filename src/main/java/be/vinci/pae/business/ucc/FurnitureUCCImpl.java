@@ -180,7 +180,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
         throw new ConflictException("Error: only antique dealers can make special sales");
       }
       if (foundFurnitureDTO.getStatus().equals(Status.UNDER_OPTION) && specialSalePrice != null) {
-        throw new ConflictException("Error: pieces of furniture under option cannot be sold with a special sale price");
+        throw new ConflictException(
+            "Error: pieces of furniture under option cannot be sold with a special sale price");
       }
       if (!foundFurnitureDTO.getStatus().equals(Status.AVAILABLE_FOR_SALE) && !foundFurnitureDTO
           .getStatus().equals(Status.UNDER_OPTION)) {
