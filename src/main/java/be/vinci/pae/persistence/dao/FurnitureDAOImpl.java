@@ -142,11 +142,13 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
   public FurnitureDTO updateToSold(FurnitureDTO furnitureDTO) {
     String query = "UPDATE satchofurniture.furniture "
         + "SET status = ?, "
-        + "buyer_id = ?";
+        + "buyer_id = ? "
+        + "WHERE furniture_id = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setString(1, furnitureDTO.getStatus().getValue());
       ps.setInt(2, furnitureDTO.getBuyerId());
+      ps.setInt(3, furnitureDTO.getFurnitureId());
       ps.execute();
       ps.close();
     } catch (SQLException e) {
@@ -166,12 +168,14 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     String query = "UPDATE satchofurniture.furniture "
         + "SET status = ?, "
         + "buyer_id = ?, "
-        + "special_sale_price = ?";
+        + "special_sale_price = ? "
+        + "WHERE furniture_id = ?";
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setString(1, furnitureDTO.getStatus().getValue());
       ps.setInt(2, furnitureDTO.getBuyerId());
       ps.setDouble(3, furnitureDTO.getSpecialSalePrice());
+      ps.setInt(4, furnitureDTO.getFurnitureId());
       ps.execute();
       ps.close();
     } catch (SQLException e) {

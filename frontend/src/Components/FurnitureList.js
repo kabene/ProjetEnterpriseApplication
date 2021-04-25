@@ -9,7 +9,7 @@ import {
   findFavImgSrc,
   generateLoadingAnimation
 } from "../utils/utils.js"
-
+let currentFurnitureId;
 let page = document.querySelector("#page");
 let mainPage;
 let furnitureList;
@@ -327,6 +327,7 @@ const displayShortElements = async (e) => {
     element.innerHTML = generateDot(classname);
   });
   let id = element.attributes["furnitureId"].value;
+  currentFurnitureId = id;
   let furniture = furnitureMap[id];
   if (!furniture) {
     await reloadPage();
@@ -545,7 +546,7 @@ const generatePhotoList = (furniture) => {
     let homePageCheckName = `checkboxHomepage${photo.photoId}`;
 
     let favChecked = ``;
-    if(photo.photoId === furniture.favouritePhoto.photoId) {
+    if(furniture.favouritePhoto && photo.photoId === furniture.favouritePhoto.photoId) {
       favChecked = `checked`;
     }
 
@@ -590,9 +591,15 @@ const generatePhotoList = (furniture) => {
       </div>
     </div>`;
   });
+  let pId
+  if(!furniture.favouritePhoto){
+    pId = "notFound";
+  }else {
+    pId = furniture.favouritePhoto.photoId;
+  }
   let res = `
   <form>
-    <input id="originalFav${furniture.furnitureId}" type="hidden" class="originalFav" value="${furniture.favouritePhoto.photoId}">
+    <input id="originalFav" type="hidden" photoId="${pId}" furnitureId="${furniture.furnitureId}"/>
     <div class="form-check d-flex flex-lg-fill flex-row">
       ${photos}
     </div>
@@ -628,12 +635,12 @@ const onVisibleCheckClicked = (e) => {
 
 const onSaveModifPhotos = async (e) => {
   e.preventDefault();
-  let cardFavImg = document.querySelector("#card-fav-photo");
-  let originalFavId = cardFavImg.getAttribute("original_fav_id");
-  let furnitureId = cardFavImg.getAttribute("furnitureid");
+  let originalFav = document.querySelector("#originalFav");
+  let originalFavPhotoId = originalFav.getAttribute("photoid");
+  let furnitureId = originalFav.getAttribute("furnitureid");
   //fav
   let selectedFavId = findSelectedFav();
-  if(originalFavId != selectedFavId) {
+  if(originalFavPhotoId != selectedFavId) {
     let newFurniture = await patchNewFav(furnitureId, selectedFavId);
     furnitureMap[furnitureId] = newFurniture;
   }
@@ -887,7 +894,7 @@ const generateAllTransitionBtns = (furniture) => {
   switch (furniture.status) {
     case "ACCEPTED":
       res += generateTransitionModal("ToAvailable",
-          "Indiquer disponible à la vente");
+          "Indiquer disponible à la vente",);
       res += generateTransitionModal("ToRestoration",
           "Indiquer en restauration");
       break;
@@ -903,6 +910,7 @@ const generateAllTransitionBtns = (furniture) => {
           "danger", "secondary");
       break;
     case "UNDER_OPTION":
+      res += generateTransitionModal("ToSold", "Indiquer vendu");
     case "SOLD":
     case "WITHDRAWN":
     case "REQUESTED_FOR_VISIT":
@@ -922,7 +930,7 @@ const generateModalBodyFromTransitionId = (transitionId) => {
     case "ToRestoration":
       return "Voulez-vous vraiment indiquer ce meuble comme allant en restauration ?"
     case "ToSold":
-      return "Voulez-vous vraiment indiquer ce meuble comme vendu ?"
+      return generateToSoldForm();
     case "Withdraw":
       return "Voulez-vous vraiment retirer ce meuble de la vente ? <br/><strong>Cette action est irréversible</strong>"
     default:
@@ -932,14 +940,42 @@ const generateModalBodyFromTransitionId = (transitionId) => {
 
 const generateToAvailableForm = () => {
   let res = `
-  <form>
     <div class="form-group">
       <label for="sellingPriceInput" class="mr-3">Prix de vente: </label>
-      <input type="number" id="sellingPriceInput" class="w-25" name="sellingPriceInput" min="0.01" step="0.01"> €
+      <input type="number" id="sellingPriceInput" class="w-25 mx-3 form-control" name="sellingPriceInput" min="0.01" step="0.01"/> €
     </div>
-  </form>
   `;
-  return res;
+  return `<div class="form-inline">${res}</div>`;
+}
+
+const generateToSoldForm = () => {
+  let furnitureId = currentFurnitureId;
+  let furniture = furnitureMap[furnitureId];
+  let status = furniture.status;
+  let res = "";
+  switch(status) {
+    case "AVAILABLE_FOR_SALE":
+      res = `
+        <div class="form-group">
+          <label for="buyerUsernameInput">Pseudo de l'acheteur: 
+            <input type="text" id="buyerUsernameInput" class="w-25 mx-3 my-1 form-control" name="buyerUsernameInput"/>
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="specialSalePriceInput">Prix spécial: 
+            <input type="number" id="specialSalePriceInput" class="w-25 mx-3 my-1 form-control" name="specialSalePriceInput" min="0.01" step="0.01"/> €
+          </label>
+        </div>`;
+      break;
+    case "UNDER_OPTION":
+      res = `
+        <div class="form-group">
+          Confirmer que le meuble a été vendu au client intéressé ?
+        </div>`;
+      break;
+    default:
+  }
+  return `<div class="form-inline">${res}</div>`;
 }
 
 const generateTransitionModal = (id, label, triggerColorClass = "primary",
@@ -967,6 +1003,8 @@ const findTransitionMethod = (btnId, furniture) => {
       return (e) => toRestoration(e, furniture);
     case "btnWithdraw":
       return (e) => withdraw(e, furniture);
+    case "btnToSold":
+        return (e) => toSold(e, furniture);
     default:
       return (e) => {
         e.preventDefault();
@@ -1054,7 +1092,53 @@ const withdraw = (e, furniture) => {//TODO
   });
 }
 
+const toSold = async (e, furniture) => {
+  e.preventDefault();
+  let specialSalePrice = "";
+  let buyerUsername;
+  let bundle;
+  if(furniture.status === "AVAILABLE_FOR_SALE"){
+    specialSalePrice = e.target.parentElement.parentElement.querySelector("#specialSalePriceInput").value;
+    buyerUsername = e.target.parentElement.parentElement.querySelector("#buyerUsernameInput").value;
+  }else if(furniture.status === "UNDER_OPTION"){
+    buyerUsername = furniture.option.user.username;
+  }
+  if(specialSalePrice !== "") {
+    bundle = {
+      buyerUsername: buyerUsername,
+      specialSalePrice: specialSalePrice,
+    }
+  }else {
+    bundle = {
+      buyerUsername: buyerUsername,
+    }
+  }
+  fetch("/furniture/sold/" + furniture.furnitureId, {
+    method: "PATCH",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    furnitureMap[data.furnitureId] = data;
+    loadCard(data.furnitureId);
+  }).catch((err) => {
+    console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
+  });
+  
+}
+
 const loadCard = (furnitureId) => {
+  currentFurnitureId = furnitureId;
   mainPage.innerHTML = generatePageHtml(false);
   generateCard(furnitureMap[furnitureId]);
   document.querySelectorAll(".toBeClicked").forEach(

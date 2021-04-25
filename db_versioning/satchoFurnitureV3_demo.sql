@@ -202,40 +202,26 @@ VALUES (3, '25-03-21', 'tous les jours de 15h à 18h', 5, '29-03-21 15:00:00', N
 
 
 INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (1, 4, 'accepted', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2);
+INTO satchoFurniture.furniture (seller_id, status, description, type_id)
+VALUES (4, 'accepted', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2);
 
 INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (2, 4, 'accepted', 'Large bureau 1m87 cm, deux colonnes de tiroirs', 6);
+INTO satchoFurniture.furniture (seller_id, status, description, type_id)
+VALUES (4, 'accepted', 'Large bureau 1m87 cm, deux colonnes de tiroirs', 6);
 
 INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (3, 4, 'refused', 'Table jardin en bois brut', 21);
-
-
-INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (4, 5, 'accepted', 'Table en chêne, pieds en fer forgé', 21);
-
-INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (5, 5, 'accepted', 'Secrétaire en acajou, marqueterie', 20);
-
-INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id)
-VALUES (5, 5, 'accepted', 'Secrétaire en acajou, marqueterie', 20);
-
+INTO satchoFurniture.furniture (seller_id, status, description, type_id)
+VALUES (4, 'refused', 'Table jardin en bois brut', 21);
 
 
 INSERT
-INTO satchoFurniture.requests_for_visit (request_id, request_date, time_slot, address_id, visit_date_time, explanatory_note, status, user_id)
-VALUES (1, '24-03-21', 'lundi de 18h à 22h', 4, '29-03-21 20:00:00', NULL, 'confirmed', 4);
+INTO satchoFurniture.furniture (seller_id, status, description, type_id)
+VALUES (5, 'accepted', 'Table en chêne, pieds en fer forgé', 21);
 
 INSERT
-INTO satchoFurniture.requests_for_visit
-VALUES (2, '25-03-21', 'lundi de 18h à 22h', 4, NULL, 'Meuble trop récent', 'canceled', 4);
+INTO satchoFurniture.furniture (seller_id, status, description, type_id)
+VALUES (5, 'accepted', 'Secrétaire en acajou, marqueterie', 20);
 
 INSERT
-INTO satchoFurniture.requests_for_visit
-VALUES (3, '25-03-21', 'tous les jours de 15h à 18h', 5, '29-03-21 15:00:00', NULL, 'confirmed', 5);
+INTO satchoFurniture.furniture (seller_id, status, description, type_id)
+VALUES (5, 'accepted', 'Secrétaire en acajou, marqueterie', 20);
