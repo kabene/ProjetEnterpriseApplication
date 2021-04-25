@@ -1,6 +1,5 @@
 package be.vinci.pae.persistence.dao;
 
-import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.RequestForVisitDTO;
 
 import java.util.List;
