@@ -151,7 +151,6 @@
     Modifie l'état d'une ressource de type 'furniture' vers 'in_restoration', et renvoie les informations mises à jour.
     </td>
 </tr>
-
 <tr>
     <td>furniture/available/{id}</td>
     <td>PATCH</td>
@@ -161,13 +160,20 @@
     Le body de la requête contient un double 'selling_price'.
     </td>
 </tr>
-
 <tr>
     <td>furniture/withdraw/{id}</td>
     <td>PATCH</td>
     <td>Admin</td>
     <td>
     Modifie l'état d'une ressource de type 'furniture' vers 'withdrawn', et renvoie les informations mises à jour.
+    </td>
+</tr>
+<tr>
+    <td>furniture/favouritePhoto/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+    Modifie la photo favorite d'une ressource de type 'furniture', et renvoie les informations mises à jour.
     </td>
 </tr>
 
@@ -181,16 +187,32 @@
     <th>Droits requis</th>
     <th>Operation</th>
 </tr>
-
+<tr>
+    <td>photos/</td>
+    <td>POST</td>
+    <td>Admin</td>
+    <td>
+      Ajoute une image a la base de donnée.
+    </td>
+</tr>
 <tr>
     <td>photos/homePage</td>
     <td>GET</td>
     <td>Aucun</td>
     <td>
-    Renvoie une liste de toutes les information sur les ressources de type "photo" qui sont visible dans la home page.
+        Renvoie une liste de toutes les information sur les ressources 
+        de type "photo" qui sont visible dans la home page.
     </td>
 </tr>
-
+<tr>
+    <td>photos/displayFlags/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>
+        Modifie les flags 'isVisible' et 'isOnHomePage' d'une ressource de type "photo" 
+        (Renvoie la ressource modifiée au format json)
+    </td>
+</tr>
 </table>
 
 <table style="caption-side: top">

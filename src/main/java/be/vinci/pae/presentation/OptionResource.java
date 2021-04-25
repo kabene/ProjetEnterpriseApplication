@@ -43,7 +43,6 @@ public class OptionResource {
    * @return list of option as json.
    */
   @GET
-  @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public Response findAll() {
@@ -65,7 +64,6 @@ public class OptionResource {
    * @return created resource as json.
    */
   @POST
-  @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize

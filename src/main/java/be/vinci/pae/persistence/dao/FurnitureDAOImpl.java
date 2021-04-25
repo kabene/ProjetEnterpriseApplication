@@ -124,7 +124,31 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
       ps.setDate(2, saleWithdrawalDate);
       ps.setInt(3, furnitureDTO.getFurnitureId());
       ps.execute();
+      ps.close();
       furnitureDTO.setSaleWithdrawalDate(saleWithdrawalDate.toString());
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return furnitureDTO;
+  }
+
+  /**
+   * updates the favourite photo of a specific entry in the furniture table.
+   *
+   * @param furnitureDTO : the furnitureDTO to modify (containing new favourite photo id)
+   * @return the modified furniture.
+   */
+  @Override
+  public FurnitureDTO updateFavouritePhoto(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET favourite_photo_id = ? "
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, furnitureDTO.getFavouritePhotoId());
+      ps.setInt(2, furnitureDTO.getFurnitureId());
+      ps.execute();
+      ps.close();
     } catch (SQLException e) {
       throw new InternalError(e);
     }

@@ -57,4 +57,15 @@ public enum FurnitureStatus {
         return null;
     }
   }
+
+  /**
+   * Verifies if the current Status instance is publicly available for non-admin users.
+   *
+   * @return whether the current Status instance is publicly available
+   */
+  public boolean isPubliclyAvailable() {
+    return this.equals(FurnitureStatus.AVAILABLE_FOR_SALE)
+        || this.equals(FurnitureStatus.SOLD)
+        || this.equals(FurnitureStatus.UNDER_OPTION);
+  }
 }

@@ -103,7 +103,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   /**
    * set the status of the furniture to AVAILABLE_FOR_SALE and set its selling price.
    *
-   * @param furnitureId the furniture id.
+   * @param furnitureId  the furniture id.
    * @param sellingPrice the selling price of the furniture.
    * @return the furniture modified.
    */
@@ -149,6 +149,37 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       furnitureDTO.setStatus(FurnitureStatus.WITHDRAWN);
       furnitureDTO = furnitureDAO.updateToWithdrawn(furnitureDTO);
+      completeFurnitureDTO(furnitureDTO);
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return furnitureDTO;
+  }
+
+  /**
+   * updates the favourite photo id of a specific piece of furniture.
+   *
+   * @param furnitureId : the furniture id
+   * @param photoId     : the new favourite photo id
+   * @return the updated furniture
+   */
+  @Override
+  public FurnitureDTO updateFavouritePhoto(int furnitureId, int photoId) {
+    FurnitureDTO furnitureDTO;
+    try {
+      dalServices.startTransaction();
+      FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(furnitureId);
+      PhotoDTO foundPhotoDTO = photoDAO.getPhotoById(photoId);
+      if (foundPhotoDTO.getFurnitureId() != foundFurnitureDTO.getFurnitureId()) {
+        throw new ConflictException(
+            "Error: The photo doesn't belong to the specified piece of furniture");
+      }
+      foundFurnitureDTO.setFavouritePhoto(foundPhotoDTO);
+      foundFurnitureDTO.setFavouritePhotoId(foundPhotoDTO.getPhotoId());
+
+      furnitureDTO = furnitureDAO.updateFavouritePhoto(foundFurnitureDTO);
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
     } catch (Throwable e) {
