@@ -111,33 +111,34 @@ public class FurnitureResource {
   /**
    * PATCH one piece of furniture to the 'in_restoration' state.
    *
-   * @param id : the furniture id
+   * @param furnitureId : the furniture id
    * @return : the updated piece of furniture
    */
   @PATCH
   @Path("/restoration/{id}")
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
-  public Response toRestoration(@PathParam("id") int id) {
+  public Response toRestoration(@PathParam("id") int furnitureId) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
-        .log(Level.INFO, "PATCH /furniture/restoration/" + id);
-    FurnitureDTO furnitureDTO = furnitureUCC.toRestoration(id);
+        .log(Level.INFO, "PATCH /furniture/restoration/" + furnitureId);
+    FurnitureDTO furnitureDTO = furnitureUCC.toRestoration(furnitureId);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 
   /**
    * PATCH one piece of furniture to the 'available_for_sale' state.
    *
-   * @param id      : the furniture id
-   * @param reqNode : the request body
+   * @param furnitureId : the furniture id
+   * @param reqNode     : the request body
    * @return : updated piece of furniture
    */
   @PATCH
   @Path("/available/{id}")
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
-  public Response toAvailable(@PathParam("id") int id, JsonNode reqNode) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /furniture/available/" + id);
+  public Response toAvailable(@PathParam("id") int furnitureId, JsonNode reqNode) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
+        .log(Level.INFO, "PATCH /furniture/available/" + furnitureId);
     if (reqNode == null || reqNode.get("selling_price") == null) {
       throw new BadRequestException("Error: malformed request");
     }
@@ -145,23 +146,43 @@ public class FurnitureResource {
     if (sellingPrice <= 0) {
       throw new BadRequestException("Error: malformed request");
     }
-    FurnitureDTO furnitureDTO = furnitureUCC.toAvailable(id, sellingPrice);
+    FurnitureDTO furnitureDTO = furnitureUCC.toAvailable(furnitureId, sellingPrice);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 
   /**
    * PATCH one piece of furniture to the 'withdrawn' state.
    *
-   * @param id : the furniture id
+   * @param furnitureId : the furniture id
    * @return : the updated piece of furniture
    */
   @PATCH
   @Path("/withdraw/{id}")
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
-  public Response withdraw(@PathParam("id") int id) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /furniture/withdraw/" + id);
-    FurnitureDTO furnitureDTO = furnitureUCC.withdraw(id);
+  public Response withdraw(@PathParam("id") int furnitureId) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
+        .log(Level.INFO, "PATCH /furniture/withdraw/" + furnitureId);
+    FurnitureDTO furnitureDTO = furnitureUCC.withdraw(furnitureId);
+    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
+  }
+
+  @PATCH
+  @Path("/sold/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response toSold(@PathParam("id") int furnitureId, JsonNode reqNode) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
+        .log(Level.INFO, "PATCH /furniture/sold/" + furnitureId);
+    if(reqNode == null || reqNode.get("buyerUsername") == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    String buyerUsername = reqNode.get("buyerUsername").asText();
+    Double specialSalePrice = null;
+    if(reqNode.get("specialSalePrice") != null) {
+      specialSalePrice = reqNode.get("specialSalePrice").asDouble();
+    }
+    FurnitureDTO furnitureDTO = furnitureUCC.toSold(furnitureId, buyerUsername, specialSalePrice);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 

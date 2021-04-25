@@ -5,6 +5,7 @@ import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.Status;
+import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
@@ -151,6 +152,42 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       furnitureDTO.setStatus(Status.WITHDRAWN);
       furnitureDTO = furnitureDAO.updateToWithdrawn(furnitureDTO);
+      completeFurnitureDTO(furnitureDTO);
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return furnitureDTO;
+  }
+
+  /**
+   * Sets the status of the furniture to SOLD and set its buyer + specialSellingPrice.
+   *
+   * @param furnitureId      : the furniture id
+   * @param buyerUsername    : the username of the buyer
+   * @param specialSalePrice : the special selling price (or null if there isn't one)
+   * @return the modified resource
+   */
+  @Override
+  public FurnitureDTO toSold(int furnitureId, String buyerUsername, Double specialSalePrice) {
+    FurnitureDTO furnitureDTO;
+    try {
+      dalServices.startTransaction();
+      UserDTO buyer = userDAO.findByUsername(buyerUsername);
+      if(specialSalePrice != null && !buyer.getRole().equals("antique_dealer")) {
+        throw new ConflictException("Error: only antique dealers can make special sales");
+      }
+      FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(furnitureId);
+      foundFurnitureDTO.setBuyerId(buyer.getId());
+      foundFurnitureDTO.setSpecialSalePrice(specialSalePrice);
+      foundFurnitureDTO.setStatus(Status.SOLD);
+      if(specialSalePrice == null) {
+        furnitureDAO.updateToSold(foundFurnitureDTO);
+      }else {
+        furnitureDAO.updateToSoldWithSpecialSale(foundFurnitureDTO);
+      }
+      furnitureDTO = furnitureDAO.findById(foundFurnitureDTO.getFurnitureId());
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
     } catch (Throwable e) {
