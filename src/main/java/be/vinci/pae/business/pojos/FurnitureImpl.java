@@ -1,6 +1,4 @@
 package be.vinci.pae.business.pojos;
-
-import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
@@ -10,9 +8,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @JsonInclude(Include.NON_NULL)
-public class FurnitureImpl implements FurnitureDTO {
+public class FurnitureImpl implements Furniture {
 
   @JsonView(Views.Public.class)
   private Integer furnitureId;
@@ -315,5 +314,15 @@ public class FurnitureImpl implements FurnitureDTO {
   @Override
   public void setAvailableForSale(Boolean isAvailableForSale) {
     this.availableForSale = isAvailableForSale;
+  }
+
+  /**
+   * Removes all photos that doesn't have the isVisible flag set to true from its 'photos' list.
+   */
+  @Override
+  public void removeInvisiblePhotos() {
+    this.photos = this.photos.parallelStream()
+        .filter(PhotoDTO::isVisible)
+        .collect(Collectors.toList());
   }
 }
