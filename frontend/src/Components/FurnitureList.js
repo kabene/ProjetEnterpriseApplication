@@ -851,15 +851,28 @@ const generateCardLabelKeyEntry = (label, id, value) => {
 }
 
 const generateTypeCardEntry = (furniture) => {
+  console.log(furniture);
   return generateCardLabelKeyEntry("Type", "typeCardEntry", furniture.type);
 }
 
 const generateBuyingPriceCardEntry = (furniture) => {
-  return "";//TODO
+  let res = "";
+  if(furniture.purchasePrice !== undefined) {
+    res = generateCardLabelKeyEntry("Prix d'achat", 
+    "purchase-price-card-entry", 
+    `${furniture.purchasePrice}€`);
+  }
+  return res;
 }
 
 const generateBuyingDateCardEntry = (furniture) => {
-  return "";//TODO
+  let res = "";
+  if(furniture.customerWithdrawalDate !== undefined) {
+    res = generateCardLabelKeyEntry("Date de retrait chez le vendeur", 
+    "purchase-price-card-entry", 
+    furniture.customerWithdrawalDate);
+  }
+  return res;
 }
 
 const generateUserCardEntry = (label, id, user) => {
@@ -1268,6 +1281,9 @@ const refreshDisplay = () => {
   displayNoResultMsg();
 }
 
+/**
+ * Displays a message in the table if it is empty
+ */
 const displayNoResultMsg = () => {
   let tbody = document.querySelector("#furniture-list-body");
   const noResultHTML = "";
