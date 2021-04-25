@@ -46,7 +46,7 @@ public class RequestForVisitResource {
   /**
    * GET all requestForVisit resources belongign to a user.
    *
-   * @param request : the request context
+   * @param request the request context
    * @return list of requestForVisit as json.
    */
   @GET
@@ -64,8 +64,8 @@ public class RequestForVisitResource {
   /**
    * PATCH (cancels) a request_for_visit by id.
    *
-   * @param requestId, the id of the request for visit.
-   * @param request,   the request context.
+   * @param requestId the id of the request for visit.
+   * @param request the request context.
    * @return the modified resource as json.
    */
   @PATCH
@@ -87,8 +87,8 @@ public class RequestForVisitResource {
   /**
    * PATCH (accept) a request_for_visit by id.
    *
-   * @param requestId, the id of the request for visit.
-   * @param request,   the request context.
+   * @param requestId the id of the request for visit.
+   * @param request the request context.
    * @return the modified resource as json.
    */
   @PATCH
@@ -111,7 +111,7 @@ public class RequestForVisitResource {
   /**
    * filter all the RequestForVisitDTO with Admin view and return a similar list.
    *
-   * @param requestDTOs, the list of dtos to filter.
+   * @param requestDTOs the list of dtos to filter.
    * @return a similar list than the one given in parameter filtered with Admin view.
    */
   private List<RequestForVisitDTO> getFilteredList(List<RequestForVisitDTO> requestDTOs) {

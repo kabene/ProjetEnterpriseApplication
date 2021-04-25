@@ -48,7 +48,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
   /**
    * list all the requests_for_visit belonging to the user.
    *
-   * @param currentUserId, the id of the current user.
+   * @param currentUserId the id of the current user.
    * @return a list of all the requests for visit.
    */
   @Override
@@ -84,14 +84,16 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
         throw new ConflictException("The request status can not be modified");
       }
       if (request.getUserId() != idCurrentUser) {
-        throw new UnauthorizedException("The requests do not belong to the user that called the request");
+        throw new UnauthorizedException(
+            "The requests do not belong to the user that called the request"
+        );
       }
       requestForVisitDAO.cancelRequest(idRequest);
       completeFurnitureDTO(request);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw(e);
+      throw (e);
     }
     return request;
   }
@@ -119,7 +121,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw(e);
+      throw (e);
     }
     return request;
   }
@@ -127,7 +129,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
   /**
    * complete the RequestForVisitDTO with the DTO objects missing.
    *
-   * @param dto : the RequestForVisitDTO to complete.
+   * @param dto the RequestForVisitDTO to complete.
    */
   private void completeFurnitureDTO(RequestForVisitDTO dto) {
     dto.setAddress(addressDAO.findById(dto.getAddressId()));

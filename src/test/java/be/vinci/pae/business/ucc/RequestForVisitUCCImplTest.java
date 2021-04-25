@@ -69,7 +69,7 @@ class RequestForVisitUCCImplTest {
     Mockito.when(requestForVisitDAO.findAll()).thenReturn(list);
 
     assertEquals(list, requestUCC.listRequest()
-        ,"called listRequest should have return all requests");
+        , "called listRequest should have return all requests");
 
     Mockito.verify(requestForVisitDAO).findAll();
     Mockito.verify(mockDal).startTransaction();
@@ -83,8 +83,8 @@ class RequestForVisitUCCImplTest {
     List<RequestForVisitDTO> list = Arrays.asList();
     Mockito.when(requestForVisitDAO.findAll()).thenReturn(list);
 
-    assertEquals(list, requestUCC.listRequest()
-        ,"called listRequest without data in the db should return an empty list");
+    assertEquals(list, requestUCC.listRequest(),
+        "called listRequest without data in the db should return an empty list");
 
     Mockito.verify(requestForVisitDAO).findAll();
     Mockito.verify(mockDal).startTransaction();
@@ -113,8 +113,8 @@ class RequestForVisitUCCImplTest {
     int userId = 1;
     Mockito.when(requestForVisitDAO.findByUserId(userId)).thenReturn(list);
 
-    assertEquals(list, requestUCC.listRequestByUserId(userId)
-        ,"called listRequestByUserId should have return all requests from client");
+    assertEquals(list, requestUCC.listRequestByUserId(userId),
+        "called listRequestByUserId should have return all requests from client");
 
     Mockito.verify(requestForVisitDAO).findByUserId(userId);
     Mockito.verify(mockDal).startTransaction();
@@ -129,8 +129,8 @@ class RequestForVisitUCCImplTest {
     int userId = 1;
     Mockito.when(requestForVisitDAO.findByUserId(userId)).thenReturn(list);
 
-    assertEquals(list, requestUCC.listRequestByUserId(userId)
-        ,"called listRequestByUserId with empty db should have return an empty list");
+    assertEquals(list, requestUCC.listRequestByUserId(userId),
+        "called listRequestByUserId with empty db should have return an empty list");
 
     Mockito.verify(requestForVisitDAO).findByUserId(userId);
     Mockito.verify(mockDal).startTransaction();
@@ -153,8 +153,8 @@ class RequestForVisitUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST cancelRequest() with the good userId and a good request " +
-      "should return the good request")
+  @DisplayName("TEST cancelRequest() with the good userId and a good request "
+      + "should return the good request")
   @Test
   void test_cancelRequest_shouldReturnRequest() {
     int requestId = 1;
@@ -163,9 +163,9 @@ class RequestForVisitUCCImplTest {
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(RequestStatus.WAITING);
     Mockito.when(mockRequestDTO1.getUserId()).thenReturn(userId);
 
-    assertEquals(mockRequestDTO1, requestUCC.cancelRequest(requestId, userId)
-        , "called cancelRequest() with the good userId and a good request " +
-            "should return the good request");
+    assertEquals(mockRequestDTO1, requestUCC.cancelRequest(requestId, userId),
+        "called cancelRequest() with the good userId and a good request "
+            +"should return the good request");
 
     Mockito.verify(requestForVisitDAO).cancelRequest(requestId);
     Mockito.verify(mockDal).startTransaction();
@@ -173,20 +173,19 @@ class RequestForVisitUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
   }
 
-  @DisplayName("TEST cancelRequest() with a bad userId and a good request " +
-      "should have thrown Unauthorized Exception")
+  @DisplayName("TEST cancelRequest() with a bad userId and a good request "
+      +"should have thrown Unauthorized Exception")
   @Test
   void test_cancelRequestWithBadUserId_shouldThrowUnauthorizedException() {
     int requestId = 1;
     int goodUserId = 1;
-    int badUserId = 2;
     Mockito.when(requestForVisitDAO.findByRequestId(requestId)).thenReturn(mockRequestDTO1);
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(RequestStatus.WAITING);
     Mockito.when(mockRequestDTO1.getUserId()).thenReturn(goodUserId);
 
-    assertThrows(UnauthorizedException.class, () -> requestUCC.cancelRequest(requestId, badUserId)
-        , "called cancelRequest() with a bad userId" +
-            "should have thrown Unauthorized Exception");
+    assertThrows(UnauthorizedException.class, () -> requestUCC.cancelRequest(requestId, 2),
+        "called cancelRequest() with a bad userId"
+            +"should have thrown Unauthorized Exception");
 
     Mockito.verify(requestForVisitDAO, Mockito.never()).cancelRequest(requestId);
     Mockito.verify(mockDal).startTransaction();
@@ -194,8 +193,8 @@ class RequestForVisitUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST cancelRequest() with a bad request " +
-      "should have thrown Conflict Exception")
+  @DisplayName("TEST cancelRequest() with a bad request "
+      +"should have thrown Conflict Exception")
   @ParameterizedTest
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
   void test_cancelRequestWithBadRequest_shouldThrowConflictException(RequestStatus requestStatus) {
@@ -205,9 +204,9 @@ class RequestForVisitUCCImplTest {
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(requestStatus);
     Mockito.when(mockRequestDTO1.getUserId()).thenReturn(userId);
 
-    assertThrows(ConflictException.class, () -> requestUCC.cancelRequest(requestId, userId)
-        , "called cancelRequest() with a bad request" +
-            "should have thrown Conflict Exception");
+    assertThrows(ConflictException.class, () -> requestUCC.cancelRequest(requestId, userId),
+        "called cancelRequest() with a bad request"
+            +"should have thrown Conflict Exception");
 
     Mockito.verify(requestForVisitDAO, Mockito.never()).cancelRequest(requestId);
     Mockito.verify(mockDal).startTransaction();
@@ -234,8 +233,8 @@ class RequestForVisitUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST acceptRequest() with the good userId and a good request " +
-      "should return the good request")
+  @DisplayName("TEST acceptRequest() with the good userId and a good request "
+      +"should return the good request")
   @Test
   void test_acceptRequest_shouldReturnRequest() {
     int requestId = 1;
@@ -244,9 +243,9 @@ class RequestForVisitUCCImplTest {
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(RequestStatus.WAITING);
     Mockito.when(mockRequestDTO1.getUserId()).thenReturn(userId);
 
-    assertEquals(mockRequestDTO1, requestUCC.acceptRequest(requestId, userId)
-        , "called acceptRequest() with the good userId and a good request " +
-            "should return the good request");
+    assertEquals(mockRequestDTO1, requestUCC.acceptRequest(requestId, userId),
+        "called acceptRequest() with the good userId and a good request "
+            + "should return the good request");
 
     Mockito.verify(requestForVisitDAO).acceptRequest(requestId);
     Mockito.verify(mockDal).startTransaction();
@@ -254,20 +253,19 @@ class RequestForVisitUCCImplTest {
     Mockito.verify(mockDal).commitTransaction();
   }
 
-  @DisplayName("TEST acceptRequest() with a bad userId and a good request " +
-      "should have thrown Unauthorized Exception")
+  @DisplayName("TEST acceptRequest() with a bad userId and a good request "
+      + "should have thrown Unauthorized Exception")
   @Test
   void test_acceptRequestWithBadUserId_shouldThrowUnauthorizedException() {
     int requestId = 1;
     int goodUserId = 1;
-    int badUserId = 2;
     Mockito.when(requestForVisitDAO.findByRequestId(requestId)).thenReturn(mockRequestDTO1);
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(RequestStatus.WAITING);
     Mockito.when(mockRequestDTO1.getUserId()).thenReturn(goodUserId);
 
-    assertThrows(UnauthorizedException.class, () -> requestUCC.acceptRequest(requestId, badUserId)
-        , "called acceptRequest() with a bad userId" +
-            "should have thrown Unauthorized Exception");
+    assertThrows(UnauthorizedException.class, () -> requestUCC.acceptRequest(requestId, 2),
+        "called acceptRequest() with a bad userId"
+            + "should have thrown Unauthorized Exception");
 
     Mockito.verify(requestForVisitDAO, Mockito.never()).acceptRequest(requestId);
     Mockito.verify(mockDal).startTransaction();
@@ -275,8 +273,8 @@ class RequestForVisitUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST acceptRequest() with a bad request " +
-      "should have thrown Conflict Exception")
+  @DisplayName("TEST acceptRequest() with a bad request "
+      + "should have thrown Conflict Exception")
   @ParameterizedTest
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
   void test_acceptRequestWithBadRequest_shouldThrowConflictException(RequestStatus requestStatus) {
@@ -286,9 +284,9 @@ class RequestForVisitUCCImplTest {
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(requestStatus);
     Mockito.when(mockRequestDTO1.getUserId()).thenReturn(userId);
 
-    assertThrows(ConflictException.class, () -> requestUCC.acceptRequest(requestId, userId)
-        , "called acceptRequest() with a bad request" +
-            "should have thrown Conflict Exception");
+    assertThrows(ConflictException.class, () -> requestUCC.acceptRequest(requestId, userId),
+        "called acceptRequest() with a bad request"
+            + "should have thrown Conflict Exception");
 
     Mockito.verify(requestForVisitDAO, Mockito.never()).acceptRequest(requestId);
     Mockito.verify(mockDal).startTransaction();
