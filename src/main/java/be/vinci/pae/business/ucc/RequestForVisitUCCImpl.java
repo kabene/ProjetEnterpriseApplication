@@ -93,7 +93,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw (e);
+      throw e;
     }
     return request;
   }
@@ -122,7 +122,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
-      throw (e);
+      throw e;
     }
     return request;
   }

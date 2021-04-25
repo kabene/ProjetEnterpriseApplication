@@ -2,7 +2,6 @@ package be.vinci.pae.business.dto;
 
 import be.vinci.pae.business.pojos.RequestForVisitImpl;
 import be.vinci.pae.business.pojos.RequestStatus;
-import be.vinci.pae.business.pojos.User;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(as = RequestForVisitImpl.class)
