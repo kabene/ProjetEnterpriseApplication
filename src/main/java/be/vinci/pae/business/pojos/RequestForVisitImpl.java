@@ -3,18 +3,30 @@ package be.vinci.pae.business.pojos;
 import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.utils.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 
 public class RequestForVisitImpl implements RequestForVisitDTO {
 
+  @JsonView(Views.AdminOnly.class)
   Integer requestId;
+  @JsonView(Views.AdminOnly.class)
   String requestDate;
+  @JsonView(Views.AdminOnly.class)
   String timeSlot;
+  @JsonView(Views.AdminOnly.class)
   Integer addressId;
+  @JsonView(Views.AdminOnly.class)
   AddressDTO address;
+  @JsonView(Views.AdminOnly.class)
   String visitDateTime;
+  @JsonView(Views.AdminOnly.class)
   String explanatoryNote;
+  @JsonView(Views.AdminOnly.class)
   RequestStatus requestStatus;
+  @JsonView(Views.AdminOnly.class)
   Integer userId;
+  @JsonView(Views.AdminOnly.class)
   UserDTO user;
 
 
