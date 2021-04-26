@@ -1079,7 +1079,7 @@ const findTransitionMethod = (btnId, furniture) => {
 
 //status transition methods
 
-const toAvailable = (e, furniture) => { //TODO
+const toAvailable = (e, furniture) => {
   e.preventDefault();
   let sellingPrice = e.target.parentElement.parentElement.querySelector(
       "#sellingPriceInput").value;
@@ -1109,7 +1109,7 @@ const toAvailable = (e, furniture) => { //TODO
   });
 }
 
-const toRestoration = (e, furniture) => {//TODO
+const toRestoration = (e, furniture) => {
   e.preventDefault();
   fetch("/furniture/restoration/" + furniture.furnitureId, {
     method: "PATCH",
@@ -1132,7 +1132,7 @@ const toRestoration = (e, furniture) => {//TODO
   });
 }
 
-const withdraw = (e, furniture) => {//TODO
+const withdraw = (e, furniture) => {
   e.preventDefault();
   fetch("/furniture/withdraw/" + furniture.furnitureId, {
     method: "PATCH",
