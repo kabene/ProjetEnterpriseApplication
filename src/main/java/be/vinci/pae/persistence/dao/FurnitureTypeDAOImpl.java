@@ -1,7 +1,5 @@
 package be.vinci.pae.persistence.dao;
 
-import be.vinci.pae.exceptions.NotFoundException;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -28,7 +26,6 @@ public class FurnitureTypeDAOImpl extends AbstractDAO implements FurnitureTypeDA
   public List<String> findAll() {
     return findAll("furniture_type");
   }
-
 
 
   /**

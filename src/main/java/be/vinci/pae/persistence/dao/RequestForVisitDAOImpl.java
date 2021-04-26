@@ -3,7 +3,6 @@ package be.vinci.pae.persistence.dao;
 import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.factories.RequestForVisitFactory;
 import be.vinci.pae.business.pojos.RequestStatus;
-import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 
 import java.sql.PreparedStatement;
