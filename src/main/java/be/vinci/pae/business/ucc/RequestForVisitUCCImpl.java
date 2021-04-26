@@ -69,13 +69,16 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
   }
 
   /**
-   * cancel a request for visit.
+   * change the status of a waiting request for visit.
    *
-   * @param idRequest id of the request for visit to cancel.
-   * @return an RequestForVisitDTO that represent the canceled one.
+   * @param idRequest     the id of the request for visit to change.
+   * @param currentUserId the id of the user asking for the change.
+   * @param requestStatus the status in which the request should be changed.
+   * @return an RequestForVisitDTO that represent the changed one.
    */
   @Override
-  public RequestForVisitDTO cancelRequest(int idRequest, int idCurrentUser) {
+  public RequestForVisitDTO changeWaitingRequestStatus(int idRequest, int currentUserId,
+                                                       RequestStatus requestStatus) {
     RequestForVisitDTO request;
     try {
       dalServices.startTransaction();
@@ -83,41 +86,15 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
       if (request.getRequestStatus() != RequestStatus.WAITING) {
         throw new ConflictException("The request status can not be modified");
       }
-      if (request.getUserId() != idCurrentUser) {
-        throw new UnauthorizedException(
-            "The requests do not belong to the user that called the request"
-        );
+      if (requestStatus.equals(RequestStatus.WAITING)) {
+        throw new ConflictException("Can not set a request to waiting");
       }
-      requestForVisitDAO.cancelRequest(idRequest);
-      completeFurnitureDTO(request);
-      dalServices.commitTransaction();
-    } catch (Throwable e) {
-      dalServices.rollbackTransaction();
-      throw e;
-    }
-    return request;
-  }
-
-  /**
-   * accept a request for visit.
-   *
-   * @param idRequest id of the request for visit to accept.
-   * @return an RequestForVisitDTO that represent the accepted one.
-   */
-  @Override
-  public RequestForVisitDTO acceptRequest(int idRequest, int idCurrentUser) {
-    RequestForVisitDTO request;
-    try {
-      dalServices.startTransaction();
-      request = requestForVisitDAO.findByRequestId(idRequest);
-      if (request.getRequestStatus() != RequestStatus.WAITING) {
-        throw new ConflictException("The request status can not be modified");
-      }
-      if (request.getUserId() != idCurrentUser) {
+      if (request.getUserId() != currentUserId) {
         throw new UnauthorizedException("The requests do not belong to the user "
             + "that called the request");
       }
-      requestForVisitDAO.acceptRequest(idRequest);
+      requestForVisitDAO.modifyStatusWaitingRequest(idRequest, requestStatus);
+      request.setRequestStatus(requestStatus);
       completeFurnitureDTO(request);
       dalServices.commitTransaction();
     } catch (Throwable e) {

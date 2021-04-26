@@ -2,6 +2,7 @@ package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.pojos.RequestStatus;
 import be.vinci.pae.business.ucc.RequestForVisitUCC;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.filters.Admin;
@@ -84,7 +85,7 @@ public class RequestForVisitResource {
     );
     UserDTO currentUser = (UserDTO) request.getProperty("user");
     RequestForVisitDTO requestForVisitDTO = requestForVisitUCC
-        .cancelRequest(requestId, currentUser.getId());
+        .changeWaitingRequestStatus(requestId, currentUser.getId(), RequestStatus.CANCELED);
     requestForVisitDTO = Json.filterAdminOnlyJsonView(requestForVisitDTO, RequestForVisitDTO.class);
     return Response.ok(requestForVisitDTO, MediaType.APPLICATION_JSON).build();
   }
@@ -107,7 +108,7 @@ public class RequestForVisitResource {
     );
     UserDTO currentUser = (UserDTO) request.getProperty("user");
     RequestForVisitDTO requestForVisitDTO = requestForVisitUCC
-        .acceptRequest(requestId, currentUser.getId());
+        .changeWaitingRequestStatus(requestId, currentUser.getId(), RequestStatus.CONFIRMED);
     requestForVisitDTO = Json.filterAdminOnlyJsonView(requestForVisitDTO, RequestForVisitDTO.class);
     return Response.ok(requestForVisitDTO, MediaType.APPLICATION_JSON).build();
   }

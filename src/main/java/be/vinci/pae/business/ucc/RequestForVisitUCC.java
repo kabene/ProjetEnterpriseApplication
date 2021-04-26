@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.RequestForVisitDTO;
+import be.vinci.pae.business.pojos.RequestStatus;
 
 import java.util.List;
 
@@ -22,18 +23,13 @@ public interface RequestForVisitUCC {
   List<RequestForVisitDTO> listRequestByUserId(int currentUserId);
 
   /**
-   * cancel a request for visit.
+   * change the status of a waiting request for visit.
    *
-   * @param idRequest id of the request for visit to cancel.
-   * @return an RequestForVisitDTO that represent the canceled one.
+   * @param idRequest     the id of the request for visit to change.
+   * @param currentUserId the id of the user asking for the change.
+   * @param requestStatus the status in which the request should be changed.
+   * @return an RequestForVisitDTO that represent the changed one.
    */
-  RequestForVisitDTO cancelRequest(int idRequest, int currentUserId);
-
-  /**
-   * accept a request for visit.
-   *
-   * @param idRequest id of the request for visit to accept.
-   * @return an RequestForVisitDTO that represent the accepted one.
-   */
-  RequestForVisitDTO acceptRequest(int idRequest, int currentUserId);
+  RequestForVisitDTO changeWaitingRequestStatus(int idRequest, int currentUserId,
+                                                RequestStatus requestStatus);
 }

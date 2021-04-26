@@ -1,6 +1,7 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.RequestForVisitDTO;
+import be.vinci.pae.business.pojos.RequestStatus;
 
 import java.util.List;
 
@@ -30,18 +31,12 @@ public interface RequestForVisitDAO {
   RequestForVisitDTO findByRequestId(int idRequest);
 
   /**
-   * cancel a request for visit.
+   * modify the status of a waiting request for visit.
    *
-   * @param idRequest the id of the request for visit to cancel.
+   * @param idRequest the id of the request for visit to modify.
+   * @param requestStatus the status in which the request should be modified.
    */
-  void cancelRequest(int idRequest);
-
-  /**
-   * accept a request for visit.
-   *
-   * @param idRequest the id of the request for visit to accept.
-   */
-  void acceptRequest(int idRequest);
+  void modifyStatusWaitingRequest(int idRequest, RequestStatus requestStatus);
 
 
 }
