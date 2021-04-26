@@ -47,10 +47,27 @@ public interface FurnitureDAO {
   FurnitureDTO updateToWithdrawn(FurnitureDTO furnitureDTO);
 
   /**
+   * updates the status of the furniture to SOLD and updates its buyerId.
+   *
+   * @param furnitureDTO : the furnitureDTO containing the new information
+   * @return the modified dto.
+   */
+  FurnitureDTO updateToSold(FurnitureDTO furnitureDTO);
+
+  /**
+   * updates the status of the furniture to SOLD and updates its buyerId and specialSalePrice.
+   *
+   * @param furnitureDTO : the furnitureDTO containing the new information
+   * @return the modified dto.
+   */
+  FurnitureDTO updateToSoldWithSpecialSale(FurnitureDTO furnitureDTO);
+
+  /**
    * updates the favourite photo of a specific entry in the furniture table.
    *
    * @param furnitureDTO : the furnitureDTO to modify (containing new favourite photo id)
    * @return the modified furniture.
    */
   FurnitureDTO updateFavouritePhoto(FurnitureDTO furnitureDTO);
+
 }
