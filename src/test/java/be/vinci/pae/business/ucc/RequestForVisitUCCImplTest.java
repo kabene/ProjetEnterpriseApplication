@@ -170,7 +170,7 @@ class RequestForVisitUCCImplTest {
 
   @DisplayName("TEST changeWaitingRequestStatus() with the good userId and a good request "
       + "should return the good request")
-  @Test
+  @ParameterizedTest
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
   void test_modifyStatusWaitingRequest_shouldReturnRequest(RequestStatus requestStatus) {
 
@@ -188,9 +188,9 @@ class RequestForVisitUCCImplTest {
 
   @DisplayName("TEST changeWaitingRequestStatus() with a bad userId and a good request "
       + "should have thrown Unauthorized Exception")
-  @Test
+  @ParameterizedTest
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
-  void test_changeWaitingRequestStatusWithBadUserId_shouldThrowUnauthorizedException
+  void test_changeWaitingRequestStatus_withBadUserId_shouldThrowUnauthorizedException
       (RequestStatus requestStatus) {
 
     assertThrows(UnauthorizedException.class, () -> requestUCC
@@ -209,7 +209,7 @@ class RequestForVisitUCCImplTest {
       + "should have thrown Conflict Exception")
   @ParameterizedTest
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
-  void test_changeWaitingRequestStatusWithNotWaitingRequest_shouldThrowConflictException
+  void test_changeWaitingRequestStatus_withNotWaitingRequest_shouldThrowConflictException
       (RequestStatus requestStatus) {
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(requestStatus);
 
@@ -227,9 +227,8 @@ class RequestForVisitUCCImplTest {
 
   @DisplayName("TEST changeWaitingRequestStatus() from waiting to waiting "
       + "should have thrown Conflict Exception")
-  @ParameterizedTest
-  void test_changeWaitingRequestStatusIntoWaiting_shouldThrowConflictException
-      (RequestStatus requestStatus) {
+  @Test
+  void test_changeWaitingRequestStatus_intoWaiting_shouldThrowConflictException() {
 
     assertThrows(ConflictException.class, () -> requestUCC
             .changeWaitingRequestStatus(defaultRequestId, defaultUserId, RequestStatus.WAITING),
@@ -237,16 +236,16 @@ class RequestForVisitUCCImplTest {
             + "should have thrown Conflict Exception");
 
     Mockito.verify(requestForVisitDAO, Mockito.never())
-        .modifyStatusWaitingRequest(defaultRequestId, requestStatus);
+        .modifyStatusWaitingRequest(defaultRequestId, RequestStatus.WAITING);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
   @DisplayName("TEST changeWaitingRequestStatus() DAO throws err, should rollback and throw err")
-  @Test
+  @ParameterizedTest
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
-  void test_cancelRequest_ErrorThrown_shouldThrowInternalErrorAndRollback
+  void test_changeWaitingRequestStatus_ErrorThrown_shouldThrowInternalErrorAndRollback
       (RequestStatus requestStatus) {
     Mockito.doThrow(new InternalError()).when(requestForVisitDAO)
         .modifyStatusWaitingRequest(defaultRequestId, requestStatus);
@@ -256,7 +255,7 @@ class RequestForVisitUCCImplTest {
         "DAO throws an Error, should rollback and throw InternalError");
 
     Mockito.verify(requestForVisitDAO)
-        .modifyStatusWaitingRequest(defaultUserId, requestStatus);
+        .modifyStatusWaitingRequest(defaultRequestId, requestStatus);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
