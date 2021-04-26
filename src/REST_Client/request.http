@@ -1,0 +1,16 @@
+
+GET {{baseUrl}}/requestForVisit/
+Authorization: {{jwt}}
+###
+
+GET {{baseUrl}}/requestForVisit/me
+Authorization: {{jwt}}
+###
+
+PATCH {{baseUrl}}/requestForVisit/cancel/1
+Authorization: {{jwt}}
+###
+
+PATCH {{baseUrl}}/requestForVisit/accept/1
+Authorization: {{jwt}}
+###
