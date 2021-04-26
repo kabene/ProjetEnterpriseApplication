@@ -4,6 +4,7 @@ import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.presentation.filters.AllowTakeover;
 import be.vinci.pae.presentation.filters.Authorize;
 import be.vinci.pae.presentation.filters.Admin;
 import be.vinci.pae.business.ucc.UserUCC;
