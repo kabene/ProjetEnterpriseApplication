@@ -182,12 +182,13 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       if (specialSalePrice != null && !buyer.getRole().equals("antique_dealer")) {
         throw new ConflictException("Error: only antique dealers can make special sales");
       }
-      if (foundFurnitureDTO.getStatus().equals(FurnitureStatus.UNDER_OPTION) && specialSalePrice != null) {
+      if (foundFurnitureDTO.getStatus().equals(FurnitureStatus.UNDER_OPTION)
+          && specialSalePrice != null) {
         throw new ConflictException(
             "Error: pieces of furniture under option cannot be sold with a special sale price");
       }
-      if (!foundFurnitureDTO.getStatus().equals(FurnitureStatus.AVAILABLE_FOR_SALE) && !foundFurnitureDTO
-          .getStatus().equals(FurnitureStatus.UNDER_OPTION)) {
+      if (!foundFurnitureDTO.getStatus().equals(FurnitureStatus.AVAILABLE_FOR_SALE)
+          && !foundFurnitureDTO.getStatus().equals(FurnitureStatus.UNDER_OPTION)) {
         throw new ConflictException("Error: invalid furniture status");
       }
       if (foundFurnitureDTO.getStatus().equals(FurnitureStatus.UNDER_OPTION)) {
