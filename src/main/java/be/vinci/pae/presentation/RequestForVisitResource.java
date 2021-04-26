@@ -77,7 +77,7 @@ public class RequestForVisitResource {
   @Path("/cancel/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  @Authorize
+  @Admin
   public Response cancel(@PathParam("id") int requestId, @Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(
         Level.INFO, "GET /requestForVisit/cancel/" + requestId
@@ -100,7 +100,7 @@ public class RequestForVisitResource {
   @Path("/accept/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  @Authorize
+  @Admin
   public Response accept(@PathParam("id") int requestId, @Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(
         Level.INFO, "GET /requestForVisit/accept/" + requestId
