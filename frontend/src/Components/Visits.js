@@ -1,6 +1,6 @@
-
 import {getUserSessionData} from "../utils/session";
 import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils";
+import {RedirectUrl} from "./Router";
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -81,7 +81,6 @@ const displayShortElements = async (e) => {
   returnBtn.className = "btn btn-dark m-3";
   let requestCardDiv = document.querySelector("#RequestCardDiv");
   requestCardDiv.innerHTML = generateLoadingAnimation();
-
   document.querySelectorAll(".toBeClicked").forEach(element => {
     element.className = "toBeClicked";
   });
@@ -113,22 +112,52 @@ const displayShortElements = async (e) => {
   }
 }
 
-// generators
+const onUserLinkClicked = (e) => {
+  e.preventDefault();
+  let link = e.target;
+  let userId = link.getAttribute("userid");
+  console.log(`Linking to user card (id: ${userId})`);
+  RedirectUrl("/users", userId);
+}
+
+
+const addTransitionBtnListeners = (request) => {
+  document.querySelectorAll(".transitionBtn").forEach(element => {
+    element.addEventListener("click",
+        findTransitionMethod(element.id, request));
+  })
+}
+
+const findTransitionMethod = (btnId, request) => {
+  switch (btnId) {
+    case "Accept":
+     // return (e) => toAvailable(e, furniture); TODO
+    case "Refuse":
+     // return (e) => toRestoration(e, furniture); TODO
+    default:
+      return (e) => {
+        e.preventDefault();
+        console.log("unrecognized button id: " + btnId); //'do nothing' method
+      };
+  }
+  ;
+}
+
 
 const generateCard = (request) => {
-  //TODO
-  /*
-  let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
-  let cardHTML = generateCardHTML(furniture);
-  furnitureCardDiv.innerHTML = cardHTML;
-  addTransitionBtnListeners(furniture);
+
+  let requestCardDiv = document.querySelector("#requestCardDiv");
+  let cardHTML = generateCardHTML(request);
+  requestCardDiv.innerHTML = cardHTML;
+  addTransitionBtnListeners(request);
   document.querySelectorAll(".favRadio").forEach((element) => {
     element.addEventListener("click", onFavRadioSelected);
   });
   document.querySelectorAll(".visibleCheckbox").forEach((element) => {
     element.addEventListener("click", onVisibleCheckClicked);
   });
-  document.querySelector("#saveBtnPhoto").addEventListener("click", onSaveModifPhotos);
+  document.querySelector("#saveBtnPhoto").addEventListener("click",
+      onSaveModifPhotos);
   document.querySelector("#home-tab").addEventListener("click", () => {
     openTab = "infos";
   });
@@ -137,8 +166,95 @@ const generateCard = (request) => {
   });
   addImage(furniture);
 
-   */
 }
+
+const generateCardHTML = (request) => {
+  const openTabObject = {
+    ariaSelected: "true",
+    tabClassname: "show active",
+    aClassname: "active",
+  }
+
+  const closedTabObject = {
+    ariaSelected: "false",
+    tabClassname: "",
+    aClassname: "",
+  }
+
+  let infoTab = openTabObject;
+  let photoTab = closedTabObject;
+  if (openTab === "photos") {
+    infoTab = closedTabObject;
+    photoTab = openTabObject;
+  }
+  let res = `
+  <div class="container emp-profile">
+    <form>
+      <div class="row">
+        <div class="col-12">
+          <div class="profile-head">
+            <div class="row">
+              <div class="col-md-6">
+              <!-- <p>generateCardFavouritePhotoImgTag(request)</p>-->
+              </div>
+              <div class="col-md-6 text-left">
+                <h5 id="descriptionCardEntry">${request.explanatoryNote}</h5>
+                <p class="proile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(
+      request)}</span></p>
+              </div>
+            </div>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link ${infoTab.aClassname}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${infoTab.ariaSelected}">Information</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link ${photoTab.aClassname}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${photoTab.ariaSelected}">Photos</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col-md-8">
+          <div class="tab-content profile-tab" id="myTabContent">
+            <div class="tab-pane fade ${infoTab.tabClassname}" id="home" role="tabpanel" aria-labelledby="home-tab">
+              ${generateClientCardEntry(request)}
+            </div>       
+            <div class="tab-pane fade ${photoTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+             
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>           
+  </div>
+  `;
+  return res;
+}
+
+const generateClientCardEntry = (request) => {
+  let res = "";
+  if (request.user) {
+    res = generateUserCardEntry("Client", "clientCardEntry", request.user);
+  }
+  return res;
+}
+
+const generateUserCardEntry = (label, id, user) => {
+  let res = `
+  <div class="row text-left">
+    <div class="col-md-6">
+      <label class="mr-3">${label}</label>
+    </div>
+    <div class="col-md-6">
+      <p id="${id}">${generateUserLink(
+      user)} (${user.firstName} ${user.lastName})</p>
+    </div>
+  </div>`;
+  return res;
+}
+
 /**
  * Reloads the page and re-fetch request information.
  * Displays loading animation while awaiting the fetch.
@@ -165,9 +281,9 @@ const generatePageHtml = (largeTable = true) => {
       <table id="${tableSize}Table" class="table table-hover border border-1 text-center">
         <thead class="table-secondary">
           <tr class="">
-            <th class="${notNeededClassName}">Client</th>
+            <th class="align-middle">Client</th>
             <th class="${notNeededClassName}">Adresse</th>
-            <th class="${notNeededClassName}">Date de la demande</th>
+            <th class="align-middle">Date de la demande</th>
              <th class="align-middle">États</th>
           </tr>
         </thead>
@@ -205,11 +321,10 @@ const generateRow = (request, notNeededClassName) => {
     statusHtml = generateColoredStatus(request);
     thumbnailClass += " w-50"
   } else { //short table
-    let infos = generateStatusInfos(request.status);
+    let infos = generateStatusInfos(request.requestStatus);
     statusHtml = generateDot(infos.classname);
     thumbnailClass += " w-100"
   }
-
   let res = `
     <tr class="toBeClicked" requestId="${request.requestId}">
       <th class="${notNeededClassName}"><p>${generateSellerLink(request.user)}</p></th>
@@ -217,7 +332,7 @@ const generateRow = (request, notNeededClassName) => {
   + request.address.buildingNumber + `,` + request.address.postcode + ` `
   + request.address.commune + ` ` + request.address.country}</p></th>
       <th class="${notNeededClassName}"><p>${request.requestDate}</p></th>
-      <th class="tableStatus text-center align-middle" status="${request.status}">${statusHtml}</th>
+      <th class="tableStatus text-center align-middle" status="${request.requestStatus}">${statusHtml}</th>
     </tr>`;
   return res;
 }
@@ -230,8 +345,14 @@ const generateSellerLink = (user) => {
 }
 
 const generateColoredStatus = (request) => {
-  let infos = generateStatusInfos(request.status);
+  let infos = generateStatusInfos(request.requestStatus);
   return `<p class="text-${infos.classname}">${infos.status}</p>`;
+}
+
+const generateBadgeStatus = (furniture) => {
+  let infos = generateStatusInfos(furniture.status);
+  let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.status}</span>`;
+  return res;
 }
 
 const generateUserLink = (user) => {
@@ -249,12 +370,16 @@ const generateStatusInfos = (status) => {
   }
 
   switch (status) {
-    case "confimed":
+    case "CONFIRMED":
       res.classname = "success";
       res.status = "Accepté";
       break;
-    case "canceled":
-      res.classname = "dark";
+    case "WAITING":
+      res.classname = "warning";
+      res.status = "en attente";
+      break;
+    case "CANCELED":
+      res.classname = "danger";
       res.status = "Refusé";
       break;
     default:
@@ -317,5 +442,4 @@ async function findVisitRequestList() {
 }
 
 export default Visits;
-
 
