@@ -55,14 +55,25 @@ Content-Type: application/json
 > {%
  client.global.set("jwt", response.body.token);
  %}
+###
 
+GET {{baseUrl}}/users/takeover/5
+Authorization: {{jwt}}
 
-####
+> {%
+client.global.set("takeover_jwt", response.body.token);
+%}
+###
+
 // me -> get current user
 GET {{baseUrl}}/users/me
 Authorization: {{jwt}}
 ###
 
+// me -> get takeover user
+GET {{baseUrl}}/users/me
+Authorization: {{takeover_jwt}}
+###
 
 // remember me -> generate & store new jwt
 GET {{baseUrl}}/users/login
