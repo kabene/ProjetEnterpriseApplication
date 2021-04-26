@@ -1,8 +1,6 @@
-# RESTful JAX-RS Application : Gestion securisee (JWT) de donnees de users
+# RESTful JAX-RS Application : Satcho Furniture
 
 ## RESTful API : operations disponibles
-
-### Operations associees a la gestion des utilisateurs et l'authentification
 
 <table style="caption-side: top">
 <caption>Operations sur les ressources de type "User"</caption>
@@ -244,7 +242,7 @@
     <td>options/</td>
     <td>POST</td>
     <td>Admin</td>
-    <td>Renvoie l'option crée</td>
+    <td>Crée une ressource de type option et la renvoie.</td>
 </tr>
 <tr>
     <td>options/cancel/{id}</td>
@@ -253,5 +251,42 @@
     <td>
     Annule une ressource de type option et renvoie l'option modifiée. 
     </td>
+</tr>
+</table>
+
+<table style="caption-side: top">
+<caption>Operations sur les ressources de type "Request for visit"</caption>
+<tr>
+    <th>URI</th>
+    <th>Methode</th>
+    <th>Droits requis</th>
+    <th>Operation</th>
+</tr>
+<tr>
+    <td>requestForVisit/</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>Renvoie une liste de toutes les ressources de type request_for_visit.</td>
+</tr>
+
+<tr>
+    <td>requestForVisit/cancel/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>Annule une ressource de type request_for_visit et la renvoie.</td>
+</tr>
+
+<tr>
+    <td>requestForVisit/confirm/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>Accepte une ressource de type request_for_visit et la renvoie.</td>
+</tr>
+
+<tr>
+    <td>requestForVisit/me</td>
+    <td>GET</td>
+    <td>JWT</td>
+    <td>Renvoie une liste de toutes les ressources de type request_for_visit appartenant à l'utilisateur.</td>
 </tr>
 </table>

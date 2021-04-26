@@ -55,9 +55,22 @@ Content-Type: application/json
 > {%
  client.global.set("jwt", response.body.token);
  %}
-
-
 ####
+
+//login with remember me -> store jwt
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "username": "achil",
+  "password": "mdpusr.2",
+  "rememberMe": true
+}
+> {%
+ client.global.set("jwt", response.body.token);
+ %}
+####
+
 // me -> get current user
 GET {{baseUrl}}/users/me
 Authorization: {{jwt}}
