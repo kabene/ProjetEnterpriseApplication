@@ -2,8 +2,6 @@ import {getUserSessionData} from "../utils/session";
 import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils";
 import {
   displayErrorMessage,
-  importAllFurnitureImg,
-  findFurnitureImgSrcFromFilename,
   findFavImgSrc,
   generateLoadingAnimation
 } from "../utils/utils.js"
@@ -114,7 +112,7 @@ const displayShortElements = async (e) => {
 // generators
 
 /**
- * Reloads the page and re-fetch furniture information.
+ * Reloads the page and re-fetch request information.
  * Displays loading animation while awaiting the fetch.
  */
 const reloadPage = async () => {
@@ -140,8 +138,6 @@ const generatePageHtml = (largeTable = true) => {
       <table id="${tableSize}Table" class="table table-hover border border-1 text-center">
         <thead class="table-secondary">
           <tr class="">
-            <th class="w-25"></th>
-            <th class="align-middle">Description</th>
             <th class="${notNeededClassName}">Client</th>
             <th class="align-middle">État</th>
             <th class="${notNeededClassName}">Adresse</th>
@@ -161,6 +157,58 @@ const generatePageHtml = (largeTable = true) => {
   return res;
 }
 
+const generateAllRows = (notNeededClassName) => {
+  let res = "";
+  requestList.forEach(request => {
+    if (!requestMap[request.requestId]) {
+      requestMap[request.requestId] = request;
+    } else if (request !== requestMap[request.requestId]) {
+      request = requestMap[request.requestId];
+    }
+    res += generateRow(request, notNeededClassName);
+    requestMap[request.requestId] = request;
+  });
+  return res;
+}
+
+const generateRow = (request, notNeededClassName) => {
+  let statusHtml;
+  let thumbnailClass = "mx-auto";
+
+  if (!notNeededClassName.includes("d-none")) { //large table
+    statusHtml = generateColoredStatus(request);
+    thumbnailClass += " w-50"
+  } else { //short table
+    let infos = generateStatusInfos(request.status);
+    statusHtml = generateDot(infos.classname);
+    thumbnailClass += " w-100"
+  }
+
+  let res = `
+    <tr class="toBeClicked" requestId="${request.requestId}">
+      <th class="${notNeededClassName}"><p>${generateSellerLink(request.userId)}</p></th>
+      <th class="${notNeededClassName}"><p>${request.requestDate}</p></th>
+      <th class="${notNeededClassName}"><p>${request.address.street + ` ` +  request.address.buildingNumber + `,` +  request.address.postcode + ` ` + request.address.commune + ` ` + request.address.country }</p></th>
+      <th class="tableStatus text-center align-middle" status="${request.status}">${statusHtml}</th>
+    </tr>`;
+  return res;
+}
+const generateSellerLink = (request) => {
+  let res = "";
+  if (request.userId) {
+    res = generateUserLink(request.userId);
+  }
+  return res;
+}
+
+const generateColoredStatus = (request) => {
+  let infos = generateStatusInfos(request.status);
+  return `<p class="text-${infos.classname}">${infos.status}</p>`;
+}
+
+const generateUserLink = (user) => {
+  return `<a href="#" userId="${user.id}" class="userLink">${user.username}</a>`;
+}
 
 const generateDot = (colorClassName) => {
   return `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
@@ -188,9 +236,6 @@ const generateStatusInfos = (status) => {
   return res;
 }
 
-
-
-
 const removeTimeouts = () => {
   timeouts.forEach(timeout => {
     clearTimeout(timeout);
@@ -201,7 +246,19 @@ const changeContainerId = () => {
   document.querySelector('#largeTableContainer').id = "shortTableContainer";
 }
 
-
+const loadCard = (requestId) => {
+  mainPage.innerHTML = generatePageHtml(false);
+ // generateCard(requestMap[requestId]); TODO
+  document.querySelectorAll(".toBeClicked").forEach(
+      (element) => {
+        let elementReqId = element.getAttribute("requestid");
+        if(elementReqId == requestId) {
+          element.className = "toBeClicked bg-secondary text-light";
+        }
+        element.addEventListener("click", displayShortElements)
+      });
+  document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
+}
 
 
 
