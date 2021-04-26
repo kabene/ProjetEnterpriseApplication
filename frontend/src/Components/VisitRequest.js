@@ -9,6 +9,8 @@ let requestMap = [];
 let timeouts = [];
 let currentUser;
 let pageHTML;
+let currentRequestId;
+let isDisplayingLargeTable;
 let openTab = "infos";
 
 const VisitRequest = async (id) => {
@@ -101,11 +103,43 @@ const displayShortElements = async (e) => {
   if (!request) {
     await reloadPage();
   }
-
+  if (request) {
+    currentRequestId = id;
+    generateCard(request);
+    document.querySelectorAll(".userLink").forEach(
+        (link) => link.addEventListener("click", onUserLinkClicked));
+    isDisplayingLargeTable = false;
+  } else {
+    displayErrorMessage("errorDiv", new Error("Request introuvable :'<"));
+  }
 }
 
 // generators
 
+const generateCard = (request) => {
+  //TODO
+  /*
+  let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
+  let cardHTML = generateCardHTML(furniture);
+  furnitureCardDiv.innerHTML = cardHTML;
+  addTransitionBtnListeners(furniture);
+  document.querySelectorAll(".favRadio").forEach((element) => {
+    element.addEventListener("click", onFavRadioSelected);
+  });
+  document.querySelectorAll(".visibleCheckbox").forEach((element) => {
+    element.addEventListener("click", onVisibleCheckClicked);
+  });
+  document.querySelector("#saveBtnPhoto").addEventListener("click", onSaveModifPhotos);
+  document.querySelector("#home-tab").addEventListener("click", () => {
+    openTab = "infos";
+  });
+  document.querySelector("#profile-tab").addEventListener("click", () => {
+    openTab = "photos";
+  });
+  addImage(furniture);
+
+   */
+}
 /**
  * Reloads the page and re-fetch request information.
  * Displays loading animation while awaiting the fetch.
@@ -243,7 +277,7 @@ const changeContainerId = () => {
 
 const loadCard = (requestId) => {
   mainPage.innerHTML = generatePageHtml(false);
- // generateCard(requestMap[requestId]); TODO
+  generateCard(requestMap[requestId]);
   document.querySelectorAll(".toBeClicked").forEach(
       (element) => {
         let elementReqId = element.getAttribute("requestid");
@@ -285,8 +319,5 @@ async function findVisitRequestList() {
   });
 }
 
-const displayUsercard = async () => {
-
-}
 
 export default VisitRequest;
