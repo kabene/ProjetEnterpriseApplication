@@ -1,29 +1,31 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
-import {getUserLocalData, getUserSessionData} from "../utils/session.js";
+import {getUserSessionData} from "../utils/session.js";
 import {
   displayErrorMessage,
-  importAllFurnitureImg,
-  findFurnitureImgSrcFromFilename,
-  findFavImgSrc,
-  generateLoadingAnimation
+  generateLoadingAnimation,
 } from "../utils/utils.js"
-let currentFurnitureId;
 let page = document.querySelector("#page");
 let mainPage;
 let furnitureList;
 let furnitureMap = [];
 let timeouts = [];
 let currentUser;
-let pageHTML;
-let images = importAllFurnitureImg();
+let isDisplayingLargeTable; //state of display (true = large list, false = furniture card)
+let currentFurnitureId; //to read only if largeTable === false
 let openTab = "infos";
+const emptyFilter = {
+  username: "",
+  price: "-1",
+  status: "",
+}
+let activeFilters = {... emptyFilter};
 
 const FurnitureList = async (id) => {
   currentUser = getUserSessionData();
 
-  pageHTML = `
+  let pageHTML = `
   <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
@@ -31,17 +33,22 @@ const FurnitureList = async (id) => {
   await findFurnitureList();
 
   if (!id) {
-    pageHTML = generatePageHtml();
-
-    mainPage.innerHTML = pageHTML;
-
-    document.querySelectorAll(".toBeClicked").forEach(
-        element => element.addEventListener("click", displayShortElements));
-    document.querySelector("#buttonReturn").addEventListener("click",
-        displayLargeTable);
+    generateLargeTablePage();
   } else {
     loadCard(id);
   }
+  displayNoResultMsg();
+}
+
+const generateLargeTablePage = () => {
+  isDisplayingLargeTable = true;
+  let pageHTML = generatePageHtml();
+  mainPage.innerHTML = pageHTML;
+
+  placeFilterForm();
+  document.querySelectorAll(".toBeClicked").forEach(
+    element => element.addEventListener("click", displayShortElements));
+  document.querySelector("#buttonReturn").addEventListener("click",displayLargeTable);
 }
 
 /**
@@ -98,6 +105,39 @@ const generatePageHtml = (largeTable = true) => {
     shortElementClassName = "shortElement";
   }
   let res = `
+  <div class="container-fluid px-5 py-3 border border-top-0 border-right-0 border-left-0">
+    <h3>Filtrer les meubles:</h3>
+    <form class="form-inline">
+      <div class="form-group mx-3">
+        <input type="text" class="form-control" id="username-filter" placeholder="Filtrer par pseudo"/>
+      </div>
+      <div class="form-group mx-3">
+        <select class="form-control" id="price-filter">
+          <option value="-1">Filtrer les prix</option>
+          <option value="1">1-10€</option>
+          <option value="10">11-100€</option>
+          <option value="100">101-500€</option>
+          <option value="500">501-1000€</option>
+          <option value="1000">+1000€</option>
+        </select>
+      </div> 
+      <div class="form-group mx-3">
+        <select class="form-control" id="status-filter">
+          <option value="">Filtrer les états</option>
+          <option value="REQUESTED_FOR_VISIT">En demande de visite</option>
+          <option value="ACCEPTED">Accepté</option>
+          <option value="IN_RESTORATION">En restauration</option>
+          <option value="AVAILABLE_FOR_SALE">Disponible à la vente</option>
+          <option value="UNDER_OPTION">Sous option</option>
+          <option value="SOLD">Vendu</option>
+          <option value="WITHDRAWN">Retiré de la vente</option>
+          <option value="REFUSED">Refusé</option>
+        </select>
+      </div>
+      <button type="submit" id="apply-filters-btn" class="btn btn-primary mx-2">Appliquer</button>
+      <button type="submit" id="clear-filters-btn" class="btn btn-secondary mx-2">Retirer les filtres</button>
+    </form>
+  </div>
   <div id="${tableSize}TableContainer" class="px-0">
     <div>
       <button type="button" id="buttonReturn" class="btn btn-dark m-3 ${shortElementClassName}">Retour à la liste</button>
@@ -114,9 +154,7 @@ const generatePageHtml = (largeTable = true) => {
             <th class="${notNeededClassName}">Prix spécial</th>
           </tr>
         </thead>
-        <tbody>
-          ${generateAllRows(notNeededClassName)}
-        </tbody>
+        <tbody id="furniture-list-body">${generateAllRows(notNeededClassName)}</tbody>
       </table>
     </div>
     <div class="shortElement ${shortElementClassName}" id="furnitureCardDiv">Hello</div>
@@ -134,7 +172,9 @@ const generateAllRows = (notNeededClassName) => {
     } else if (furniture !== furnitureMap[furniture.furnitureId]) {
       furniture = furnitureMap[furniture.furnitureId];
     }
-    res += generateRow(furniture, notNeededClassName);
+    if(respectsAllActiveFilters(furniture)){
+      res += generateRow(furniture, notNeededClassName);
+    }
     furnitureMap[furniture.furnitureId] = furniture;
   });
   return res;
@@ -327,15 +367,16 @@ const displayShortElements = async (e) => {
     element.innerHTML = generateDot(classname);
   });
   let id = element.attributes["furnitureId"].value;
-  currentFurnitureId = id;
   let furniture = furnitureMap[id];
   if (!furniture) {
     await reloadPage();
   }
   if (furniture) {
+    currentFurnitureId = id;
     generateCard(furniture);
     document.querySelectorAll(".userLink").forEach(
-        (link) => link.addEventListener("click", onUserLinkClicked))
+        (link) => link.addEventListener("click", onUserLinkClicked));
+      isDisplayingLargeTable = false;
   } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
   }
@@ -350,6 +391,7 @@ const onUserLinkClicked = (e) => {
 }
 
 const displayLargeTable = () => {
+  isDisplayingLargeTable = true;
   openTab = "infos";
   document.querySelector('#shortTableContainer').id = "largeTableContainer";
   timeouts.push(setTimeout(displayLargeElements, 750));
@@ -819,11 +861,23 @@ const generateTypeCardEntry = (furniture) => {
 }
 
 const generateBuyingPriceCardEntry = (furniture) => {
-  return "";//TODO
+  let res = "";
+  if(furniture.purchasePrice !== undefined) {
+    res = generateCardLabelKeyEntry("Prix d'achat",
+    "purchase-price-card-entry",
+    `${furniture.purchasePrice}€`);
+  }
+  return res;
 }
 
 const generateBuyingDateCardEntry = (furniture) => {
-  return "";//TODO
+  let res = "";
+  if(furniture.customerWithdrawalDate !== undefined) {
+    res = generateCardLabelKeyEntry("Date de retrait chez le vendeur",
+    "purchase-price-card-entry",
+    furniture.customerWithdrawalDate);
+  }
+  return res;
 }
 
 const generateUserCardEntry = (label, id, user) => {
@@ -903,7 +957,7 @@ const generateAllTransitionBtns = (furniture) => {
   switch (furniture.status) {
     case "ACCEPTED":
       res += generateTransitionModal("ToAvailable",
-          "Indiquer disponible à la vente",);
+          "Indiquer disponible à la vente");
       res += generateTransitionModal("ToRestoration",
           "Indiquer en restauration");
       break;
@@ -1143,10 +1197,11 @@ const toSold = async (e, furniture) => {
     console.log("Erreur de fetch !! :´\n" + err);
     displayErrorMessage("errorDiv", err);
   });
-  
+
 }
 
 const loadCard = (furnitureId) => {
+  isDisplayingLargeTable = false;
   currentFurnitureId = furnitureId;
   mainPage.innerHTML = generatePageHtml(false);
   generateCard(furnitureMap[furnitureId]);
@@ -1159,6 +1214,171 @@ const loadCard = (furnitureId) => {
       element.addEventListener("click", displayShortElements)
     });
   document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
+  placeFilterForm();
+}
+
+/**
+ * Verifies if a piece of furniture respects all active filters.
+ *
+ * @param {*} furniture : full furniture object
+ * @returns {boolean} true if furniture respects all active filters.
+ */
+const respectsAllActiveFilters = (furniture) => {
+  let res = true;
+  res = res && respectsUserFilter(furniture);
+  res = res && respectsPriceFilters(furniture);
+  res = res && respectsStatusFilter(furniture);
+  return res;
+}
+
+/**
+ * Verifies if a piece of furniture respects the active username filter.
+ * (filter is contained inside of the seller/buyer's username)
+ *
+ * @param {*} furniture full furniture object
+ * @returns {boolean} true if furniture respects active username filter.
+ */
+const respectsUserFilter = (furniture) => {
+  if (activeFilters.username === "") {
+    return true; //inactive filter -> TRUE
+  }
+  if(!furniture.seller && !furniture.buyer) return false; // active filter + no user -> FALSE
+
+  if(furniture.seller !== undefined) {
+    if(furniture.seller.username.includes(activeFilters.username)) {
+      return true;
+    }
+  }
+  if(!furniture.buyer){
+    return false;
+  }else {
+    if(furniture.buyer.username.includes(activeFilters.username)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Verifies if a piece of furniture respects the active price filters.
+ *
+ * @param {*} furniture
+ * @returns {boolean} true if furniture respects active price filters.
+ */
+const respectsPriceFilters = (furniture) => {
+  if(activeFilters.price === "-1") return true; //inactive filters
+  let minPrice = -1;
+  let maxPrice = -1;
+  switch(activeFilters.price) {
+    case "1":
+      minPrice = 1;
+      maxPrice = 10;
+      break;
+    case "10":
+      minPrice = 11;
+      maxPrice = 100;
+      break;
+    case "100":
+      minPrice = 101;
+      maxPrice = 500;
+      break;
+    case "500":
+      minPrice = 501;
+      maxPrice = 1000;
+      break;
+    case "1000":
+      minPrice = 1001;
+      maxPrice = -1;
+      break;
+    default:
+  }
+  //active filters
+  if(!furniture.sellingPrice) return false; //no price
+
+  if(minPrice !== -1 && furniture.sellingPrice < minPrice) return false; //under minPrice
+  if(maxPrice !== -1 && furniture.sellingPrice > maxPrice) return false; //above maxPrice
+
+  return true;
+}
+
+/**
+ * Verifies if a piece of furniture respects the active status filter.
+ *
+ * @param {*} furniture full furniture object
+ * @returns {boolean} true if furniture respects active status filter.
+ */
+const respectsStatusFilter = (furniture) => {
+  if(activeFilters.status === "") return true; //inactive filter
+  return furniture.status === activeFilters.status;
+}
+
+/**
+ * remove all applied filter, then refresh display
+ */
+const clearFilters = (e) => {
+  e.preventDefault();
+  activeFilters = {... emptyFilter};
+  refreshDisplay();
+}
+
+const applyFilters = (e) => {
+  e.preventDefault();
+
+  let usernameInput = document.querySelector("#username-filter");
+  let priceInput = document.querySelector("#price-filter");
+  let statusInput = document.querySelector("#status-filter");
+
+  activeFilters.username = usernameInput.value;
+  activeFilters.price = priceInput.value;
+  activeFilters.status = statusInput.value;
+
+  refreshDisplay();
+}
+
+/**
+ * Sets the filter form to the current active filter values,
+ * and adds its necessary eventListeners
+ */
+const placeFilterForm = () => {
+
+  let usernameInput = document.querySelector("#username-filter");
+  let priceInput = document.querySelector("#price-filter");
+  let statusInput = document.querySelector("#status-filter");
+
+  usernameInput.value = activeFilters.username;
+  priceInput.value = activeFilters.price;
+  statusInput.value = activeFilters.status;
+
+  let applyFiltersBtn = document.querySelector("#apply-filters-btn");
+  let clearFiltersBtn = document.querySelector("#clear-filters-btn");
+
+  applyFiltersBtn.addEventListener("click", applyFilters);
+  clearFiltersBtn.addEventListener("click", clearFilters);
+}
+
+/**
+ * Refresh the current display
+ */
+const refreshDisplay = () => {
+  if(isDisplayingLargeTable === false && typeof(currentFurnitureId) !== undefined){
+    let furnitureId = currentFurnitureId;
+    loadCard(furnitureId);
+  }else {
+    generateLargeTablePage();
+  }
+  placeFilterForm();
+  displayNoResultMsg();
+}
+
+/**
+ * Displays a message in the table if it is empty
+ */
+const displayNoResultMsg = () => {
+  let tbody = document.querySelector("#furniture-list-body");
+  const noResultHTML = "";
+  if (tbody.innerHTML === noResultHTML){
+    tbody.innerHTML = `<th colspan="8"><p>Aucun résultat</p></th>`;
+  }
 }
 
 export default FurnitureList;
