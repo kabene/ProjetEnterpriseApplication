@@ -12,7 +12,6 @@
     <th>Droits requis</th>
     <th>Operation</th>
 </tr>
-
 <tr>
     <td>users/login</td>
     <td>GET</td>
@@ -96,6 +95,14 @@
     Renvoie le user DTO et set le waiting du user précis à false et si la validation est positive il le garde son role si non il set le role à customer.
     </td>
 </tr>
+<tr>
+    <td>users/takeover/{id}</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>
+    Renvoie un JWT de prise de contrôle, et une ressource de type "user" contenant les informations de l'utilisateur contrôlé.
+    </td>
+</tr>
 </table>
 
 <table style="caption-side: top">
@@ -106,7 +113,6 @@
     <th>Droits requis</th>
     <th>Operation</th>
 </tr>
-
 <tr>
     <td>furniture/{id}</td>
     <td>GET</td>
@@ -116,7 +122,6 @@
     (La ressource doit être dans l'état 'disponible à la vente' ou 'vendu')
     </td>
 </tr>
-
 <tr>
     <td>furniture/detail/{id}</td>
     <td>GET</td>
@@ -125,7 +130,6 @@
     Renvoie les informations reservees aux admins d'une ressource de type "furniture".
     </td>
 </tr>
-
 <tr>
     <td>furniture/</td>
     <td>GET</td>
@@ -135,7 +139,6 @@
     étant dans l'état 'disponible à la vente' ou 'vendu'.
     </td>
 </tr>
-
 <tr>
     <td>furniture/detail</td>
     <td>GET</td>
@@ -144,7 +147,6 @@
     Renvoie une liste contenant les informations reservees aux admins de toutes les ressources de type "furniture".
     </td>
 </tr>
-
 <tr>
     <td>furniture/restoration/{id}</td>
     <td>PATCH</td>
@@ -187,7 +189,6 @@
     Modifie la photo favorite d'une ressource de type 'furniture', et renvoie les informations mises à jour.
     </td>
 </tr>
-
 </table>
 
 <table style="caption-side: top">
