@@ -268,6 +268,27 @@ public class UserResource {
   }
 
   /**
+   * GET a take over jwt for a specific user account.
+   *
+   * @param takeoverId : user id to take over
+   * @return take over jwt + UserDTO containing user information.
+   */
+  @GET
+  @Path("/takeover/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response takeOver(@Context ContainerRequest request, @PathParam("id") int takeoverId) {
+    UserDTO currentAdminDTO = (UserDTO) request.getProperty("user");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/takeover/" + takeoverId + " (admin: " + currentAdminDTO.getId() + ")");
+
+    UserDTO takeoverUserDTO = userUCC.getOne(takeoverId);
+
+    String takeoverToken = authentication.createTakeoverToken(currentAdminDTO, takeoverUserDTO);
+    ObjectNode resNode = jsonMapper.createObjectNode().put("token", takeoverToken).putPOJO("user", takeoverUserDTO);
+    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
+  }
+
+  /**
    * create a Node from the userList.
    *
    * @param users list user.

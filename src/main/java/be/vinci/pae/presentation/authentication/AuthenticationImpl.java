@@ -46,6 +46,35 @@ public class AuthenticationImpl implements Authentication {
     return getTokenFromExpirationDate(user, end);
   }
 
+  /**
+   * create a takeover JWT that expires in a short time. The token's lifetime is the same as a
+   * shortToken. The token contains the Admin id in the 'user' claim, and the takeover user id in
+   * the 'takeover' claim.
+   *
+   * @param adminDTO        : UserDTO containing the admin account information.
+   * @param takeoverUserDTO : UserDTO containing the taken over account information.
+   * @return generated takeover JWT
+   */
+  @Override
+  public String createTakeoverToken(UserDTO adminDTO, UserDTO takeoverUserDTO) {
+    LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+    LocalDateTime end = now.plusHours(
+        Integer.parseInt(Configurate.getConfiguration("lengthShortJWT"))
+    );
+    String token;
+    Date date = Date.from(end.toInstant(ZoneOffset.UTC));
+    try {
+      token =
+          JWT.create().withExpiresAt(date).withIssuer("auth0")
+              .withClaim("user", adminDTO.getId())
+              .withClaim("takeover", takeoverUserDTO.getId())
+              .sign(this.jwtAlgorithm);
+    } catch (Exception e) {
+      throw new InternalError("Error: Unable to create token");
+    }
+    return token;
+  }
+
   private String getTokenFromExpirationDate(UserDTO user, LocalDateTime end) {
     String token;
     Date date = Date.from(end.toInstant(ZoneOffset.UTC));
