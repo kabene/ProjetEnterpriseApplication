@@ -50,7 +50,7 @@ public class RequestForVisitResource {
   }
 
   /**
-   * GET all requestForVisit resources belongign to a user.
+   * GET all requestForVisit resources belonging to a user.
    *
    * @param request the request context
    * @return list of requestForVisit as json.
