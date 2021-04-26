@@ -190,7 +190,7 @@ class RequestForVisitUCCImplTest {
       + "should have thrown Unauthorized Exception")
   @ParameterizedTest
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
-  void test_changeWaitingRequestStatus_withBadUserId_shouldThrowUnauthorizedException(RequestStatus requestStatus) {
+  void test_changeWaitingRequestStatus_withBadUserId_shouldThrowExc(RequestStatus requestStatus) {
 
     assertThrows(UnauthorizedException.class, () -> requestUCC
             .changeWaitingRequestStatus(defaultRequestId, defaultBadUserId, requestStatus),
@@ -208,7 +208,7 @@ class RequestForVisitUCCImplTest {
       + "should have thrown Conflict Exception")
   @ParameterizedTest
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
-  void test_changeWaitingRequestStatus_withNotWaitingRequest_shouldThrowConflictException(RequestStatus requestStatus) {
+  void test_changeWaitingRequestStatus_withNoRequest_shouldThrowExc(RequestStatus requestStatus) {
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(requestStatus);
 
     assertThrows(ConflictException.class, () -> requestUCC
@@ -243,7 +243,7 @@ class RequestForVisitUCCImplTest {
   @DisplayName("TEST changeWaitingRequestStatus() DAO throws err, should rollback and throw err")
   @ParameterizedTest
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
-  void test_changeWaitingRequestStatus_ErrorThrown_shouldThrowInternalErrorAndRollback(RequestStatus requestStatus) {
+  void test_changeWaitingRequestStatus_ErrorThrown_shouldThrowError(RequestStatus requestStatus) {
     Mockito.doThrow(new InternalError()).when(requestForVisitDAO)
         .modifyStatusWaitingRequest(defaultRequestId, requestStatus);
 
