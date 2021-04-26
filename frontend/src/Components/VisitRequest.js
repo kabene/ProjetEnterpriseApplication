@@ -1,13 +1,8 @@
 import {getUserSessionData} from "../utils/session";
 import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils";
-import {
-  displayErrorMessage,
-  findFavImgSrc,
-  generateLoadingAnimation
-} from "../utils/utils.js"
+
 
 let page = document.querySelector("#page");
-let currentUser;
 let mainPage;
 let requestList;
 let requestMap = [];
