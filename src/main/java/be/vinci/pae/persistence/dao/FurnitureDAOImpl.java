@@ -2,7 +2,7 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.factories.FurnitureFactory;
-import be.vinci.pae.business.pojos.Status;
+import be.vinci.pae.business.pojos.FurnitureStatus;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -229,7 +229,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
       res.setSellerId(sellerId);
     }
 
-    res.setStatus(Status.toEnum(rs.getString("status")));
+    res.setStatus(FurnitureStatus.toEnum(rs.getString("status")));
 
     Date saleWithdrawalDate = rs.getDate("sale_withdrawal_date");
     if (saleWithdrawalDate != null) {

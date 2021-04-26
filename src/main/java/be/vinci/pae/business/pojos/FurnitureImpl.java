@@ -3,6 +3,7 @@ package be.vinci.pae.business.pojos;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -25,7 +26,7 @@ public class FurnitureImpl implements Furniture {
   @JsonView(Views.AdminOnly.class)
   private UserDTO seller;
   @JsonView(Views.Public.class)
-  private Status status;
+  private FurnitureStatus status;
   @JsonView(Views.AdminOnly.class)
   private String saleWithdrawalDate;
   @JsonView(Views.Public.class)
@@ -65,6 +66,8 @@ public class FurnitureImpl implements Furniture {
   private Boolean suitable;
   @JsonView(Views.AdminOnly.class)
   private Boolean availableForSale;
+  @JsonView(Views.AdminOnly.class)
+  private RequestForVisitDTO request;
 
 
   @Override
@@ -118,12 +121,12 @@ public class FurnitureImpl implements Furniture {
   }
 
   @Override
-  public Status getStatus() {
+  public FurnitureStatus getStatus() {
     return status;
   }
 
   @Override
-  public void setStatus(Status status) {
+  public void setStatus(FurnitureStatus status) {
     this.status = status;
   }
 
@@ -268,6 +271,16 @@ public class FurnitureImpl implements Furniture {
   }
 
   @Override
+  public RequestForVisitDTO getRequest() {
+    return this.request;
+  }
+
+  @Override
+  public void setRequest(RequestForVisitDTO request) {
+    this.request = request;
+  }
+
+  @Override
   public Double getPurchasePrice() {
     return this.purchasePrice;
   }
@@ -289,7 +302,7 @@ public class FurnitureImpl implements Furniture {
 
   @Override
   public String getDepositDate() {
-    return depositDate = depositDate;
+    return depositDate;
   }
 
   @Override
