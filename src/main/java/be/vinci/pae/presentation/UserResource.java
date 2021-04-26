@@ -116,6 +116,7 @@ public class UserResource {
   @Path("me")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
+  @AllowTakeover
   public Response getUser(@Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/me");
     UserDTO userFound = (UserDTO) request.getProperty("user");
