@@ -91,9 +91,9 @@ class PhotoUCCImplTest {
     Mockito.when(mockPhotoDTO2.getSource()).thenReturn(defaultSource2);
     Mockito.when(mockPhotoDTO3.getSource()).thenReturn(defaultSource3);
 
-    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId1)).thenReturn(mockPhotoDTO1);
-    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId2)).thenReturn(mockPhotoDTO2);
-    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId3)).thenReturn(mockPhotoDTO3);
+    Mockito.when(mockPhotoDAO.findById(defaultPhotoId1)).thenReturn(mockPhotoDTO1);
+    Mockito.when(mockPhotoDAO.findById(defaultPhotoId2)).thenReturn(mockPhotoDTO2);
+    Mockito.when(mockPhotoDAO.findById(defaultPhotoId3)).thenReturn(mockPhotoDTO3);
 
     Mockito.when(mockPhotoDTO1.isVisible()).thenReturn(defaultIsVisible);
     Mockito.when(mockPhotoDTO2.isVisible()).thenReturn(defaultIsVisible);
@@ -177,7 +177,7 @@ class PhotoUCCImplTest {
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
     inOrder.verify(mockPhotoDAO).insert(defaultFurnitureId1, defaultSource1);
-    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockPhotoDAO).findById(defaultPhotoId1);
     inOrder.verify(mockDal).commitTransaction();
     inOrder.verify(mockDal, Mockito.never()).rollbackTransaction();
     inOrder.verifyNoMoreInteractions();
@@ -270,13 +270,13 @@ class PhotoUCCImplTest {
       + "given invalid id, should throw NotFoundException")
   @Test
   void test_patchDisplayFlags_givenInvalidId_shouldThrowNotFound() {
-    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId1)).thenThrow(new NotFoundException());
+    Mockito.when(mockPhotoDAO.findById(defaultPhotoId1)).thenThrow(new NotFoundException());
     assertThrows(NotFoundException.class,
         () -> photoUCC.patchDisplayFlags(defaultPhotoId1, true, true));
 
     InOrder inOrder = Mockito.inOrder(mockDal, mockPhotoDAO);
     inOrder.verify(mockDal).startTransaction();
-    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockPhotoDAO).findById(defaultPhotoId1);
     inOrder.verify(mockDal).rollbackTransaction();
     inOrder.verify(mockDal, Mockito.never()).commitTransaction();
   }
@@ -292,7 +292,7 @@ class PhotoUCCImplTest {
 
     InOrder inOrder = Mockito.inOrder(mockDal, mockPhotoDAO);
     inOrder.verify(mockDal).startTransaction();
-    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockPhotoDAO).findById(defaultPhotoId1);
     inOrder.verify(mockPhotoDAO).updateDisplayFlags(mockPhotoDTO1);
     inOrder.verify(mockDal).rollbackTransaction();
     inOrder.verify(mockDal, Mockito.never()).commitTransaction();

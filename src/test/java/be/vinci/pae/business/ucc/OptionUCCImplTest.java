@@ -78,8 +78,8 @@ class OptionUCCImplTest {
     Mockito.reset(mockUserDTO1);
     Mockito.reset(mockUserDTO2);
 
-    Mockito.when(mockOptionDAO.getOption(defaultOptionId1)).thenReturn(mockOptionDTO1);
-    Mockito.when(mockOptionDAO.getOption(defaultOptionId2)).thenReturn(mockOptionDTO2);
+    Mockito.when(mockOptionDAO.findById(defaultOptionId1)).thenReturn(mockOptionDTO1);
+    Mockito.when(mockOptionDAO.findById(defaultOptionId2)).thenReturn(mockOptionDTO2);
 
     Mockito.when(mockOptionDTO1.getOptionId()).thenReturn(defaultOptionId1);
     Mockito.when(mockOptionDTO1.getFurnitureId()).thenReturn(defaultFurnitureId1);
@@ -197,7 +197,7 @@ class OptionUCCImplTest {
       + "option id, should throw NotFoundException")
   @Test
   public void test_cancelOption_invalidOptionId_shouldThrowNotFoundException() {
-    Mockito.when(mockOptionDAO.getOption(defaultOptionId1)).thenThrow(new NotFoundException());
+    Mockito.when(mockOptionDAO.findById(defaultOptionId1)).thenThrow(new NotFoundException());
 
     assertThrows(NotFoundException.class,
         () -> optionUCC.cancelOption(mockUserDTO1, defaultOptionId1),

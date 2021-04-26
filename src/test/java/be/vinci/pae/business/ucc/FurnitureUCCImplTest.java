@@ -174,9 +174,9 @@ class FurnitureUCCImplTest {
     Mockito.when(mockUserDTO2.getUsername()).thenReturn(defaultUsername2);
     Mockito.when(mockUserDTO3.getUsername()).thenReturn(defaultUsername3);
 
-    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId1)).thenReturn(mockPhotoDTO1);
-    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId2)).thenReturn(mockPhotoDTO2);
-    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId3)).thenReturn(mockPhotoDTO3);
+    Mockito.when(mockPhotoDAO.findById(defaultPhotoId1)).thenReturn(mockPhotoDTO1);
+    Mockito.when(mockPhotoDAO.findById(defaultPhotoId2)).thenReturn(mockPhotoDTO2);
+    Mockito.when(mockPhotoDAO.findById(defaultPhotoId3)).thenReturn(mockPhotoDTO3);
 
     Mockito.when(mockFurnitureTypeDAO.findById(defaultTypeId1)).thenReturn(defaultType1);
     Mockito.when(mockFurnitureTypeDAO.findById(defaultTypeId2)).thenReturn(defaultType2);
@@ -220,7 +220,7 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockUserDAO).findById(defaultBuyerId1);
     Mockito.verify(mockUserDAO).findById(defaultSellerId1);
 
-    Mockito.verify(mockPhotoDAO).getPhotoById(defaultFavouritePhotoId1);
+    Mockito.verify(mockPhotoDAO).findById(defaultFavouritePhotoId1);
     Mockito.verify(mockPhotoDAO).findAllByFurnitureId(defaultFurnitureId1);
 
     Mockito.verify(mockFurnitureTypeDAO).findById(defaultTypeId1);
@@ -300,7 +300,7 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockUserDAO).findById(defaultBuyerId1);
     Mockito.verify(mockUserDAO).findById(defaultSellerId1);
 
-    Mockito.verify(mockPhotoDAO).getPhotoById(defaultFavouritePhotoId1);
+    Mockito.verify(mockPhotoDAO).findById(defaultFavouritePhotoId1);
     Mockito.verify(mockPhotoDAO).findAllByFurnitureId(defaultFurnitureId1);
     Mockito.verify(mockPhotoDAO).findAllByFurnitureId(defaultFurnitureId2);
 
@@ -628,7 +628,7 @@ class FurnitureUCCImplTest {
 
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
-    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockPhotoDAO).findById(defaultPhotoId1);
     inOrder.verify(mockFurnitureDAO).updateFavouritePhoto(mockFurnitureDTO1);
     inOrder.verify(mockDal).commitTransaction();
     inOrder.verifyNoMoreInteractions();
@@ -658,7 +658,7 @@ class FurnitureUCCImplTest {
       + " given invalid photoId, should throw NotFoundException")
   @Test
   public void test_updateFavouritePhoto_givenInvalidPhotoId_shouldThrowNotFound() {
-    Mockito.when(mockPhotoDAO.getPhotoById(defaultPhotoId1)).thenThrow(new NotFoundException());
+    Mockito.when(mockPhotoDAO.findById(defaultPhotoId1)).thenThrow(new NotFoundException());
 
     assertThrows(NotFoundException.class, () -> {
       furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
@@ -671,7 +671,7 @@ class FurnitureUCCImplTest {
 
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
-    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockPhotoDAO).findById(defaultPhotoId1);
     inOrder.verify(mockDal).rollbackTransaction();
   }
 
@@ -692,7 +692,7 @@ class FurnitureUCCImplTest {
 
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
-    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockPhotoDAO).findById(defaultPhotoId1);
     inOrder.verify(mockDal).rollbackTransaction();
   }
 
@@ -714,7 +714,7 @@ class FurnitureUCCImplTest {
 
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
-    inOrder.verify(mockPhotoDAO).getPhotoById(defaultPhotoId1);
+    inOrder.verify(mockPhotoDAO).findById(defaultPhotoId1);
     inOrder.verify(mockFurnitureDAO).updateFavouritePhoto(mockFurnitureDTO1);
     inOrder.verify(mockDal).rollbackTransaction();
   }

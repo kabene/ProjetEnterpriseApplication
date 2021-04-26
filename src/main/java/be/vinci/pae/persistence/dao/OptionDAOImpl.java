@@ -74,24 +74,8 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
    * @return OptionDTO that represent the option
    */
   @Override
-  public OptionDTO getOption(int id) {
-    OptionDTO optionFound;
-    String query = "SELECT o.* FROM satchofurniture.options o WHERE o.option_id=? ";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setInt(1, id);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        optionFound = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: option not found");
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return optionFound;
+  public OptionDTO findById(int id) {
+    return findById(id, "options", "option_id");
   }
 
   /**

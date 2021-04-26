@@ -58,24 +58,8 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
    * @return RequestForVisitDTO that represent the request for visit.
    */
   @Override
-  public RequestForVisitDTO findByRequestId(int idRequest) {
-    RequestForVisitDTO requestFound;
-    String query = "SELECT * FROM satchoFurniture.requests_for_visit "
-        + "WHERE request_id=?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, idRequest);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        requestFound = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: request for visit not found");
-      }
-      rs.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return requestFound;
+  public RequestForVisitDTO findById(int idRequest) {
+    return findById(idRequest, "requests_for_visit", "request_id");
   }
 
   /**
