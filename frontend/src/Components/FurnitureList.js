@@ -6,7 +6,6 @@ import {
   displayErrorMessage,
   generateLoadingAnimation,
 } from "../utils/utils.js"
-
 let page = document.querySelector("#page");
 let mainPage;
 let furnitureList;
@@ -264,7 +263,7 @@ const generateSellingPriceTableElement = (furniture) => {
 const generateSpecialPriceTableElement = (furniture) => {
   let res = "";
   if (furniture.specialSalePrice) {
-    res = `<p>${furniture.specialSalePrice}</p>`;
+    res = `<p>${furniture.specialSalePrice}€</p>`;
   }
   return res;
 }
@@ -373,11 +372,11 @@ const displayShortElements = async (e) => {
     await reloadPage();
   }
   if (furniture) {
+    currentFurnitureId = id;
     generateCard(furniture);
     document.querySelectorAll(".userLink").forEach(
         (link) => link.addEventListener("click", onUserLinkClicked));
       isDisplayingLargeTable = false;
-      currentFurnitureId = id;
   } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
   }
@@ -497,6 +496,7 @@ const generateCardHTML = (furniture) => {
               ${generateBuyingDateCardEntry(furniture)}
               ${generateSellerCardEntry(furniture)}
               ${generateSellingPriceCardEntry(furniture)}
+              ${generateSpecialSalePriceCardEntry(furniture)}
               ${generateBuyerCardEntry(furniture)}
               ${generateOptionCardEntry(furniture)}
               ${generateSaleWithdrawalDateCardEntry(furniture)}
@@ -589,7 +589,7 @@ const generatePhotoList = (furniture) => {
     let homePageCheckName = `checkboxHomepage${photo.photoId}`;
 
     let favChecked = ``;
-    if(photo.photoId === furniture.favouritePhoto.photoId) {
+    if(furniture.favouritePhoto && photo.photoId === furniture.favouritePhoto.photoId) {
       favChecked = `checked`;
     }
 
@@ -634,9 +634,15 @@ const generatePhotoList = (furniture) => {
       </div>
     </div>`;
   });
+  let pId
+  if(!furniture.favouritePhoto){
+    pId = "notFound";
+  }else {
+    pId = furniture.favouritePhoto.photoId;
+  }
   let res = `
   <form>
-    <input id="originalFav${furniture.furnitureId}" type="hidden" class="originalFav" value="${furniture.favouritePhoto.photoId}">
+    <input id="originalFav" type="hidden" photoId="${pId}" furnitureId="${furniture.furnitureId}"/>
     <div class="form-check d-flex flex-lg-fill flex-row">
       ${photos}
     </div>
@@ -672,12 +678,12 @@ const onVisibleCheckClicked = (e) => {
 
 const onSaveModifPhotos = async (e) => {
   e.preventDefault();
-  let cardFavImg = document.querySelector("#card-fav-photo");
-  let originalFavId = cardFavImg.getAttribute("original_fav_id");
-  let furnitureId = cardFavImg.getAttribute("furnitureid");
+  let originalFav = document.querySelector("#originalFav");
+  let originalFavPhotoId = originalFav.getAttribute("photoid");
+  let furnitureId = originalFav.getAttribute("furnitureid");
   //fav
   let selectedFavId = findSelectedFav();
-  if(originalFavId != selectedFavId) {
+  if(originalFavPhotoId != selectedFavId) {
     let newFurniture = await patchNewFav(furnitureId, selectedFavId);
     furnitureMap[furnitureId] = newFurniture;
   }
@@ -851,15 +857,14 @@ const generateCardLabelKeyEntry = (label, id, value) => {
 }
 
 const generateTypeCardEntry = (furniture) => {
-  console.log(furniture);
   return generateCardLabelKeyEntry("Type", "typeCardEntry", furniture.type);
 }
 
 const generateBuyingPriceCardEntry = (furniture) => {
   let res = "";
   if(furniture.purchasePrice !== undefined) {
-    res = generateCardLabelKeyEntry("Prix d'achat", 
-    "purchase-price-card-entry", 
+    res = generateCardLabelKeyEntry("Prix d'achat",
+    "purchase-price-card-entry",
     `${furniture.purchasePrice}€`);
   }
   return res;
@@ -868,8 +873,8 @@ const generateBuyingPriceCardEntry = (furniture) => {
 const generateBuyingDateCardEntry = (furniture) => {
   let res = "";
   if(furniture.customerWithdrawalDate !== undefined) {
-    res = generateCardLabelKeyEntry("Date de retrait chez le vendeur", 
-    "purchase-price-card-entry", 
+    res = generateCardLabelKeyEntry("Date de retrait chez le vendeur",
+    "purchase-price-card-entry",
     furniture.customerWithdrawalDate);
   }
   return res;
@@ -922,6 +927,14 @@ const generateSellingPriceCardEntry = (furniture) => {
   return "";
 }
 
+const generateSpecialSalePriceCardEntry = (furniture) => {
+  if (furniture.specialSalePrice) {
+    return generateCardLabelKeyEntry("Prix de vente spécial", "specialSalePriceCardEntry",
+        furniture.specialSalePrice + "€");
+  }
+  return "";
+}
+
 const generateSaleWithdrawalDateCardEntry = (furniture) => {
   if (furniture.saleWithdrawalDate) {
     return generateCardLabelKeyEntry("Date de retrait de la vente",
@@ -960,6 +973,7 @@ const generateAllTransitionBtns = (furniture) => {
           "danger", "secondary");
       break;
     case "UNDER_OPTION":
+      res += generateTransitionModal("ToSold", "Indiquer vendu");
     case "SOLD":
     case "WITHDRAWN":
     case "REQUESTED_FOR_VISIT":
@@ -979,7 +993,7 @@ const generateModalBodyFromTransitionId = (transitionId) => {
     case "ToRestoration":
       return "Voulez-vous vraiment indiquer ce meuble comme allant en restauration ?"
     case "ToSold":
-      return "Voulez-vous vraiment indiquer ce meuble comme vendu ?"
+      return generateToSoldForm();
     case "Withdraw":
       return "Voulez-vous vraiment retirer ce meuble de la vente ? <br/><strong>Cette action est irréversible</strong>"
     default:
@@ -989,14 +1003,42 @@ const generateModalBodyFromTransitionId = (transitionId) => {
 
 const generateToAvailableForm = () => {
   let res = `
-  <form>
     <div class="form-group">
       <label for="sellingPriceInput" class="mr-3">Prix de vente: </label>
-      <input type="number" id="sellingPriceInput" class="w-25" name="sellingPriceInput" min="0.01" step="0.01"> €
+      <input type="number" id="sellingPriceInput" class="w-25 mx-3 form-control" name="sellingPriceInput" min="0.01" step="0.01"/> €
     </div>
-  </form>
   `;
-  return res;
+  return `<div class="form-inline">${res}</div>`;
+}
+
+const generateToSoldForm = () => {
+  let furnitureId = currentFurnitureId;
+  let furniture = furnitureMap[furnitureId];
+  let status = furniture.status;
+  let res = "";
+  switch(status) {
+    case "AVAILABLE_FOR_SALE":
+      res = `
+        <div class="form-group">
+          <label for="buyerUsernameInput">Pseudo de l'acheteur: 
+            <input type="text" id="buyerUsernameInput" class="w-25 mx-3 my-1 form-control" name="buyerUsernameInput"/>
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="specialSalePriceInput">Prix spécial: 
+            <input type="number" id="specialSalePriceInput" class="w-25 mx-3 my-1 form-control" name="specialSalePriceInput" min="0.01" step="0.01"/> €
+          </label>
+        </div>`;
+      break;
+    case "UNDER_OPTION":
+      res = `
+        <div class="form-group">
+          Confirmer que le meuble a été vendu au client intéressé ?
+        </div>`;
+      break;
+    default:
+  }
+  return `<div class="form-inline">${res}</div>`;
 }
 
 const generateTransitionModal = (id, label, triggerColorClass = "primary",
@@ -1024,6 +1066,8 @@ const findTransitionMethod = (btnId, furniture) => {
       return (e) => toRestoration(e, furniture);
     case "btnWithdraw":
       return (e) => withdraw(e, furniture);
+    case "btnToSold":
+        return (e) => toSold(e, furniture);
     default:
       return (e) => {
         e.preventDefault();
@@ -1035,7 +1079,7 @@ const findTransitionMethod = (btnId, furniture) => {
 
 //status transition methods
 
-const toAvailable = (e, furniture) => { //TODO
+const toAvailable = (e, furniture) => {
   e.preventDefault();
   let sellingPrice = e.target.parentElement.parentElement.querySelector(
       "#sellingPriceInput").value;
@@ -1065,7 +1109,7 @@ const toAvailable = (e, furniture) => { //TODO
   });
 }
 
-const toRestoration = (e, furniture) => {//TODO
+const toRestoration = (e, furniture) => {
   e.preventDefault();
   fetch("/furniture/restoration/" + furniture.furnitureId, {
     method: "PATCH",
@@ -1088,7 +1132,7 @@ const toRestoration = (e, furniture) => {//TODO
   });
 }
 
-const withdraw = (e, furniture) => {//TODO
+const withdraw = (e, furniture) => {
   e.preventDefault();
   fetch("/furniture/withdraw/" + furniture.furnitureId, {
     method: "PATCH",
@@ -1111,6 +1155,51 @@ const withdraw = (e, furniture) => {//TODO
   });
 }
 
+const toSold = async (e, furniture) => {
+  e.preventDefault();
+  let specialSalePrice = "";
+  let buyerUsername;
+  let bundle;
+  if(furniture.status === "AVAILABLE_FOR_SALE"){
+    specialSalePrice = e.target.parentElement.parentElement.querySelector("#specialSalePriceInput").value;
+    buyerUsername = e.target.parentElement.parentElement.querySelector("#buyerUsernameInput").value;
+  }else if(furniture.status === "UNDER_OPTION"){
+    buyerUsername = furniture.option.user.username;
+  }
+  if(specialSalePrice !== "") {
+    bundle = {
+      buyerUsername: buyerUsername,
+      specialSalePrice: specialSalePrice,
+    }
+  }else {
+    bundle = {
+      buyerUsername: buyerUsername,
+    }
+  }
+  fetch("/furniture/sold/" + furniture.furnitureId, {
+    method: "PATCH",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    furnitureMap[data.furnitureId] = data;
+    loadCard(data.furnitureId);
+  }).catch((err) => {
+    console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
+  });
+
+}
+
 const loadCard = (furnitureId) => {
   isDisplayingLargeTable = false;
   currentFurnitureId = furnitureId;
@@ -1130,7 +1219,7 @@ const loadCard = (furnitureId) => {
 
 /**
  * Verifies if a piece of furniture respects all active filters.
- * 
+ *
  * @param {*} furniture : full furniture object
  * @returns {boolean} true if furniture respects all active filters.
  */
@@ -1145,14 +1234,14 @@ const respectsAllActiveFilters = (furniture) => {
 /**
  * Verifies if a piece of furniture respects the active username filter.
  * (filter is contained inside of the seller/buyer's username)
- * 
+ *
  * @param {*} furniture full furniture object
  * @returns {boolean} true if furniture respects active username filter.
  */
 const respectsUserFilter = (furniture) => {
   if (activeFilters.username === "") {
     return true; //inactive filter -> TRUE
-  } 
+  }
   if(!furniture.seller && !furniture.buyer) return false; // active filter + no user -> FALSE
 
   if(furniture.seller !== undefined) {
@@ -1172,8 +1261,8 @@ const respectsUserFilter = (furniture) => {
 
 /**
  * Verifies if a piece of furniture respects the active price filters.
- * 
- * @param {*} furniture 
+ *
+ * @param {*} furniture
  * @returns {boolean} true if furniture respects active price filters.
  */
 const respectsPriceFilters = (furniture) => {
@@ -1205,7 +1294,7 @@ const respectsPriceFilters = (furniture) => {
   }
   //active filters
   if(!furniture.sellingPrice) return false; //no price
-  
+
   if(minPrice !== -1 && furniture.sellingPrice < minPrice) return false; //under minPrice
   if(maxPrice !== -1 && furniture.sellingPrice > maxPrice) return false; //above maxPrice
 
@@ -1214,7 +1303,7 @@ const respectsPriceFilters = (furniture) => {
 
 /**
  * Verifies if a piece of furniture respects the active status filter.
- * 
+ *
  * @param {*} furniture full furniture object
  * @returns {boolean} true if furniture respects active status filter.
  */
@@ -1247,7 +1336,7 @@ const applyFilters = (e) => {
 }
 
 /**
- * Sets the filter form to the current active filter values, 
+ * Sets the filter form to the current active filter values,
  * and adds its necessary eventListeners
  */
 const placeFilterForm = () => {

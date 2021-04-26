@@ -133,6 +133,58 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
   }
 
   /**
+   * updates the status of the furniture to SOLD and updates its buyerId.
+   *
+   * @param furnitureDTO : the furnitureDTO containing the new information
+   * @return the modified dto.
+   */
+  @Override
+  public FurnitureDTO updateToSold(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET status = ?, "
+        + "buyer_id = ? "
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setString(1, furnitureDTO.getStatus().getValue());
+      ps.setInt(2, furnitureDTO.getBuyerId());
+      ps.setInt(3, furnitureDTO.getFurnitureId());
+      ps.execute();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return furnitureDTO;
+  }
+
+  /**
+   * updates the status of the furniture to SOLD and updates its buyerId and specialSalePrice.
+   *
+   * @param furnitureDTO : the furnitureDTO containing the new information
+   * @return the modified dto.
+   */
+  @Override
+  public FurnitureDTO updateToSoldWithSpecialSale(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET status = ?, "
+        + "buyer_id = ?, "
+        + "special_sale_price = ? "
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setString(1, furnitureDTO.getStatus().getValue());
+      ps.setInt(2, furnitureDTO.getBuyerId());
+      ps.setDouble(3, furnitureDTO.getSpecialSalePrice());
+      ps.setInt(4, furnitureDTO.getFurnitureId());
+      ps.execute();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return furnitureDTO;
+  }
+
+  /**
    * updates the favourite photo of a specific entry in the furniture table.
    *
    * @param furnitureDTO : the furnitureDTO to modify (containing new favourite photo id)
@@ -203,7 +255,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
 
     double specialSalePrice = rs.getInt("special_sale_price");
     if (specialSalePrice != 0) {
-      res.setSellingPrice(specialSalePrice);
+      res.setSpecialSalePrice(specialSalePrice);
     }
 
     Date dateOfSale = rs.getDate("date_of_sale");
