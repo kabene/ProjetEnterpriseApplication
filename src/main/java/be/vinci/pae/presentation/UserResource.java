@@ -281,12 +281,14 @@ public class UserResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response takeOver(@Context ContainerRequest request, @PathParam("id") int takeoverId) {
     UserDTO currentAdminDTO = (UserDTO) request.getProperty("user");
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/takeover/" + takeoverId + " (admin: " + currentAdminDTO.getId() + ")");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
+        "GET /users/takeover/" + takeoverId + " (admin: " + currentAdminDTO.getId() + ")");
 
     UserDTO takeoverUserDTO = userUCC.getOne(takeoverId);
 
     String takeoverToken = authentication.createTakeoverToken(currentAdminDTO, takeoverUserDTO);
-    ObjectNode resNode = jsonMapper.createObjectNode().put("token", takeoverToken).putPOJO("user", takeoverUserDTO);
+    ObjectNode resNode = jsonMapper.createObjectNode().put("token", takeoverToken)
+        .putPOJO("user", takeoverUserDTO);
     return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
 

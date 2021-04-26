@@ -52,7 +52,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public UserDTO findById(int userId) {
-   return findById(userId, "users", "user_id");
+    return findById(userId, "users", "user_id");
   }
 
   /**
