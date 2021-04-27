@@ -636,7 +636,8 @@ class FurnitureUCCImplTest {
         .thenReturn(mockFurnitureDTO2);
 
     assertEquals(mockFurnitureDTO2,
-        furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1));
+        furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
+        "A valid call to updateFavouritePhoto should return the modified dto");
 
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
 
@@ -659,7 +660,8 @@ class FurnitureUCCImplTest {
 
     assertThrows(NotFoundException.class, () -> {
       furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
-    });
+    }, "calling updateFavouritePhoto with a non-existing furniture id should throw "
+        + "NotFoundException");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 
@@ -677,9 +679,10 @@ class FurnitureUCCImplTest {
   public void test_updateFavouritePhoto_givenInvalidPhotoId_shouldThrowNotFound() {
     Mockito.when(mockPhotoDAO.findById(defaultPhotoId1)).thenThrow(new NotFoundException());
 
-    assertThrows(NotFoundException.class, () -> {
-      furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
-    });
+    assertThrows(NotFoundException.class, () ->
+      furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
+        "calling updateFavouritePhoto with a non-existing photo id should throw "
+            + "NotFoundException");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 
@@ -700,7 +703,8 @@ class FurnitureUCCImplTest {
 
     assertThrows(ConflictException.class, () -> {
       furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
-    });
+    }, "calling updateFavouritePhoto with a photo id that references a photo not belonging "
+        + "to the given furniture id should throw ConflictException");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 
@@ -722,7 +726,7 @@ class FurnitureUCCImplTest {
 
     assertThrows(InternalError.class, () -> {
       furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
-    });
+    }, "if updateFavouritePhoto catches an InternalError, it should throw it back");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 
