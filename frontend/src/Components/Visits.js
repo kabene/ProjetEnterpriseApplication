@@ -38,6 +38,38 @@ const Visits = async (id) => {
     loadCard(id);
   }
 }
+
+/**
+ * displays the card for a given request id.
+ * @param {int} requestId 
+ */
+ const loadCard = (requestId) => {
+  isDisplayingLargeTable = false;
+  currentRequestId = requestId;
+  mainPage.innerHTML = generatePageHtml(false);
+  generateCard(requestMap[requestId]);
+  document.querySelectorAll(".toBeClicked").forEach(
+      (element) => {
+        let elementReqId = element.getAttribute("requestid");
+        if (elementReqId == requestId) {
+          element.className = "toBeClicked selected-row";
+        }
+        element.addEventListener("click", displayShortElements)
+      });
+  document.querySelector("#buttonReturn").addEventListener("click",
+      displayLargeTable);
+}
+
+/**
+ * Reloads the page and re-fetch request information.
+ * Displays loading animation while awaiting the fetch.
+ */
+ const reloadPage = async () => {
+  mainPage.innerHTML = generateLoadingAnimation();
+  await findVisitRequestList();
+  mainPage = generatePageHtml();
+}
+
 //displayers
 
 /**
@@ -45,6 +77,7 @@ const Visits = async (id) => {
  */
 const displayLargeTable = () => {
   openTab = "infos";
+  removeTimeouts();
   document.querySelector('#shortTableContainer').id = "largeTableContainer";
   timeouts.push(setTimeout(displayLargeElements, 750));
   document.querySelectorAll(".shortElement").forEach(
@@ -72,7 +105,7 @@ const displayLargeElements = () => {
 }
 
 /**
- * sets CSS class for transition to short table. Then, loads card.
+ * sets CSS class for transition to short table and hides not needed columns. Then, loads card.
  * @param {*} e : event object from event listener
  */
 const displayShortElements = (e) => {
@@ -99,18 +132,16 @@ const displayShortElements = (e) => {
     element.className = "toBeClicked";
   });
 
-  let element = e.srcElement;
-  while (!element.className.includes("toBeClicked")) {
-    element = element.parentElement;
-  }
-  element.className = "toBeClicked bg-secondary text-light";
-
   document.querySelectorAll(".tableStatus").forEach(element => {
-    let status = element.attributes["status"].value;
+    let status = element.getAttribute("status");
     let classname = generateStatusInfos(status).classname;
     element.innerHTML = generateDot(classname);
   });
-  let id = element.attributes["requestId"].value;
+  let element = e.srcElement;
+  while(element.tagName!="TR") {
+    element = element.parentNode;
+  }
+  let id = element.getAttribute("requestid");
   loadCard(id);
 }
 
@@ -180,7 +211,7 @@ const generateCard = (request) => {
     openTab = "infos";
   });
   document.querySelector("#profile-tab").addEventListener("click", () => {
-    openTab = "photos";
+    openTab = "furniture";
   });
 }
 
@@ -190,6 +221,7 @@ const generateCard = (request) => {
  * @returns {String} request card html
  */
 const generateCardHTML = (request) => {
+  console.log(request);
   const openTabObject = {
     ariaSelected: "true",
     tabClassname: "show active",
@@ -203,10 +235,10 @@ const generateCardHTML = (request) => {
   }
 
   let infoTab = openTabObject;
-  let photoTab = closedTabObject;
-  if (openTab === "photos") {
+  let furnitureTab = closedTabObject;
+  if (openTab === "furniture") {
     infoTab = closedTabObject;
-    photoTab = openTabObject;
+    furnitureTab = openTabObject;
   }
   let res = `
   <div class="container emp-profile">
@@ -216,11 +248,10 @@ const generateCardHTML = (request) => {
           <div class="profile-head">
             <div class="row">
               <div class="col-md-6">
-              <!-- <p>generateCardFavouritePhotoImgTag(request)</p>-->
+              ${generateSummaryCardHeader(request)}
               </div>
               <div class="col-md-6 text-left">
-                <h5 id="descriptionCardEntry">${request.explanatoryNote}</h5>
-                <p class="proile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(request)}</span></p>
+                <p class="profile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(request)}</span></p>
               </div>
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -228,7 +259,7 @@ const generateCardHTML = (request) => {
                 <a class="nav-link ${infoTab.aClassname}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${infoTab.ariaSelected}">Information</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link ${photoTab.aClassname}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${photoTab.ariaSelected}">Photos</a>
+                <a class="nav-link ${furnitureTab.aClassname}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${furnitureTab.ariaSelected}">Meubles</a>
               </li>
             </ul>
           </div>
@@ -240,8 +271,13 @@ const generateCardHTML = (request) => {
           <div class="tab-content profile-tab" id="myTabContent">
             <div class="tab-pane fade ${infoTab.tabClassname}" id="home" role="tabpanel" aria-labelledby="home-tab">
               ${generateUserCardEntry("Utilisateur", "userCardEntry", request.user)}
+              ${generateAddressCardEntry(request)}
+              ${generateRequestDateCardEntry(request)}
+              ${generateTimeSlotCardEntry(request)}
+              ${generateVisitDateTimeCardEntry(request)}
+              ${generateExplanatoryNoteCardEntry(request)}
             </div>       
-            <div class="tab-pane fade ${photoTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="tab-pane fade ${furnitureTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
              
             </div>
           </div>
@@ -250,6 +286,15 @@ const generateCardHTML = (request) => {
     </form>           
   </div>
   `;
+  return res;
+}
+
+const generateSummaryCardHeader = (request) => {
+  let res = "";
+  if(request && request.user && request.requestDate) {
+    res = `<h5>${request.user.username} (${request.requestDate})</h5>`;
+    
+  }
   return res;
 }
 
@@ -277,14 +322,60 @@ const generateUserCardEntry = (label, userLinkId, user) => {
   return res;
 }
 
-/**
- * Reloads the page and re-fetch request information.
- * Displays loading animation while awaiting the fetch.
- */
-const reloadPage = async () => {
-  mainPage.innerHTML = generateLoadingAnimation();
-  await findVisitRequestList();
-  mainPage = generatePageHtml();
+const generateExplanatoryNoteCardEntry = (request) => {
+  let res = "";
+  if(request.explanatoryNote) {
+    res = generateCardLabelKeyEntry("Justificatif de refus", "explanatory-note-entry", request.explanatoryNote);
+  }
+  return res;
+}
+
+
+const generateAddressCardEntry = (request) => {
+  let res = "";
+  let adr = generateAddressText(request);
+  if(adr) {
+    res = generateCardLabelKeyEntry("Adresse de visite", "address-entry", adr);
+  }
+  return res;
+}
+
+const generateRequestDateCardEntry = (request) => {
+  let res = "";
+  if(request.requestDate) {
+    res = generateCardLabelKeyEntry("Date de la demande", "request-date-entry", request.requestDate);
+  }
+  return res;
+}
+
+const generateTimeSlotCardEntry = (request) => {
+  let res = "";
+  if(request.timeSlot) {
+    res = generateCardLabelKeyEntry("Disponibilités", "time-slot-entry", request.timeSlot);
+  }
+  return res;
+}
+
+const generateVisitDateTimeCardEntry = (request) => {
+  let res = "";
+  if(request.visitDateTime) {
+    res = generateCardLabelKeyEntry("Date/heure de visite", "visit-date-time-entry", request.visitDateTime);
+  }
+  return res;
+}
+
+const generateCardLabelKeyEntry = (label, id, value) => {
+  let res = `
+  <div class="row text-left">
+    <div class="col-md-6">
+      <label>${label}</label>
+    </div>
+    <div class="col-md-6">
+      <p id="${id}">${value}</p>
+    </div>
+  </div>
+  `;
+  return res;
 }
 
 /**
@@ -398,8 +489,8 @@ const generateColoredStatus = (request) => {
  * @param {*} furniture 
  * @returns 
  */
-const generateBadgeStatus = (furniture) => {
-  let infos = generateStatusInfos(furniture.status);
+const generateBadgeStatus = (request) => {
+  let infos = generateStatusInfos(request.requestStatus);
   let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.status}</span>`;
   return res;
 }
@@ -467,27 +558,6 @@ const changeContainerId = () => {
   if(tContainer) {
     tContainer.id = "shortTableContainer";
   }
-}
-
-/**
- * displays the card for a given request id.
- * @param {int} requestId 
- */
-const loadCard = (requestId) => {
-  isDisplayingLargeTable = false;
-  currentRequestId = requestId;
-  mainPage.innerHTML = generatePageHtml(false);
-  generateCard(requestMap[requestId]);
-  document.querySelectorAll(".toBeClicked").forEach(
-      (element) => {
-        let elementReqId = element.getAttribute("requestid");
-        if (elementReqId == requestId) {
-          element.className = "toBeClicked bg-secondary text-light";
-        }
-        element.addEventListener("click", displayShortElements)
-      });
-  document.querySelector("#buttonReturn").addEventListener("click",
-      displayLargeTable);
 }
 
 //requests
