@@ -1,10 +1,12 @@
 package be.vinci.pae.business.pojos;
 
 import be.vinci.pae.business.dto.AddressDTO;
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.util.List;
 
 public class RequestForVisitImpl implements RequestForVisitDTO {
 
@@ -28,6 +30,8 @@ public class RequestForVisitImpl implements RequestForVisitDTO {
   Integer userId;
   @JsonView(Views.AdminOnly.class)
   UserDTO user;
+  @JsonView(Views.AdminOnly.class)
+  List<FurnitureDTO> furnitureList;
 
 
   @Override
@@ -128,5 +132,15 @@ public class RequestForVisitImpl implements RequestForVisitDTO {
   @Override
   public void setUser(UserDTO user) {
     this.user = user;
+  }
+
+  @Override
+  public List<FurnitureDTO> getFurnitureList() {
+    return furnitureList;
+  }
+
+  @Override
+  public void setFurnitureList(List<FurnitureDTO> lst) {
+    this.furnitureList = lst;
   }
 }

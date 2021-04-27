@@ -3,6 +3,7 @@ package be.vinci.pae.business.dto;
 import be.vinci.pae.business.pojos.RequestForVisitImpl;
 import be.vinci.pae.business.pojos.RequestStatus;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.List;
 
 @JsonDeserialize(as = RequestForVisitImpl.class)
 public interface RequestForVisitDTO {
@@ -46,4 +47,8 @@ public interface RequestForVisitDTO {
   UserDTO getUser();
 
   void setUser(UserDTO user);
+
+  List<FurnitureDTO> getFurnitureList();
+
+  void setFurnitureList(List<FurnitureDTO> lst);
 }
