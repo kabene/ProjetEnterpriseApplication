@@ -1,4 +1,4 @@
-import {getUserSessionData} from "../utils/session";
+import {findCurrentUser} from "../utils/session";
 import {removeTimeouts, generateLoadingAnimation, displayErrorMessage} from "../utils/utils";
 import {Loader} from "@googlemaps/js-api-loader";
 
@@ -11,7 +11,7 @@ let userDetail;
 let valueButtonValid;
 
 const Users = async (id) => {
-  currentUser = getUserSessionData();
+  currentUser = findCurrentUser();
 
   page.innerHTML = generateLoadingAnimation();
 
@@ -260,7 +260,7 @@ const generateUserCard = (userDetail) => {
         <div class="col-md-6">
           <div class="profile-head">
             <h5 id="Name&Firstname">` + userDetail.lastName + ` ` + userDetail.firstName +`</h5>
-            <p class="proile-rating">ROLE : 
+            <p class="profile-rating">ROLE : 
               <span id="role">
                ` + userDetail.role + ` 
               </span>
