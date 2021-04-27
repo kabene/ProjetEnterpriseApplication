@@ -40,7 +40,6 @@ public class RequestForVisitResource {
    * @return list of requestForVisit as json.
    */
   @GET
-  @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
   @Admin
   public Response getAll() {
