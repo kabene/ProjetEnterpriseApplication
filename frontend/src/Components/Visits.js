@@ -119,7 +119,7 @@ const displayShortElements = (e) => {
  * redirects to user's card in user list page.
  * @param {*} e : event object from event listener
  */
-const onUserLinkClicked = (e) => {
+const onUserLinkClicked = (e) => { //TODO eventlistener
   e.preventDefault();
   let link = e.target;
   let userId = link.getAttribute("userid");
@@ -165,7 +165,7 @@ const findTransitionMethod = (btnId, request) => {
  * @param {*} request 
  */
 const generateCard = (request) => {
-  let requestCardDiv = document.querySelector("#requestCardDiv");
+  let requestCardDiv = document.querySelector("#RequestCardDiv");
   let cardHTML = generateCardHTML(request);
   requestCardDiv.innerHTML = cardHTML;
   //event listeners
@@ -176,15 +176,12 @@ const generateCard = (request) => {
   document.querySelectorAll(".visibleCheckbox").forEach((element) => {
     element.addEventListener("click", onVisibleCheckClicked);
   });
-  document.querySelector("#saveBtnPhoto").addEventListener("click",
-      onSaveModifPhotos);
   document.querySelector("#home-tab").addEventListener("click", () => {
     openTab = "infos";
   });
   document.querySelector("#profile-tab").addEventListener("click", () => {
     openTab = "photos";
   });
-  addImage(furniture);
 }
 
 /**
@@ -265,8 +262,8 @@ const generateCardHTML = (request) => {
  */
 const generateUserCardEntry = (label, userLinkId, user) => {
   let res = "";
-  if (request.user) {
-    let res = `
+  if (user) {
+    res = `
     <div class="row text-left">
       <div class="col-md-6">
         <label class="mr-3">${label}</label>
@@ -368,14 +365,22 @@ const generateRow = (request, notNeededClassName) => {
   }
   let res = `
     <tr class="toBeClicked" requestId="${request.requestId}">
-      <th class="${notNeededClassName}"><p>${generateUserLink(request.user)}</p></th>
-      <th class="${notNeededClassName}"><p>${request.address.street + ` `
-  + request.address.buildingNumber + `,` + request.address.postcode + ` `
-  + request.address.commune + ` ` + request.address.country}</p></th>
-      <th class="${notNeededClassName}"><p>${request.requestDate}</p></th>
+      <th class="align-middle"><p>${generateUserLink(request.user)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateAddressText(request)}</p></th>
+      <th class="align-middle"><p>${request.requestDate}</p></th>
       <th class="tableStatus text-center align-middle" status="${request.requestStatus}">${statusHtml}</th>
     </tr>`;
   return res;
+}
+
+/**
+ * generates an address String from a request
+ * @param {*} request 
+ * @returns {String} address text
+ */
+const generateAddressText = (request) => {
+  let adr = request.address;
+  return `${adr.street} ${adr.buildingNumber}, ${adr.postcode} ${adr.commune} ${adr.country}`; 
 }
 
 /**
@@ -417,6 +422,14 @@ const generateDot = (colorClassName) => {
   return `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
 }
 
+/**
+ * find status label & color classname (primary / danger / etc...) for a given status
+ * @param {String} status 
+ * @returns {
+ *  classname: bootstrap color suffix,
+ *  status: status label,
+ * } object
+ */
 const generateStatusInfos = (status) => {
   let res = {
     classname: "",
@@ -450,9 +463,16 @@ const removeTimeouts = () => {
 }
 
 const changeContainerId = () => {
-  document.querySelector('#largeTableContainer').id = "shortTableContainer";
+  let tContainer = document.querySelector('#largeTableContainer');
+  if(tContainer) {
+    tContainer.id = "shortTableContainer";
+  }
 }
 
+/**
+ * displays the card for a given request id.
+ * @param {int} requestId 
+ */
 const loadCard = (requestId) => {
   isDisplayingLargeTable = false;
   currentRequestId = requestId;
@@ -471,7 +491,10 @@ const loadCard = (requestId) => {
 }
 
 //requests
-
+/**
+ * fetch all requests, then fill requestMap
+ * @returns {Promise} fetch promise
+ */
 async function findVisitRequestList() {
   return fetch("/requestForVisit/", {
     method: "GET",
@@ -498,4 +521,3 @@ async function findVisitRequestList() {
 }
 
 export default Visits;
-
