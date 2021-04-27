@@ -1,6 +1,7 @@
 import {getUserSessionData} from "../utils/session";
 import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils";
 import {RedirectUrl} from "./Router";
+import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -15,7 +16,7 @@ let openTab = "infos";
 
 /**
  * Runs visit request list page (for admins)
- * @param {*} id 
+ * @param {*} id
  */
 const Visits = async (id) => {
 
@@ -41,9 +42,9 @@ const Visits = async (id) => {
 
 /**
  * displays the card for a given request id.
- * @param {int} requestId 
+ * @param {int} requestId
  */
- const loadCard = (requestId) => {
+const loadCard = (requestId) => {
   isDisplayingLargeTable = false;
   currentRequestId = requestId;
   mainPage.innerHTML = generatePageHtml(false);
@@ -64,7 +65,7 @@ const Visits = async (id) => {
  * Reloads the page and re-fetch request information.
  * Displays loading animation while awaiting the fetch.
  */
- const reloadPage = async () => {
+const reloadPage = async () => {
   mainPage.innerHTML = generateLoadingAnimation();
   await findVisitRequestList();
   mainPage = generatePageHtml();
@@ -138,7 +139,7 @@ const displayShortElements = (e) => {
     element.innerHTML = generateDot(classname);
   });
   let element = e.srcElement;
-  while(element.tagName!="TR") {
+  while (element.tagName != "TR") {
     element = element.parentNode;
   }
   let id = element.getAttribute("requestid");
@@ -160,7 +161,7 @@ const onUserLinkClicked = (e) => { //TODO eventlistener
 
 /**
  * Adds event listeners for every transition btn. (on the request card)
- * @param {*} request 
+ * @param {*} request
  */
 const addTransitionBtnListeners = (request) => {
   document.querySelectorAll(".transitionBtn").forEach(element => {
@@ -178,9 +179,9 @@ const addTransitionBtnListeners = (request) => {
 const findTransitionMethod = (btnId, request) => {
   switch (btnId) {
     case "Accept":
-     // return (e) => toAvailable(e, furniture); TODO
+      // return (e) => toAvailable(e, furniture); TODO
     case "Refuse":
-     // return (e) => toRestoration(e, furniture); TODO
+      // return (e) => toRestoration(e, furniture); TODO
     default:
       return (e) => {
         e.preventDefault();
@@ -193,7 +194,7 @@ const findTransitionMethod = (btnId, request) => {
 /**
  * Generate request card html and updates current display.
  * Then, adds all necessary event listeners.
- * @param {*} request 
+ * @param {*} request
  */
 const generateCard = (request) => {
   let requestCardDiv = document.querySelector("#RequestCardDiv");
@@ -213,6 +214,100 @@ const generateCard = (request) => {
   document.querySelector("#profile-tab").addEventListener("click", () => {
     openTab = "furniture";
   });
+}
+
+/**
+ *
+ * @param furniture
+ * @returns {string}
+ */
+const generateButtonRow = (request) => {
+  let res = `
+  <div class="row d-flex mt-5">
+    ${generateTransitionBtns(request)}
+  </div>
+  `;
+  return res;
+}
+
+/**
+ *  Generate change state buttons
+ * @param request
+ */
+const generateTransitionBtns = (request) => {
+  let res = "";
+  if (request.requestStatus === "WAITING") {
+    res += generateTransitionModal("ToConfirmed",
+        "Accepter la demande");
+    res += generateTransitionModal("ToCanceled",
+        "Refuser la demande");
+  }
+  return res;
+}
+/**
+ *
+ * @param id
+ * @param label
+ * @param triggerColorClass
+ * @param closeColorClass
+ * @returns {string}
+ */
+const generateTransitionModal = (id, label, triggerColorClass = "primary",
+    closeColorClass = "danger") => {
+  let body = generateModalBodyFromTransitionId(id);
+  let sendBtn = generateCloseBtn(label, "btn" + id,
+      `btn btn-${triggerColorClass} mx-5 transitionBtn`);
+  return generateModalPlusTriggerBtn("modal_" + id, label,
+      `btn btn-${triggerColorClass}`, `<h4>${label}</h4>`, body, `${sendBtn}`,
+      "Fermer", `btn btn-${closeColorClass}`);
+}
+
+/**
+ *
+ * @param transitionId
+ * @returns {string|*}
+ */
+const generateModalBodyFromTransitionId = (transitionId) => {
+  switch (transitionId) {
+    case "ToConfirmed":
+      return generateToAcceptForm();
+    case "ToCanceled":
+      return generateToCanceledForm();
+    default:
+      return "not implemented yet";
+  }
+}
+/**
+ *
+ * @returns {string}
+ */
+const generateToAcceptForm = () => {
+  let res = `
+    <form class="form-group">
+      <label for="acceptInput" class="mr-3">Entrez la date et heure de la visite: </label>
+      <div class="mx-auto my-2">
+        <input class=" mx-3 form-control" name="acceptInputDate" id="acceptInputDate" type="date" max="9999-12-12T00:00:00.00"/>
+        <input type="time" class=" mx-3 form-control"  name="acceptInputTime" id="acceptInputTime" max="9999-12-12T00:00:00.00"/>
+      </div>
+    </form>
+  `;
+  return `<div class="form-inline">${res}</div>`;
+}
+/**
+ *
+ * @returns {string}
+ */
+const generateToCanceledForm = () => {
+  let res = `
+    <div>
+      <div class="form-group">
+        <label for="cancelInput" class="mr-3">Entrez la raison de l'annulation: </label>
+        <br/>
+        <textarea id="cancelInput" class="form-control" name="cancelInput" ></textarea> 
+      </div>
+    </div>
+  `;
+  return res;
 }
 
 /**
@@ -251,7 +346,8 @@ const generateCardHTML = (request) => {
               ${generateSummaryCardHeader(request)}
               </div>
               <div class="col-md-6 text-left">
-                <p class="profile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(request)}</span></p>
+                <p class="profile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(
+      request)}</span></p>
               </div>
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -270,15 +366,17 @@ const generateCardHTML = (request) => {
         <div class="col-md-8">
           <div class="tab-content profile-tab" id="myTabContent">
             <div class="tab-pane fade ${infoTab.tabClassname}" id="home" role="tabpanel" aria-labelledby="home-tab">
-              ${generateUserCardEntry("Utilisateur", "userCardEntry", request.user)}
+              ${generateUserCardEntry("Utilisateur", "userCardEntry",
+      request.user)}
               ${generateAddressCardEntry(request)}
               ${generateRequestDateCardEntry(request)}
               ${generateTimeSlotCardEntry(request)}
               ${generateVisitDateTimeCardEntry(request)}
               ${generateExplanatoryNoteCardEntry(request)}
+            
             </div>       
             <div class="tab-pane fade ${furnitureTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-             
+             ${generateButtonRow(request)}
             </div>
           </div>
         </div>
@@ -291,9 +389,9 @@ const generateCardHTML = (request) => {
 
 const generateSummaryCardHeader = (request) => {
   let res = "";
-  if(request && request.user && request.requestDate) {
+  if (request && request.user && request.requestDate) {
     res = `<h5>${request.user.username} (${request.requestDate})</h5>`;
-    
+
   }
   return res;
 }
@@ -303,7 +401,7 @@ const generateSummaryCardHeader = (request) => {
  * @param {String} label : text displayed in the label part of the entry
  * @param {String} userLinkId : html id of the user link
  * @param {*} user : user object
- * @returns {String} user entry html 
+ * @returns {String} user entry html
  */
 const generateUserCardEntry = (label, userLinkId, user) => {
   let res = "";
@@ -324,17 +422,17 @@ const generateUserCardEntry = (label, userLinkId, user) => {
 
 const generateExplanatoryNoteCardEntry = (request) => {
   let res = "";
-  if(request.explanatoryNote) {
-    res = generateCardLabelKeyEntry("Justificatif de refus", "explanatory-note-entry", request.explanatoryNote);
+  if (request.explanatoryNote) {
+    res = generateCardLabelKeyEntry("Justificatif de refus",
+        "explanatory-note-entry", request.explanatoryNote);
   }
   return res;
 }
 
-
 const generateAddressCardEntry = (request) => {
   let res = "";
   let adr = generateAddressText(request);
-  if(adr) {
+  if (adr) {
     res = generateCardLabelKeyEntry("Adresse de visite", "address-entry", adr);
   }
   return res;
@@ -342,24 +440,27 @@ const generateAddressCardEntry = (request) => {
 
 const generateRequestDateCardEntry = (request) => {
   let res = "";
-  if(request.requestDate) {
-    res = generateCardLabelKeyEntry("Date de la demande", "request-date-entry", request.requestDate);
+  if (request.requestDate) {
+    res = generateCardLabelKeyEntry("Date de la demande", "request-date-entry",
+        request.requestDate);
   }
   return res;
 }
 
 const generateTimeSlotCardEntry = (request) => {
   let res = "";
-  if(request.timeSlot) {
-    res = generateCardLabelKeyEntry("Disponibilités", "time-slot-entry", request.timeSlot);
+  if (request.timeSlot) {
+    res = generateCardLabelKeyEntry("Disponibilités", "time-slot-entry",
+        request.timeSlot);
   }
   return res;
 }
 
 const generateVisitDateTimeCardEntry = (request) => {
   let res = "";
-  if(request.visitDateTime) {
-    res = generateCardLabelKeyEntry("Date/heure de visite", "visit-date-time-entry", request.visitDateTime);
+  if (request.visitDateTime) {
+    res = generateCardLabelKeyEntry("Date/heure de visite",
+        "visit-date-time-entry", request.visitDateTime);
   }
   return res;
 }
@@ -380,7 +481,7 @@ const generateCardLabelKeyEntry = (label, id, value) => {
 
 /**
  * Generates page html containing request list & card div.
- * @param {Boolean} largeTable : if CSS classes should be set for large tables (false = short table) 
+ * @param {Boolean} largeTable : if CSS classes should be set for large tables (false = short table)
  * @returns page html
  */
 const generatePageHtml = (largeTable = true) => {
@@ -466,12 +567,12 @@ const generateRow = (request, notNeededClassName) => {
 
 /**
  * generates an address String from a request
- * @param {*} request 
+ * @param {*} request
  * @returns {String} address text
  */
 const generateAddressText = (request) => {
   let adr = request.address;
-  return `${adr.street} ${adr.buildingNumber}, ${adr.postcode} ${adr.commune} ${adr.country}`; 
+  return `${adr.street} ${adr.buildingNumber}, ${adr.postcode} ${adr.commune} ${adr.country}`;
 }
 
 /**
@@ -486,8 +587,8 @@ const generateColoredStatus = (request) => {
 
 /**
  * Generate status entry for request list as colored bootstrap badge (used in cards)
- * @param {*} furniture 
- * @returns 
+ * @param {*} furniture
+ * @returns
  */
 const generateBadgeStatus = (request) => {
   let infos = generateStatusInfos(request.requestStatus);
@@ -515,7 +616,7 @@ const generateDot = (colorClassName) => {
 
 /**
  * find status label & color classname (primary / danger / etc...) for a given status
- * @param {String} status 
+ * @param {String} status
  * @returns {
  *  classname: bootstrap color suffix,
  *  status: status label,
@@ -555,7 +656,7 @@ const removeTimeouts = () => {
 
 const changeContainerId = () => {
   let tContainer = document.querySelector('#largeTableContainer');
-  if(tContainer) {
+  if (tContainer) {
     tContainer.id = "shortTableContainer";
   }
 }
