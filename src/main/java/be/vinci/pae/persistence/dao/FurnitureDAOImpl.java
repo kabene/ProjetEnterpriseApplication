@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
@@ -43,6 +44,30 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     }
 
     return res;
+  }
+
+  /**
+   * Finds all pieces of furniture having a specific request id.
+   *
+   * @param requestId : request id.
+   * @return List of FurnitureDTO
+   */
+  @Override
+  public List<FurnitureDTO> findByRequestId(int requestId) {
+    List<FurnitureDTO> lst = new ArrayList<>();
+    String query = "SELECT f.* FROM satchofurniture.furniture f WHERE f.request_id = ?";
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setInt(1, requestId);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        lst.add(toDTO(rs));
+      }
+      rs.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return lst;
   }
 
   /**

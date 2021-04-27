@@ -1,11 +1,14 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.pojos.RequestStatus;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
+import be.vinci.pae.persistence.dao.FurnitureDAO;
+import be.vinci.pae.persistence.dao.PhotoDAO;
 import be.vinci.pae.persistence.dao.RequestForVisitDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
@@ -22,6 +25,10 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
   private AddressDAO addressDAO;
   @Inject
   private UserDAO userDAO;
+  @Inject
+  private FurnitureDAO furnitureDAO;
+  @Inject
+  private PhotoDAO photoDAO;
 
   /**
    * list all the requests for visit.
@@ -112,5 +119,9 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
   private void completeFurnitureDTO(RequestForVisitDTO dto) {
     dto.setAddress(addressDAO.findById(dto.getAddressId()));
     dto.setUser(userDAO.findById(dto.getUserId()));
+    dto.setFurnitureList(furnitureDAO.findByRequestId(dto.getRequestId()));
+    for(FurnitureDTO furnitureDTO : dto.getFurnitureList()) {
+      furnitureDTO.setPhotos(photoDAO.findAllByFurnitureId(furnitureDTO.getFurnitureId()));
+    }
   }
 }
