@@ -376,8 +376,9 @@ const generateCardHTML = (request) => {
             
             </div>       
             <div class="tab-pane fade ${furnitureTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-             ${generateButtonRow(request)}
+            
             </div>
+            ${generateButtonRow(request)}
           </div>
         </div>
       </div>
