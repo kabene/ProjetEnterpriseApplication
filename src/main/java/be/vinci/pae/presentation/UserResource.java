@@ -1,6 +1,7 @@
 package be.vinci.pae.presentation;
 
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.dto.UserDTO;
@@ -283,9 +284,10 @@ public class UserResource {
     UserDTO currentAdminDTO = (UserDTO) request.getProperty("user");
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
         "GET /users/takeover/" + takeoverId + " (admin: " + currentAdminDTO.getId() + ")");
-
     UserDTO takeoverUserDTO = userUCC.getOne(takeoverId);
-
+    if(takeoverUserDTO.getRole().equals("admin")) {
+      throw new ConflictException("Error: cannot takeover an admin account");
+    }
     String takeoverToken = authentication.createTakeoverToken(currentAdminDTO, takeoverUserDTO);
     ObjectNode resNode = jsonMapper.createObjectNode().put("token", takeoverToken)
         .putPOJO("user", takeoverUserDTO);
