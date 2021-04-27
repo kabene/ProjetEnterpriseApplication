@@ -30,7 +30,7 @@ public interface OptionDAO {
    * @param id id of the option.
    * @return OptionDTO that represent the option
    */
-  OptionDTO getOption(int id);
+  OptionDTO findById(int id);
 
   /**
    * list all the options .

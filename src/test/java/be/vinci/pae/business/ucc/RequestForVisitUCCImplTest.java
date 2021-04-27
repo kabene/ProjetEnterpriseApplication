@@ -65,7 +65,7 @@ class RequestForVisitUCCImplTest {
     Mockito.when(mockRequestDTO3.getRequestId()).thenReturn(3);
 
 
-    Mockito.when(requestForVisitDAO.findByRequestId(defaultRequestId)).thenReturn(mockRequestDTO1);
+    Mockito.when(requestForVisitDAO.findById(defaultRequestId)).thenReturn(mockRequestDTO1);
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(RequestStatus.WAITING);
     Mockito.when(mockRequestDTO1.getUserId()).thenReturn(defaultUserId);
   }

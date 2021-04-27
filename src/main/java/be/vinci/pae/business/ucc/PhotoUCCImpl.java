@@ -50,7 +50,7 @@ public class PhotoUCCImpl implements PhotoUCC {
       dalServices.startTransaction();
       furnitureDAO.findById(furnitureId);
       int id = photoDAO.insert(furnitureId, source);
-      res = photoDAO.getPhotoById(id);
+      res = photoDAO.findById(id);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -72,7 +72,7 @@ public class PhotoUCCImpl implements PhotoUCC {
     PhotoDTO res;
     try {
       dalServices.startTransaction();
-      PhotoDTO foundDto = photoDAO.getPhotoById(id);
+      PhotoDTO foundDto = photoDAO.findById(id);
       if (!isVisible && isOnHomePage) {
         throw new ConflictException(
             "Error: impossible flag configuration "

@@ -79,21 +79,7 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
    */
   @Override
   public AddressDTO findById(int addressId) {
-    AddressDTO res;
-    String query = "SELECT a.* FROM satchoFurniture.addresses a WHERE a.address_id = ?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, addressId);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        res = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: address not found");
-      }
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-    return res;
+    return findById(addressId, "addresses", "address_id");
   }
 
   /**

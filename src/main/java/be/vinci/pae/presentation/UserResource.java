@@ -4,6 +4,7 @@ import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.authentication.Authentication;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.presentation.filters.AllowTakeover;
 import be.vinci.pae.presentation.filters.Authorize;
 import be.vinci.pae.presentation.filters.Admin;
 import be.vinci.pae.business.ucc.UserUCC;
@@ -115,6 +116,7 @@ public class UserResource {
   @Path("me")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
+  @AllowTakeover
   public Response getUser(@Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /users/me");
     UserDTO userFound = (UserDTO) request.getProperty("user");
@@ -265,6 +267,29 @@ public class UserResource {
     UserDTO userDTO = userUCC.validateUser(id, value);
     userDTO = Json.filterAdminOnlyJsonView(userDTO, UserDTO.class);
     return Response.ok(userDTO).build();
+  }
+
+  /**
+   * GET a take over jwt for a specific user account.
+   *
+   * @param takeoverId : user id to take over
+   * @return take over jwt + UserDTO containing user information.
+   */
+  @GET
+  @Path("/takeover/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response takeOver(@Context ContainerRequest request, @PathParam("id") int takeoverId) {
+    UserDTO currentAdminDTO = (UserDTO) request.getProperty("user");
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
+        "GET /users/takeover/" + takeoverId + " (admin: " + currentAdminDTO.getId() + ")");
+
+    UserDTO takeoverUserDTO = userUCC.getOne(takeoverId);
+
+    String takeoverToken = authentication.createTakeoverToken(currentAdminDTO, takeoverUserDTO);
+    ObjectNode resNode = jsonMapper.createObjectNode().put("token", takeoverToken)
+        .putPOJO("user", takeoverUserDTO);
+    return Response.ok(resNode, MediaType.APPLICATION_JSON).build();
   }
 
   /**

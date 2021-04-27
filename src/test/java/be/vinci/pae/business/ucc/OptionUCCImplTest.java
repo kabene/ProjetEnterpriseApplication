@@ -78,8 +78,8 @@ class OptionUCCImplTest {
     Mockito.reset(mockUserDTO1);
     Mockito.reset(mockUserDTO2);
 
-    Mockito.when(mockOptionDAO.getOption(defaultOptionId1)).thenReturn(mockOptionDTO1);
-    Mockito.when(mockOptionDAO.getOption(defaultOptionId2)).thenReturn(mockOptionDTO2);
+    Mockito.when(mockOptionDAO.findById(defaultOptionId1)).thenReturn(mockOptionDTO1);
+    Mockito.when(mockOptionDAO.findById(defaultOptionId2)).thenReturn(mockOptionDTO2);
 
     Mockito.when(mockOptionDTO1.getOptionId()).thenReturn(defaultOptionId1);
     Mockito.when(mockOptionDTO1.getFurnitureId()).thenReturn(defaultFurnitureId1);
@@ -182,7 +182,7 @@ class OptionUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.toEnum(status));
 
     assertEquals(mockOptionDTO1, optionUCC.cancelOption(mockUserDTO1, defaultOptionId1),
-        "nominal, should return OptionDTO");
+        "a valid call to cancelOption should return OptionDTO");
 
     Mockito.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.toEnum("available_for_sale"));
     Mockito.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
@@ -197,7 +197,7 @@ class OptionUCCImplTest {
       + "option id, should throw NotFoundException")
   @Test
   public void test_cancelOption_invalidOptionId_shouldThrowNotFoundException() {
-    Mockito.when(mockOptionDAO.getOption(defaultOptionId1)).thenThrow(new NotFoundException());
+    Mockito.when(mockOptionDAO.findById(defaultOptionId1)).thenThrow(new NotFoundException());
 
     assertThrows(NotFoundException.class,
         () -> optionUCC.cancelOption(mockUserDTO1, defaultOptionId1),
@@ -275,7 +275,8 @@ class OptionUCCImplTest {
 
     Mockito.when(mockOptionDAO.findAll()).thenReturn(lst);
 
-    assertEquals(lst, optionUCC.listOption());
+    assertEquals(lst, optionUCC.listOption(),
+        "a valid call to listOption should return a List of OptionDTO");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
@@ -289,7 +290,8 @@ class OptionUCCImplTest {
 
     Mockito.when(mockOptionDAO.findAll()).thenReturn(emptyLst);
 
-    assertEquals(emptyLst, optionUCC.listOption());
+    assertEquals(emptyLst, optionUCC.listOption(),
+        "a valid call to listOption should return an empty List if the db is empty");
 
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();

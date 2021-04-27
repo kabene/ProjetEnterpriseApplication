@@ -52,23 +52,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public UserDTO findById(int userId) {
-    UserDTO userFound;
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ?";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, userId);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        userFound = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: user not found");
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return userFound;
+    return findById(userId, "users", "user_id");
   }
 
   /**
