@@ -190,7 +190,7 @@ class PhotoUCCImplTest {
 
     assertThrows(NotFoundException.class, () -> {
       photoUCC.add(defaultFurnitureId1, defaultSource1);
-    });
+    }, "a call to insert with a non-existing furniture id should throw NotFoundException");
     InOrder inOrder = Mockito.inOrder(mockDal, mockPhotoDAO, mockFurnitureDAO);
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
@@ -225,7 +225,8 @@ class PhotoUCCImplTest {
     Mockito.when(mockPhotoDAO.updateDisplayFlags(mockPhotoDTO1)).thenReturn(mockPhotoDTO2);
 
     PhotoDTO actual = photoUCC.patchDisplayFlags(defaultPhotoId1, isVisible, isOnHomePage);
-    assertEquals(mockPhotoDTO2, actual);
+    assertEquals(mockPhotoDTO2, actual,
+        "a valid call to patchDisplayFlags should return the modified PhotoDTO");
 
     InOrder inOrder = Mockito
         .inOrder(mockPhotoDTO1, mockPhotoDAO, mockDal); // enforce invocation order
@@ -258,7 +259,9 @@ class PhotoUCCImplTest {
   @Test
   void test_patchDisplayFlags_givenInvalidFlags_shouldThrowConflict() {
     assertThrows(ConflictException.class,
-        () -> photoUCC.patchDisplayFlags(defaultPhotoId1, false, true));
+        () -> photoUCC.patchDisplayFlags(defaultPhotoId1, false, true),
+        "a call to patchDisplayFlags with invalid flags (!isVisible & isOnHomePage) "
+            + "should throw ConflictException");
 
     InOrder inOrder = Mockito.inOrder(mockDal);
     inOrder.verify(mockDal).startTransaction();
@@ -272,7 +275,9 @@ class PhotoUCCImplTest {
   void test_patchDisplayFlags_givenInvalidId_shouldThrowNotFound() {
     Mockito.when(mockPhotoDAO.findById(defaultPhotoId1)).thenThrow(new NotFoundException());
     assertThrows(NotFoundException.class,
-        () -> photoUCC.patchDisplayFlags(defaultPhotoId1, true, true));
+        () -> photoUCC.patchDisplayFlags(defaultPhotoId1, true, true),
+        "a call to patchDisplayFlags with invalid photo id should throw "
+            + "NotFoundException");
 
     InOrder inOrder = Mockito.inOrder(mockDal, mockPhotoDAO);
     inOrder.verify(mockDal).startTransaction();
@@ -288,7 +293,8 @@ class PhotoUCCImplTest {
     Mockito.when(mockPhotoDAO.updateDisplayFlags(mockPhotoDTO1)).thenThrow(new InternalError());
 
     assertThrows(InternalError.class,
-        () -> photoUCC.patchDisplayFlags(defaultPhotoId1, true, true));
+        () -> photoUCC.patchDisplayFlags(defaultPhotoId1, true, true),
+        "if patchDisplayFlags catches an InternalError, it should throw it back");
 
     InOrder inOrder = Mockito.inOrder(mockDal, mockPhotoDAO);
     inOrder.verify(mockDal).startTransaction();
