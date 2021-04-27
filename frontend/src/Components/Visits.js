@@ -13,6 +13,10 @@ let currentRequestId;
 let isDisplayingLargeTable;
 let openTab = "infos";
 
+/**
+ * Runs visit request list page (for admins)
+ * @param {*} id 
+ */
 const Visits = async (id) => {
 
   currentUser = getUserSessionData();
@@ -23,10 +27,9 @@ const Visits = async (id) => {
   mainPage = document.querySelector("#mainPage");
   await findVisitRequestList();
   if (!id) {
+    isDisplayingLargeTable = true;
     pageHTML = generatePageHtml();
-
     mainPage.innerHTML = pageHTML;
-
     document.querySelectorAll(".toBeClicked").forEach(
         element => element.addEventListener("click", displayShortElements));
     document.querySelector("#buttonReturn").addEventListener("click",
@@ -34,10 +37,12 @@ const Visits = async (id) => {
   } else {
     loadCard(id);
   }
-
 }
 //displayers
 
+/**
+ * sets CSS classes for transition to large table (callback for "back to list" btn)
+ */
 const displayLargeTable = () => {
   openTab = "infos";
   document.querySelector('#shortTableContainer').id = "largeTableContainer";
@@ -57,11 +62,20 @@ const displayLargeTable = () => {
   })
 }
 
+/**
+ * shows columns in the table that were hidden in short table
+ */
 const displayLargeElements = () => {
+  isDisplayingLargeTable = true;
   document.querySelectorAll('.notNeeded').forEach(
       element => element.className = "notNeeded align-middle");
 }
-const displayShortElements = async (e) => {
+
+/**
+ * sets CSS class for transition to short table. Then, loads card.
+ * @param {*} e : event object from event listener
+ */
+const displayShortElements = (e) => {
   removeTimeouts();
   //hide large table
   let largeTable = document.querySelector('#largeTable');
@@ -97,21 +111,14 @@ const displayShortElements = async (e) => {
     element.innerHTML = generateDot(classname);
   });
   let id = element.attributes["requestId"].value;
-  let request = requestMap[id];
-  if (!request) {
-    await reloadPage();
-  }
-  if (request) {
-    currentRequestId = id;
-    generateCard(request);
-    document.querySelectorAll(".userLink").forEach(
-        (link) => link.addEventListener("click", onUserLinkClicked));
-    isDisplayingLargeTable = false;
-  } else {
-    displayErrorMessage("errorDiv", new Error("Request introuvable :'<"));
-  }
+  loadCard(id);
 }
 
+/**
+ * callback for clicks on user links.
+ * redirects to user's card in user list page.
+ * @param {*} e : event object from event listener
+ */
 const onUserLinkClicked = (e) => {
   e.preventDefault();
   let link = e.target;
@@ -120,7 +127,10 @@ const onUserLinkClicked = (e) => {
   RedirectUrl("/users", userId);
 }
 
-
+/**
+ * Adds event listeners for every transition btn. (on the request card)
+ * @param {*} request 
+ */
 const addTransitionBtnListeners = (request) => {
   document.querySelectorAll(".transitionBtn").forEach(element => {
     element.addEventListener("click",
@@ -128,6 +138,12 @@ const addTransitionBtnListeners = (request) => {
   })
 }
 
+/**
+ * finds event listener callback for transition btn given it's id.
+ * @param {*} btnId : html id of the transition btn
+ * @param {*} request : request object
+ * @returns {Function} callback
+ */
 const findTransitionMethod = (btnId, request) => {
   switch (btnId) {
     case "Accept":
@@ -143,12 +159,16 @@ const findTransitionMethod = (btnId, request) => {
   ;
 }
 
-
+/**
+ * Generate request card html and updates current display.
+ * Then, adds all necessary event listeners.
+ * @param {*} request 
+ */
 const generateCard = (request) => {
-
   let requestCardDiv = document.querySelector("#requestCardDiv");
   let cardHTML = generateCardHTML(request);
   requestCardDiv.innerHTML = cardHTML;
+  //event listeners
   addTransitionBtnListeners(request);
   document.querySelectorAll(".favRadio").forEach((element) => {
     element.addEventListener("click", onFavRadioSelected);
@@ -165,9 +185,13 @@ const generateCard = (request) => {
     openTab = "photos";
   });
   addImage(furniture);
-
 }
 
+/**
+ * Generate request card html given a specific request.
+ * @param {*} request : request object
+ * @returns {String} request card html
+ */
 const generateCardHTML = (request) => {
   const openTabObject = {
     ariaSelected: "true",
@@ -199,8 +223,7 @@ const generateCardHTML = (request) => {
               </div>
               <div class="col-md-6 text-left">
                 <h5 id="descriptionCardEntry">${request.explanatoryNote}</h5>
-                <p class="proile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(
-      request)}</span></p>
+                <p class="proile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(request)}</span></p>
               </div>
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -219,7 +242,7 @@ const generateCardHTML = (request) => {
         <div class="col-md-8">
           <div class="tab-content profile-tab" id="myTabContent">
             <div class="tab-pane fade ${infoTab.tabClassname}" id="home" role="tabpanel" aria-labelledby="home-tab">
-              ${generateClientCardEntry(request)}
+              ${generateUserCardEntry("Utilisateur", "userCardEntry", request.user)}
             </div>       
             <div class="tab-pane fade ${photoTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
              
@@ -233,25 +256,27 @@ const generateCardHTML = (request) => {
   return res;
 }
 
-const generateClientCardEntry = (request) => {
+/**
+ * Generate html for standard user entry in cards. (with user link)
+ * @param {String} label : text displayed in the label part of the entry
+ * @param {String} userLinkId : html id of the user link
+ * @param {*} user : user object
+ * @returns {String} user entry html 
+ */
+const generateUserCardEntry = (label, userLinkId, user) => {
   let res = "";
   if (request.user) {
-    res = generateUserCardEntry("Client", "clientCardEntry", request.user);
+    let res = `
+    <div class="row text-left">
+      <div class="col-md-6">
+        <label class="mr-3">${label}</label>
+      </div>
+      <div class="col-md-6">
+        <p id="${userLinkId}">${generateUserLink(
+        user)} (${user.firstName} ${user.lastName})</p>
+      </div>
+    </div>`;
   }
-  return res;
-}
-
-const generateUserCardEntry = (label, id, user) => {
-  let res = `
-  <div class="row text-left">
-    <div class="col-md-6">
-      <label class="mr-3">${label}</label>
-    </div>
-    <div class="col-md-6">
-      <p id="${id}">${generateUserLink(
-      user)} (${user.firstName} ${user.lastName})</p>
-    </div>
-  </div>`;
   return res;
 }
 
@@ -265,6 +290,11 @@ const reloadPage = async () => {
   mainPage = generatePageHtml();
 }
 
+/**
+ * Generates page html containing request list & card div.
+ * @param {Boolean} largeTable : if CSS classes should be set for large tables (false = short table) 
+ * @returns page html
+ */
 const generatePageHtml = (largeTable = true) => {
   let tableSize = "large";
   let notNeededClassName = "notNeeded align-middle";
@@ -299,6 +329,11 @@ const generatePageHtml = (largeTable = true) => {
   return res;
 }
 
+/**
+ * generates all rows in the request list
+ * @param {String} notNeededClassName : CSS classname for not needed columns (short list -> notNeeded d-none / large list -> notNeeded align-middle)
+ * @returns {String} html for all list rows
+ */
 const generateAllRows = (notNeededClassName) => {
   let res = "";
   requestList.forEach(request => {
@@ -313,6 +348,12 @@ const generateAllRows = (notNeededClassName) => {
   return res;
 }
 
+/**
+ * Generates one request list row (given one specific request)
+ * @param {*} request : request object
+ * @param {String} notNeededClassName : CSS classname for not needed columns (short list -> notNeeded d-none / large list -> notNeeded align-middle)
+ * @returns {String} html for one row
+ */
 const generateRow = (request, notNeededClassName) => {
   let statusHtml;
   let thumbnailClass = "mx-auto";
@@ -327,7 +368,7 @@ const generateRow = (request, notNeededClassName) => {
   }
   let res = `
     <tr class="toBeClicked" requestId="${request.requestId}">
-      <th class="${notNeededClassName}"><p>${generateSellerLink(request.user)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateUserLink(request.user)}</p></th>
       <th class="${notNeededClassName}"><p>${request.address.street + ` `
   + request.address.buildingNumber + `,` + request.address.postcode + ` `
   + request.address.commune + ` ` + request.address.country}</p></th>
@@ -336,29 +377,42 @@ const generateRow = (request, notNeededClassName) => {
     </tr>`;
   return res;
 }
-const generateSellerLink = (user) => {
-  let res = "";
-  if (user) {
-    res = generateUserLink(user);
-  }
-  return res;
-}
 
+/**
+ * Generate status entry for request list as colored <p> html tag (used in large tables)
+ * @param {*} request : request  object
+ * @returns {String} html <p> tag
+ */
 const generateColoredStatus = (request) => {
   let infos = generateStatusInfos(request.requestStatus);
   return `<p class="text-${infos.classname}">${infos.status}</p>`;
 }
 
+/**
+ * Generate status entry for request list as colored bootstrap badge (used in cards)
+ * @param {*} furniture 
+ * @returns 
+ */
 const generateBadgeStatus = (furniture) => {
   let infos = generateStatusInfos(furniture.status);
   let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.status}</span>`;
   return res;
 }
 
+/**
+ * generate <a> tag that links to user card
+ * @param {*} user : user object
+ * @returns {String} <a> html tag (class = userLink)
+ */
 const generateUserLink = (user) => {
   return `<a href="#" userId="${user.id}" class="userLink">${user.username}</a>`;
 }
 
+/**
+ * generate colored dot for status in short table
+ * @param {String} colorClassName : bootstrap color classname (primary / secondary / danger / etc...)
+ * @returns {String} empty bootstrap pill badge in the needed color
+ */
 const generateDot = (colorClassName) => {
   return `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
 }
@@ -400,6 +454,8 @@ const changeContainerId = () => {
 }
 
 const loadCard = (requestId) => {
+  isDisplayingLargeTable = false;
+  currentRequestId = requestId;
   mainPage.innerHTML = generatePageHtml(false);
   generateCard(requestMap[requestId]);
   document.querySelectorAll(".toBeClicked").forEach(
