@@ -285,7 +285,7 @@ public class UserResource {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
         "GET /users/takeover/" + takeoverId + " (admin: " + currentAdminDTO.getId() + ")");
     UserDTO takeoverUserDTO = userUCC.getOne(takeoverId);
-    if(takeoverUserDTO.getRole().equals("admin")) {
+    if (takeoverUserDTO.getRole().equals("admin")) {
       throw new ConflictException("Error: cannot takeover an admin account");
     }
     String takeoverToken = authentication.createTakeoverToken(currentAdminDTO, takeoverUserDTO);

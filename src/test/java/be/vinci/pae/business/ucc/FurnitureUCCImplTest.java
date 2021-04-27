@@ -680,7 +680,7 @@ class FurnitureUCCImplTest {
     Mockito.when(mockPhotoDAO.findById(defaultPhotoId1)).thenThrow(new NotFoundException());
 
     assertThrows(NotFoundException.class, () ->
-      furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
+            furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
         "calling updateFavouritePhoto with a non-existing photo id should throw "
             + "NotFoundException");
 
