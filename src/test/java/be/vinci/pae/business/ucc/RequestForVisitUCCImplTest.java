@@ -17,6 +17,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,9 +35,10 @@ class RequestForVisitUCCImplTest {
   private static RequestForVisitDTO mockRequestDTO2;
   private static RequestForVisitDTO mockRequestDTO3;
 
-  private static int defaultRequestId = 1;
-  private static int defaultUserId = 2;
-  private static int defaultBadUserId = 3;
+  private static final int defaultRequestId = 1;
+  private static final int defaultUserId = 2;
+  private static final int defaultBadUserId = 3;
+  private static final String info = "my info";
 
   @BeforeAll
   public static void init() {
@@ -92,7 +94,7 @@ class RequestForVisitUCCImplTest {
   @DisplayName("TEST listRequest() without data should have return an empty list")
   @Test
   void test_listRequestWithEmptyDB_shouldReturnEmptyDTOList() {
-    List<RequestForVisitDTO> list = Arrays.asList();
+    List<RequestForVisitDTO> list = new ArrayList<>();
     Mockito.when(requestForVisitDAO.findAll()).thenReturn(list);
 
     assertEquals(list, requestUCC.listRequest(),
@@ -139,7 +141,7 @@ class RequestForVisitUCCImplTest {
   @DisplayName("TEST listRequestByUserId() should have return correct requests")
   @Test
   void test_listRequestByUserIdWithEmptyDb_shouldReturnCorrectRequests() {
-    List<RequestForVisitDTO> list = Arrays.asList();
+    List<RequestForVisitDTO> list = new ArrayList<>();
     Mockito.when(requestForVisitDAO.findByUserId(defaultUserId)).thenReturn(list);
 
     assertEquals(list, requestUCC.listRequestByUserId(defaultUserId),
@@ -175,12 +177,12 @@ class RequestForVisitUCCImplTest {
   void test_modifyStatusWaitingRequest_shouldReturnRequest(RequestStatus requestStatus) {
 
     assertEquals(mockRequestDTO1, requestUCC
-            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, requestStatus),
+            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, requestStatus, info),
         "called changeWaitingRequestStatus() with the good userId and a good request "
             + "should return the good request");
 
     Mockito.verify(requestForVisitDAO)
-        .modifyStatusWaitingRequest(defaultRequestId, requestStatus);
+        .modifyStatusWaitingRequest(defaultRequestId, requestStatus, info);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
     Mockito.verify(mockDal).commitTransaction();
@@ -193,12 +195,12 @@ class RequestForVisitUCCImplTest {
   void test_changeWaitingRequestStatus_withBadUserId_shouldThrowExc(RequestStatus requestStatus) {
 
     assertThrows(UnauthorizedException.class, () -> requestUCC
-            .changeWaitingRequestStatus(defaultRequestId, defaultBadUserId, requestStatus),
+            .changeWaitingRequestStatus(defaultRequestId, defaultBadUserId, requestStatus, info),
         "called changeWaitingRequestStatus() with a bad userId"
             + "should have thrown Unauthorized Exception");
 
     Mockito.verify(requestForVisitDAO, Mockito.never())
-        .modifyStatusWaitingRequest(defaultRequestId, requestStatus);
+        .modifyStatusWaitingRequest(defaultRequestId, requestStatus, info);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
@@ -212,12 +214,12 @@ class RequestForVisitUCCImplTest {
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(requestStatus);
 
     assertThrows(ConflictException.class, () -> requestUCC
-            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, requestStatus),
+            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, requestStatus, info),
         "called changeWaitingRequestStatus() with a not waiting request"
             + "should have thrown Conflict Exception");
 
     Mockito.verify(requestForVisitDAO, Mockito.never())
-        .modifyStatusWaitingRequest(defaultRequestId, requestStatus);
+        .modifyStatusWaitingRequest(defaultRequestId, requestStatus, info);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
@@ -229,12 +231,13 @@ class RequestForVisitUCCImplTest {
   void test_changeWaitingRequestStatus_intoWaiting_shouldThrowConflictException() {
 
     assertThrows(ConflictException.class, () -> requestUCC
-            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, RequestStatus.WAITING),
+            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, RequestStatus.WAITING
+                , info),
         "called changeWaitingRequestStatus() to change it into waiting"
             + "should have thrown Conflict Exception");
 
     Mockito.verify(requestForVisitDAO, Mockito.never())
-        .modifyStatusWaitingRequest(defaultRequestId, RequestStatus.WAITING);
+        .modifyStatusWaitingRequest(defaultRequestId, RequestStatus.WAITING, info);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
@@ -245,14 +248,14 @@ class RequestForVisitUCCImplTest {
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
   void test_changeWaitingRequestStatus_ErrorThrown_shouldThrowError(RequestStatus requestStatus) {
     Mockito.doThrow(new InternalError()).when(requestForVisitDAO)
-        .modifyStatusWaitingRequest(defaultRequestId, requestStatus);
+        .modifyStatusWaitingRequest(defaultRequestId, requestStatus, info);
 
     assertThrows(InternalError.class, () -> requestUCC
-            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, requestStatus),
+            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, requestStatus, info),
         "DAO throws an Error, should rollback and throw InternalError");
 
     Mockito.verify(requestForVisitDAO)
-        .modifyStatusWaitingRequest(defaultRequestId, requestStatus);
+        .modifyStatusWaitingRequest(defaultRequestId, requestStatus, info);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();

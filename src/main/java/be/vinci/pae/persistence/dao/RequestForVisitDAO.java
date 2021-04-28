@@ -35,8 +35,9 @@ public interface RequestForVisitDAO {
    *
    * @param idRequest the id of the request for visit to modify.
    * @param requestStatus the status in which the request should be modified.
+   * @param info          the info (explanatory note or visit date time) to add.
    */
-  void modifyStatusWaitingRequest(int idRequest, RequestStatus requestStatus);
+  void modifyStatusWaitingRequest(int idRequest, RequestStatus requestStatus, String info);
 
 
 }

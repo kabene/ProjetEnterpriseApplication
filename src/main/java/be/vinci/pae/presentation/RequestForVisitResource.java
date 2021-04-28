@@ -4,10 +4,12 @@ import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.RequestStatus;
 import be.vinci.pae.business.ucc.RequestForVisitUCC;
+import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.filters.Admin;
 import be.vinci.pae.presentation.filters.Authorize;
 import be.vinci.pae.utils.Json;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Path;
@@ -78,13 +80,26 @@ public class RequestForVisitResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Admin
-  public Response cancel(@PathParam("id") int requestId, @Context ContainerRequest request) {
+  public Response cancel(@PathParam("id") int requestId, @Context ContainerRequest request,
+                         JsonNode reqNode) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(
         Level.INFO, "GET /requestForVisit/cancel/" + requestId
     );
+    if (reqNode == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    JsonNode explanatoryNoteJson = reqNode.get("explanatoryNote");
+    if (explanatoryNoteJson == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    String explanatoryNote = explanatoryNoteJson.asText();
+    if (explanatoryNote == null || explanatoryNote == "") {
+      throw new BadRequestException("Error: malformed request");
+    }
     UserDTO currentUser = (UserDTO) request.getProperty("user");
     RequestForVisitDTO requestForVisitDTO = requestForVisitUCC
-        .changeWaitingRequestStatus(requestId, currentUser.getId(), RequestStatus.CANCELED);
+        .changeWaitingRequestStatus(requestId, currentUser.getId(), RequestStatus.CANCELED,
+            explanatoryNote);
     requestForVisitDTO = Json.filterAdminOnlyJsonView(requestForVisitDTO, RequestForVisitDTO.class);
     return Response.ok(requestForVisitDTO, MediaType.APPLICATION_JSON).build();
   }
@@ -101,13 +116,26 @@ public class RequestForVisitResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Admin
-  public Response accept(@PathParam("id") int requestId, @Context ContainerRequest request) {
+  public Response accept(@PathParam("id") int requestId, @Context ContainerRequest request,
+                         JsonNode reqNode) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(
         Level.INFO, "GET /requestForVisit/accept/" + requestId
     );
+    if (reqNode == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    JsonNode visitDateTimeJson = reqNode.get("visitDateTime");
+    if (visitDateTimeJson == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    String visitDateTime = visitDateTimeJson.asText();
+    if (visitDateTime == null || visitDateTime == "" || visitDateTime == " ") {
+      throw new BadRequestException("Error: malformed request");
+    }
     UserDTO currentUser = (UserDTO) request.getProperty("user");
     RequestForVisitDTO requestForVisitDTO = requestForVisitUCC
-        .changeWaitingRequestStatus(requestId, currentUser.getId(), RequestStatus.CONFIRMED);
+        .changeWaitingRequestStatus(requestId, currentUser.getId(), RequestStatus.CONFIRMED,
+            visitDateTime);
     requestForVisitDTO = Json.filterAdminOnlyJsonView(requestForVisitDTO, RequestForVisitDTO.class);
     return Response.ok(requestForVisitDTO, MediaType.APPLICATION_JSON).build();
   }

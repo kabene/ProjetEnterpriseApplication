@@ -82,15 +82,26 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
    * modify the status of a waiting request for visit.
    *
    * @param idRequest the id of the request for visit to modify.
+   * @param requestStatus the status in which the request should be modified.
+   * @param info          the info (explanatory note or visit date time) to add.
    */
   @Override
-  public void modifyStatusWaitingRequest(int idRequest, RequestStatus requestStatus) {
-    String query = "UPDATE satchoFurniture.requests_for_visit SET status='?'"
-        + "WHERE request_id=?";
+  public void modifyStatusWaitingRequest(int idRequest, RequestStatus requestStatus, String info) {
+    String query;
+    if (requestStatus.equals(RequestStatus.CANCELED)) {
+      query = "UPDATE satchoFurniture.requests_for_visit "
+          + "SET status='?' AND explanatory_note='?'"
+          + "WHERE request_id=?";
+    } else {
+      query = "UPDATE satchoFurniture.requests_for_visit "
+          + "SET status='?' AND visit_date_time='?'"
+          + "WHERE request_id=?";
+    }
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
       ps.setString(1, requestStatus.getValue());
-      ps.setInt(2, idRequest);
+      ps.setString(2, info);
+      ps.setInt(3, idRequest);
       ps.executeUpdate();
       ps.close();
     } catch (SQLException e) {

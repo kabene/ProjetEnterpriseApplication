@@ -81,11 +81,12 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
    * @param idRequest     the id of the request for visit to change.
    * @param currentUserId the id of the user asking for the change.
    * @param requestStatus the status in which the request should be changed.
+   * @param info          the info (explanatory note or visit date time) to put in the DTO.
    * @return an RequestForVisitDTO that represent the changed one.
    */
   @Override
   public RequestForVisitDTO changeWaitingRequestStatus(int idRequest, int currentUserId,
-                                                       RequestStatus requestStatus) {
+                                                       RequestStatus requestStatus, String info) {
     RequestForVisitDTO request;
     try {
       dalServices.startTransaction();
@@ -100,7 +101,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
         throw new UnauthorizedException("The requests do not belong to the user "
             + "that called the request");
       }
-      requestForVisitDAO.modifyStatusWaitingRequest(idRequest, requestStatus);
+      requestForVisitDAO.modifyStatusWaitingRequest(idRequest, requestStatus, info);
       request.setRequestStatus(requestStatus);
       completeFurnitureDTO(request);
       dalServices.commitTransaction();
