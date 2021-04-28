@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
+import be.vinci.pae.business.dto.FurnitureTypeDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.FurnitureStatus;
 import be.vinci.pae.business.pojos.FurnitureImpl;
+import be.vinci.pae.business.pojos.FurnitureTypeImpl;
 import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.business.pojos.PhotoImpl;
 import be.vinci.pae.business.pojos.OptionImpl;
@@ -42,7 +44,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InOrder;
@@ -69,6 +70,8 @@ class FurnitureUCCImplTest {
   private static PhotoDTO mockPhotoDTO2;
   private static PhotoDTO mockPhotoDTO3;
   private static OptionDTO mockOptionDTO;
+  private static FurnitureTypeDTO mockFurnitureType1;
+  private static FurnitureTypeDTO mockFurnitureType2;
   private static RequestForVisitDTO mockRequest1;
 
   private static final int defaultFurnitureId1 = 0;
@@ -126,8 +129,8 @@ class FurnitureUCCImplTest {
 
   private static final int defaultFavouritePhotoId2 = defaultPhotoId3;
 
-  private static final String defaultType1 = "type 1";
-  private static final String defaultType2 = "type 2";
+  private static final String defaultTypeName1 = "type 1";
+  private static final String defaultTypeName2 = "type 2";
 
   @BeforeAll
   public static void init() {
@@ -152,6 +155,8 @@ class FurnitureUCCImplTest {
     mockPhotoDTO2 = Mockito.mock(PhotoImpl.class);
     mockPhotoDTO3 = Mockito.mock(PhotoImpl.class);
     mockOptionDTO = Mockito.mock(OptionImpl.class);
+    mockFurnitureType1 = Mockito.mock(FurnitureTypeImpl.class);
+    mockFurnitureType2 = Mockito.mock(FurnitureTypeImpl.class);
     mockRequest1 = Mockito.mock(RequestForVisitDTO.class);
 
     defaultBuyer1 = mockUserDTO1;
@@ -181,6 +186,8 @@ class FurnitureUCCImplTest {
     Mockito.reset(mockPhotoDTO3);
     Mockito.reset(mockOptionDTO);
     Mockito.reset(mockRequest1);
+    Mockito.reset(mockFurnitureType1);
+    Mockito.reset(mockFurnitureType2);
 
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
 
@@ -204,8 +211,8 @@ class FurnitureUCCImplTest {
     Mockito.when(mockPhotoDAO.findById(defaultPhotoId2)).thenReturn(mockPhotoDTO2);
     Mockito.when(mockPhotoDAO.findById(defaultPhotoId3)).thenReturn(mockPhotoDTO3);
 
-    Mockito.when(mockFurnitureTypeDAO.findById(defaultTypeId1)).thenReturn(defaultType1);
-    Mockito.when(mockFurnitureTypeDAO.findById(defaultTypeId2)).thenReturn(defaultType2);
+    Mockito.when(mockFurnitureTypeDAO.findById(defaultTypeId1)).thenReturn(mockFurnitureType1);
+    Mockito.when(mockFurnitureTypeDAO.findById(defaultTypeId2)).thenReturn(mockFurnitureType2);
 
     Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(defaultFurnitureId1);
     Mockito.when(mockFurnitureDTO1.getBuyerId()).thenReturn(defaultBuyerId1);
@@ -228,6 +235,12 @@ class FurnitureUCCImplTest {
     Mockito.when(mockOptionDTO.getOptionId()).thenReturn(defaultOptionId1);
 
     Mockito.when(mockRequestDAO.findById(defaultRequestId1)).thenReturn(mockRequest1);
+
+    Mockito.when(mockFurnitureType1.getTypeId()).thenReturn(defaultTypeId1);
+    Mockito.when(mockFurnitureType2.getTypeId()).thenReturn(defaultTypeId2);
+
+    Mockito.when(mockFurnitureType1.getTypeName()).thenReturn(defaultTypeName1);
+    Mockito.when(mockFurnitureType2.getTypeName()).thenReturn(defaultTypeName2);
   }
 
   @DisplayName("TEST FurnitureUCC.getOne : given valid id, should return dto "
@@ -261,7 +274,7 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockFurnitureDTO1).setSeller(defaultSeller1);
     Mockito.verify(mockFurnitureDTO1).setFavouritePhoto(defaultFavouritePhoto1);
     Mockito.verify(mockFurnitureDTO1).setPhotos(photos);
-    Mockito.verify(mockFurnitureDTO1).setType(defaultType1);
+    Mockito.verify(mockFurnitureDTO1).setType(defaultTypeName1);
   }
 
   @DisplayName("TEST FurnitureUCC.getOne : given invalid id, should throw NotFoundException")
@@ -343,10 +356,10 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockFurnitureDTO1).setSeller(defaultSeller1);
     Mockito.verify(mockFurnitureDTO1).setFavouritePhoto(defaultFavouritePhoto1);
     Mockito.verify(mockFurnitureDTO1).setPhotos(photos1);
-    Mockito.verify(mockFurnitureDTO1).setType(defaultType1);
+    Mockito.verify(mockFurnitureDTO1).setType(defaultTypeName1);
 
     Mockito.verify(mockFurnitureDTO2).setPhotos(photos2);
-    Mockito.verify(mockFurnitureDTO2).setType(defaultType2);
+    Mockito.verify(mockFurnitureDTO2).setType(defaultTypeName2);
     Mockito.verify(mockFurnitureDTO2).setOption(mockOptionDTO);
 
     Mockito.verify(mockOptionDTO).setUser(mockUserDTO3);
