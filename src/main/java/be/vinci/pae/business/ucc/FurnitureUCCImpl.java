@@ -267,7 +267,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
         foundFurnitureDTO.setTypeId(bodyDTO.getTypeId());
       }
       if (bodyDTO.getSellingPrice() != null) {
-        if (foundFurnitureDTO.getStatus().equals(FurnitureStatus.SOLD)) {
+        if (!foundFurnitureDTO.getStatus().equals(FurnitureStatus.AVAILABLE_FOR_SALE)) {
           throw new ConflictException(
               "Error: cannot update the selling price on a sold piece of furniture");
         }
@@ -275,7 +275,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       res = furnitureDAO.updateDescription(foundFurnitureDTO);
       res = furnitureDAO.updateTypeId(res);
-      if(res.getSellingPrice()!=null){
+      if(foundFurnitureDTO.getSellingPrice()!=null){
         res = furnitureDAO.updateSellingPrice(res);
       }
       completeFurnitureDTO(res);
