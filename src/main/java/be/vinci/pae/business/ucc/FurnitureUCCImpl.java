@@ -132,10 +132,6 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     if (!foundFurnitureDTO.getStatus().equals(FurnitureStatus.REQUESTED_FOR_VISIT)) {
       throw new ConflictException("Error: invalid furniture status");
     }
-    if (!status.equals(FurnitureStatus.ACCEPTED) && !status.equals(FurnitureStatus.REFUSED)) {
-      throw new InternalError("Error: Invalid method invocation status should be either "
-          + "ACCEPTED or REFUSED (current = " + status + ")");
-    }
     foundFurnitureDTO.setStatus(status);
     return furnitureDAO.updateStatusOnly(foundFurnitureDTO);
   }
