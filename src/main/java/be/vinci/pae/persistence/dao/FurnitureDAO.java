@@ -70,4 +70,27 @@ public interface FurnitureDAO {
    */
   FurnitureDTO updateFavouritePhoto(FurnitureDTO furnitureDTO);
 
+  /**
+   * Updates the description on a piece of furniture.
+   *
+   * @param furnitureDTO : the furnitureDTO containing the new information
+   * @return the modified furniture.
+   */
+  FurnitureDTO updateDescription(FurnitureDTO furnitureDTO);
+
+  /**
+   * Updates the type id on a piece of furniture.
+   *
+   * @param furnitureDTO : the furnitureDTO containing the new information
+   * @return the modified furniture.
+   */
+  FurnitureDTO updateTypeId(FurnitureDTO furnitureDTO);
+
+  /**
+   * Updates the selling price on a piece of furniture.
+   *
+   * @param furnitureDTO : the furnitureDTO containing the new information
+   * @return the modified furniture.
+   */
+  FurnitureDTO updateSellingPrice(FurnitureDTO furnitureDTO);
 }

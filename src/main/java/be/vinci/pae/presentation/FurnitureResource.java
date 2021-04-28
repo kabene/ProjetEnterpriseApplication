@@ -11,6 +11,7 @@ import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.Path;
@@ -222,6 +223,30 @@ public class FurnitureResource {
     FurnitureDTO furnitureDTO = furnitureUCC.updateFavouritePhoto(furnitureId, photoId);
     furnitureDTO = Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class);
     return Response.ok(furnitureDTO).build();
+  }
+
+  /**
+   * PATCH one piece of furniture's information.
+   * No values are mandatory in the request body, but at least on has to be not null.
+   *
+   * @param id : furniture id
+   * @param bodyDTO : request body as FurnitureDTO
+   * @return http response containing modified resource
+   */
+  @PATCH
+  @Path("/infos/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response updateInfos(@PathParam("id") int id, FurnitureDTO bodyDTO) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH furniture/infos/"+id);
+    if(bodyDTO.getDescription()==null && bodyDTO.getTypeId()==null
+        && bodyDTO.getSellingPrice()==null) {
+      throw new BadRequestException("Error: lack of at least one non-null body value");
+    }
+    bodyDTO.setFurnitureId(id);
+    FurnitureDTO furnitureDTO = furnitureUCC.updateInfos(bodyDTO);
+    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 }
 
