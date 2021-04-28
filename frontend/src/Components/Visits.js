@@ -690,10 +690,8 @@ const toAccept=(e,request)=>{
       },
     }).then((response) => {
       if (!response.ok) {
-        console.log("Erreur de fetch !! :´\n" + response);
-        throw new Error(
-            response.status + " : " + response.statusText
-        );
+        console.log("Erreur de fetch !! :´\n" + response.statusText);
+        throw new Error(response.statusText);
       }
       return response.json();
     }).then((data)=>{

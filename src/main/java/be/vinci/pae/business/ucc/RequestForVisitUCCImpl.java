@@ -13,6 +13,8 @@ import be.vinci.pae.persistence.dao.RequestForVisitDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class RequestForVisitUCCImpl implements RequestForVisitUCC {
@@ -85,8 +87,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
    * @return an RequestForVisitDTO that represent the changed one.
    */
   @Override
-  public RequestForVisitDTO changeWaitingRequestStatus(int idRequest, int currentUserId,
-      RequestStatus requestStatus, String info) {
+  public RequestForVisitDTO changeWaitingRequestStatus(int idRequest, int currentUserId, RequestStatus requestStatus, String info) {
     RequestForVisitDTO request;
     try {
       dalServices.startTransaction();
@@ -96,6 +97,12 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
       }
       if (requestStatus.equals(RequestStatus.WAITING)) {
         throw new ConflictException("Can not set a request to waiting");
+      }
+      if(requestStatus.equals(RequestStatus.CONFIRMED)){
+        int result=info.split(" ")[0].compareTo( LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        if(result<0){
+          throw new ConflictException("Date is in the past");
+        }
       }
       requestFound.setRequestStatus(requestStatus);
       switch (requestStatus) {
