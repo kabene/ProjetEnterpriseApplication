@@ -97,12 +97,15 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
       if (requestStatus.equals(RequestStatus.WAITING)) {
         throw new ConflictException("Can not set a request to waiting");
       }
-      if (request.getUserId() != currentUserId) {
-        throw new UnauthorizedException("The requests do not belong to the user "
-            + "that called the request");
+      requestFound.setRequestStatus(requestStatus);
+      switch(requestStatus) {
+        case CANCELED:
+          requestFound.setExplanatoryNote(info);
+          break;
+        default:
+          requestFound.setVisitDateTime(info);
       }
-      requestForVisitDAO.modifyStatusWaitingRequest(idRequest, requestStatus, info);
-      request.setRequestStatus(requestStatus);
+      request = requestForVisitDAO.modifyStatusWaitingRequest(requestFound);
       completeFurnitureDTO(request);
       dalServices.commitTransaction();
     } catch (Throwable e) {

@@ -178,10 +178,10 @@ const addTransitionBtnListeners = (request) => {
  */
 const findTransitionMethod = (btnId, request) => {
   switch (btnId) {
-    case "Accept":
-      // return (e) => toAvailable(e, furniture); TODO
-    case "Refuse":
-      // return (e) => toRestoration(e, furniture); TODO
+    case "btnToConfirmed":
+       return (e) => toAccept(e, request);
+    case "btnToCanceled":
+       return (e) => toRefuse(e, request);
     default:
       return (e) => {
         e.preventDefault();
@@ -662,7 +662,82 @@ const changeContainerId = () => {
   }
 }
 
-//requests
+//request
+/**
+ * accept the request
+ * @param e
+ * @param request
+ */
+const toAccept=(e,request)=>{
+  e.preventDefault();
+  let acceptDate=e.target.parentElement.parentElement.querySelector("#acceptInputDate").value;
+  let acceptTime=e.target.parentElement.parentElement.querySelector("#acceptInputTime").value;
+  if(acceptDate && acceptTime){
+    let date=acceptDate+" "+acceptTime;
+    let bundle={
+      visitDateTime:date,
+    }
+    fetch("/requestForVisit/accept/" + request.requestId, {
+      method: "PATCH",
+      body: JSON.stringify(bundle),
+      headers: {
+        "Authorization": currentUser.token,
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
+      if (!response.ok) {
+        console.log("Erreur de fetch !! :´\n" + response);
+        throw new Error(
+            response.status + " : " + response.statusText
+        );
+      }
+      return response.json();
+    }).then((data)=>{
+      requestMap[data.requestId]=data;
+      loadCard(data.requestId);
+    }).catch((err)=>{
+      displayErrorMessage("errorDiv", err);
+    });
+  }else {
+    let error =new Error();
+    throw displayErrorMessage('tous les champs doivent être sélectionner',error);
+  }
+}
+/**
+ * refuse
+ * @param e
+ * @param furniture
+ */
+const toRefuse= (e, request) => {
+  e.preventDefault();
+  let explain = e.target.parentElement.parentElement.querySelector(
+      "#cancelInput").value;
+  let bundle = {
+    explanatoryNote: explain,
+  };
+  fetch("/requestForVisit/cancel/" + request.requestId ,{
+    method: "PATCH",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      console.log("Erreur de fetch !! :´\n" + response);
+      throw new Error(
+          response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    requestMap[data.requestId] = data;
+    loadCard(data.requestId);
+  }).catch((err) => {
+    displayErrorMessage("errorDiv", err);
+  });
+}
+
 /**
  * fetch all requests, then fill requestMap
  * @returns {Promise} fetch promise
@@ -691,5 +766,7 @@ async function findVisitRequestList() {
     displayErrorMessage("errorDiv", err);
   });
 }
+
+
 
 export default Visits;

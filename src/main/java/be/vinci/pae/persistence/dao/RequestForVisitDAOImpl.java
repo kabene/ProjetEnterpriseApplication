@@ -81,21 +81,21 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
   /**
    * modify the status of a waiting request for visit.
    *
-   * @param idRequest the id of the request for visit to modify.
-   * @param requestStatus the status in which the request should be modified.
-   * @param info          the info (explanatory note or visit date time) to add.
+   * @param requestForVisitDTO : dto containing the new information
+   * @return RequestForVisitDTO containing modified resource
    */
   @Override
-  public void modifyStatusWaitingRequest(int idRequest, RequestStatus requestStatus, String info) {
+  public RequestForVisitDTO modifyStatusWaitingRequest(RequestForVisitDTO requestForVisitDTO) {
     String query;
-    if (requestStatus.equals(RequestStatus.CANCELED)) {
-      query = "UPDATE satchoFurniture.requests_for_visit "
-          + "SET status='?' AND explanatory_note='?'"
-          + "WHERE request_id=?";
+    String info;
+    if (requestForVisitDTO.getRequestStatus().equals(RequestStatus.CANCELED)) {
+      query = "UPDATE satchoFurniture.requests_for_visit SET status=?, "
+          + "explanatory_note=? WHERE request_id=?";
+      info = requestForVisitDTO.getExplanatoryNote();
     } else {
-      query = "UPDATE satchoFurniture.requests_for_visit "
-          + "SET status='?' AND visit_date_time='?'"
-          + "WHERE request_id=?";
+      query = "UPDATE satchoFurniture.requests_for_visit SET status=?, "
+          + "visit_date_time=TO_TIMESTAMP(?, 'YYYY-MM-DD HH24-MI') WHERE request_id=?";
+      info = requestForVisitDTO.getVisitDateTime();
     }
     PreparedStatement ps = dalServices.makeStatement(query);
     try {
