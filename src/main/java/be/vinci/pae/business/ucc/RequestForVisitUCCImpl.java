@@ -86,7 +86,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
    */
   @Override
   public RequestForVisitDTO changeWaitingRequestStatus(int idRequest, int currentUserId,
-                                                       RequestStatus requestStatus, String info) {
+      RequestStatus requestStatus, String info) {
     RequestForVisitDTO request;
     try {
       dalServices.startTransaction();
@@ -98,7 +98,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
         throw new ConflictException("Can not set a request to waiting");
       }
       requestFound.setRequestStatus(requestStatus);
-      switch(requestStatus) {
+      switch (requestStatus) {
         case CANCELED:
           requestFound.setExplanatoryNote(info);
           break;
@@ -124,7 +124,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
     dto.setAddress(addressDAO.findById(dto.getAddressId()));
     dto.setUser(userDAO.findById(dto.getUserId()));
     dto.setFurnitureList(furnitureDAO.findByRequestId(dto.getRequestId()));
-    for(FurnitureDTO furnitureDTO : dto.getFurnitureList()) {
+    for (FurnitureDTO furnitureDTO : dto.getFurnitureList()) {
       furnitureDTO.setPhotos(photoDAO.findAllByFurnitureId(furnitureDTO.getFurnitureId()));
     }
   }
