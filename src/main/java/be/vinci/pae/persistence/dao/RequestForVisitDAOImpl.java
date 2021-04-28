@@ -97,16 +97,17 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
           + "visit_date_time=TO_TIMESTAMP(?, 'YYYY-MM-DD HH24-MI') WHERE request_id=?";
       info = requestForVisitDTO.getVisitDateTime();
     }
-    PreparedStatement ps = dalServices.makeStatement(query);
     try {
-      ps.setString(1, requestStatus.getValue());
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setString(1, requestForVisitDTO.getRequestStatus().getValue());
       ps.setString(2, info);
-      ps.setInt(3, idRequest);
+      ps.setInt(3, requestForVisitDTO.getRequestId());
       ps.executeUpdate();
       ps.close();
     } catch (SQLException e) {
       throw new InternalError(e);
     }
+    return requestForVisitDTO;
   }
 
   /**

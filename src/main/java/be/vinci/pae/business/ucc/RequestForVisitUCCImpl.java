@@ -90,8 +90,8 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
     RequestForVisitDTO request;
     try {
       dalServices.startTransaction();
-      request = requestForVisitDAO.findByRequestId(idRequest);
-      if (request.getRequestStatus() != RequestStatus.WAITING) {
+      RequestForVisitDTO requestFound = requestForVisitDAO.findByRequestId(idRequest);
+      if (requestFound.getRequestStatus() != RequestStatus.WAITING) {
         throw new ConflictException("The request status can not be modified");
       }
       if (requestStatus.equals(RequestStatus.WAITING)) {

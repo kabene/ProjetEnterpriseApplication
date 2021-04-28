@@ -38,6 +38,8 @@ const Visits = async (id) => {
   } else {
     loadCard(id);
   }
+  document.querySelectorAll(".userLink").forEach(
+      (link) => link.addEventListener("click", onUserLinkClicked));
 }
 
 /**
@@ -144,6 +146,8 @@ const displayShortElements = (e) => {
   }
   let id = element.getAttribute("requestid");
   loadCard(id);
+  document.querySelectorAll(".userLink").forEach(
+      (link) => link.addEventListener("click", onUserLinkClicked));
 }
 
 /**
@@ -151,7 +155,7 @@ const displayShortElements = (e) => {
  * redirects to user's card in user list page.
  * @param {*} e : event object from event listener
  */
-const onUserLinkClicked = (e) => { //TODO eventlistener
+const onUserLinkClicked = (e) => {
   e.preventDefault();
   let link = e.target;
   let userId = link.getAttribute("userid");

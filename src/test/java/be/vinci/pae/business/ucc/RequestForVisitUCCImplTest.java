@@ -219,7 +219,7 @@ class RequestForVisitUCCImplTest {
             + "should have thrown Conflict Exception");
 
     Mockito.verify(requestForVisitDAO, Mockito.never())
-        .modifyStatusWaitingRequest(defaultRequestId, requestStatus, info);
+        .modifyStatusWaitingRequest(mockRequestDTO1);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
@@ -255,7 +255,7 @@ class RequestForVisitUCCImplTest {
         "DAO throws an Error, should rollback and throw InternalError");
 
     Mockito.verify(requestForVisitDAO)
-        .modifyStatusWaitingRequest(defaultRequestId, requestStatus, info);
+        .modifyStatusWaitingRequest(mockRequestDTO1);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
