@@ -80,6 +80,63 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   }
 
   /**
+   * Sets the status of the piece of furniture to ACCEPTED.
+   *
+   * @param furnitureId : the furniture id
+   * @return modified resource as a FurnitureDTO
+   */
+  @Override
+  public FurnitureDTO toAccepted(int furnitureId) {
+    FurnitureDTO res;
+    try {
+      dalServices.startTransaction();
+      res = updateAfterVisit(furnitureId, FurnitureStatus.ACCEPTED);
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return res;
+  }
+
+  /**
+   * Sets the status of the piece of furniture to REFUSED.
+   *
+   * @param furnitureId : the furniture id
+   * @return modified resource as a FurnitureDTO
+   */
+  @Override
+  public FurnitureDTO toRefused(int furnitureId) {
+    FurnitureDTO res;
+    try {
+      dalServices.startTransaction();
+      res = updateAfterVisit(furnitureId, FurnitureStatus.REFUSED);
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return res;
+  }
+
+  /**
+   * Updates furniture status from REQUESTED_FOR_VISIT to status. Requirements: status is either
+   * ACCEPTED or REFUSED.
+   *
+   * @param furnitureId : furniture id
+   * @param status      : new status
+   * @return modified resource as a FurnitureDTO
+   */
+  private FurnitureDTO updateAfterVisit(int furnitureId, FurnitureStatus status) {
+    FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(furnitureId);
+    if (!foundFurnitureDTO.getStatus().equals(FurnitureStatus.REQUESTED_FOR_VISIT)) {
+      throw new ConflictException("Error: invalid furniture status");
+    }
+    foundFurnitureDTO.setStatus(status);
+    return furnitureDAO.updateStatusOnly(foundFurnitureDTO);
+  }
+
+  /**
    * set the status of the furniture to IN_RESTORATION.
    *
    * @param furnitureId the furniture id.
@@ -230,7 +287,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       dalServices.startTransaction();
       FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(furnitureId);
       PhotoDTO foundPhotoDTO = photoDAO.findById(photoId);
-      if (foundPhotoDTO.getFurnitureId() != foundFurnitureDTO.getFurnitureId()) {
+      if (!foundPhotoDTO.getFurnitureId().equals(foundFurnitureDTO.getFurnitureId())) {
         throw new ConflictException(
             "Error: The photo doesn't belong to the specified piece of furniture");
       }

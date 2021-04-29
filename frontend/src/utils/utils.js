@@ -115,3 +115,5 @@ const findFavImgSrc = (furniture, images) => {
 export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
      displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, 
      findFavImgSrc};
+
+

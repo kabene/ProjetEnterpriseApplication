@@ -28,8 +28,9 @@ public interface RequestForVisitUCC {
    * @param idRequest     the id of the request for visit to change.
    * @param currentUserId the id of the user asking for the change.
    * @param requestStatus the status in which the request should be changed.
+   * @param info          the info (explanatory note or visit date time) to put in the DTO.
    * @return an RequestForVisitDTO that represent the changed one.
    */
   RequestForVisitDTO changeWaitingRequestStatus(int idRequest, int currentUserId,
-                                                RequestStatus requestStatus);
+                                                RequestStatus requestStatus, String info);
 }

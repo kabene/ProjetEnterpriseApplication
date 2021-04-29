@@ -64,21 +64,33 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
   /**
    * modify the status of a waiting request for visit.
    *
-   * @param idRequest the id of the request for visit to modify.
+   * @param requestForVisitDTO : dto containing the new information
+   * @return RequestForVisitDTO containing modified resource
    */
   @Override
-  public void modifyStatusWaitingRequest(int idRequest, RequestStatus requestStatus) {
-    String query = "UPDATE satchoFurniture.requests_for_visit SET status='?'"
-        + "WHERE request_id=?";
-    PreparedStatement ps = dalServices.makeStatement(query);
+  public RequestForVisitDTO modifyStatusWaitingRequest(RequestForVisitDTO requestForVisitDTO) {
+    String query;
+    String info;
+    if (requestForVisitDTO.getRequestStatus().equals(RequestStatus.CANCELED)) {
+      query = "UPDATE satchoFurniture.requests_for_visit SET status=?, "
+          + "explanatory_note=? WHERE request_id=?";
+      info = requestForVisitDTO.getExplanatoryNote();
+    } else {
+      query = "UPDATE satchoFurniture.requests_for_visit SET status=?, "
+          + "visit_date_time=TO_TIMESTAMP(?, 'YYYY-MM-DD HH24-MI') WHERE request_id=?";
+      info = requestForVisitDTO.getVisitDateTime();
+    }
     try {
-      ps.setString(1, requestStatus.getValue());
-      ps.setInt(2, idRequest);
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setString(1, requestForVisitDTO.getRequestStatus().getValue());
+      ps.setString(2, info);
+      ps.setInt(3, requestForVisitDTO.getRequestId());
       ps.executeUpdate();
       ps.close();
     } catch (SQLException e) {
       throw new InternalError(e);
     }
+    return requestForVisitDTO;
   }
 
   /**
