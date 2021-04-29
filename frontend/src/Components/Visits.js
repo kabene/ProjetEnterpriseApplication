@@ -425,6 +425,7 @@ const generatePhotoList = (request) => {
       </div>
     </div>`;
     });
+
   let res = `
   <form>
     <input id="originalFav" type="hidden" request-id="${request.requestId}"/>
