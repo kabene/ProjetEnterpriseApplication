@@ -13,7 +13,6 @@ const VisitRequest = async () => {
 
     let listRequests = await getUserRequestsForVisit();
     mapRequests = new Map(listRequests.map(request => [request.requestId, request]));
-    console.log(mapRequests);
     page.innerHTML = generateVisitPage();
 
     document.querySelectorAll(".requestTableRow").forEach(requestTableRow => requestTableRow.addEventListener("click", onRequestTableRowClick));
@@ -26,7 +25,7 @@ const VisitRequest = async () => {
 
 const onRequestTableRowClick = (e) => {
     if (document.querySelector('#shortTableContainer') == null)
-      displayShortElements();
+        displayShortElements();
     onUserClickHandler(e);
   }
 
@@ -43,7 +42,12 @@ const onRequestTableRowClick = (e) => {
     //magnify
     document.querySelector('#shortTable').id = "largeTable";
     if (document.querySelector('#shortTableContainer') !== null) //can be undefined because of the setTimeout in displayShortElements
-      document.querySelector('#shortTableContainer').id = "largeTableContainer";
+        document.querySelector('#shortTableContainer').id = "largeTableContainer";
+
+    document.querySelectorAll(".requestState").forEach(element => {
+        let status = element.getAttribute("status");
+        element.innerHTML = generateColoredStatus(status);
+    });
   }
   
   /**
@@ -57,6 +61,11 @@ const onRequestTableRowClick = (e) => {
                       , 750));
     //display
     document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
+    document.querySelectorAll(".requestState").forEach(element => {
+        let status = element.getAttribute("status");
+        let classname = generateStatusInfos(status).classname;
+        element.innerHTML = generateDot(classname);
+    });
   }
   
   /**
@@ -69,7 +78,7 @@ const onRequestTableRowClick = (e) => {
     //get the tr element
     let element = e.target;
     while (!element.className.includes("requestTableRow")) {
-      element = element.parentElement;
+        element = element.parentElement;
     }
     element.className += " bg-secondary text-light";
     let requestId = element.attributes["requestId"].value;
@@ -133,41 +142,141 @@ const generateVisitPage = () => {
       <tr class="requestTableRow" requestId="` + request.requestId + `">
         <th>` + request.requestDate + `</th>
         <th>` + request.address.street + ` ` + request.address.buildingNumber + ` ` + request.address.postcode + `, ` + request.address.commune + `</th>
-        <th class="requestState">` + request.requestStatus + `</th>
+        <th class="requestState" status=` + request.requestStatus + `>` + generateColoredStatus(request.requestStatus) + `</th>
      </tr>`;
   }
 
   const generateRequestCard = (request) => {
     let info = "";
     if (request.requestStatus === "CANCELED")
-        info = `<div><h5>Raison d'annulation : </h5> <span>` + request.explanatoryNote + `</span></div>`;
-    else (request.requestStatus === "CONFIRMED")
-        info = `<div><h5>Date de visite : </h5> <span>` + request.visitDateTime + `</span></div>`;
-    let page= `
-    <div class="container emp-profile">
-        <form>
+        info = generateCardLabelKeyEntry("Justificatif de refus", "explanatory-note-entry", request.explanatoryNote);
+    else if (request.requestStatus === "CONFIRMED")
+        info = generateCardLabelKeyEntry("Date/heure de visite", "visit-date-time-entry", request.visitDateTime);
+
+    let page =
+    `<div class="container emp-profile">
+    <form>
+      <div class="row">
+        <div class="col-12">
+          <div class="profile-head">
+
             <div class="row">
-                <div class="col-md-6">
-                    <div class="profile-head">
-                        <h4>Demande de visite du ` + request.requestDate + `</h4>
-                        <h5>Plage horaire demandé : ` + request.timeSlot + `</h5>
-                    </div>
-                </div>
-            </div>
-    
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="tab-content profile-tab" id="myTabContent">
-                        <div>
-                            <h5>Status : ` + request.requestStatus + `</h5>
-                            `+ info + `
-                        </div>
-                </div>
+              <div class="col-md-6">
+                <h4>Demande de visite du ` + request.requestDate + `</h4>
+                <h5>Plage horaire demandé : ` + request.timeSlot + `</h5>
+              </div>
+              <div class="col-md-6 text-left">
+                <p class="profile-rating">ÉTAT : <span id="statusCardEntry">` + generateBadgeStatus(request) + `</span></p>
+              </div>
             </div>
 
-        </form>           
-    </div>`;
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Information</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Meubles</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col-md-8">
+          <div class="tab-content profile-tab" id="myTabContent">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+              ` + generateCardLabelKeyEntry("Adresse de visite", "address-entry", request.address.street + ` ` + request.address.buildingNumber + ` ` + request.address.postcode + `, ` + request.address.commune) + ` 
+              ` + generateCardLabelKeyEntry("Date de la demande", "request-date-entry", request.requestDate) + `
+              ` + generateCardLabelKeyEntry("Disponibilités", "time-slot-entry", request.timeSlot) + `
+              ` + info + `
+            </div>       
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>           
+  </div>`;
+
     return page;
+  }
+
+
+  const generateCardLabelKeyEntry = (label, id, value) => {
+    let res = `
+    <div class="row text-left">
+      <div class="col-md-6">
+        <label> ` + label + `</label>
+      </div>
+      <div class="col-md-6">
+        <p id=" ` + id + `"> ` + value + `</p>
+      </div>
+    </div>
+    `;
+    return res;
+  }
+
+
+/**
+ * Generate status entry for request list as colored bootstrap badge (used in cards)
+ * @param {*} furniture
+ * @returns
+ */
+ const generateBadgeStatus = (request) => {
+    let infos = generateStatusInfos(request.requestStatus);
+    let res = `<span class="badge badge-pill badge-` + infos.classname + ` text-light"> ` + infos.status + `</span>`;
+    return res;
+  }
+
+  /**
+ * Generate status entry for request list as colored <p> html tag (used in large tables)
+ * @param {*} request : request  object
+ * @returns {String} html <p> tag
+ */
+const generateColoredStatus = (requestStatus) => {
+    let infos = generateStatusInfos(requestStatus);
+    return `<p class="text-` + infos.classname + `"> ` + infos.status + `</p>`;
+  }
+
+  const generateDot = (colorClassName) => {
+    return `<span class="badge badge-pill p-1 badge-` + colorClassName + `"> </span>`;
+  }
+  
+
+
+  /**
+ * find status label & color classname (primary / danger / etc...) for a given status
+ * @param {String} status
+ * @returns {
+ *  classname: bootstrap color suffix,
+   *  status: status label,
+   * } object
+   */
+  const generateStatusInfos = (status) => {
+    let res = {
+      classname: "",
+      status: "",
+    }
+  
+    switch (status) {
+      case "CONFIRMED":
+        res.classname = "success";
+        res.status = "Accepté";
+        break;
+      case "WAITING":
+        res.classname = "warning";
+        res.status = "en attente";
+        break;
+      case "CANCELED":
+        res.classname = "danger";
+        res.status = "Refusé";
+        break;
+      default:
+        res.classname = "";
+        res.status = status;
+    }
+    return res;
   }
 
 
