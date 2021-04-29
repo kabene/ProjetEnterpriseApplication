@@ -102,6 +102,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       furnitureDTO.setStatus(FurnitureStatus.ACCEPTED);
       res = furnitureDAO.updateStatusOnly(furnitureDTO);
+      completeFurnitureDTO(res);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -131,6 +132,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       furnitureDTO.setStatus(FurnitureStatus.REFUSED);
       res = furnitureDAO.updateStatusOnly(furnitureDTO);
+      completeFurnitureDTO(res);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();

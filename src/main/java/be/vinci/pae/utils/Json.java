@@ -45,8 +45,7 @@ public class Json {
       return jsonMapper.readerWithView(view).forType(targetClass)
           .readValue(adminOnlyItemAsString);
     } catch (JsonProcessingException e) {
-      e.printStackTrace();
-      return null;
+      throw new InternalError(e);
     }
   }
 }
