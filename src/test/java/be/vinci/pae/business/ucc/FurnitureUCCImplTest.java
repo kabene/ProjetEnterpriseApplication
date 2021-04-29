@@ -658,8 +658,10 @@ class FurnitureUCCImplTest {
   public void test_updateFavouritePhoto_givenInvalidFurnitureId_shouldThrowNotFound() {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new NotFoundException());
 
-    assertThrows(NotFoundException.class, () -> furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1), "calling updateFavouritePhoto with a non-existing furniture id should throw "
-        + "NotFoundException");
+    assertThrows(NotFoundException.class,
+        () -> furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
+        "calling updateFavouritePhoto with a non-existing furniture id should throw "
+            + "NotFoundException");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 
@@ -699,8 +701,10 @@ class FurnitureUCCImplTest {
   public void test_updateFavouritePhoto_givenNotMatchingIds_shouldThrowConflict() {
     Mockito.when(mockPhotoDTO1.getFurnitureId()).thenReturn(defaultFurnitureId2);
 
-    assertThrows(ConflictException.class, () -> furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1), "calling updateFavouritePhoto with a photo id that references a photo not belonging "
-        + "to the given furniture id should throw ConflictException");
+    assertThrows(ConflictException.class,
+        () -> furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
+        "calling updateFavouritePhoto with a photo id that references a photo not belonging "
+            + "to the given furniture id should throw ConflictException");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 
@@ -720,7 +724,9 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDAO.updateFavouritePhoto(mockFurnitureDTO1))
         .thenThrow(new InternalError());
 
-    assertThrows(InternalError.class, () -> furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1), "if updateFavouritePhoto catches an InternalError, it should throw it back");
+    assertThrows(InternalError.class,
+        () -> furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
+        "if updateFavouritePhoto catches an InternalError, it should throw it back");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 

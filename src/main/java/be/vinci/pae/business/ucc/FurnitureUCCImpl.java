@@ -286,7 +286,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     try {
       dalServices.startTransaction();
       FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(furnitureId);
-      PhotoDTO foundPhotoDTO = photoDAO.findById((photoId));
+      PhotoDTO foundPhotoDTO = photoDAO.findById(photoId);
       if (!foundPhotoDTO.getFurnitureId().equals(foundFurnitureDTO.getFurnitureId())) {
         throw new ConflictException(
             "Error: The photo doesn't belong to the specified piece of furniture");
