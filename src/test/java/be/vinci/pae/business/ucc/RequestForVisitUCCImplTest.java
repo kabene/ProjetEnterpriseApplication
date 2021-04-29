@@ -261,7 +261,8 @@ class RequestForVisitUCCImplTest {
   void test_changeWaitingRequestStatus_intoWaiting_shouldThrowConflictException() {
 
     assertThrows(ConflictException.class, () -> requestUCC
-            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, RequestStatus.WAITING, info),
+            .changeWaitingRequestStatus(defaultRequestId, defaultUserId,
+                RequestStatus.WAITING, info),
         "called changeWaitingRequestStatus() to change it into waiting"
             + "should have thrown Conflict Exception");
 
