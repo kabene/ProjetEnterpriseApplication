@@ -415,11 +415,15 @@ const generatePhotoList = (request) => {
         <div class="text-left col-6">
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" name="furniture-validation" id="AcceptFurniture"/>
+              <input type="radio" class="form-check-input" name="furniture-validation" id="AcceptFurniture"/>
+             Convient
             </label>
           </div>
-          <div> 
-            <input type="radio" name="furniture-validation" id="RefuseFurniture"/>
+          <div class="text-left col-6"> 
+            <label class="form-check-label">
+              <input type="radio" class="form-check-input" name="furniture-validation" id="RefuseFurniture"/>
+              Ne convient pas
+            </label>
           </div>
         </div>
       </div>
@@ -432,8 +436,17 @@ const generatePhotoList = (request) => {
     <div class="form-check d-flex flex-lg-fill flex-row">
       ${photos}
     </div>
-    <button id="saveBtnPhoto" class="btn btn-primary my-5 float-right">Enregistrer les modifications</button>
+    ${generateAcceptFurnitureBtn(request)}
   </form>`;
+  return res;
+}
+
+
+const generateAcceptFurnitureBtn = (request) => {
+  let res = "";
+  if(request.requestStatus === "CONFIRMED") {
+    res = `<button id="saveBtnPhoto" class="btn btn-primary my-5 float-right">Enregistrer le choix</button>`
+  }
   return res;
 }
 
