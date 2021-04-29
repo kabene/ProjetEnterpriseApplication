@@ -163,6 +163,24 @@
     </td>
 </tr>
 <tr>
+    <td>furniture/available/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>Non</td>
+    <td>
+    Modifie l'état d'une ressource de type 'furniture' vers 'available', et renvoie les informations mises à jour.
+    </td>
+</tr>
+<tr>
+    <td>furniture/refused/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>Non</td>
+    <td>
+    Modifie l'état d'une ressource de type 'furniture' vers 'refused', et renvoie les informations mises à jour.
+    </td>
+</tr>
+<tr>
     <td>furniture/restoration/{id}</td>
     <td>PATCH</td>
     <td>Admin</td>

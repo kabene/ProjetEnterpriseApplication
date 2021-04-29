@@ -45,8 +45,8 @@ public class TakeoverRequestFilter implements ContainerRequestFilter {
       if (takeoverDTO.isWaiting()) {
         throw new UnauthorizedException("The taken over account is not yet validated");
       }
-      isAdmin = takeoverDTO.getRole().equals("admin");
-      if (isAdmin) {
+      boolean isTakingAdminOver = takeoverDTO.getRole().equals("admin");
+      if (isTakingAdminOver) {
         throw new UnauthorizedException("Error: Cannot take over an admin account");
       }
       requestContext.setProperty("user", takeoverDTO);

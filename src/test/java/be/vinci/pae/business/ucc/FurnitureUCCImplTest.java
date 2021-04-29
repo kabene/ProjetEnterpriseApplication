@@ -686,10 +686,10 @@ class FurnitureUCCImplTest {
   public void test_updateFavouritePhoto_givenInvalidFurnitureId_shouldThrowNotFound() {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new NotFoundException());
 
-    assertThrows(NotFoundException.class, () -> {
-      furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
-    }, "calling updateFavouritePhoto with a non-existing furniture id should throw "
-        + "NotFoundException");
+    assertThrows(NotFoundException.class,
+        () -> furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
+        "calling updateFavouritePhoto with a non-existing furniture id should throw "
+            + "NotFoundException");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 
@@ -729,10 +729,10 @@ class FurnitureUCCImplTest {
   public void test_updateFavouritePhoto_givenNotMatchingIds_shouldThrowConflict() {
     Mockito.when(mockPhotoDTO1.getFurnitureId()).thenReturn(defaultFurnitureId2);
 
-    assertThrows(ConflictException.class, () -> {
-      furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
-    }, "calling updateFavouritePhoto with a photo id that references a photo not belonging "
-        + "to the given furniture id should throw ConflictException");
+    assertThrows(ConflictException.class,
+        () -> furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
+        "calling updateFavouritePhoto with a photo id that references a photo not belonging "
+            + "to the given furniture id should throw ConflictException");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 
@@ -752,9 +752,9 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDAO.updateFavouritePhoto(mockFurnitureDTO1))
         .thenThrow(new InternalError());
 
-    assertThrows(InternalError.class, () -> {
-      furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1);
-    }, "if updateFavouritePhoto catches an InternalError, it should throw it back");
+    assertThrows(InternalError.class,
+        () -> furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
+        "if updateFavouritePhoto catches an InternalError, it should throw it back");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
 
@@ -1027,13 +1027,171 @@ class FurnitureUCCImplTest {
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
     assertThrows(ConflictException.class, () ->
             furnitureUCC.toSold(defaultFurnitureId1, defaultBuyerUsername1, null),
-        "A call of toSold() with specialSalePrice on furniture UNDER_OPTION should "
+        "A call to toSold() with under option furniture and non-owner buyer should "
             + "throw ConflictException");
 
     InOrder inOrder = Mockito.inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1);
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockUserDAO).findByUsername(defaultBuyerUsername1);
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toAccepted : nominal scenario, should return dto")
+  @Test
+  void test_toAccepted_nominal_shouldReturnDTO() {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.REQUESTED_FOR_VISIT);
+    Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
+        .thenReturn(mockFurnitureDTO2);
+    assertEquals(mockFurnitureDTO2, furnitureUCC.toAccepted(defaultFurnitureId1),
+        "A valid call of toAccepted() with specialSalePrice should "
+            + "return the corresponding dto");
+
+    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.ACCEPTED);
+    inOrder.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
+    inOrder.verify(mockDal).commitTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).rollbackTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toAccepted : given invalid furnitureId, "
+      + "should throw NotFoundException")
+  @Test
+  void test_toAccepted_givenInvalidFurnitureId_shouldThrowNotFound() {
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new NotFoundException());
+    assertThrows(NotFoundException.class, () ->
+            furnitureUCC.toAccepted(defaultFurnitureId1),
+        "A call to toAccepted with invalid furnitureId should throw NotFoundException");
+
+    InOrder inOrder = Mockito.inOrder(mockDal);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toAccepted : given invalid FurnitureStatus, "
+      + "should throw ConflictException")
+  @ParameterizedTest
+  @EnumSource(value = FurnitureStatus.class, names = {"REFUSED", "ACCEPTED", "IN_RESTORATION",
+      "AVAILABLE_FOR_SALE", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED",
+      "WITHDRAWN"})
+  void test_toAccepted_givenInvalidStatus_shouldThrowConflict(FurnitureStatus startingStatus) {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
+    assertThrows(ConflictException.class, () ->
+            furnitureUCC.toAccepted(defaultFurnitureId1),
+        "A call to toAccepted with invalid starting furniture status"
+            + " should throw ConflictException");
+
+    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toAccepted : catching InternalError, "
+      + "should throw it back")
+  @Test
+  void test_toAccepted_catchesInternal_shouldThrowInternal() {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.REQUESTED_FOR_VISIT);
+    Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
+        .thenThrow(new InternalError());
+    assertThrows(InternalError.class, () ->
+            furnitureUCC.toAccepted(defaultFurnitureId1),
+        "A call to toAccepted catching an InternalError should throw it back");
+
+    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.ACCEPTED);
+    inOrder.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  // -----
+
+  @DisplayName("TEST FurnitureUCC.toRefused : nominal scenario, should return dto")
+  @Test
+  void test_toRefused_nominal_shouldReturnDTO() {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.REQUESTED_FOR_VISIT);
+    Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
+        .thenReturn(mockFurnitureDTO2);
+    assertEquals(mockFurnitureDTO2, furnitureUCC.toRefused(defaultFurnitureId1),
+        "A valid call of toRefused() with specialSalePrice should "
+            + "return the corresponding dto");
+
+    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.REFUSED);
+    inOrder.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
+    inOrder.verify(mockDal).commitTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).rollbackTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toRefused : given invalid furnitureId, "
+      + "should throw NotFoundException")
+  @Test
+  void test_toRefused_givenInvalidFurnitureId_shouldThrowNotFound() {
+    Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new NotFoundException());
+    assertThrows(NotFoundException.class, () ->
+            furnitureUCC.toRefused(defaultFurnitureId1),
+        "A call to toRefused with invalid furnitureId should throw NotFoundException");
+
+    InOrder inOrder = Mockito.inOrder(mockDal);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toRefused : given invalid FurnitureStatus, "
+      + "should throw ConflictException")
+  @ParameterizedTest
+  @EnumSource(value = FurnitureStatus.class, names = {"REFUSED", "ACCEPTED", "IN_RESTORATION",
+      "AVAILABLE_FOR_SALE", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED",
+      "WITHDRAWN"})
+  void test_toRefused_givenInvalidStatus_shouldThrowConflict(FurnitureStatus startingStatus) {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
+    assertThrows(ConflictException.class, () ->
+            furnitureUCC.toRefused(defaultFurnitureId1),
+        "A call to toRefused with invalid starting furniture status"
+            + " should throw ConflictException");
+
+    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toRefused : catching InternalError, "
+      + "should throw it back")
+  @Test
+  void test_toRefused_catchesInternal_shouldThrowInternal() {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.REQUESTED_FOR_VISIT);
+    Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
+        .thenThrow(new InternalError());
+    assertThrows(InternalError.class, () ->
+            furnitureUCC.toRefused(defaultFurnitureId1),
+        "A call to toRefused catching an InternalError should throw it back");
+
+    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.REFUSED);
+    inOrder.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
     inOrder.verify(mockDal).rollbackTransaction();
     inOrder.verifyNoMoreInteractions();
     inOrder.verify(mockDal, Mockito.never()).commitTransaction();

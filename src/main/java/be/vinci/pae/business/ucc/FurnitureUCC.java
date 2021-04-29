@@ -21,6 +21,22 @@ public interface FurnitureUCC {
   List<FurnitureDTO> getAll();
 
   /**
+   * Sets the status of the piece of furniture to ACCEPTED.
+   *
+   * @param furnitureId : the furniture id
+   * @return modified resource as a FurnitureDTO
+   */
+  FurnitureDTO toAccepted(int furnitureId);
+
+  /**
+   * Sets the status of the piece of furniture to REFUSED.
+   *
+   * @param furnitureId : the furniture id
+   * @return modified resource as a FurnitureDTO
+   */
+  FurnitureDTO toRefused(int furnitureId);
+
+  /**
    * Sets the status of the furniture to IN_RESTORATION.
    *
    * @param furnitureId the furniture id.

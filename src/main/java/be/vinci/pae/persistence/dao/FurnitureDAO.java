@@ -14,6 +14,14 @@ public interface FurnitureDAO {
   FurnitureDTO findById(int id);
 
   /**
+   * Finds all pieces of furniture having a specific request id.
+   *
+   * @param requestId : request id.
+   * @return List of FurnitureDTO
+   */
+  List<FurnitureDTO> findByRequestId(int requestId);
+
+  /**
    * Finds all entries of furniture in the DB.
    *
    * @return a list of furnitureDTO

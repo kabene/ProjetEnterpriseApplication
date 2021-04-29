@@ -116,7 +116,40 @@ public class FurnitureResource {
   // (some are admin only, others are not)
 
   /**
-   * PATCH one piece of furniture to the 'in_restoration' state.
+   * PATCH one piece of furniture to the 'accepted' status.
+   *
+   * @param furnitureId : the furniture id
+   * @return http response containing the modified resource
+   */
+  @PATCH
+  @Path("/accepted/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response toAccepted(@PathParam("id") int furnitureId) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
+        .log(Level.INFO, "/furniture/accepted/" + furnitureId);
+    FurnitureDTO furnitureDTO = furnitureUCC.toAccepted(furnitureId);
+    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
+  }
+
+  /**
+   * PATCH one piece of furniture to the 'refused' status.
+   *
+   * @param furnitureId : the furniture id
+   * @return http response containing the modified resource
+   */
+  @PATCH
+  @Path("/refused/{id}")
+  @Admin
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response toRefused(@PathParam("id") int furnitureId) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "/furniture/refused/" + furnitureId);
+    FurnitureDTO furnitureDTO = furnitureUCC.toRefused(furnitureId);
+    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
+  }
+
+  /**
+   * PATCH one piece of furniture to the 'in_restoration' status.
    *
    * @param furnitureId : the furniture id
    * @return : the updated piece of furniture
@@ -133,7 +166,7 @@ public class FurnitureResource {
   }
 
   /**
-   * PATCH one piece of furniture to the 'available_for_sale' state.
+   * PATCH one piece of furniture to the 'available_for_sale' status.
    *
    * @param furnitureId : the furniture id
    * @param reqNode     : the request body
@@ -158,7 +191,7 @@ public class FurnitureResource {
   }
 
   /**
-   * PATCH one piece of furniture to the 'withdrawn' state.
+   * PATCH one piece of furniture to the 'withdrawn' status.
    *
    * @param furnitureId : the furniture id
    * @return : the updated piece of furniture
