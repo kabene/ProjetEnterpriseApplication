@@ -1,4 +1,4 @@
-import {getUserSessionData} from "../utils/session";
+import {findCurrentUser} from "../utils/session";
 import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
@@ -19,8 +19,7 @@ let openTab = "infos";
  * @param {*} id
  */
 const Visits = async (id) => {
-
-  currentUser = getUserSessionData();
+  currentUser = findCurrentUser();
   pageHTML = `
   <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
