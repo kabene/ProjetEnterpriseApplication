@@ -67,7 +67,7 @@ class RequestForVisitUCCImplTest {
     Mockito.when(mockRequestDTO2.getRequestId()).thenReturn(2);
     Mockito.when(mockRequestDTO3.getRequestId()).thenReturn(3);
 
-    Mockito.when(mockRequestForVisitDAO.findByRequestId(defaultRequestId))
+    Mockito.when(mockRequestForVisitDAO.findById(defaultRequestId))
         .thenReturn(mockRequestDTO1);
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(RequestStatus.WAITING);
     Mockito.when(mockRequestDTO1.getUserId()).thenReturn(defaultUserId);
@@ -191,9 +191,11 @@ class RequestForVisitUCCImplTest {
       + "should throw NotFoundException")
   @ParameterizedTest
   @EnumSource(value = RequestStatus.class, names = {"CANCELED", "CONFIRMED"})
-  void test_changeWaitingRequestStatus_invalidRequestId_shouldThrowNotFound(RequestStatus requestStatus) {
+  void test_changeWaitingRequestStatus_invalidRequestId_shouldThrowNotFound(
+      RequestStatus requestStatus) {
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(requestStatus);
-    Mockito.when(mockRequestForVisitDAO.findByRequestId(defaultRequestId)).thenThrow(new NotFoundException());
+    Mockito.when(mockRequestForVisitDAO.findById(defaultRequestId))
+        .thenThrow(new NotFoundException());
 
     assertThrows(NotFoundException.class, () -> requestUCC
             .changeWaitingRequestStatus(defaultRequestId, defaultUserId, requestStatus, info),
@@ -203,7 +205,7 @@ class RequestForVisitUCCImplTest {
     Mockito.verify(mockRequestForVisitDAO, Mockito.never())
         .modifyStatusWaitingRequest(mockRequestDTO1);
     Mockito.verify(mockDal).startTransaction();
-    Mockito.verify(mockRequestForVisitDAO).findByRequestId(defaultRequestId);
+    Mockito.verify(mockRequestForVisitDAO).findById(defaultRequestId);
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }

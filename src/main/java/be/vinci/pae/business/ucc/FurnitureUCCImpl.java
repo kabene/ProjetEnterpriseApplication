@@ -286,8 +286,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     try {
       dalServices.startTransaction();
       FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(furnitureId);
-      PhotoDTO foundPhotoDTO = photoDAO.getPhotoById(photoId);
-      if (foundPhotoDTO.getFurnitureId() != foundFurnitureDTO.getFurnitureId()) {
+      PhotoDTO foundPhotoDTO = photoDAO.findById((photoId));
+      if (!foundPhotoDTO.getFurnitureId().equals(foundFurnitureDTO.getFurnitureId())) {
         throw new ConflictException(
             "Error: The photo doesn't belong to the specified piece of furniture");
       }
@@ -319,7 +319,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       dto.setSeller(u);
     }
     if (dto.getFavouritePhotoId() != null) {
-      PhotoDTO favPhoto = photoDAO.getPhotoById(dto.getFavouritePhotoId());
+      PhotoDTO favPhoto = photoDAO.findById(dto.getFavouritePhotoId());
       dto.setFavouritePhoto(favPhoto);
     }
     if (dto.getStatus().equals(FurnitureStatus.UNDER_OPTION)) {
@@ -332,7 +332,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     String type = furnitureTypeDAO.findById(dto.getTypeId());
     dto.setType(type);
     if (dto.getRequestId() != null) {
-      dto.setRequest(requestForVisitDAO.findByRequestId(dto.getRequestId()));
+      dto.setRequest(requestForVisitDAO.findById(dto.getRequestId()));
     }
   }
 }

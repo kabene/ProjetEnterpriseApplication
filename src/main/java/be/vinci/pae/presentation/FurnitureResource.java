@@ -125,7 +125,8 @@ public class FurnitureResource {
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
   public Response toAccepted(@PathParam("id") int furnitureId) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "/furniture/accepted/"+furnitureId);
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
+        .log(Level.INFO, "/furniture/accepted/" + furnitureId);
     FurnitureDTO furnitureDTO = furnitureUCC.toAccepted(furnitureId);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
@@ -141,7 +142,7 @@ public class FurnitureResource {
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
   public Response toRefused(@PathParam("id") int furnitureId) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "/furniture/refused/"+furnitureId);
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "/furniture/refused/" + furnitureId);
     FurnitureDTO furnitureDTO = furnitureUCC.toRefused(furnitureId);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
