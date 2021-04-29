@@ -380,7 +380,7 @@ const generateCardHTML = (request) => {
             
             </div>       
             <div class="tab-pane fade ${furnitureTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            
+              ${generatePhotoList(request)}
             </div>
             ${generateButtonRow(request)}
           </div>
@@ -390,6 +390,79 @@ const generateCardHTML = (request) => {
   </div>
   `;
   return res;
+}
+
+const generatePhotoList = (request) => {
+  let photos = "";
+  request.furnitureList.forEach(furniture=> {
+    furniture.photos.forEach(photo => {
+      let favRadioName = `radioFav${photo.photoId}`;
+      let visibleCheckName = `checkboxVisible${photo.photoId}`;
+      let homePageCheckName = `checkboxHomepage${photo.photoId}`;
+
+      let favChecked = ``;
+      if (furniture.favouritePhoto && photo.photoId
+          === furniture.favouritePhoto.photoId) {
+        favChecked = `checked`;
+      }
+
+      let visibleCheckedOriginaly = false;
+      let homePageCheckedOriginaly = false;
+      let visibileChecked = ``;
+      let homePageChecked = ``;
+      if (photo.isVisible) {
+        visibileChecked = `checked`;
+        visibleCheckedOriginaly = true;
+
+        if (photo.onHomePage && photo.isVisible) {
+          homePageChecked = `checked`;
+          homePageCheckedOriginaly = true;
+        }
+      } else {
+        homePageChecked = `disabled`;
+      }
+
+      photos += `
+    <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
+      <div class="row px-0">
+        <div class="col-6">
+          <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+        </div>
+        <div class="text-left col-6">
+          <label class="form-check-label" for="${favRadioName}">
+            <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId="${photo.photoId}" furnitureid="${photo.furnitureId}" ${favChecked}>
+            Photo favorite
+          </label>
+          <br/>
+          <label class="form-check-label" for="${visibleCheckName}">
+            <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
+            Visible
+          </label>
+          <br/>
+          <label class="form-check-label" for="${homePageCheckName}">
+            <input id="${homePageCheckName}" type="checkbox" class="form-check-input homepageCheckbox" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
+            Affiché sur la page d'accueil
+          </label>
+        </div>
+      </div>
+    </div>`;
+    });
+  let pId
+  if(!furniture.favouritePhoto){
+    pId = "notFound";
+  }else {
+    pId = furniture.favouritePhoto.photoId;
+  }
+  let res = `
+  <form>
+    <input id="originalFav" type="hidden" photoId="${pId}" furnitureId="${furniture.furnitureId}"/>
+    <div class="form-check d-flex flex-lg-fill flex-row">
+      ${photos}
+    </div>
+    <button id="saveBtnPhoto" class="btn btn-primary my-5 float-right">Enregistrer les modifications</button>
+  </form>`;
+  return res;
+  });
 }
 
 const generateSummaryCardHeader = (request) => {
