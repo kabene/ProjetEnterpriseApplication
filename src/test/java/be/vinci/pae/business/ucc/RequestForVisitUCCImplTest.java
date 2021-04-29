@@ -1,5 +1,6 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.pojos.RequestStatus;
 import be.vinci.pae.exceptions.ConflictException;
@@ -7,7 +8,10 @@ import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
+import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.RequestForVisitDAO;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,14 +35,20 @@ class RequestForVisitUCCImplTest {
   private static ConnectionDalServices mockDal;
 
   private static RequestForVisitDAO mockRequestForVisitDAO;
+  private static FurnitureDAO mockFurnitureDAO;
 
   private static RequestForVisitDTO mockRequestDTO1;
   private static RequestForVisitDTO mockRequestDTO2;
   private static RequestForVisitDTO mockRequestDTO3;
 
+  private static FurnitureDTO mockFurnitureDTO1;
+  private static FurnitureDTO mockFurnitureDTO2;
+
   private static final int defaultRequestId = 1;
   private static final int defaultUserId = 2;
   private static final int defaultBadUserId = 3;
+  private static final int defaultFurnitureId1 = 4;
+  private static final int defaultFurnitureId2 = 5;
   private static final String info = "my info";
 
   @BeforeAll
@@ -47,30 +57,46 @@ class RequestForVisitUCCImplTest {
 
     requestUCC = locator.getService(RequestForVisitUCC.class);
     mockDal = locator.getService(ConnectionDalServices.class);
+    mockFurnitureDAO = locator.getService(FurnitureDAO.class);
+
+    mockRequestForVisitDAO = locator.getService(RequestForVisitDAO.class);
 
     mockRequestForVisitDAO = locator.getService(RequestForVisitDAO.class);
 
     mockRequestDTO1 = Mockito.mock(RequestForVisitDTO.class);
     mockRequestDTO2 = Mockito.mock(RequestForVisitDTO.class);
     mockRequestDTO3 = Mockito.mock(RequestForVisitDTO.class);
+    mockFurnitureDTO1 = Mockito.mock(FurnitureDTO.class);
+    mockFurnitureDTO2 = Mockito.mock(FurnitureDTO.class);
   }
 
   @BeforeEach
   void setUp() {
     Mockito.reset(mockDal);
     Mockito.reset(mockRequestForVisitDAO);
+    Mockito.reset(mockFurnitureDAO);
     Mockito.reset(mockRequestDTO1);
     Mockito.reset(mockRequestDTO2);
     Mockito.reset(mockRequestDTO3);
+    Mockito.reset(mockFurnitureDTO1);
+    Mockito.reset(mockFurnitureDTO2);
 
     Mockito.when(mockRequestDTO1.getRequestId()).thenReturn(1);
     Mockito.when(mockRequestDTO2.getRequestId()).thenReturn(2);
     Mockito.when(mockRequestDTO3.getRequestId()).thenReturn(3);
 
+    Mockito.when(mockFurnitureDTO1.getFurnitureId()).thenReturn(defaultFurnitureId1);
+    Mockito.when(mockFurnitureDTO2.getFurnitureId()).thenReturn(defaultFurnitureId2);
+
     Mockito.when(mockRequestForVisitDAO.findById(defaultRequestId))
         .thenReturn(mockRequestDTO1);
     Mockito.when(mockRequestDTO1.getRequestStatus()).thenReturn(RequestStatus.WAITING);
     Mockito.when(mockRequestDTO1.getUserId()).thenReturn(defaultUserId);
+    Mockito.when(mockFurnitureDAO.findByRequestId(defaultRequestId))
+        .thenReturn(Arrays.asList(mockFurnitureDTO1, mockFurnitureDTO2));
+
+    Mockito.when(mockRequestDTO1.getFurnitureList())
+        .thenReturn(Arrays.asList(mockFurnitureDTO1, mockFurnitureDTO2));
   }
 
   //TEST listRequest
@@ -235,12 +261,31 @@ class RequestForVisitUCCImplTest {
   void test_changeWaitingRequestStatus_intoWaiting_shouldThrowConflictException() {
 
     assertThrows(ConflictException.class, () -> requestUCC
-            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, RequestStatus.WAITING,info),
+            .changeWaitingRequestStatus(defaultRequestId, defaultUserId, RequestStatus.WAITING, info),
         "called changeWaitingRequestStatus() to change it into waiting"
             + "should have thrown Conflict Exception");
 
     Mockito.verify(mockRequestForVisitDAO, Mockito.never())
         .modifyStatusWaitingRequest(mockRequestDTO1);
+    Mockito.verify(mockDal).startTransaction();
+    Mockito.verify(mockDal).rollbackTransaction();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST changeWaitingRequestStatus() to CONFIRMED with visit date into the past "
+      + "should throw Conflict Exception")
+  @Test
+  void test_changeWaitingRequestStatus_visitDateIntoThePast_shouldThrowConflictException() {
+    String date = LocalDateTime.now().minusDays(1)
+        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+    assertThrows(ConflictException.class, () -> requestUCC
+        .changeWaitingRequestStatus(defaultRequestId, defaultUserId, RequestStatus.CONFIRMED,
+            date));
+
+    Mockito.verify(mockRequestForVisitDAO, Mockito.never())
+        .modifyStatusWaitingRequest(mockRequestDTO1);
+    Mockito.verify(mockRequestForVisitDAO).findById(defaultRequestId);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal).rollbackTransaction();
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
