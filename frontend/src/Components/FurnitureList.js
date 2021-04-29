@@ -1,7 +1,7 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
-import {getUserSessionData} from "../utils/session.js";
+import {findCurrentUser} from "../utils/session.js";
 import {
   displayErrorMessage,
   generateLoadingAnimation,
@@ -23,7 +23,7 @@ const emptyFilter = {
 let activeFilters = {... emptyFilter};
 
 const FurnitureList = async (id) => {
-  currentUser = getUserSessionData();
+  currentUser = findCurrentUser();
 
   let pageHTML = `
   <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
@@ -166,6 +166,7 @@ const generatePageHtml = (largeTable = true) => {
 
 const generateAllRows = (notNeededClassName) => {
   let res = "";
+  console.log(furnitureList);
   furnitureList.forEach(furniture => {
     if (!furnitureMap[furniture.furnitureId]) {
       furnitureMap[furniture.furnitureId] = furniture;
@@ -471,7 +472,7 @@ const generateCardHTML = (furniture) => {
               </div>
               <div class="col-md-6 text-left">
                 <h5 id="descriptionCardEntry">${furniture.description}</h5>
-                <p class="proile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(
+                <p class="profile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(
       furniture)}</span></p>
               </div>
             </div>

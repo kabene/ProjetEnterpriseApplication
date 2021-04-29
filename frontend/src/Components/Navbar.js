@@ -1,12 +1,12 @@
 import logo from "../img/logoAE_v2.png";
-import {getUserSessionData} from "../utils/session.js";
+import {findCurrentUser} from "../utils/session.js";
 import {escapeHtml} from "../utils/utils.js";
 
 let navBar = document.querySelector("#navbar");
 const Navbar = () => {
 
   let navbarHtml;
-  let pers = getUserSessionData();
+  let pers = findCurrentUser();
   console.log(pers);
 //class=navbar navbar-expand-md navbar-light py-0"
   navbarHtml = `
@@ -43,13 +43,21 @@ const Navbar = () => {
                       <li class="my-auto font-weight-bold">${userPrintable}</li>
       `;
 
+    } else if(pers.isTakeover === true){
+      navbarHtml += `
+                    <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton p-0" href="#" data-uri="/visits">Mes demandes de visite</button>
+                    <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>
+                    <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furniture">Voir les meubles</button>
+                    <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/releaseTakeover">Abandonner le contrôle</button></li>
+                    <li class="my-auto font-weight-bold"> ${userPrintable} <span class="badge badge-pill badge-warning">C</span></li>
+      `
     } else {
 
       navbarHtml += `
                   <li class="nav-item"><button type="button" class="btn btn-secondary navbarButton p-0" href="#" data-uri="/myVisits">Mes demandes de visite</button>
                   <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>
                   <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/furniture">Voir les meubles</button>
-                  <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button></li>
+                  <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout"></button></li>
                   <li class="my-auto font-weight-bold"> ${userPrintable}</li>
                   `;
 

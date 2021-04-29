@@ -1,43 +1,73 @@
-const STORE_NAME = "user";
+const USER_STORE_NAME = "user";
+const TAKEOVER_STORE_NAME = "takeover";
+
+const findCurrentUser = () => {
+  let res = getTakeoverSessionData();
+  if(!res) {
+    res = getUserSessionData();
+  }
+  return res;
+}
+
+//session storage
 
 const getUserSessionData = () => {
-  const retrievedUser = sessionStorage.getItem(STORE_NAME);
-  if (!retrievedUser) return;
-  return JSON.parse(retrievedUser);
+  return getSessionStorageData(USER_STORE_NAME);
 };
-
 const setUserSessionData = (user) => {
-  const storageValue = JSON.stringify(user);
-  sessionStorage.setItem(STORE_NAME, storageValue);
+  setSessionStorageData(user, USER_STORE_NAME);
 };
-
 const removeSessionData = () => {
-  sessionStorage.removeItem(STORE_NAME);
+  removeSessionStorageData(USER_STORE_NAME);
 };
 
+//takeover
+const getTakeoverSessionData = () => {
+  return getSessionStorageData(TAKEOVER_STORE_NAME);
+};
+const setTakeoverSessionData = (bundle) => {
+  setSessionStorageData(bundle, TAKEOVER_STORE_NAME);
+}
+const removeTakeoverSessionData = () => {
+  removeSessionStorageData(TAKEOVER_STORE_NAME);
+}
+
+//general (not exported)
+const getSessionStorageData = (storeName) => {
+  const retrievedBundle = sessionStorage.getItem(storeName);
+  if (!retrievedBundle) return;
+  return JSON.parse(retrievedBundle);
+}
+
+const setSessionStorageData = (bundle, storeName) => {
+  const storageValue = JSON.stringify(bundle);
+  sessionStorage.setItem(storeName, storageValue);
+}
+
+const removeSessionStorageData = (storeName) => {
+  sessionStorage.removeItem(storeName);
+}
 
 // localstorage
 
-
-
 const getUserLocalData = () => {
-  const retrievedUser = localStorage.getItem(STORE_NAME);
+  const retrievedUser = localStorage.getItem(USER_STORE_NAME);
   if (!retrievedUser) return;
   return JSON.parse(retrievedUser);
 };
 
 const setUserLocalData = (token) => {
   const storageValue = JSON.stringify(token);
-  localStorage.setItem(STORE_NAME, storageValue);
+  localStorage.setItem(USER_STORE_NAME, storageValue);
 };
 
 const removeLocalData = () => {
-  localStorage.removeItem(STORE_NAME);
+  localStorage.removeItem(USER_STORE_NAME);
 };
 
-
-
-
-
-
-export { getUserSessionData, setUserSessionData, removeSessionData,getUserLocalData,setUserLocalData,removeLocalData };
+export { 
+  findCurrentUser,
+  getUserSessionData, setUserSessionData, removeSessionData,
+  getUserLocalData,setUserLocalData,removeLocalData, 
+  getTakeoverSessionData, setTakeoverSessionData, removeTakeoverSessionData
+};
