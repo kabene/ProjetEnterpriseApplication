@@ -103,7 +103,7 @@ const displayRequestCardById = async (requestId) => {
     requestCardDiv.innerHTML = generateLoadingAnimation();
     //generate the user card
     requestCardDiv.innerHTML = generateRequestCard(mapRequests.get(parseInt(requestId)));
-  }
+}
 
 
 /********************  HTML generation  **********************/
@@ -121,10 +121,10 @@ const generateVisitPage = () => {
             <div class="shortElement" id="requestCardDiv"></div>
           </div>
           <div id="snackbar"></div>`;
-  }
+}
 
   
-  const generateTable = () => {
+const generateTable = () => {
     let res = `
       <table id="largeTable" class="table table-bordered table-hover">
           <thead class="table-secondary">
@@ -139,96 +139,103 @@ const generateVisitPage = () => {
           </tbody>
       </table>`;
     return res;
-  }
+}
 
 
-  const getAllRequestsRows = () => {
+const getAllRequestsRows = () => {
     let res = "";  
     mapRequests.forEach(request => res += generateRow(request));
     return res;
-  }
+}
 
 
-  const generateRow = (request) => {
+const generateRow = (request) => {
     return ` 
       <tr class="requestTableRow" requestId="` + request.requestId + `">
         <th>` + request.requestDate + `</th>
         <th>` + request.address.street + ` ` + request.address.buildingNumber + ` ` + request.address.postcode + `, ` + request.address.commune + `</th>
         <th class="requestState" status=` + request.requestStatus + `>` + generateColoredStatus(request.requestStatus) + `</th>
      </tr>`;
-  }
+}
 
 
-  const generateRequestCard = (request) => {
-    let info = "";
-    if (request.requestStatus === "CANCELED")
-        info = generateCardLabelKeyEntry("Justificatif de refus", "explanatory-note-entry", request.explanatoryNote);
-    else if (request.requestStatus === "CONFIRMED")
-        info = generateCardLabelKeyEntry("Date/heure de visite", "visit-date-time-entry", request.visitDateTime);
-
+const generateRequestCard = (request) => {
     let page =
     `<div class="container emp-profile">
-    <form>
-      <div class="row">
-        <div class="col-12">
-          <div class="profile-head">
-
-            <div class="row">
-              <div class="col-md-6">
-                <h4>Demande de visite du ` + request.requestDate + `</h4>
-                <h5>Plage horaire demandé : ` + request.timeSlot + `</h5>
-              </div>
-              <div class="col-md-6 text-left">
-                <p class="profile-rating">ÉTAT : <span id="statusCardEntry">` + generateBadgeStatus(request) + `</span></p>
-              </div>
-            </div>
-
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-              <li class="nav-item">
-                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Information</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Meubles</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-  
-      <div class="row">
-        <div class="col-md-8">
-          <div class="tab-content profile-tab" id="myTabContent">
-            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-              ` + generateCardLabelKeyEntry("Adresse de visite", "address-entry", request.address.street + ` ` + request.address.buildingNumber + ` ` + request.address.postcode + `, ` + request.address.commune) + ` 
-              ` + generateCardLabelKeyEntry("Date de la demande", "request-date-entry", request.requestDate) + `
-              ` + generateCardLabelKeyEntry("Disponibilités", "time-slot-entry", request.timeSlot) + `
-              ` + info + `
-            </div>       
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>           
-  </div>`;
+		<form>
+			<div class="row">
+				<div class="col-12">
+					<div class="profile-head">
+						<div class="row">
+							<div class="col-md-6">
+								<h4>Demande de visite du ` + request.requestDate + `</h4>
+								<h5>Plage horaire demandé : ` + request.timeSlot + `</h5>
+							</div>
+							<div class="col-md-6 text-left">
+								<p class="profile-rating">ÉTAT : <span id="statusCardEntry">` + generateBadgeStatus(request) + `</span></p>
+							</div>
+						</div>
+						<ul class="nav nav-tabs" id="myTab" role="tablist">
+							<li class="nav-item">
+								<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Information</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Meubles</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+	
+			<div class="row">
+				<div class="col-md-8">
+					<div class="tab-content profile-tab" id="myTabContent">
+						<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">` + generateRequestInfoCard() + `</div>       
+						<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">` + generateRequestFurnitureCard() + `</div>
+					</div>	
+				</div>
+			</div>
+		</form>           
+  	</div>`;
 
     return page;
-  }
+}
 
 
-  const generateCardLabelKeyEntry = (label, id, value) => {
+const generateRequestInfoCard = () => {    
+	let info = "";
+	if (request.requestStatus === "CANCELED")
+		info = generateCardLabelKeyEntry("Justificatif de refus", "explanatory-note-entry", request.explanatoryNote);
+	else if (request.requestStatus === "CONFIRMED")
+		info = generateCardLabelKeyEntry("Date/heure de visite", "visit-date-time-entry", request.visitDateTime);
+
+	return generateCardLabelKeyEntry("Adresse de visite", "address-entry", request.address.street + ` ` + request.address.buildingNumber + ` ` + request.address.postcode + `, ` + request.address.commune) + ` 
+	  ` + generateCardLabelKeyEntry("Date de la demande", "request-date-entry", request.requestDate) + `
+	  ` + generateCardLabelKeyEntry("Disponibilités", "time-slot-entry", request.timeSlot)
+	  ` + info + `;
+}
+
+
+const generateRequestFurnitureCard = () => {
+	return `
+	
+	`;
+}
+
+
+const generateCardLabelKeyEntry = (label, id, value) => {
     let res = `
     <div class="row text-left">
       <div class="col-md-6">
         <label> ` + label + `</label>
       </div>
       <div class="col-md-6">
-        <p id=" ` + id + `"> ` + value + `</p>
+        <p id="` + id + `"> ` + value + `</p>
       </div>
     </div>
     `;
     return res;
-  }
+}
 
 
 /**
@@ -259,7 +266,6 @@ const generateDot = (colorClassName) => {
 }
   
 
-
   /**
  * find status label & color classname (primary / danger / etc...) for a given status
  * @param {String} status
@@ -273,7 +279,6 @@ const generateStatusInfos = (status) => {
       classname: "",
       status: "",
     }
-  
     switch (status) {
       case "CONFIRMED":
         res.classname = "success";
