@@ -22,6 +22,11 @@ public class FurnitureTypeResource {
   @Inject
   FurnitureTypeUCC furnitureTypeUCC;
 
+  /**
+   * GET all furniture types.
+   *
+   * @return http response containing a list of furniture types in json format
+   */
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public Response findAll() {

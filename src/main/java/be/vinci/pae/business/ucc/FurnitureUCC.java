@@ -66,7 +66,7 @@ public interface FurnitureUCC {
 
   /**
    * Updates the a furniture resource with the information contained in the bodyDTO
-   * (works for: description, typeId, sellingPrice)
+   * (works for: description, typeId, sellingPrice).
    *
    * @param bodyDTO : request body as FurnitureDTO
    * @return the modified resource as FurnitureDTO

@@ -226,10 +226,10 @@ public class FurnitureResource {
   }
 
   /**
-   * PATCH one piece of furniture's information.
-   * No values are mandatory in the request body, but at least on has to be not null.
+   * PATCH one piece of furniture's information. No values are mandatory in the request body, but at
+   * least on has to be not null.
    *
-   * @param id : furniture id
+   * @param id      : furniture id
    * @param bodyDTO : request body as FurnitureDTO
    * @return http response containing modified resource
    */
@@ -239,9 +239,9 @@ public class FurnitureResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public Response updateInfos(@PathParam("id") int id, FurnitureDTO bodyDTO) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH furniture/infos/"+id);
-    if(bodyDTO.getDescription()==null && bodyDTO.getTypeId()==null
-        && bodyDTO.getSellingPrice()==null) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH furniture/infos/" + id);
+    if (bodyDTO.getDescription() == null && bodyDTO.getTypeId() == null
+        && bodyDTO.getSellingPrice() == null) {
       throw new BadRequestException("Error: lack of at least one non-null body value");
     }
     bodyDTO.setFurnitureId(id);

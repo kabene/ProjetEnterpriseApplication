@@ -249,7 +249,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
 
   /**
    * Updates the a furniture resource with the information contained in the bodyDTO (works for:
-   * description, typeId, sellingPrice)
+   * description, typeId, sellingPrice).
    *
    * @param bodyDTO : request body as FurnitureDTO
    * @return the modified resource as FurnitureDTO
@@ -275,7 +275,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       res = furnitureDAO.updateDescription(foundFurnitureDTO);
       res = furnitureDAO.updateTypeId(res);
-      if(foundFurnitureDTO.getSellingPrice()!=null){
+      if (foundFurnitureDTO.getSellingPrice() != null) {
         res = furnitureDAO.updateSellingPrice(res);
       }
       completeFurnitureDTO(res);
