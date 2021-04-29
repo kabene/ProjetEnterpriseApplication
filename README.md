@@ -209,6 +209,15 @@
     Modifie la photo favorite d'une ressource de type 'furniture', et renvoie les informations mises à jour.
     </td>
 </tr>
+<tr>
+    <td>furniture/infos/{id}</td>
+    <td>PATCH</td>
+    <td>Admin</td>
+    <td>Non</td>
+    <td>
+    Modifie les informations (description / type id / prix de vente) d'une ressource de type furniture, et renvoie les informations mises à jour.
+    </td>
+</tr>
 </table>
 
 <table style="caption-side: top">
@@ -248,6 +257,24 @@
         Modifie les flags 'isVisible' et 'isOnHomePage' d'une ressource de type "photo" 
         (Renvoie la ressource modifiée au format json)
     </td>
+</tr>
+</table>
+
+<table style="caption-side: top">
+<caption>Operations sur les ressources de type "FurnitureType"</caption>
+<tr>
+    <th>URI</th>
+    <th>Methode</th>
+    <th>Droits requis</th>
+    <th>Autorise la prise de contrôle</th>
+    <th>Operation</th>
+</tr>
+<tr>
+    <td>furnitureTypes/</td>
+    <td>GET</td>
+    <td>Aucun</td>
+    <td>Non</td>
+    <td>Renvoie une liste de touts les types de meubles.</td>
 </tr>
 </table>
 
