@@ -24,8 +24,31 @@ public abstract class AbstractDAO {
    * @return a List of 'Dto' containing all found entries
    */
   protected <T> List<T> findAll(String tableName) {
-    List<T> dtoList = new ArrayList<>();
     String query = "SELECT t.* FROM satchoFurniture." + tableName + " t";
+    return executeSelectManyResults(query);
+  }
+
+  protected <T> List<T> findAll(String tableName, String ... orderBy) {
+    String query = "SELECT t.* FROM satchoFurniture." + tableName + " t ORDER BY ";
+    int i=0;
+    for(String column : orderBy) {
+      query += column;
+      i++;
+      if(i<orderBy.length) {
+        query += ", ";
+      }
+    }
+    return executeSelectManyResults(query);
+  }
+
+  /**
+   * Executes a SELECT type of query containing many results.
+   * @param query : String containing SQL query
+   * @param <T> : class of DTO
+   * @return
+   */
+  private <T> List<T> executeSelectManyResults(String query) {
+    List<T> dtoList = new ArrayList<>();
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
@@ -56,7 +79,6 @@ public abstract class AbstractDAO {
     } catch (SQLException e) {
       throw new InternalError(e.getMessage());
     }
-
     return res;
   }
 
