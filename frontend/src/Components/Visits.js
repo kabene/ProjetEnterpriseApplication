@@ -62,7 +62,7 @@ const loadCard = (requestId) => {
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
   let choiceBtn = document.querySelector("#choose-furniture-btn"); //TODO
-  if(choiceBtn) {
+  if (choiceBtn) {
     choiceBtn.addEventListener("click", onChooseFurnitureBtnClick)
   }
 }
@@ -187,9 +187,9 @@ const addTransitionBtnListeners = (request) => {
 const findTransitionMethod = (btnId, request) => {
   switch (btnId) {
     case "btnToConfirmed":
-       return (e) => toConfirmed(e, request);
+      return (e) => toConfirmed(e, request);
     case "btnToCanceled":
-       return (e) => toCanceled(e, request);
+      return (e) => toCanceled(e, request);
     default:
       return (e) => {
         e.preventDefault();
@@ -399,15 +399,15 @@ const generateCardHTML = (request) => {
 const generatePhotoList = (request) => {
   let photos = "";
   request.furnitureList.forEach(furniture => {
-      let fav = furniture.favouritePhoto;
-      let favPhoto;
-      if(!fav) {
-        favPhoto = notFoundPhoto;
-      }else {
-        favPhoto = fav.source;
-      }
+    let fav = furniture.favouritePhoto;
+    let favPhoto;
+    if (!fav) {
+      favPhoto = notFoundPhoto;
+    } else {
+      favPhoto = fav.source;
+    }
 
-      photos += `
+    photos += `
     <div class="p-1 w-50 container photo-list-container" request-id="${request.requestId}">
       <div class="row px-0">
         <div class="col-6">
@@ -431,9 +431,10 @@ const generatePhotoList = (request) => {
 
 const generateRadioBtns = (request, furniture) => {
   let res = ``;
-  if(request.requestStatus === "CONFIRMED" && furniture.status === "REQUESTED_FOR_VISIT") {
-    res = 
-    `<div class="text-left col-6 furniture-choices">
+  if (request.requestStatus === "CONFIRMED" && furniture.status
+      === "REQUESTED_FOR_VISIT") {
+    res =
+        `<div class="text-left col-6 furniture-choices">
     <div class="form-check">
       <label class="form-check-label">
         <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/>
@@ -451,10 +452,9 @@ const generateRadioBtns = (request, furniture) => {
   return res;
 }
 
-
 const generateChooseFurnitureBtn = (request) => {
   let res = "";
-  if(request.requestStatus === "CONFIRMED") {
+  if (request.requestStatus === "CONFIRMED") {
     res = `<button id="choose-furniture-btn" class="btn btn-primary choose-furniture-btn my-5 float-right">Enregistrer le choix</button>`
   }
   return res;
@@ -462,13 +462,13 @@ const generateChooseFurnitureBtn = (request) => {
 
 const onChooseFurnitureBtnClick = async (e) => {
   e.preventDefault()
-  if(verifyValidChoices() === true){
+  if (verifyValidChoices() === true) {
     const matches = document.querySelectorAll(".form-check-input:checked");
-    for(const i in matches) {
+    for (const i in matches) {
       let radio = matches[i];
-      if(radio.tagName === "INPUT") {
+      if (radio.tagName === "INPUT") {
         let furnitureId = radio.getAttribute("furniture-id");
-        switch(radio.id) {
+        switch (radio.id) {
           case "AcceptFurniture":
             await acceptFurniture(furnitureId);
             break;
@@ -482,27 +482,60 @@ const onChooseFurnitureBtnClick = async (e) => {
 }
 
 const acceptFurniture = async (furnitureId) => {
-  console.log("accept " + furnitureId)
+  try {
+    let result =await fetch("/furniture/accepted/" + furnitureId, {
+      method: "PATCH",
+      headers: {
+        "Authorization": currentUser.token,
+      },
+    });
+    if (!result.ok) {
+      throw new Error(result.status + " : " + result.statusText);
+    } else {
+      let data = await result.json();
+      requestMap[data.requestId] = data;
+      loadCard(data.requestId);
+    }
+  } catch (err) {
+    displayErrorMessage("errorDiv", err);
+  }
 }
 
 const refuseFurniture = async (furnitureId) => {
-  console.log("refuse " + furnitureId)
+  try {
+    let result = await fetch("/furniture/refused/" + furnitureId, {
+      method: "PATCH",
+      headers: {
+        "Authorization": currentUser.token,
+      },
+    });
+    if (!result.ok) {
+      throw new Error(result.status + " : " + result.statusText
+      );
+    } else {
+      let data = await result.json();
+      requestMap[data.requestId] = data;
+      loadCard(data.requestId);
+    }
+  } catch (err) {
+    displayErrorMessage("errorDiv", err);
+  }
 }
 
 const verifyValidChoices = (e) => {
   let matchesDiv = document.querySelectorAll(".furniture-choices")
-  for(const i in matchesDiv) {
+  for (const i in matchesDiv) {
     let choiceDiv = matchesDiv[i];
-    if(choiceDiv.tagName === "DIV") {
+    if (choiceDiv.tagName === "DIV") {
       let checkCnt = 0;
       const matches = choiceDiv.querySelectorAll(".form-check-input")
-      for(const j in matches) {
+      for (const j in matches) {
         let input = matches[j]
-        if(input.tagName === "INPUT" && input.checked){
+        if (input.tagName === "INPUT" && input.checked) {
           checkCnt++;
         }
       }
-      if(checkCnt !== 1) {
+      if (checkCnt !== 1) {
         return false;
       }
     }
@@ -787,14 +820,16 @@ const changeContainerId = () => {
  * @param e
  * @param request
  */
-const toConfirmed=(e,request)=>{
+const toConfirmed = (e, request) => {
   e.preventDefault();
-  let acceptDate=e.target.parentElement.parentElement.querySelector("#acceptInputDate").value;
-  let acceptTime=e.target.parentElement.parentElement.querySelector("#acceptInputTime").value;
-  if(acceptDate && acceptTime){
-    let date=acceptDate+" "+acceptTime;
-    let bundle={
-      visitDateTime:date,
+  let acceptDate = e.target.parentElement.parentElement.querySelector(
+      "#acceptInputDate").value;
+  let acceptTime = e.target.parentElement.parentElement.querySelector(
+      "#acceptInputTime").value;
+  if (acceptDate && acceptTime) {
+    let date = acceptDate + " " + acceptTime;
+    let bundle = {
+      visitDateTime: date,
     }
     fetch("/requestForVisit/accept/" + request.requestId, {
       method: "PATCH",
@@ -809,15 +844,16 @@ const toConfirmed=(e,request)=>{
         throw new Error(response.statusText);
       }
       return response.json();
-    }).then((data)=>{
-      requestMap[data.requestId]=data;
+    }).then((data) => {
+      requestMap[data.requestId] = data;
       loadCard(data.requestId);
-    }).catch((err)=>{
+    }).catch((err) => {
       displayErrorMessage("errorDiv", err);
     });
-  }else {
-    let error =new Error();
-    throw displayErrorMessage('tous les champs doivent être sélectionner',error);
+  } else {
+    let error = new Error();
+    throw displayErrorMessage('tous les champs doivent être sélectionner',
+        error);
   }
 }
 /**
@@ -825,14 +861,14 @@ const toConfirmed=(e,request)=>{
  * @param e
  * @param request
  */
-const toCanceled= (e, request) => {
+const toCanceled = (e, request) => {
   e.preventDefault();
   let explain = e.target.parentElement.parentElement.querySelector(
       "#cancelInput").value;
   let bundle = {
     explanatoryNote: explain,
   };
-  fetch("/requestForVisit/cancel/" + request.requestId ,{
+  fetch("/requestForVisit/cancel/" + request.requestId, {
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -883,7 +919,5 @@ async function findVisitRequestList() {
     displayErrorMessage("errorDiv", err);
   });
 }
-
-
 
 export default Visits;
