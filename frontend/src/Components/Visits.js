@@ -501,6 +501,7 @@ const acceptFurniture = async (furnitureId) => {
   }
 }
 
+
 const refuseFurniture = async (furnitureId) => {
   try {
     let result = await fetch("/furniture/refused/" + furnitureId, {
