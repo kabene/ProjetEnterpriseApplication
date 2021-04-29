@@ -3,10 +3,12 @@ package be.vinci.pae.main;
 
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.FurnitureFactory;
+import be.vinci.pae.business.factories.FurnitureTypeFactory;
 import be.vinci.pae.business.factories.OptionFactory;
 import be.vinci.pae.business.factories.PhotoFactory;
 import be.vinci.pae.business.factories.UserFactory;
 import be.vinci.pae.business.factories.RequestForVisitFactory;
+import be.vinci.pae.business.ucc.FurnitureTypeUCC;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.business.ucc.OptionUCC;
 import be.vinci.pae.business.ucc.FurnitureUCC;
@@ -51,7 +53,6 @@ public class ApplicationBinder extends AbstractBinder {
       bind(Class.forName(Configurate.getConfiguration("RequestForVisitDAO")))
           .to(RequestForVisitDAO.class).in(Singleton.class);
 
-
       //FACTORY
       bind(Class.forName(Configurate.getConfiguration("UserFactory"))).to(UserFactory.class)
           .in(Singleton.class);
@@ -67,6 +68,8 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("RequestForVisitFactory")))
           .to(RequestForVisitFactory.class).in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("FurnitureTypeFactory")))
+          .to(FurnitureTypeFactory.class).in(Singleton.class);
 
       //UCC
       bind(Class.forName(Configurate.getConfiguration("UserUCC"))).to(UserUCC.class)
@@ -79,6 +82,8 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("RequestForVisitUCC")))
           .to(RequestForVisitUCC.class).in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("FurnitureTypeUCC")))
+          .to(FurnitureTypeUCC.class).in(Singleton.class);
 
       //OTHERS
       bind(Class.forName(Configurate.getConfiguration("Authentication")))

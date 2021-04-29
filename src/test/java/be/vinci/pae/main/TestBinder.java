@@ -1,5 +1,7 @@
 package be.vinci.pae.main;
 
+import be.vinci.pae.business.ucc.FurnitureTypeUCC;
+import be.vinci.pae.business.ucc.FurnitureTypeUCCImpl;
 import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.business.ucc.RequestForVisitUCC;
@@ -47,6 +49,7 @@ public class TestBinder extends AbstractBinder {
     bind(Mockito.mock(FurnitureDAOImpl.class)).to(FurnitureDAO.class);
 
     //furniture types
+    bind(FurnitureTypeUCCImpl.class).to(FurnitureTypeUCC.class).in(Singleton.class);
     bind(Mockito.mock(FurnitureTypeDAOImpl.class)).to(FurnitureTypeDAO.class);
 
     //photos
