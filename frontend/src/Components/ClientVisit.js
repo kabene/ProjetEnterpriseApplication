@@ -23,16 +23,22 @@ const VisitRequest = async () => {
 
 /********************  Business methods  **********************/
 
+
+/**
+ * Called when clicking a row in the body table.
+ * Display the short elements if the table is large, else just refresh the user card.
+ */
 const onRequestTableRowClick = (e) => {
     if (document.querySelector('#shortTableContainer') == null)
         displayShortElements();
     onUserClickHandler(e);
   }
 
-  /**
- * Called when clicking on the buttonReturn.
- * Hide all the short elements, display the large ones and magnify the large.
- */
+
+/**
+  * Called when clicking on the buttonReturn.
+  * Hide all the short elements, display the large ones and magnify the large.
+  */
  const displayLargeTable = () => {
     removeTimeouts(timeouts);
     //hide
@@ -43,12 +49,13 @@ const onRequestTableRowClick = (e) => {
     document.querySelector('#shortTable').id = "largeTable";
     if (document.querySelector('#shortTableContainer') !== null) //can be undefined because of the setTimeout in displayShortElements
         document.querySelector('#shortTableContainer').id = "largeTableContainer";
-
+	
     document.querySelectorAll(".requestState").forEach(element => {
         let status = element.getAttribute("status");
         element.innerHTML = generateColoredStatus(status);
     });
   }
+
   
   /**
    * Shrink the large table, hide the not needed element in the table and display the user card needed.
@@ -67,6 +74,7 @@ const onRequestTableRowClick = (e) => {
         element.innerHTML = generateDot(classname);
     });
   }
+
   
   /**
    * Called when clicking on one of the rows of the table's body (large or short).
@@ -77,13 +85,13 @@ const onRequestTableRowClick = (e) => {
     document.querySelectorAll(".requestTableRow").forEach(element => element.className = "requestTableRow");
     //get the tr element
     let element = e.target;
-    while (!element.className.includes("requestTableRow")) {
+    while (!element.className.includes("requestTableRow"))
         element = element.parentElement;
-    }
     element.className += " bg-secondary text-light";
-    let requestId = element.attributes["requestId"].value;
-    await displayRequestCardById(requestId);
+	
+    await displayRequestCardById(element.attributes["requestId"].value);
   }
+
 
   /**
  * Displays the card of the corresponding request
@@ -113,6 +121,7 @@ const generateVisitPage = () => {
           </div>
           <div id="snackbar"></div>`;
   }
+
   
   const generateTable = () => {
     let res = `
@@ -131,11 +140,13 @@ const generateVisitPage = () => {
     return res;
   }
 
+
   const getAllRequestsRows = () => {
     let res = "";  
     mapRequests.forEach(request => res += generateRow(request));
     return res;
   }
+
 
   const generateRow = (request) => {
     return ` 
@@ -145,6 +156,7 @@ const generateVisitPage = () => {
         <th class="requestState" status=` + request.requestStatus + `>` + generateColoredStatus(request.requestStatus) + `</th>
      </tr>`;
   }
+
 
   const generateRequestCard = (request) => {
     let info = "";
@@ -227,7 +239,8 @@ const generateVisitPage = () => {
     let infos = generateStatusInfos(request.requestStatus);
     let res = `<span class="badge badge-pill badge-` + infos.classname + ` text-light"> ` + infos.status + `</span>`;
     return res;
-  }
+}
+
 
   /**
  * Generate status entry for request list as colored <p> html tag (used in large tables)
@@ -237,11 +250,12 @@ const generateVisitPage = () => {
 const generateColoredStatus = (requestStatus) => {
     let infos = generateStatusInfos(requestStatus);
     return `<p class="text-` + infos.classname + `"> ` + infos.status + `</p>`;
-  }
+}
 
-  const generateDot = (colorClassName) => {
+
+const generateDot = (colorClassName) => {
     return `<span class="badge badge-pill p-1 badge-` + colorClassName + `"> </span>`;
-  }
+}
   
 
 
@@ -249,11 +263,11 @@ const generateColoredStatus = (requestStatus) => {
  * find status label & color classname (primary / danger / etc...) for a given status
  * @param {String} status
  * @returns {
- *  classname: bootstrap color suffix,
-   *  status: status label,
-   * } object
-   */
-  const generateStatusInfos = (status) => {
+ * classname: bootstrap color suffix,
+ * status: status label,
+ * } object
+ */
+const generateStatusInfos = (status) => {
     let res = {
       classname: "",
       status: "",
@@ -277,10 +291,11 @@ const generateColoredStatus = (requestStatus) => {
         res.status = status;
     }
     return res;
-  }
+}  
 
 
 /********************  Backend fetch  **********************/
+
 
 const getUserRequestsForVisit = async () => {
     let response = await fetch("/requestForVisit/me", {
