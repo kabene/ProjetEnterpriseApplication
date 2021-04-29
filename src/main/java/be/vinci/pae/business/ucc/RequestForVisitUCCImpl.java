@@ -4,7 +4,6 @@ import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.pojos.RequestStatus;
 import be.vinci.pae.exceptions.ConflictException;
-import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
@@ -92,7 +91,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
     RequestForVisitDTO request;
     try {
       dalServices.startTransaction();
-      RequestForVisitDTO requestFound = requestForVisitDAO.findById((idRequest));
+      RequestForVisitDTO requestFound = requestForVisitDAO.findById(idRequest);
       if (requestFound.getRequestStatus() != RequestStatus.WAITING) {
         throw new ConflictException("The request status can not be modified");
       }
