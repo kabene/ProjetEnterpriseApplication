@@ -61,6 +61,10 @@ const loadCard = (requestId) => {
       });
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
+  let choiceBtn = document.querySelector("#choose-furniture-btn"); //TODO
+  if(choiceBtn) {
+    choiceBtn.addEventListener("click", onChooseFurnitureBtnClick)
+  }
 }
 
 /**
@@ -183,9 +187,9 @@ const addTransitionBtnListeners = (request) => {
 const findTransitionMethod = (btnId, request) => {
   switch (btnId) {
     case "btnToConfirmed":
-       return (e) => toAccept(e, request);
+       return (e) => toConfirmed(e, request);
     case "btnToCanceled":
-       return (e) => toRefuse(e, request);
+       return (e) => toCanceled(e, request);
     default:
       return (e) => {
         e.preventDefault();
@@ -402,9 +406,6 @@ const generatePhotoList = (request) => {
       }else {
         favPhoto = fav.source;
       }
-      let favRadioName = `radioFav${furniture.furnitureId}`;
-      let visibleCheckName = `checkboxVisible${furniture.furnitureId}`;
-      let homePageCheckName = `checkboxHomepage${furniture.furnitureId}`;
 
       photos += `
     <div class="p-1 w-50 container photo-list-container" request-id="${request.requestId}">
@@ -412,23 +413,10 @@ const generatePhotoList = (request) => {
         <div class="col-6">
           <img class="img-fluid" src="${favPhoto}" alt="photo id:${fav.photoId}"/>
         </div>
-        <div class="text-left col-6">
-          <div class="form-check">
-            <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="furniture-validation" id="AcceptFurniture"/>
-             Convient
-            </label>
-          </div>
-          <div class="text-left col-6"> 
-            <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="furniture-validation" id="RefuseFurniture"/>
-              Ne convient pas
-            </label>
-          </div>
-        </div>
+        ${generateRadioBtns(request, furniture)}
       </div>
     </div>`;
-    });
+  });
 
   let res = `
   <form>
@@ -436,18 +424,90 @@ const generatePhotoList = (request) => {
     <div class="form-check d-flex flex-lg-fill flex-row">
       ${photos}
     </div>
-    ${generateAcceptFurnitureBtn(request)}
+    ${generateChooseFurnitureBtn(request)}
   </form>`;
   return res;
 }
 
-
-const generateAcceptFurnitureBtn = (request) => {
-  let res = "";
-  if(request.requestStatus === "CONFIRMED") {
-    res = `<button id="saveBtnPhoto" class="btn btn-primary my-5 float-right">Enregistrer le choix</button>`
+const generateRadioBtns = (request, furniture) => {
+  let res = ``;
+  if(request.requestStatus === "CONFIRMED" && furniture.status === "REQUESTED_FOR_VISIT") {
+    res = 
+    `<div class="text-left col-6 furniture-choices">
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/>
+       <span class="text-success">Convient</span>
+      </label>
+    </div>
+    <div class="form-check"> 
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="RefuseFurniture"/>
+        <span class="text-danger">Ne convient pas</span>
+      </label>
+    </div>
+  </div>`
   }
   return res;
+}
+
+
+const generateChooseFurnitureBtn = (request) => {
+  let res = "";
+  if(request.requestStatus === "CONFIRMED") {
+    res = `<button id="choose-furniture-btn" class="btn btn-primary choose-furniture-btn my-5 float-right">Enregistrer le choix</button>`
+  }
+  return res;
+}
+
+const onChooseFurnitureBtnClick = async (e) => {
+  e.preventDefault()
+  if(verifyValidChoices() === true){
+    const matches = document.querySelectorAll(".form-check-input:checked");
+    for(const i in matches) {
+      let radio = matches[i];
+      if(radio.tagName === "INPUT") {
+        let furnitureId = radio.getAttribute("furniture-id");
+        switch(radio.id) {
+          case "AcceptFurniture":
+            await acceptFurniture(furnitureId);
+            break;
+          case "RefuseFurniture":
+            await refuseFurniture(furnitureId);
+            break;
+        }
+      }
+    }
+  }
+}
+
+const acceptFurniture = async (furnitureId) => {
+  console.log("accept " + furnitureId)
+}
+
+const refuseFurniture = async (furnitureId) => {
+  console.log("refuse " + furnitureId)
+}
+
+const verifyValidChoices = (e) => {
+  let matchesDiv = document.querySelectorAll(".furniture-choices")
+  for(const i in matchesDiv) {
+    let choiceDiv = matchesDiv[i];
+    if(choiceDiv.tagName === "DIV") {
+      let checkCnt = 0;
+      const matches = choiceDiv.querySelectorAll(".form-check-input")
+      for(const j in matches) {
+        let input = matches[j]
+        if(input.tagName === "INPUT" && input.checked){
+          checkCnt++;
+        }
+      }
+      if(checkCnt !== 1) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 const generateSummaryCardHeader = (request) => {
@@ -608,15 +668,12 @@ const generateAllRows = (notNeededClassName) => {
  */
 const generateRow = (request, notNeededClassName) => {
   let statusHtml;
-  let thumbnailClass = "mx-auto";
 
   if (!notNeededClassName.includes("d-none")) { //large table
     statusHtml = generateColoredStatus(request);
-    thumbnailClass += " w-50"
   } else { //short table
     let infos = generateStatusInfos(request.requestStatus);
     statusHtml = generateDot(infos.classname);
-    thumbnailClass += " w-100"
   }
   let res = `
     <tr class="toBeClicked" requestId="${request.requestId}">
@@ -694,15 +751,15 @@ const generateStatusInfos = (status) => {
   switch (status) {
     case "CONFIRMED":
       res.classname = "success";
-      res.status = "Accepté";
+      res.status = "Confirmée";
       break;
     case "WAITING":
       res.classname = "warning";
-      res.status = "en attente";
+      res.status = "En attente";
       break;
     case "CANCELED":
       res.classname = "danger";
-      res.status = "Refusé";
+      res.status = "Annulée";
       break;
     default:
       res.classname = "";
@@ -730,7 +787,7 @@ const changeContainerId = () => {
  * @param e
  * @param request
  */
-const toAccept=(e,request)=>{
+const toConfirmed=(e,request)=>{
   e.preventDefault();
   let acceptDate=e.target.parentElement.parentElement.querySelector("#acceptInputDate").value;
   let acceptTime=e.target.parentElement.parentElement.querySelector("#acceptInputTime").value;
@@ -766,9 +823,9 @@ const toAccept=(e,request)=>{
 /**
  * refuse
  * @param e
- * @param furniture
+ * @param request
  */
-const toRefuse= (e, request) => {
+const toCanceled= (e, request) => {
   e.preventDefault();
   let explain = e.target.parentElement.parentElement.querySelector(
       "#cancelInput").value;
