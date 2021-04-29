@@ -13,6 +13,7 @@ const VisitRequest = async () => {
 
     let listRequests = await getUserRequestsForVisit();
     mapRequests = new Map(listRequests.map(request => [request.requestId, request]));
+	console.log(mapRequests);
     page.innerHTML = generateVisitPage();
 
     document.querySelectorAll(".requestTableRow").forEach(requestTableRow => requestTableRow.addEventListener("click", onRequestTableRowClick));
