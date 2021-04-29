@@ -3,8 +3,10 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
+import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.FurnitureStatus;
+import be.vinci.pae.business.pojos.RequestStatus;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
@@ -90,6 +92,11 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     FurnitureDTO res;
     try {
       dalServices.startTransaction();
+      FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
+      RequestForVisitDTO requestDTO = requestForVisitDAO.findById(furnitureDTO.getRequestId());
+      if(!requestDTO.getRequestStatus().equals(RequestStatus.CONFIRMED)) {
+        throw new ConflictException("Error : invalid request status");
+      }
       res = updateAfterVisit(furnitureId, FurnitureStatus.ACCEPTED);
       dalServices.commitTransaction();
     } catch (Throwable e) {
@@ -110,6 +117,11 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     FurnitureDTO res;
     try {
       dalServices.startTransaction();
+      FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
+      RequestForVisitDTO requestDTO = requestForVisitDAO.findById(furnitureDTO.getRequestId());
+      if(requestDTO.getRequestStatus().equals(RequestStatus.WAITING)) {
+        throw new ConflictException("Error : invalid request status");
+      }
       res = updateAfterVisit(furnitureId, FurnitureStatus.REFUSED);
       dalServices.commitTransaction();
     } catch (Throwable e) {
