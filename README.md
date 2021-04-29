@@ -163,7 +163,7 @@
     </td>
 </tr>
 <tr>
-    <td>furniture/available/{id}</td>
+    <td>furniture/accepted/{id}</td>
     <td>PATCH</td>
     <td>Admin</td>
     <td>Non</td>
