@@ -5,6 +5,7 @@ import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.ucc.OptionUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
+import be.vinci.pae.presentation.filters.AllowTakeover;
 import be.vinci.pae.presentation.filters.Authorize;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -67,6 +68,7 @@ public class OptionResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
+  @AllowTakeover
   public Response introduce(JsonNode reqNode, @Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /option/introduce");
     UserDTO currentUser = (UserDTO) request.getProperty("user");
@@ -97,6 +99,7 @@ public class OptionResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
+  @AllowTakeover
   public Response cancel(@PathParam("id") int optionId, @Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "PATCH /option/cancel");
     UserDTO currentUser = (UserDTO) request.getProperty("user");
@@ -104,6 +107,4 @@ public class OptionResource {
     optionDTO = Json.filterPublicJsonView(optionDTO, OptionDTO.class);
     return Response.ok(optionDTO, MediaType.APPLICATION_JSON).build();
   }
-
-
 }

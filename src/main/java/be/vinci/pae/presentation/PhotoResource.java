@@ -53,7 +53,6 @@ public class PhotoResource {
    * @return status code.
    */
   @POST
-  @Path("/")
   @Admin
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)

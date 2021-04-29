@@ -142,12 +142,12 @@ footer {
   color: #6c757d;
   cursor: pointer;
 }
-.proile-rating{
+.profile-rating{
   font-size: 12px;
   color: #818182;
   margin-top: 5%;
 }
-.proile-rating span{
+.profile-rating span{
   color: #495057;
   font-size: 15px;
   font-weight: 600;
@@ -402,10 +402,24 @@ body, .search-bar {
   grid-gap: 5em;
   text-align: -webkit-center;
   overflow-x: auto;
+  overflow-y: auto;
 }
 #shortTable {
   width: 20em;
   transition: 1s;
+}
+
+.selected-row {
+  background-color: lightslategray!important;
+  color: white!important;
+}
+
+.selected-row a {
+  color: white;
+}
+
+.selected-row a:visited {
+  color: white;
 }
 
 .msgTable {

@@ -1,4 +1,4 @@
-import { getUserSessionData } from "../utils/session";
+import { findCurrentUser } from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
 import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc, generateLoadingAnimation} from "../utils/utils.js"
 
@@ -10,7 +10,7 @@ let optionList;
 let images = importAllFurnitureImg();
 
 const Furniture = async () => {
-    currentUser = getUserSessionData();
+    currentUser = findCurrentUser();
 
     page.innerHTML = `
     <div class="col-5 mx-auto">
@@ -34,6 +34,7 @@ const Furniture = async () => {
       element.addEventListener("click",cancelOption);
     })
 }
+
 const cancelOption= (e)=>{
   e.preventDefault();
   let furnitureId = e.target.id.substring(4);

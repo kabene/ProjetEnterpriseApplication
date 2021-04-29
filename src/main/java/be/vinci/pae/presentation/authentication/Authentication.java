@@ -22,4 +22,16 @@ public interface Authentication {
    * @return generated JWT.
    */
   String createLongToken(UserDTO user);
+
+  /**
+   * create a takeover JWT that expires in a short time.
+   * The token's lifetime is the same as a shortToken.
+   * The token contains the Admin id in the 'user' claim,
+   * and the takeover user id in the 'takeover' claim.
+   *
+   * @param adminDTO : UserDTO containing the admin account information.
+   * @param takeoverUserDTO : UserDTO containing the taken over account information.
+   * @return generated takeover JWT
+   */
+  String createTakeoverToken(UserDTO adminDTO, UserDTO takeoverUserDTO);
 }

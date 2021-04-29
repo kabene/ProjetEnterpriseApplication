@@ -1,18 +1,19 @@
 package be.vinci.pae.business.pojos;
 
-import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @JsonInclude(Include.NON_NULL)
-public class FurnitureImpl implements FurnitureDTO {
+public class FurnitureImpl implements Furniture {
 
   @JsonView(Views.Public.class)
   private Integer furnitureId;
@@ -25,7 +26,7 @@ public class FurnitureImpl implements FurnitureDTO {
   @JsonView(Views.AdminOnly.class)
   private UserDTO seller;
   @JsonView(Views.Public.class)
-  private Status status;
+  private FurnitureStatus status;
   @JsonView(Views.AdminOnly.class)
   private String saleWithdrawalDate;
   @JsonView(Views.Public.class)
@@ -65,6 +66,8 @@ public class FurnitureImpl implements FurnitureDTO {
   private Boolean suitable;
   @JsonView(Views.AdminOnly.class)
   private Boolean availableForSale;
+  @JsonView(Views.AdminOnly.class)
+  private RequestForVisitDTO request;
 
 
   @Override
@@ -118,12 +121,12 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public Status getStatus() {
+  public FurnitureStatus getStatus() {
     return status;
   }
 
   @Override
-  public void setStatus(Status status) {
+  public void setStatus(FurnitureStatus status) {
     this.status = status;
   }
 
@@ -268,6 +271,16 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
+  public RequestForVisitDTO getRequest() {
+    return this.request;
+  }
+
+  @Override
+  public void setRequest(RequestForVisitDTO request) {
+    this.request = request;
+  }
+
+  @Override
   public Double getPurchasePrice() {
     return this.purchasePrice;
   }
@@ -289,7 +302,7 @@ public class FurnitureImpl implements FurnitureDTO {
 
   @Override
   public String getDepositDate() {
-    return depositDate = depositDate;
+    return depositDate;
   }
 
   @Override
@@ -315,5 +328,15 @@ public class FurnitureImpl implements FurnitureDTO {
   @Override
   public void setAvailableForSale(Boolean isAvailableForSale) {
     this.availableForSale = isAvailableForSale;
+  }
+
+  /**
+   * Removes all photos that doesn't have the isVisible flag set to true from its 'photos' list.
+   */
+  @Override
+  public void removeInvisiblePhotos() {
+    this.photos = this.photos.parallelStream()
+        .filter(PhotoDTO::isVisible)
+        .collect(Collectors.toList());
   }
 }

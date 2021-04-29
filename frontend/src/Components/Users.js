@@ -1,6 +1,8 @@
-import {getUserSessionData} from "../utils/session";
+import {findCurrentUser, setTakeoverSessionData} from "../utils/session";
 import {removeTimeouts, generateLoadingAnimation, displayErrorMessage} from "../utils/utils";
 import {Loader} from "@googlemaps/js-api-loader";
+import { RedirectUrl } from "./Router";
+import Navbar from "./Navbar";
 
 let page = document.querySelector("#page");
 let waitingUsersList;
@@ -11,7 +13,7 @@ let userDetail;
 let valueButtonValid;
 
 const Users = async (id) => {
-  currentUser = getUserSessionData();
+  currentUser = findCurrentUser();
 
   page.innerHTML = generateLoadingAnimation();
 
@@ -131,7 +133,38 @@ const displayUserCardById = async (userId) => {
     valueButtonValid = e.target.id;
     document.querySelector("#accept").addEventListener("click",onValidateClick);
     document.querySelector("#refuse").addEventListener("click",onValidateClick);
+  }else {
+    let takeoverBtn = document.querySelector("#takeoverBtn");
+    takeoverBtn.className = "profile-edit-btn";
+    takeoverBtn.addEventListener("click", (e) => onTakeoverClick(e));
   }
+}
+
+const onTakeoverClick = async (e) => {
+  e.preventDefault();
+  let btn = e.target;
+  let userId = btn.getAttribute("user-id");
+  let response = await fetch(`/users/takeover/${userId}`,{
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+    },
+  });
+  if(!response.ok) {
+    let err = new Error( "Error code : " + response.status + " : " + response.statusText);
+    displayErrorMessage("errorDiv", err);
+    return;
+  }
+  let data = await response.json();
+
+  let bundle = {
+    ...data,
+    isAdmin: false,
+    isTakeover: true,
+  }
+  setTakeoverSessionData(bundle);
+  Navbar();
+  RedirectUrl("/");
 }
 
 /**
@@ -260,7 +293,7 @@ const generateUserCard = (userDetail) => {
         <div class="col-md-6">
           <div class="profile-head">
             <h5 id="Name&Firstname">` + userDetail.lastName + ` ` + userDetail.firstName +`</h5>
-            <p class="proile-rating">ROLE : 
+            <p class="profile-rating">ROLE : 
               <span id="role">
                ` + userDetail.role + ` 
               </span>
@@ -276,7 +309,7 @@ const generateUserCard = (userDetail) => {
           </div>
         </div>
         <div class="col-md-2">
-          <input type="submit" class="profile-edit-btn" name="btnAddMore" value="prendre le controle"/>
+          <input type="submit" id="takeoverBtn" class="d-none" user-id="${userDetail.id}" name="btnAddMore" value="prendre le controle"/>
         </div>
       </div>
 
