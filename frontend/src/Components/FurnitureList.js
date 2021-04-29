@@ -166,6 +166,7 @@ const generatePageHtml = (largeTable = true) => {
 
 const generateAllRows = (notNeededClassName) => {
   let res = "";
+  console.log(furnitureList);
   furnitureList.forEach(furniture => {
     if (!furnitureMap[furniture.furnitureId]) {
       furnitureMap[furniture.furnitureId] = furniture;
