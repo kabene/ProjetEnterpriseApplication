@@ -12,6 +12,7 @@ import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.FurnitureStatus;
 import be.vinci.pae.business.pojos.FurnitureImpl;
 import be.vinci.pae.business.pojos.FurnitureTypeImpl;
+import be.vinci.pae.business.pojos.RequestStatus;
 import be.vinci.pae.business.pojos.UserImpl;
 import be.vinci.pae.business.pojos.PhotoImpl;
 import be.vinci.pae.business.pojos.OptionImpl;
@@ -1045,13 +1046,16 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.REQUESTED_FOR_VISIT);
     Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
         .thenReturn(mockFurnitureDTO2);
+    Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
+    Mockito.when(mockRequest1.getRequestStatus()).thenReturn(RequestStatus.CONFIRMED);
     assertEquals(mockFurnitureDTO2, furnitureUCC.toAccepted(defaultFurnitureId1),
         "A valid call of toAccepted() with specialSalePrice should "
             + "return the corresponding dto");
 
-    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1);
+    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1, mockRequestDAO);
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockRequestDAO).findById(defaultRequestId1);
     inOrder.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.ACCEPTED);
     inOrder.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
     inOrder.verify(mockDal).commitTransaction();
@@ -1081,8 +1085,10 @@ class FurnitureUCCImplTest {
   @EnumSource(value = FurnitureStatus.class, names = {"REFUSED", "ACCEPTED", "IN_RESTORATION",
       "AVAILABLE_FOR_SALE", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED",
       "WITHDRAWN"})
-  void test_toAccepted_givenInvalidStatus_shouldThrowConflict(FurnitureStatus startingStatus) {
+  void test_toAccepted_givenInvalidFurnitureStatus_shouldThrowConflict(FurnitureStatus startingStatus) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
+    Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
+    Mockito.when(mockRequest1.getRequestStatus()).thenReturn(RequestStatus.CONFIRMED);
     assertThrows(ConflictException.class, () ->
             furnitureUCC.toAccepted(defaultFurnitureId1),
         "A call to toAccepted with invalid starting furniture status"
@@ -1103,6 +1109,8 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.REQUESTED_FOR_VISIT);
     Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
         .thenThrow(new InternalError());
+    Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
+    Mockito.when(mockRequest1.getRequestStatus()).thenReturn(RequestStatus.CONFIRMED);
     assertThrows(InternalError.class, () ->
             furnitureUCC.toAccepted(defaultFurnitureId1),
         "A call to toAccepted catching an InternalError should throw it back");
@@ -1117,6 +1125,29 @@ class FurnitureUCCImplTest {
     inOrder.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
+  @DisplayName("TEST FurnitureUCC.toAccepted : given invalid request status, "
+      + "should throw ConflictException")
+  @ParameterizedTest
+  @EnumSource(value = RequestStatus.class, names = {"WAITING", "CANCELED"})
+  void test_toAccepted_invalidRequestStatus_shouldThrowConflict(RequestStatus requestStatus) {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.REQUESTED_FOR_VISIT);
+    Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
+        .thenReturn(mockFurnitureDTO2);
+    Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
+    Mockito.when(mockRequest1.getRequestStatus()).thenReturn(requestStatus);
+    assertThrows(ConflictException.class, ()->
+        furnitureUCC.toAccepted(defaultFurnitureId1),
+        "A call to toAccepted with an invalid request status should throw ConflictException");
+
+    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1, mockRequestDAO);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockRequestDAO).findById(defaultRequestId1);
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
   // -----
 
   @DisplayName("TEST FurnitureUCC.toRefused : nominal scenario, should return dto")
@@ -1125,13 +1156,16 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.REQUESTED_FOR_VISIT);
     Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
         .thenReturn(mockFurnitureDTO2);
+    Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
+    Mockito.when(mockRequest1.getRequestStatus()).thenReturn(RequestStatus.CONFIRMED);
     assertEquals(mockFurnitureDTO2, furnitureUCC.toRefused(defaultFurnitureId1),
         "A valid call of toRefused() with specialSalePrice should "
             + "return the corresponding dto");
 
-    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1);
+    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1, mockRequestDAO);
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockRequestDAO).findById(defaultRequestId1);
     inOrder.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.REFUSED);
     inOrder.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
     inOrder.verify(mockDal).commitTransaction();
@@ -1183,6 +1217,8 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.REQUESTED_FOR_VISIT);
     Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
         .thenThrow(new InternalError());
+    Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
+    Mockito.when(mockRequest1.getRequestStatus()).thenReturn(RequestStatus.CONFIRMED);
     assertThrows(InternalError.class, () ->
             furnitureUCC.toRefused(defaultFurnitureId1),
         "A call to toRefused catching an InternalError should throw it back");
@@ -1192,6 +1228,28 @@ class FurnitureUCCImplTest {
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
     inOrder.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.REFUSED);
     inOrder.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toAccepted : given invalid request status, "
+      + "should throw ConflictException")
+  @Test
+  void test_toRefused_invalidRequestStatus_shouldThrowConflict() {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.REQUESTED_FOR_VISIT);
+    Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
+        .thenReturn(mockFurnitureDTO2);
+    Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
+    Mockito.when(mockRequest1.getRequestStatus()).thenReturn(RequestStatus.WAITING);
+    assertThrows(ConflictException.class, ()->
+            furnitureUCC.toRefused(defaultFurnitureId1),
+        "A call to toAccepted with an invalid request status should throw ConflictException");
+
+    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1, mockRequestDAO);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockRequestDAO).findById(defaultRequestId1);
     inOrder.verify(mockDal).rollbackTransaction();
     inOrder.verifyNoMoreInteractions();
     inOrder.verify(mockDal, Mockito.never()).commitTransaction();

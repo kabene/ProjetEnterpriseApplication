@@ -94,10 +94,14 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       dalServices.startTransaction();
       FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
       RequestForVisitDTO requestDTO = requestForVisitDAO.findById(furnitureDTO.getRequestId());
+      if (!furnitureDTO.getStatus().equals(FurnitureStatus.REQUESTED_FOR_VISIT)) {
+        throw new ConflictException("Error: invalid furniture status");
+      }
       if(!requestDTO.getRequestStatus().equals(RequestStatus.CONFIRMED)) {
         throw new ConflictException("Error : invalid request status");
       }
-      res = updateAfterVisit(furnitureId, FurnitureStatus.ACCEPTED);
+      furnitureDTO.setStatus(FurnitureStatus.ACCEPTED);
+      res = furnitureDAO.updateStatusOnly(furnitureDTO);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -119,33 +123,20 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       dalServices.startTransaction();
       FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
       RequestForVisitDTO requestDTO = requestForVisitDAO.findById(furnitureDTO.getRequestId());
+      if (!furnitureDTO.getStatus().equals(FurnitureStatus.REQUESTED_FOR_VISIT)) {
+        throw new ConflictException("Error: invalid furniture status");
+      }
       if(requestDTO.getRequestStatus().equals(RequestStatus.WAITING)) {
         throw new ConflictException("Error : invalid request status");
       }
-      res = updateAfterVisit(furnitureId, FurnitureStatus.REFUSED);
+      furnitureDTO.setStatus(FurnitureStatus.REFUSED);
+      res = furnitureDAO.updateStatusOnly(furnitureDTO);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }
     return res;
-  }
-
-  /**
-   * Updates furniture status from REQUESTED_FOR_VISIT to status. Requirements: status is either
-   * ACCEPTED or REFUSED.
-   *
-   * @param furnitureId : furniture id
-   * @param status      : new status
-   * @return modified resource as a FurnitureDTO
-   */
-  private FurnitureDTO updateAfterVisit(int furnitureId, FurnitureStatus status) {
-    FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(furnitureId);
-    if (!foundFurnitureDTO.getStatus().equals(FurnitureStatus.REQUESTED_FOR_VISIT)) {
-      throw new ConflictException("Error: invalid furniture status");
-    }
-    foundFurnitureDTO.setStatus(status);
-    return furnitureDAO.updateStatusOnly(foundFurnitureDTO);
   }
 
   /**
