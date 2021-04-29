@@ -305,6 +305,46 @@ public class FurnitureUCCImpl implements FurnitureUCC {
   }
 
   /**
+   * Updates the a furniture resource with the information contained in the bodyDTO (works for:
+   * description, typeId, sellingPrice).
+   *
+   * @param bodyDTO : request body as FurnitureDTO
+   * @return the modified resource as FurnitureDTO
+   */
+  @Override
+  public FurnitureDTO updateInfos(FurnitureDTO bodyDTO) {
+    FurnitureDTO res;
+    try {
+      dalServices.startTransaction();
+      FurnitureDTO foundFurnitureDTO = furnitureDAO.findById(bodyDTO.getFurnitureId());
+      if (bodyDTO.getDescription() != null) {
+        foundFurnitureDTO.setDescription(bodyDTO.getDescription());
+      }
+      if (bodyDTO.getTypeId() != null) {
+        foundFurnitureDTO.setTypeId(bodyDTO.getTypeId());
+      }
+      if (bodyDTO.getSellingPrice() != null) {
+        if (!foundFurnitureDTO.getStatus().equals(FurnitureStatus.AVAILABLE_FOR_SALE)) {
+          throw new ConflictException(
+              "Error: cannot update the selling price on a sold piece of furniture");
+        }
+        foundFurnitureDTO.setSellingPrice(bodyDTO.getSellingPrice());
+      }
+      res = furnitureDAO.updateDescription(foundFurnitureDTO);
+      res = furnitureDAO.updateTypeId(res);
+      if (foundFurnitureDTO.getSellingPrice() != null) {
+        res = furnitureDAO.updateSellingPrice(res);
+      }
+      completeFurnitureDTO(res);
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return res;
+  }
+
+  /**
    * Completes the FurnitureDTO given as an argument with it's references in the db.
    *
    * @param dto : the FurnitureDTO to complete
@@ -329,7 +369,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
     }
     List<PhotoDTO> photos = photoDAO.findAllByFurnitureId(dto.getFurnitureId());
     dto.setPhotos(photos);
-    String type = furnitureTypeDAO.findById(dto.getTypeId());
+    String type = furnitureTypeDAO.findById(dto.getTypeId()).getTypeName();
     dto.setType(type);
     if (dto.getRequestId() != null) {
       dto.setRequest(requestForVisitDAO.findById(dto.getRequestId()));
