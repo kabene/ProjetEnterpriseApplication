@@ -1,6 +1,5 @@
 package be.vinci.pae.persistence.dao;
 
-import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.FurnitureTypeDTO;
 import be.vinci.pae.business.factories.FurnitureTypeFactory;
 import jakarta.inject.Inject;
