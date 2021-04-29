@@ -2,7 +2,6 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.factories.PhotoFactory;
-import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -47,24 +46,8 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    * @return one instance of PhotoDTO
    */
   @Override
-  public PhotoDTO getPhotoById(int photoId) {
-    PhotoDTO res;
-    String query = "SELECT p.* FROM satchofurniture.photos p WHERE p.photo_id = ?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, photoId);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        res = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: photo not found");
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-    return res;
+  public PhotoDTO findById(int photoId) {
+    return findById(photoId, "photos", "photo_id");
   }
 
   /**

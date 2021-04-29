@@ -3,7 +3,6 @@ package be.vinci.pae.persistence.dao;
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.factories.FurnitureFactory;
 import be.vinci.pae.business.pojos.FurnitureStatus;
-import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,25 +24,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO findById(int id) {
-    FurnitureDTO res;
-    String query = "SELECT f.* FROM satchofurniture.furniture f WHERE f.furniture_id = ?";
-
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, id);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        res = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: piece of furniture not found");
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-
-    return res;
+    return findById(id, "furniture", "furniture_id");
   }
 
   /**

@@ -19,7 +19,7 @@ public interface PhotoDAO {
    * @param photoId : the researched photoId.
    * @return one instance of PhotoDTO
    */
-  PhotoDTO getPhotoById(int photoId);
+  PhotoDTO findById(int photoId);
 
 
   /**

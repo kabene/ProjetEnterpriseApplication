@@ -7,6 +7,7 @@ import be.vinci.pae.business.ucc.RequestForVisitUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.filters.Admin;
+import be.vinci.pae.presentation.filters.AllowTakeover;
 import be.vinci.pae.presentation.filters.Authorize;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -60,6 +61,7 @@ public class RequestForVisitResource {
   @Path("/me")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
+  @AllowTakeover
   public Response getAllByUserId(@Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /requestForVisit/user/me");
     UserDTO currentUser = (UserDTO) request.getProperty("user");

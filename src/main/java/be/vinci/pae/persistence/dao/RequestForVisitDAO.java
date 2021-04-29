@@ -28,7 +28,7 @@ public interface RequestForVisitDAO {
    * @param idRequest the id of the request for visit.
    * @return RequestForVisitDTO that represent the request for visit.
    */
-  RequestForVisitDTO findByRequestId(int idRequest);
+  RequestForVisitDTO findById(int idRequest);
 
   /**
    * modify the status of a waiting request for visit.

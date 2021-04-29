@@ -62,7 +62,7 @@ public class OptionUCCImpl implements OptionUCC {
     OptionDTO opt;
     try {
       dalServices.startTransaction();
-      opt = optionDAO.getOption(optionId);
+      opt = optionDAO.findById(optionId);
       if (opt.isCanceled()) {
         throw new ConflictException("The resource is already canceled");
       }
@@ -77,7 +77,7 @@ public class OptionUCCImpl implements OptionUCC {
       furnitureDAO.updateStatusOnly(furnitureDTO);
 
       optionDAO.cancelOption(optionId);
-      opt = optionDAO.getOption(optionId);
+      opt = optionDAO.findById(optionId);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
