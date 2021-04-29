@@ -9,6 +9,7 @@ import {
 let page = document.querySelector("#page");
 let mainPage;
 let furnitureList;
+let typeList;
 let furnitureMap = [];
 let timeouts = [];
 let currentUser;
@@ -31,6 +32,7 @@ const FurnitureList = async (id) => {
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
   await findFurnitureList();
+  await findTypeList();
 
   if (!id) {
     generateLargeTablePage();
@@ -77,6 +79,24 @@ const findFurnitureList = async () => {
     console.log("Erreur de fetch !! :´\n" + err);
     displayErrorMessage("errorDiv", err);
   });
+}
+
+/**
+ * Fetches all furniture types and updates typeList
+ */
+const findTypeList = async () => {
+  try {
+    let response = await fetch("/furnitureTypes/", {
+      method: "GET",
+    });
+    if(!response.ok) {
+      throw new Error(response.status + " : " + response.statusText);
+    }
+    let data = await response.json();
+    typeList = data;
+  } catch (err) {
+    displayErrorMessage("errorDiv", err);
+  }
 }
 
 /**
@@ -433,7 +453,58 @@ const generateCard = (furniture) => {
   document.querySelector("#profile-tab").addEventListener("click", () => {
     openTab = "photos";
   });
+  document.querySelectorAll(".input-furniture-info").forEach((input) => {
+    input.addEventListener("change", updateSaveInfoBtn);
+  })
   addImage(furniture);
+}
+
+const updateSaveInfoBtn = () => {
+  let saveInfoBtn = document.querySelector("#save-info-btn");
+  if(verifyDifferentInfo()) {
+    saveInfoBtn.disabled = false;
+  } else {
+    saveInfoBtn.disabled = true;
+  }
+}
+
+/**
+ * verifies if the save info btn should be disabled or not
+ * @returns true -> enabled / false -> disabled
+ */
+const verifyDifferentInfo = () => {
+  let inputDescription = document.querySelector("#input-description");
+  let selectType = document.querySelector("#select-type");
+  let inputSellingPrice = document.querySelector("#input-selling-price");
+
+  let originalDescriptionInput = document.querySelector("#original-description");
+  let originalTypeInput = document.querySelector("#original-type-id");
+  let originalSellingPrice = document.querySelector("#original-selling-price");
+
+  let bundle = {};
+  //description
+  let newDesc = inputDescription.value;
+  let oldDesc = originalDescriptionInput.value;
+  if(newDesc !== oldDesc) {
+    if(newDesc !== ""){
+      return true;
+    }
+  }
+  //type id
+  let newTypeId = selectType.value;
+  let oldTypeId = originalTypeInput.value;
+  if(newTypeId !== oldTypeId) {
+    return true;
+  }
+  //selling price
+  if(inputSellingPrice) {
+    let newSellingPrice = inputSellingPrice.value;
+    let oldSellingPrice = originalSellingPrice.value;
+    if(newSellingPrice !== oldSellingPrice) {
+      return true;
+    }
+  }
+  return false;
 }
 
 const changeContainerId = () => {
@@ -470,7 +541,7 @@ const generateCardHTML = (furniture) => {
                 <p>${generateCardFavouritePhotoImgTag(furniture)}</p>
               </div>
               <div class="col-md-6 text-left">
-                <h5 id="descriptionCardEntry">${furniture.description}</h5>
+                <h5 id="descriptionCardEntry">${generateFurnitureDescriptionCardEntry(furniture)}</h5>
                 <p class="proile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(
       furniture)}</span></p>
               </div>
@@ -500,6 +571,7 @@ const generateCardHTML = (furniture) => {
               ${generateBuyerCardEntry(furniture)}
               ${generateOptionCardEntry(furniture)}
               ${generateSaleWithdrawalDateCardEntry(furniture)}
+              ${generateSaveInfoBtn()}
               ${generateButtonRow(furniture)}
             </div>       
             <div class="tab-pane fade ${photoTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -843,21 +915,52 @@ const findPhotoIndexById = (photoArray, photoId) => {
 }
 
 const generateCardLabelKeyEntry = (label, id, value) => {
+  let p = `<p id="${id}">${value}</p>`;
+  return generateCardLabelKeyEntryHtml(label, p);
+}
+
+const generateCardLabelKeyEntryHtml = (label, value) => {
   let res = `
-  <div class="row text-left">
+  <div class="row text-left my-2">
     <div class="col-md-6">
       <label>${label}</label>
     </div>
     <div class="col-md-6">
-      <p id="${id}">${value}</p>
+      ${value}
     </div>
   </div>
   `;
   return res;
 }
 
+const generateFurnitureDescriptionCardEntry = (furniture) => {
+  let input = `<textarea rows="3" id="input-description" class="input-furniture-info form-control w-100">${furniture.description}</textarea>
+  <input type="hidden" id="original-description" value="${furniture.description}"/>`
+  return input;
+}
+
 const generateTypeCardEntry = (furniture) => {
-  return generateCardLabelKeyEntry("Type", "typeCardEntry", furniture.type);
+  let select = `
+  <select id="select-type" class="input-furniture-info form-control">
+    ${generateAllTypeOptions(furniture)}
+  </select>
+  <input type="hidden" id="original-type-id" value="${furniture.typeId}"/>`;
+  return generateCardLabelKeyEntryHtml("Type", select);
+}
+
+const generateAllTypeOptions = (furniture) => {
+  let res = "";
+  for(const typeIndex in typeList) {
+    let typeObject = typeList[typeIndex];
+    let opt;
+    if(furniture.typeId === typeObject.typeId) {
+      opt = `<option value="${typeObject.typeId}" selected>${typeObject.typeName}</option>`;
+    }else {
+      opt = `<option value="${typeObject.typeId}">${typeObject.typeName}</option>`;
+    }
+    res += opt;
+  }
+  return res;
 }
 
 const generateBuyingPriceCardEntry = (furniture) => {
@@ -921,8 +1024,21 @@ const generateOptionCardEntry = (furniture) => {
 
 const generateSellingPriceCardEntry = (furniture) => {
   if (furniture.sellingPrice) {
-    return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry",
+    if(furniture.status === "AVAILABLE_FOR_SALE"){
+      let input = `
+      <div class="input-group">
+        <input type="number" min="0.01" step="0.01" class="form-control input-furniture-info w-lg-25 w-50" id="input-selling-price" value="${furniture.sellingPrice}"/>
+        <div class="input-group-append">
+          <span class="input-group-text">€</span>
+        </div>
+        <input type="hidden" id="original-selling-price" value="${furniture.sellingPrice}"/>
+      </div>`;
+      return generateCardLabelKeyEntryHtml("Prix de vente",
+        input);
+    }else {
+      return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry",
         furniture.sellingPrice + "€");
+    }
   }
   return "";
 }
@@ -941,6 +1057,13 @@ const generateSaleWithdrawalDateCardEntry = (furniture) => {
         "WithdrawalDateCardEntry", furniture.saleWithdrawalDate);
   }
   return "";
+}
+
+const generateSaveInfoBtn = () => {
+  return `
+  <div class="d-flex flex-row-reverse">
+  <button type="submit" id="save-info-btn" class="btn btn-primary" disabled>Enregistrer les modifications</button>
+  </div>`;
 }
 
 const generateButtonRow = (furniture) => {
@@ -1055,7 +1178,8 @@ const addTransitionBtnListeners = (furniture) => {
   document.querySelectorAll(".transitionBtn").forEach(element => {
     element.addEventListener("click",
         findTransitionMethod(element.id, furniture));
-  })
+  });
+  document.querySelector("#save-info-btn").addEventListener("click", onSaveInfoBtnClicked)
 }
 
 const findTransitionMethod = (btnId, furniture) => {
@@ -1073,8 +1197,71 @@ const findTransitionMethod = (btnId, furniture) => {
         e.preventDefault();
         console.log("unrecognized button id: " + btnId); //'do nothing' method
       };
+  };
+}
+
+const onSaveInfoBtnClicked = async (e) => {
+  e.preventDefault();
+  let inputDescription = document.querySelector("#input-description");
+  let selectType = document.querySelector("#select-type");
+  let inputSellingPrice = document.querySelector("#input-selling-price");
+
+  let originalDescriptionInput = document.querySelector("#original-description");
+  let originalTypeInput = document.querySelector("#original-type-id");
+  let originalSellingPrice = document.querySelector("#original-selling-price");
+
+  let bundle = {};
+  //description
+  let newDesc = inputDescription.value;
+  let oldDesc = originalDescriptionInput.value;
+  if(newDesc !== oldDesc) {
+    if(newDesc !== ""){
+      bundle = {
+        ...bundle, 
+        description: newDesc,
+      }
+    }
   }
-  ;
+  //type id
+  let newTypeId = selectType.value;
+  let oldTypeId = originalTypeInput.value;
+  if(newTypeId !== oldTypeId) {
+    bundle = {
+      ...bundle, 
+      typeId: newTypeId,
+    }
+  }
+  //selling price
+  if(inputSellingPrice) {
+    let newSellingPrice = inputSellingPrice.value;
+    let oldSellingPrice = originalSellingPrice.value;
+    if(newSellingPrice !== oldSellingPrice) {
+      bundle = {
+        ...bundle, 
+        sellingPrice: newSellingPrice,
+      }
+    }
+  }
+  if(bundle !== {}) {
+    try {
+      let response = await fetch("furniture/infos/"+currentFurnitureId, {
+        method: "PATCH",
+        body: JSON.stringify(bundle),
+        headers: {
+          "Authorization": currentUser.token,
+          "Content-Type": "application/json",
+        },
+      });
+      if(!response.ok) {
+        throw new Error(response.status + " : " + response.statusText);
+      }
+      let data = await response.json();
+      furnitureMap[data.furnitureId] = data;
+      loadCard(data.furnitureId);
+    }catch(err) {
+      displayErrorMessage("errorDiv", err);
+    }
+  }
 }
 
 //status transition methods

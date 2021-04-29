@@ -49,7 +49,7 @@ const generateModal = (id, htmlHeader, htmlBody, htmlFooter, closeBtnLabel, clos
  */
 const generateTriggerBtn = (modalId, label, classname) => {
     let res = `
-    <button type="button" class="mx-1 ${classname}" data-toggle="modal" data-target="#${modalId}">
+    <button type="button" class="mx-1 py-2 ${classname}" data-toggle="modal" data-target="#${modalId}">
         ${label}
     </button>
     `;
