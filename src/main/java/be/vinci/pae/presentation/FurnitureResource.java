@@ -43,8 +43,8 @@ public class FurnitureResource {
   public Response getById(@PathParam("id") int id) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/" + id);
     FurnitureDTO furnitureDTO = furnitureUCC.getOne(id);
-    if (!furnitureDTO.getStatus().equals(Status.AVAILABLE_FOR_SALE) &&
-        !furnitureDTO.getStatus().equals(Status.SOLD)) {
+    if (!furnitureDTO.getStatus().getValue().equals("available_for_sale")
+        && !furnitureDTO.getStatus().getValue().equals("sold")) {
       throw new ConflictException("Unavailable resource (inaccessible status)");
     }
     furnitureDTO = Json.filterPublicJsonView(furnitureDTO, FurnitureDTO.class);

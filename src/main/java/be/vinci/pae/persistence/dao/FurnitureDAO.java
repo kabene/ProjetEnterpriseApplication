@@ -42,7 +42,15 @@ public interface FurnitureDAO {
    * into the database.
    *
    * @param furnitureDTO the furnitureDTO to modify
-   * @return the furniture modified.
+   * @return the modified furniture.
    */
   FurnitureDTO updateToWithdrawn(FurnitureDTO furnitureDTO);
+
+  /**
+   * updates the favourite photo of a specific entry in the furniture table.
+   *
+   * @param furnitureDTO : the furnitureDTO to modify (containing new favourite photo id)
+   * @return the modified furniture.
+   */
+  FurnitureDTO updateFavouritePhoto(FurnitureDTO furnitureDTO);
 }

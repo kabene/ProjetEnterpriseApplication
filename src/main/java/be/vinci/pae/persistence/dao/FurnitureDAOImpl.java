@@ -124,7 +124,31 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
       ps.setDate(2, saleWithdrawalDate);
       ps.setInt(3, furnitureDTO.getFurnitureId());
       ps.execute();
+      ps.close();
       furnitureDTO.setSaleWithdrawalDate(saleWithdrawalDate.toString());
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return furnitureDTO;
+  }
+
+  /**
+   * updates the favourite photo of a specific entry in the furniture table.
+   *
+   * @param furnitureDTO : the furnitureDTO to modify (containing new favourite photo id)
+   * @return the modified furniture.
+   */
+  @Override
+  public FurnitureDTO updateFavouritePhoto(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET favourite_photo_id = ? "
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, furnitureDTO.getFavouritePhotoId());
+      ps.setInt(2, furnitureDTO.getFurnitureId());
+      ps.execute();
+      ps.close();
     } catch (SQLException e) {
       throw new InternalError(e);
     }
@@ -193,6 +217,33 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
     if (pickUpDate != null) {
       res.setPickUpDate(pickUpDate.toString());
     }
+
+    int requestId = rs.getInt("request_id");
+    if (requestId != 0) {
+      res.setRequestId(requestId);
+    }
+
+    double purchasePrice = rs.getDouble("purchase_price");
+    if (purchasePrice != 0) {
+      res.setPurchasePrice(purchasePrice);
+    }
+
+    String customerWithdrawalDate = rs.getString("customer_withdrawal_date");
+    if (customerWithdrawalDate != null) {
+      res.setCustomerWithdrawalDate(customerWithdrawalDate);
+    }
+
+    String depositDate = rs.getString("deposit_date");
+    if (depositDate != null) {
+      res.setDepositDate(depositDate);
+    }
+
+    Boolean suitable = rs.getBoolean("suitable");
+    res.setSuitable(suitable);
+
+    Boolean availableForSale = rs.getBoolean("available_for_sale");
+    res.setAvailableForSale(availableForSale);
+
     return res;
   }
 }

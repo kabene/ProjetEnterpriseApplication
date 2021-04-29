@@ -7,6 +7,7 @@ import ErrorPage from "./ErrorPage.js";
 import FurnitureList from "./FurnitureList.js";
 import VisitRequest from "./VisitRequest.js";
 import LogoutComponent from "./LogoutComponent.js";
+import {fetchMe} from "../utils/utils.js";
 import { getUserLocalData, getUserSessionData, setUserLocalData, setUserSessionData } from "../utils/session.js";
 import { setLayout } from "../utils/render.js";
 
@@ -31,7 +32,7 @@ const Router = () => {
 }
 
 //onLoadHandler
-const onLoadHandler = async (e) => {
+const onLoadHandler = async () => {
     let url = window.location.pathname;
     console.log("onLoad : ", url);
     await getRememberMe(); // logs in if remember me
@@ -62,7 +63,7 @@ const onNavigateHandler = (e) => {
 };
 
 //onHistoryHandler (arrows <- -> )
-const onHistoryHandler = (e) => {
+const onHistoryHandler = () => {
     console.log("onHistory : ", window.location.pathname);
     removeModals();
     componentToRender = routes[window.location.pathname];
@@ -115,9 +116,13 @@ const getRememberMe = async () => {
     }
 }
 
-const onUserLogin = (data) => {
+const onUserLogin = async (data) => {
     console.log("Logged in via remember me token : ", data)
     
+    let user = await fetchMe(data.token);
+    const bundle = {...data, isAutenticated: true, isAdmin: user.role === "admin"};
+
+    setUserSessionData(bundle);
     setUserLocalData(data.token);
     setLayout();
 }

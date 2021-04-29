@@ -31,3 +31,12 @@ Content-Type: application/json
 PATCH {{baseUrl}}/furniture/withdraw/1
 Authorization: {{jwt}}
 ###
+
+PATCH {{baseUrl}}/furniture/favouritePhoto/1
+Authorization: {{jwt}}
+Content-Type: application/json
+
+{
+  "photoId": 1
+}
+###

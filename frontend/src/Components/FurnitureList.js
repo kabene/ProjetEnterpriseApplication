@@ -1,8 +1,14 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
-import {getUserSessionData} from "../utils/session.js";
-import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, findFavImgSrc, generateLoadingAnimation} from "../utils/utils.js"
+import {getUserLocalData, getUserSessionData} from "../utils/session.js";
+import {
+  displayErrorMessage,
+  importAllFurnitureImg,
+  findFurnitureImgSrcFromFilename,
+  findFavImgSrc,
+  generateLoadingAnimation
+} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -12,6 +18,7 @@ let timeouts = [];
 let currentUser;
 let pageHTML;
 let images = importAllFurnitureImg();
+let openTab = "infos";
 
 const FurnitureList = async (id) => {
   currentUser = getUserSessionData();
@@ -21,24 +28,24 @@ const FurnitureList = async (id) => {
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
-
   await findFurnitureList();
 
-  if(!id) {
-    pageHTML =  generatePageHtml();
+  if (!id) {
+    pageHTML = generatePageHtml();
 
     mainPage.innerHTML = pageHTML;
 
     document.querySelectorAll(".toBeClicked").forEach(
         element => element.addEventListener("click", displayShortElements));
-    document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
-  }else {
+    document.querySelector("#buttonReturn").addEventListener("click",
+        displayLargeTable);
+  } else {
     loadCard(id);
   }
 }
 
 /**
- * Loads the furnitureList & furnitureMap from backend 
+ * Loads the furnitureList & furnitureMap from backend
  */
 const findFurnitureList = async () => {
   return fetch("/furniture/detail", {
@@ -50,7 +57,7 @@ const findFurnitureList = async () => {
   }).then((response) => {
     if (!response.ok) {
       throw new Error(
-        response.status + " : " + response.statusText
+          response.status + " : " + response.statusText
       );
     }
     return response.json();
@@ -67,7 +74,7 @@ const findFurnitureList = async () => {
 
 /**
  * Reloads the page and re-fetch furniture information.
- * Displays loading animation while awaiting the fetch. 
+ * Displays loading animation while awaiting the fetch.
  */
 const reloadPage = async () => {
   mainPage.innerHTML = generateLoadingAnimation();
@@ -78,14 +85,14 @@ const reloadPage = async () => {
 const removeTimeouts = () => {
   timeouts.forEach(timeout => {
     clearTimeout(timeout);
-})
+  })
 }
 
 const generatePageHtml = (largeTable = true) => {
   let tableSize = "large";
   let notNeededClassName = "notNeeded align-middle";
   let shortElementClassName = "shortElement d-none";
-  if(largeTable === false) {
+  if (largeTable === false) {
     tableSize = "short";
     notNeededClassName = "notNeeded d-none";
     shortElementClassName = "shortElement";
@@ -122,9 +129,9 @@ const generatePageHtml = (largeTable = true) => {
 const generateAllRows = (notNeededClassName) => {
   let res = "";
   furnitureList.forEach(furniture => {
-    if(!furnitureMap[furniture.furnitureId]){
+    if (!furnitureMap[furniture.furnitureId]) {
       furnitureMap[furniture.furnitureId] = furniture;
-    } else if(furniture !== furnitureMap[furniture.furnitureId]) {
+    } else if (furniture !== furnitureMap[furniture.furnitureId]) {
       furniture = furnitureMap[furniture.furnitureId];
     }
     res += generateRow(furniture, notNeededClassName);
@@ -136,32 +143,53 @@ const generateAllRows = (notNeededClassName) => {
 const generateRow = (furniture, notNeededClassName) => {
   let statusHtml;
   let thumbnailClass = "mx-auto";
-  if(!notNeededClassName.includes("d-none")) { //large table
+  if (!notNeededClassName.includes("d-none")) { //large table
     statusHtml = generateColoredStatus(furniture);
     thumbnailClass += " w-50"
-  }else { //short table
+  } else { //short table
     let infos = generateStatusInfos(furniture.status);
     statusHtml = generateDot(infos.classname);
     thumbnailClass += " w-100"
   }
   let res = `
     <tr class="toBeClicked" furnitureId="${furniture.furnitureId}">
-      <th><div id="thumbnail" class="${thumbnailClass}">${generateFavouritePhotoImgTag(furniture)}<div></th>
+      <th><div id="thumbnail" class="${thumbnailClass}">${generateFavouritePhotoImgTag(
+      furniture)}<div></th>
       <th class="align-middle"><p>${furniture.description}</p></th>
       <th class="${notNeededClassName}"><p>${furniture.type}</p></th>
       <th class="tableStatus text-center align-middle" status="${furniture.status}">${statusHtml}</th>
       <th class="${notNeededClassName}"><p>${generateSellerLink(furniture)}</p></th>
       <th class="${notNeededClassName}"><p>${generateBuyerLink(furniture)}</p></th>
-      <th class="${notNeededClassName}"><p>${generateSellingPriceTableElement(furniture)}</p></th>
-      <th class="${notNeededClassName}"><p>${generateSpecialPriceTableElement(furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateSellingPriceTableElement(
+      furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateSpecialPriceTableElement(
+      furniture)}</p></th>
     </tr>`;
   return res;
 }
 
+/**
+ * used in list
+ * @param {*} furniture
+ * @returns html
+ */
 const generateFavouritePhotoImgTag = (furniture) => {
-  if (!furniture.favouritePhoto)
-    return `<img class="img-fluid" src="${findFavImgSrc(furniture, notFoundPhoto)}" alt="thumbnail id:${notFoundPhoto}"/>`;
-  return `<img class="img-fluid" src="${findFavImgSrc(furniture, images)}" alt="thumbnail id:${furniture.favouritePhoto.photoId}"/>`;
+  if(!furniture.favouritePhoto) {
+    return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
+  }
+  return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" furnitureId="${furniture.furnitureId}" id="list-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
+}
+
+/**
+ * used in card
+ * @param {*} furniture
+ * @returns html
+ */
+const generateCardFavouritePhotoImgTag = (furniture) => {
+  if(!furniture.favouritePhoto) {
+    return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
+  }
+  return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" furnitureId="${furniture.furnitureId}" id="card-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
 }
 
 const generateSellerLink = (furniture) => {
@@ -252,9 +280,9 @@ const generateColoredStatus = (furniture) => {
 }
 
 //input: "primary", "secondary", "info", etc...
-const generateDot = (colorClassName) =>{
+const generateDot = (colorClassName) => {
   return `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
-} 
+}
 
 const generateBadgeStatus = (furniture) => {
   let infos = generateStatusInfos(furniture.status);
@@ -266,14 +294,16 @@ const displayShortElements = async (e) => {
   removeTimeouts();
   //hide large table
   let largeTable = document.querySelector('#largeTable');
-  if (largeTable !== null) 
+  if (largeTable !== null) {
     largeTable.id = "shortTable";
-  if (document.querySelector('#largeTableContainer') !== null)
+  }
+  if (document.querySelector('#largeTableContainer') !== null) {
     timeouts.push(setTimeout(changeContainerId, 1000));
+  }
   document.querySelectorAll(".notNeeded").forEach(
       element => element.className = "notNeeded d-none");
   document.querySelectorAll("#thumbnail").forEach(
-    element => element.className = "w-100 mx-auto");
+      element => element.className = "w-100 mx-auto");
   document.querySelectorAll(".shortElement").forEach(
       element => element.className = "shortElement");
   let returnBtn = document.querySelector("#buttonReturn");
@@ -281,7 +311,7 @@ const displayShortElements = async (e) => {
   let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
   furnitureCardDiv.innerHTML = generateLoadingAnimation();
 
-  document.querySelectorAll(".toBeClicked").forEach( element => {
+  document.querySelectorAll(".toBeClicked").forEach(element => {
     element.className = "toBeClicked";
   });
 
@@ -298,11 +328,14 @@ const displayShortElements = async (e) => {
   });
   let id = element.attributes["furnitureId"].value;
   let furniture = furnitureMap[id];
-  if(!furniture) await reloadPage();
-  if(furniture) {
+  if (!furniture) {
+    await reloadPage();
+  }
+  if (furniture) {
     generateCard(furniture);
-    document.querySelectorAll(".userLink").forEach((link) => link.addEventListener("click", onUserLinkClicked))
-  }else {
+    document.querySelectorAll(".userLink").forEach(
+        (link) => link.addEventListener("click", onUserLinkClicked))
+  } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
   }
 }
@@ -316,14 +349,17 @@ const onUserLinkClicked = (e) => {
 }
 
 const displayLargeTable = () => {
+  openTab = "infos";
   document.querySelector('#shortTableContainer').id = "largeTableContainer";
   timeouts.push(setTimeout(displayLargeElements, 750));
-  document.querySelectorAll(".shortElement").forEach(element => element.className = "shortElement d-none");
+  document.querySelectorAll(".shortElement").forEach(
+      element => element.className = "shortElement d-none");
   document.querySelector('#shortTable').id = "largeTable";
-  document.querySelectorAll(".toBeClicked").forEach(element => element.className = "toBeClicked");
+  document.querySelectorAll(".toBeClicked").forEach(
+      element => element.className = "toBeClicked");
   document.querySelector("#buttonReturn").className = "btn btn-dark m-3 d-none";
   document.querySelectorAll("#thumbnail").forEach(
-    element => element.className = "w-50 mx-auto");
+      element => element.className = "w-50 mx-auto");
   document.querySelectorAll(".tableStatus").forEach(element => {
     let status = element.getAttribute("status");
     let infos = generateStatusInfos(status);
@@ -332,7 +368,8 @@ const displayLargeTable = () => {
 }
 
 const displayLargeElements = () => {
-  document.querySelectorAll('.notNeeded').forEach(element => element.className = "notNeeded align-middle");
+  document.querySelectorAll('.notNeeded').forEach(
+      element => element.className = "notNeeded align-middle");
 }
 
 const generateCard = (furniture) => {
@@ -340,6 +377,20 @@ const generateCard = (furniture) => {
   let cardHTML = generateCardHTML(furniture);
   furnitureCardDiv.innerHTML = cardHTML;
   addTransitionBtnListeners(furniture);
+  document.querySelectorAll(".favRadio").forEach((element) => {
+    element.addEventListener("click", onFavRadioSelected);
+  });
+  document.querySelectorAll(".visibleCheckbox").forEach((element) => {
+    element.addEventListener("click", onVisibleCheckClicked);
+  });
+  document.querySelector("#saveBtnPhoto").addEventListener("click", onSaveModifPhotos);
+  document.querySelector("#home-tab").addEventListener("click", () => {
+    openTab = "infos";
+  });
+  document.querySelector("#profile-tab").addEventListener("click", () => {
+    openTab = "photos";
+  });
+  addImage(furniture);
 }
 
 const changeContainerId = () => {
@@ -347,6 +398,24 @@ const changeContainerId = () => {
 }
 
 const generateCardHTML = (furniture) => {
+  const openTabObject = {
+    ariaSelected: "true",
+    tabClassname: "show active",
+    aClassname: "active",
+  }
+
+  const closedTabObject = {
+    ariaSelected: "false",
+    tabClassname: "",
+    aClassname: "",
+  }
+
+  let infoTab = openTabObject;
+  let photoTab = closedTabObject;
+  if(openTab === "photos"){
+    infoTab = closedTabObject;
+    photoTab = openTabObject;
+  }
   let res = `
   <div class="container emp-profile">
     <form>
@@ -355,19 +424,20 @@ const generateCardHTML = (furniture) => {
           <div class="profile-head">
             <div class="row">
               <div class="col-md-6">
-                <p>${generateFavouritePhotoImgTag(furniture)}</p>
+                <p>${generateCardFavouritePhotoImgTag(furniture)}</p>
               </div>
               <div class="col-md-6 text-left">
                 <h5 id="descriptionCardEntry">${furniture.description}</h5>
-                <p class="proile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(furniture)}</span></p>
+                <p class="proile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(
+      furniture)}</span></p>
               </div>
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item">
-                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Information</a>
+                <a class="nav-link ${infoTab.aClassname}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${infoTab.ariaSelected}">Information</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Photos</a>
+                <a class="nav-link ${photoTab.aClassname}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${photoTab.ariaSelected}">Photos</a>
               </li>
             </ul>
           </div>
@@ -377,7 +447,7 @@ const generateCardHTML = (furniture) => {
       <div class="row">
         <div class="col-md-8">
           <div class="tab-content profile-tab" id="myTabContent">
-            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="tab-pane fade ${infoTab.tabClassname}" id="home" role="tabpanel" aria-labelledby="home-tab">
               ${generateTypeCardEntry(furniture)}
               ${generateBuyingPriceCardEntry(furniture)}
               ${generateBuyingDateCardEntry(furniture)}
@@ -386,10 +456,10 @@ const generateCardHTML = (furniture) => {
               ${generateBuyerCardEntry(furniture)}
               ${generateOptionCardEntry(furniture)}
               ${generateSaleWithdrawalDateCardEntry(furniture)}
-
               ${generateButtonRow(furniture)}
             </div>       
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="tab-pane fade ${photoTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+              ${addImgForm()}
               ${generatePhotoList(furniture)}
             </div>
           </div>
@@ -401,13 +471,325 @@ const generateCardHTML = (furniture) => {
   return res;
 }
 
+const addImgForm = () => {
+  let res = `<div className="row text-left">
+    <div className="col-md-6">
+      <label> Ajouter une photo:</label>
+    </div>
+    <div className="col-md-6">
+      <input type='file' id='addImg'>
+      <button class="btn btn-primary" id="sendImg"> Ajouter</button>
+    </div>  
+    <hr/>
+  </div>`;
+  return res;
+}
+
+/**
+ * load the image and transform it to base64  then  listen the click on accept to send the image
+ * 
+ * @param {*} furniture 
+ */
+const addImage = (furniture) => {
+  document.getElementById("addImg").addEventListener("change", () => {
+    var FR = new FileReader();
+    let bas;
+    var file = document.querySelector('input[type=file]').files[0];
+      if (typeof (FR) != "undefined") {
+        FR.addEventListener("load", function (e) {
+          bas = e.target.result;
+          document.getElementById("sendImg").addEventListener("click",(e) => {
+            e.preventDefault();
+            fetching(bas, furniture.furnitureId);
+          });
+        });
+        if (file) {
+          FR.readAsDataURL(file);
+        }
+        //addImgForm();
+      }else{
+        throw new Error('le navigateur ne supporte pas FileReader');
+      }
+    addImgForm();
+  });
+}
+
+const fetching = async (base64, furnitureId) => {
+  let toSend = {
+    source: base64,
+    furnitureId: furnitureId
+  }
+  let pers = getUserSessionData();
+  let response = await fetch("/photos/", {
+    method: "POST",
+    body: JSON.stringify(toSend),
+    headers: {
+      Authorization: pers.token,
+      "Content-Type": "application/json",
+    }
+  });
+  if(!response.ok) {
+    displayErrorMessage("errorDiv", new Error("Erreur de fetch :<"));
+    return;
+  }
+  let data = await response.json();
+  furnitureMap[furnitureId].photos.push(data);
+  loadCard(furnitureId);
+}
+
 const generatePhotoList = (furniture) => {
   let photos = "";
   furniture.photos.forEach(photo => {
-    photos += `<img class="img-fluid flex-grow-1 p-1" src="${findFurnitureImgSrcFromFilename(photo.source, images)}" alt="photo id:${photo.photoId}"/>`;
+    let favRadioName = `radioFav${photo.photoId}`;
+    let visibleCheckName = `checkboxVisible${photo.photoId}`;
+    let homePageCheckName = `checkboxHomepage${photo.photoId}`;
+
+    let favChecked = ``;
+    if(photo.photoId === furniture.favouritePhoto.photoId) {
+      favChecked = `checked`;
+    }
+
+    let visibleCheckedOriginaly = false;
+    let homePageCheckedOriginaly = false;
+    let visibileChecked = ``;
+    let homePageChecked = ``;
+    if(photo.isVisible) {
+      visibileChecked = `checked`;
+      visibleCheckedOriginaly = true;
+
+      if(photo.onHomePage && photo.isVisible) {
+        homePageChecked = `checked`;
+        homePageCheckedOriginaly = true;
+      }
+    }else {
+      homePageChecked = `disabled`;
+    }
+
+    photos += `
+    <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
+      <div class="row px-0">
+        <div class="col-6">
+          <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+        </div>
+        <div class="text-left col-6">
+          <label class="form-check-label" for="${favRadioName}">
+            <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId="${photo.photoId}" furnitureid="${photo.furnitureId}" ${favChecked}>
+            Photo favorite
+          </label>
+          <br/>
+          <label class="form-check-label" for="${visibleCheckName}">
+            <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
+            Visible
+          </label>
+          <br/>
+          <label class="form-check-label" for="${homePageCheckName}">
+            <input id="${homePageCheckName}" type="checkbox" class="form-check-input homepageCheckbox" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
+            Affiché sur la page d'accueil
+          </label>
+        </div>
+      </div>
+    </div>`;
   });
-  let res = `<div class="d-flex flex-lg-fill">${photos}</div>`;
+  let res = `
+  <form>
+    <input id="originalFav${furniture.furnitureId}" type="hidden" class="originalFav" value="${furniture.favouritePhoto.photoId}">
+    <div class="form-check d-flex flex-lg-fill flex-row">
+      ${photos}
+    </div>
+    <button id="saveBtnPhoto" class="btn btn-primary my-5 float-right">Enregistrer les modifications</button>
+  </form>`;
   return res;
+}
+
+const onFavRadioSelected = (e) => {
+  unselectAllFavRadioExcept(e.target.id);
+}
+
+const unselectAllFavRadioExcept = (radioId) => {
+  document.querySelectorAll(".favRadio").forEach((element) => {
+    if(element.id !== radioId){
+      element.checked = false;
+    }
+  })
+}
+
+const onVisibleCheckClicked = (e) => {
+  let photoId = e.target.getAttribute("photoid");
+  let homepageCheckbox = document.querySelector(`#checkboxHomepage${photoId}`);
+
+  if(!e.target.checked) {
+    homepageCheckbox.checked = false;
+    homepageCheckbox.disabled = true;
+    e.target.checked = false;
+  }else {
+    homepageCheckbox.disabled = false;
+  }
+}
+
+const onSaveModifPhotos = async (e) => {
+  e.preventDefault();
+  let cardFavImg = document.querySelector("#card-fav-photo");
+  let originalFavId = cardFavImg.getAttribute("original_fav_id");
+  let furnitureId = cardFavImg.getAttribute("furnitureid");
+  //fav
+  let selectedFavId = findSelectedFav();
+  if(originalFavId != selectedFavId) {
+    let newFurniture = await patchNewFav(furnitureId, selectedFavId);
+    furnitureMap[furnitureId] = newFurniture;
+  }
+  //display flags
+  let modifiedPhotoArray = findAllPhotosForFlagUpdate();
+  await patchDisplayFlagsAllPhotos(modifiedPhotoArray);
+  //refresh card
+  loadCard(furnitureId);
+}
+
+/**
+ * Finds the selected favourite photo (between all radio buttons)
+ * @returns photoId
+ */
+const findSelectedFav = () => {
+  let res = null;
+  document.querySelectorAll(".favRadio").forEach((radioBtn) => {
+    if(radioBtn.checked) {
+      res = radioBtn.getAttribute("photoid");
+    }
+  });
+  return res;
+}
+
+/**
+ * Finds all photos having at least one modified display flag
+ *
+ * @returns {Array} list of object
+ * {
+ *   photoId,
+ *   isVisible,
+ *   isOnHomePage,
+ * },
+ */
+const findAllPhotosForFlagUpdate = () => {
+  let arrayFound = new Array();
+  document.querySelectorAll(".photo-list-container").forEach((container) => {
+    let visibleCheckbox = container.querySelector(".visibleCheckbox");
+    let homepageCheckbox = container.querySelector(".homepageCheckbox");
+    let photoId = container.getAttribute("photoid");
+    let isModified = false;
+
+    let visibleChecked = "false";
+    let homepageChecked = "false";
+    if(visibleCheckbox.checked) {
+      visibleChecked = "true";
+    }
+    if(!homepageCheckbox.disabled && homepageCheckbox.checked) {
+      homepageChecked = "true";
+    }
+
+    if(visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
+      isModified = true;
+    } else if(homepageCheckbox.getAttribute("checked_originaly") != homepageChecked) {
+      isModified = true;
+    }
+
+    if(isModified) {
+      let bundle = {
+        photoId: photoId,
+        isVisible: visibleCheckbox.checked,
+        isOnHomePage: homepageCheckbox.checked,
+      }
+      arrayFound.push(bundle);
+    }
+  });
+  return arrayFound;
+}
+
+/**
+ * [Fetch] PATCH new favourite photo
+ *
+ * @param {int} furnitureId
+ * @param {int} favPhotoId
+ * @returns {*} new photo obj.
+ */
+const patchNewFav = async (furnitureId, favPhotoId) => {
+  let bundle =  {
+    photoId: favPhotoId,
+  };
+  let response = await fetch("/furniture/favouritePhoto/"+furnitureId, {
+    method: "PATCH",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  });
+  if(!response.ok) {
+    displayErrorMessage("errorDiv", new Error(
+      response.status + " : " + response.statusText
+    ));
+    return;
+  }
+  let data = await response.json();
+  return data;
+}
+
+/**
+ * [Fetch] PATCH new display flags for one photo
+ *
+ * @param {
+ *  photoId,
+ *  isVisible,
+ *  isOnHomePage,
+ * } bundle
+ * @return new photo (fetch response)
+ */
+const patchDisplayFlags = async (bundle) => {
+  let addr = "/photos/displayFlags/"+bundle.photoId;
+  let response = await fetch(addr, {
+    method: "PATCH",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  });
+  if(!response.ok) {
+    displayErrorMessage("errorDiv", new Error(
+      response.status + " : " + response.statusText
+    ));
+    return;
+  }
+  let data = await response.json();
+  return data;
+}
+
+/**
+ * Performs all necesary fetches for photo display flags and updates furnitureMap accordingly.
+ *
+ * @param {Array} array result of findAllPhotosForFlagUpdate()
+ */
+const patchDisplayFlagsAllPhotos = async (array) => {
+  for(const obj of array) {
+    let newPhoto = await patchDisplayFlags(obj);
+    //update furnitureMap
+    if(newPhoto){
+      let furnitureId = newPhoto.furnitureId;
+      let photoIndex = findPhotoIndexById(furnitureMap[furnitureId].photos, newPhoto.photoId);
+      if(photoIndex != -1){
+        furnitureMap[furnitureId].photos[photoIndex] = newPhoto;
+      }
+    }
+  }
+}
+
+/**
+ * Finds the index of the first occurence of a photo in an array by id.
+ *
+ * @param {Array} photoArray
+ * @param {int} photoId
+ * @returns {int} index of photoId in photoArray or
+ */
+const findPhotoIndexById = (photoArray, photoId) => {
+  return photoArray.findIndex((photo) => photo.photoId === photoId);
 }
 
 const generateCardLabelKeyEntry = (label, id, value) => {
@@ -443,46 +825,50 @@ const generateUserCardEntry = (label, id, user) => {
       <label class="mr-3">${label}</label>
     </div>
     <div class="col-md-6">
-      <p id="${id}">${generateUserLink(user)} (${user.firstName} ${user.lastName})</p>
+      <p id="${id}">${generateUserLink(
+      user)} (${user.firstName} ${user.lastName})</p>
     </div>
   </div>`;
   return res;
 }
 
 const generateSellerCardEntry = (furniture) => {
-  let res ="";
-  if(furniture.seller) {
+  let res = "";
+  if (furniture.seller) {
     res = generateUserCardEntry("Vendeur", "sellerCardEntry", furniture.seller);
   }
   return res;
 }
 
 const generateBuyerCardEntry = (furniture) => {
-  let res ="";
-  if(furniture.buyer) {
+  let res = "";
+  if (furniture.buyer) {
     res = generateUserCardEntry("Acheteur", "buyerCardEntry", furniture.buyer);
   }
   return res;
 }
 
 const generateOptionCardEntry = (furniture) => {
-  let res ="";
-  if(furniture.option) {
-    res = generateUserCardEntry("Client intéressé", "optionUserCardEntry", furniture.option.user);
+  let res = "";
+  if (furniture.option) {
+    res = generateUserCardEntry("Client intéressé", "optionUserCardEntry",
+        furniture.option.user);
   }
   return res;
 }
 
 const generateSellingPriceCardEntry = (furniture) => {
-  if(furniture.sellingPrice) {
-    return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry", furniture.sellingPrice + "€");
+  if (furniture.sellingPrice) {
+    return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry",
+        furniture.sellingPrice + "€");
   }
   return "";
 }
 
 const generateSaleWithdrawalDateCardEntry = (furniture) => {
-  if(furniture.saleWithdrawalDate) {
-    return generateCardLabelKeyEntry("Date de retrait de la vente", "WithdrawalDateCardEntry", furniture.saleWithdrawalDate);
+  if (furniture.saleWithdrawalDate) {
+    return generateCardLabelKeyEntry("Date de retrait de la vente",
+        "WithdrawalDateCardEntry", furniture.saleWithdrawalDate);
   }
   return "";
 }
@@ -498,14 +884,17 @@ const generateButtonRow = (furniture) => {
 
 const generateAllTransitionBtns = (furniture) => {
   let res = "";
-  switch(furniture.status) {
+  switch (furniture.status) {
     case "ACCEPTED":
-      res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
-      res += generateTransitionModal("ToRestoration", "Indiquer en restauration");
+      res += generateTransitionModal("ToAvailable",
+          "Indiquer disponible à la vente");
+      res += generateTransitionModal("ToRestoration",
+          "Indiquer en restauration");
       break;
     case "AVAILABLE_FOR_SALE":
       res += generateTransitionModal("ToSold", "Indiquer vendu");
-      res += generateTransitionModal("Withdraw", "Retirer de la vente", "danger", "secondary");
+      res += generateTransitionModal("Withdraw", "Retirer de la vente",
+          "danger", "secondary");
       break;
     case "IN_RESTORATION":
       res += generateTransitionModal("ToAvailable", "Indiquer disponible à la vente");
@@ -528,7 +917,7 @@ const generateAllTransitionBtns = (furniture) => {
 }
 
 const generateModalBodyFromTransitionId = (transitionId) => {
-  switch(transitionId) {
+  switch (transitionId) {
     case "ToAvailable":
       return generateToAvailableForm();
     case "ToRestoration":
@@ -554,21 +943,25 @@ const generateToAvailableForm = () => {
   return res;
 }
 
-const generateTransitionModal = (id, label, triggerColorClass="primary", closeColorClass="danger") => {
+const generateTransitionModal = (id, label, triggerColorClass = "primary",
+    closeColorClass = "danger") => {
   let body = generateModalBodyFromTransitionId(id);
-  let sendBtn = generateCloseBtn(label, "btn"+id, `btn btn-${triggerColorClass} mx-5 transitionBtn`);
-  return generateModalPlusTriggerBtn("modal_"+id, label, `btn btn-${triggerColorClass}`, `<h4>${label}</h4>`, body, `${sendBtn}`, "Fermer", `btn btn-${closeColorClass}`);
+  let sendBtn = generateCloseBtn(label, "btn" + id,
+      `btn btn-${triggerColorClass} mx-5 transitionBtn`);
+  return generateModalPlusTriggerBtn("modal_" + id, label,
+      `btn btn-${triggerColorClass}`, `<h4>${label}</h4>`, body, `${sendBtn}`,
+      "Fermer", `btn btn-${closeColorClass}`);
 }
-
 
 const addTransitionBtnListeners = (furniture) => {
   document.querySelectorAll(".transitionBtn").forEach(element => {
-    element.addEventListener("click", findTransitionMethod(element.id, furniture));
+    element.addEventListener("click",
+        findTransitionMethod(element.id, furniture));
   })
 }
 
 const findTransitionMethod = (btnId, furniture) => {
-  switch(btnId) {
+  switch (btnId) {
     case "btnToAvailable":
       return (e) => toAvailable(e, furniture);
     case "btnToRestoration":
@@ -578,20 +971,22 @@ const findTransitionMethod = (btnId, furniture) => {
     default:
       return (e) => {
         e.preventDefault();
-        console.log("unrecognized button id: " + btnId) ; //'do nothing' method
+        console.log("unrecognized button id: " + btnId); //'do nothing' method
       };
-  };
+  }
+  ;
 }
 
 //status transition methods
 
 const toAvailable = (e, furniture) => { //TODO
   e.preventDefault();
-  let sellingPrice = e.target.parentElement.parentElement.querySelector("#sellingPriceInput").value;
+  let sellingPrice = e.target.parentElement.parentElement.querySelector(
+      "#sellingPriceInput").value;
   let bundle = {
     selling_price: sellingPrice,
   };
-  fetch("/furniture/available/"+furniture.furnitureId, {
+  fetch("/furniture/available/" + furniture.furnitureId, {
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -602,7 +997,7 @@ const toAvailable = (e, furniture) => { //TODO
     if (!response.ok) {
       console.log("Erreur de fetch !! :´\n" + response);
       throw new Error(
-        response.status + " : " + response.statusText
+          response.status + " : " + response.statusText
       );
     }
     return response.json();
@@ -614,10 +1009,9 @@ const toAvailable = (e, furniture) => { //TODO
   });
 }
 
-
 const toRestoration = (e, furniture) => {//TODO
   e.preventDefault();
-  fetch("/furniture/restoration/"+furniture.furnitureId, {
+  fetch("/furniture/restoration/" + furniture.furnitureId, {
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -625,7 +1019,7 @@ const toRestoration = (e, furniture) => {//TODO
   }).then((response) => {
     if (!response.ok) {
       throw new Error(
-        response.status + " : " + response.statusText
+          response.status + " : " + response.statusText
       );
     }
     return response.json();
@@ -640,7 +1034,7 @@ const toRestoration = (e, furniture) => {//TODO
 
 const withdraw = (e, furniture) => {//TODO
   e.preventDefault();
-  fetch("/furniture/withdraw/"+furniture.furnitureId, {
+  fetch("/furniture/withdraw/" + furniture.furnitureId, {
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -648,7 +1042,7 @@ const withdraw = (e, furniture) => {//TODO
   }).then((response) => {
     if (!response.ok) {
       throw new Error(
-        response.status + " : " + response.statusText
+          response.status + " : " + response.statusText
       );
     }
     return response.json();
@@ -661,11 +1055,17 @@ const withdraw = (e, furniture) => {//TODO
   });
 }
 
-const loadCard = (id) => {
+const loadCard = (furnitureId) => {
   mainPage.innerHTML = generatePageHtml(false);
-  generateCard(furnitureMap[id]);
+  generateCard(furnitureMap[furnitureId]);
   document.querySelectorAll(".toBeClicked").forEach(
-    element => element.addEventListener("click", displayShortElements));
+    (element) => {
+      let elementFurnId = element.getAttribute("furnitureid");
+      if(elementFurnId == furnitureId) {
+        element.className = "toBeClicked bg-secondary text-light";
+      }
+      element.addEventListener("click", displayShortElements)
+    });
   document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
 }
 

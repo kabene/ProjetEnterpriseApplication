@@ -1,3 +1,13 @@
 
 GET {{baseUrl}}/photos/homePage
 ###
+
+POST {{baseUrl}}/photos/add
+Authorization: {{jwt}}
+Content-Type: application/json
+
+{
+  "furnitureId": 1,
+  "source": "source"
+}
+###
