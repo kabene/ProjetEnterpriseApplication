@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
@@ -114,6 +115,32 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
       throw new InternalError(e);
     }
     return opt;
+  }
+
+  /**
+   * list all user's options.
+   *
+   * @param userId user id.
+   * @return list of all user's options.
+   */
+  @Override
+  public List<OptionDTO> findByUserId(int userId) {
+    List<OptionDTO> optionList = new ArrayList<>();;
+    String query = "SELECT o.* FROM satchofurniture.options o "
+        + "WHERE o.user_id = ? AND o.is_canceled = 'false'";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, userId);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        optionList.add(toDTO(rs));
+      }
+      rs.close();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return optionList;
   }
 
   /**

@@ -30,7 +30,15 @@ public interface OptionUCC {
   /**
    * list all the options.
    *
-   * @return list of all the Option .
+   * @return list of all the Option.
    */
   List<OptionDTO> listOption();
+
+  /**
+   * list all options of the current user.
+   *
+   * @param currentUser user.
+   * @return list of all currentUser's option.
+   */
+  List<OptionDTO> myOptions(UserDTO currentUser);
 }

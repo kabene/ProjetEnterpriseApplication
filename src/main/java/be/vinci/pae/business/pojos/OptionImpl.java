@@ -16,13 +16,13 @@ public class OptionImpl implements OptionDTO {
   private int duration;
   @JsonView(Views.Public.class)
   private String dateOption;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.AdminOnly.class)
   private int userId;
   @JsonView(Views.Public.class)
   private int furnitureId;
   @JsonView(Views.Public.class)
   private boolean isCanceled;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.AdminOnly.class)
   private UserDTO user;
 
   @Override

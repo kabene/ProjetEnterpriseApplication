@@ -313,6 +313,13 @@
     <td>Renvoie une liste de toutes les ressources de type option.</td>
 </tr>
 <tr>
+    <td>options/me</td>
+    <td>GET</td>
+    <td>JWT</td>
+    <td>oui</td>
+    <td>Renvoie une liste de toutes les ressources de type option mises par l'utilisateur.</td>
+</tr>
+<tr>
     <td>options/</td>
     <td>POST</td>
     <td>JWT</td>
