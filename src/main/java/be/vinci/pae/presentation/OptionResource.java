@@ -64,7 +64,7 @@ public class OptionResource {
    * @return list of user's options as json.
    */
   @GET
-  @Path("me")
+  @Path("/me")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   @AllowTakeover

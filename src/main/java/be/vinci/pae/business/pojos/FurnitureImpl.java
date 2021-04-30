@@ -51,7 +51,7 @@ public class FurnitureImpl implements Furniture {
   private Boolean isToPickUp;
   @JsonView(Views.AdminOnly.class)
   private String pickUpDate;
-  @JsonView(Views.AdminOnly.class)
+  @JsonView(Views.Public.class)
   private OptionDTO option;
   @JsonView(Views.AdminOnly.class)
   private Integer requestId;

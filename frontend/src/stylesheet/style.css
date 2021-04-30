@@ -64,25 +64,6 @@
 
 /********************************On HomePage**********************************/
 
-.badgeSold {
-  transform: rotateZ(-25deg) translateY(2em);;
-  margin-top: 2em;
-  margin-left: 2em;
-  color: red;
-  background-color: lightgray;
-  height: 2em;
-  font-size: large;
-}
-
-.badgeUnderOption {
-  margin-top: 2em;
-  margin-right: 1em;
-  transform: translateY(2em);
-  color: blue;
-  background-color: lightgray;
-  height: 2em;
-  font-size: large;
-}
 
 
 /********************************On Footer**********************************/
@@ -243,6 +224,34 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+img-furniture {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.badgeSold {
+  transform: rotateZ(-25deg) translateY(2em);;
+  margin-top: 2em;
+  margin-left: 2em;
+  color: red;
+  background-color: rgba(211,211,211, 0.4);
+
+  height: 2em;
+  font-size: large;
+}
+
+.badgeUnderOption {
+  margin-top: 2em;
+  margin-right: 1em;
+  transform: translateY(2em);
+  color: blue;
+  background-color: rgba(211,211,211, 0.4);
+  height: 2em;
+  font-size: large;
+}
+
 
 
 /* source @author Milan Raring

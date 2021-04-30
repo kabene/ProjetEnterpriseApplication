@@ -15,3 +15,8 @@ Authorization: {{jwt}}
 
 GET {{baseUrl}}/options/
 Authorization: {{jwt}}
+###
+
+GET {{baseUrl}}/options/me
+Authorization: {{jwt}}
+###
