@@ -206,7 +206,6 @@ const onApplyFilterClick = () => {
   if (document.querySelector(".shortElement").style.display === "block") {
     document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
     document.querySelector('#largeTable').id = "shortTable";
-    document.querySelector('#largeTableContainer').id = "shortTableContainer";
   }
 
 }
@@ -222,7 +221,6 @@ const onClearFilterClick = () => {
   if (document.querySelector(".shortElement").style.display === "block") {
     document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
     document.querySelector('#largeTable').id = "shortTable";
-    document.querySelector('#largeTableContainer').id = "shortTableContainer";
   }
 }
 
@@ -284,9 +282,19 @@ const getAllUsersRows = () => {
 }
 
 const generateRow = (user) => {
-  console.log(user);
   if (filter.role !== '') {
     if (filter.role !== user.role)
+      return ``;
+  }
+  console.log(filter.info);
+  console.log(user.address.commune);
+  if (filter.info !== '') {
+    let info = filter.info.toLowerCase();
+    let bool = user.address.commune.toLowerCase() === info
+    console.log(bool);
+    let postcode = "" + user.address.postcode;
+    if (!user.firstName.toLowerCase().includes(info) && !user.lastName.toLowerCase().includes(info) 
+        && !(user.address.commune.toLowerCase() === info) && !(postcode === info))
       return ``;
   }
   return ` 
