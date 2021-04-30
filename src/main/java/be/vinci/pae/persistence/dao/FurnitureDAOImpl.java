@@ -214,6 +214,75 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
   }
 
   /**
+   * Updates the description on a piece of furniture.
+   *
+   * @param furnitureDTO : the furnitureDTO containing the new information
+   * @return the modified furniture.
+   */
+  @Override
+  public FurnitureDTO updateDescription(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET description = ? "
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setString(1, furnitureDTO.getDescription());
+      ps.setInt(2, furnitureDTO.getFurnitureId());
+      ps.execute();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return furnitureDTO;
+  }
+
+  /**
+   * Updates the type id on a piece of furniture.
+   *
+   * @param furnitureDTO : the furnitureDTO containing the new information
+   * @return the modified furniture.
+   */
+  @Override
+  public FurnitureDTO updateTypeId(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET type_id = ? "
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, furnitureDTO.getTypeId());
+      ps.setInt(2, furnitureDTO.getFurnitureId());
+      ps.execute();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return furnitureDTO;
+  }
+
+  /**
+   * Updates the selling price on a piece of furniture.
+   *
+   * @param furnitureDTO : the furnitureDTO containing the new information
+   * @return the modified furniture.
+   */
+  @Override
+  public FurnitureDTO updateSellingPrice(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET selling_price = ? "
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setDouble(1, furnitureDTO.getSellingPrice());
+      ps.setInt(2, furnitureDTO.getFurnitureId());
+      ps.execute();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return furnitureDTO;
+  }
+
+  /**
    * transfers ONE furniture entry from a result set to a dto.
    *
    * @param rs the result set containing the information.
