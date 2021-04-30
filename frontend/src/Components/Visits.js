@@ -67,7 +67,6 @@ const loadCard = (requestId) => {
   }
 }
 
-
 /**
  * Reloads the page and re-fetch request information.
  * Displays loading animation while awaiting the fetch.
@@ -484,7 +483,7 @@ const onChooseFurnitureBtnClick = async (e) => {
 
 const acceptFurniture = async (furnitureId) => {
   try {
-    let result =await fetch("/furniture/accepted/" + furnitureId, {
+    let result = await fetch("/furniture/accepted/" + furnitureId, {
       method: "PATCH",
       headers: {
         "Authorization": currentUser.token,
@@ -494,20 +493,15 @@ const acceptFurniture = async (furnitureId) => {
       throw new Error(result.status + " : " + result.statusText);
     } else {
       let data = await result.json();
-      let i=0; //TODO TO CHANGE
-      requestMap[data.requestId].furnitureList.forEach((furniture)=>{
-        i++;
-        if(furniture.furnitureId==data.furnitureId){
-          requestMap[data.requestId].furnitureList[i]=data;
-        }
-      });
+      let index = requestMap[data.requestId].furnitureList.findIndex(
+          furniture => furniture.furnitureId === data.furnitureId);
+      requestMap[data.requestId].furnitureList[index] = data;
       loadCard(data.requestId);
     }
   } catch (err) {
     displayErrorMessage("errorDiv", err);
   }
 }
-
 
 const refuseFurniture = async (furnitureId) => {
   try {
@@ -522,7 +516,9 @@ const refuseFurniture = async (furnitureId) => {
       );
     } else {
       let data = await result.json();
-      requestMap[data.requestId] = data;
+      let index = requestMap[data.requestId].furnitureList.findIndex(
+          furniture => furniture.furnitureId === data.furnitureId);
+      requestMap[data.requestId].furnitureList[index] = data;
       loadCard(data.requestId);
     }
   } catch (err) {
