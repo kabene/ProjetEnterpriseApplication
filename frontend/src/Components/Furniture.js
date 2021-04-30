@@ -39,73 +39,12 @@ const Furniture = async () => {
     });
     document.querySelectorAll(".cancelOptButton").forEach(element=>{
       element.addEventListener("click",cancelOption);
-    })
+    });
+    document.querySelector("#apply-filters-btn").addEventListener("click", onClickApplyFilter);
+    document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
 }
 
-const cancelOption= (e)=>{
-  e.preventDefault();
-  let furnitureId = e.target.id.substring(4);
-  let optionId;
-  optionList.forEach(option=>{
-    if(option.furnitureId == furnitureId ) {
-      if (!option.isCanceled){
-        optionId = option.optionId;
-      }
-    }
-  });
-
-   fetch("/options/cancel/"+optionId,{
-    method: "PATCH",
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if(!response.ok) {
-      throw new Error(response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    refresh(data, "AVAILABLE_FOR_SALE");
-  }).catch((err) => {
-     console.log("Erreur de fetch !! :´<\n" + err);
-     displayErrorMessage("errorDiv", err);
-   });
-}
-
-
-
-
-const addOption =  (e) => {
-  e.preventDefault();
-  let furnitureId = e.target.id.substring(3);
-  let duration = e.target.parentElement.parentElement.querySelector("input").value;
-
-  let bundle = {
-    furnitureId: furnitureId,
-    duration: duration,
-  }
-  console.log(bundle);
-   fetch("/options/", {
-    method: "POST",
-    body: JSON.stringify(bundle),
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-    }).then((response) => {
-      if(!response.ok) {
-        throw new Error(response.status + " : " + response.statusText);
-      }
-      return response.json();
-    }).then((data) => {
-      refresh(data.option, "UNDER_OPTION");
-    }).catch((err) => {
-     console.log("Erreur de fetch !! :´<\n" + err);
-     displayErrorMessage("errorDiv", err);
-   });
-
-}
+/********************  Business methods  **********************/
 
 const refresh = (data, status) => {
   optionList.push(data);
@@ -120,50 +59,6 @@ const refresh = (data, status) => {
   })
 }
 
-const getFurnitureList = async () => {
-    let ret = [];
-    await fetch("/furniture/", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    }).then((response) => {
-        if (!response.ok)
-            throw new Error("Error code : " + response.status + " : " + response.statusText);
-        return response.json();
-    }).then((data) => {
-         ret = data;
-    }).catch((err) => {
-        console.log("Erreur de fetch !! :´<\n" + err);
-        displayErrorMessage("errorDiv", err);
-      });
-    return ret;
-}
-
-const getOptionList= async () => {
-  if(currentUser) {
-    let ret = [];
-    await fetch("/options/", {
-      method: "GET",
-      headers: {
-        "Authorization": currentUser.token,
-        "Content-Type": "application/json",
-      },
-    }).then((response) => {
-      if (!response.ok)
-        throw new Error(
-            "Error code : " + response.status + " : " + response.statusText);
-      return response.json();
-    }).then((data) => {
-      ret = data;
-    }).catch((err) => {
-      console.log("Erreur de fetch !! :´<\n" + err);
-      displayErrorMessage("errorDiv", err);
-    });
-    return ret;
-  }
-}
-
 
 const updateFurnitureList = (furnitureId, status) => {
     furnitureList.forEach(furniture => {
@@ -172,6 +67,27 @@ const updateFurnitureList = (furnitureId, status) => {
         }
     })
 }
+
+/**
+ * Called when clicking on the apply filter button.
+ * Apply all filters chosen on the furniture and render them.
+ */
+const onClickApplyFilter = (e) => {
+  e.preventDefault();
+  page.innerHTML = generateTable();
+}
+
+/**
+ * Called when clicking on the cancel filter button.
+ * Clear all filters chosen on the furniture and render all the furniture.
+ */
+const onClickClearFilter = (e) => {
+  e.preventDefault();
+  page.innerHTML = generateTable();
+}
+
+/********************  HTML generation  **********************/
+
 
 const generateTable = () => {
     return `
@@ -312,5 +228,119 @@ const generateOptionForm = () => {
   `;
     return res;
 }
+
+
+/********************  Backend fetch  **********************/
+
+
+const cancelOption = (e) => {
+  e.preventDefault();
+  let furnitureId = e.target.id.substring(4);
+  let optionId;
+  optionList.forEach(option=>{
+    if(option.furnitureId == furnitureId ) {
+      if (!option.isCanceled){
+        optionId = option.optionId;
+      }
+    }
+  });
+
+   fetch("/options/cancel/"+optionId,{
+    method: "PATCH",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if(!response.ok) {
+      throw new Error(response.status + " : " + response.statusText);
+    }
+    return response.json();
+  }).then((data) => {
+    refresh(data, "AVAILABLE_FOR_SALE");
+  }).catch((err) => {
+     console.log("Erreur de fetch !! :´<\n" + err);
+     displayErrorMessage("errorDiv", err);
+   });
+}
+
+
+const addOption =  (e) => {
+  e.preventDefault();
+  let furnitureId = e.target.id.substring(3);
+  let duration = e.target.parentElement.parentElement.querySelector("input").value;
+
+  let bundle = {
+    furnitureId: furnitureId,
+    duration: duration,
+  }
+  console.log(bundle);
+   fetch("/options/", {
+    method: "POST",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+    }).then((response) => {
+      if(!response.ok) {
+        throw new Error(response.status + " : " + response.statusText);
+      }
+      return response.json();
+    }).then((data) => {
+      refresh(data.option, "UNDER_OPTION");
+    }).catch((err) => {
+     console.log("Erreur de fetch !! :´<\n" + err);
+     displayErrorMessage("errorDiv", err);
+   });
+}
+
+
+const getFurnitureList = async () => {
+  let ret = [];
+  await fetch("/furniture/", {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+  }).then((response) => {
+      if (!response.ok)
+          throw new Error("Error code : " + response.status + " : " + response.statusText);
+      return response.json();
+  }).then((data) => {
+       ret = data;
+  }).catch((err) => {
+      console.log("Erreur de fetch !! :´<\n" + err);
+      displayErrorMessage("errorDiv", err);
+    });
+  return ret;
+}
+
+
+const getOptionList= async () => {
+if(currentUser) {
+  let ret = [];
+  await fetch("/options/", {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok)
+      throw new Error(
+          "Error code : " + response.status + " : " + response.statusText);
+    return response.json();
+  }).then((data) => {
+    ret = data;
+  }).catch((err) => {
+    console.log("Erreur de fetch !! :´<\n" + err);
+    displayErrorMessage("errorDiv", err);
+  });
+  return ret;
+}
+}
+
+
 
 export default Furniture;
