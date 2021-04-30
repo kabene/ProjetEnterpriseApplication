@@ -4,10 +4,15 @@ import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilen
 
 
 let page = document.querySelector("#page");
-let furnitureList;
+
 let currentUser;
+
+let images;
+let furnitureList;
+let furnitureTypeList;
 let optionList;
-let images = importAllFurnitureImg();
+
+const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"></div>  </div>`;
 
 let filter = {
   description: "",
@@ -15,24 +20,16 @@ let filter = {
 };
 
 const Furniture = async () => {
-    currentUser = findCurrentUser();
+  page.innerHTML =  errorDiv + generateLoadingAnimation();
+  currentUser = findCurrentUser();
 
-    page.innerHTML = `
-    <div class="col-5 mx-auto">
-        <div id="errorDiv" class="d-none"></div>
-    </div>
-    ${generateLoadingAnimation()}`;
+  images = importAllFurnitureImg()
+  furnitureList = await getFurnitureList();
+  furnitureTypeList = await getFurnitureTypeList();
+  optionList = await getOptionList();
 
-    furnitureList = await getFurnitureList();
-    optionList = await getOptionList();
-
-    page.innerHTML = `
-    <div class="col-5 mx-auto">
-        <div id="errorDiv" class="d-none"></div>
-    </div>
-    ${generateTable()}`;
-
-    addAllEventListeners();
+  page.innerHTML = errorDiv + generateTable();
+  addAllEventListeners();
 }
 
 /********************  Business methods  **********************/
@@ -113,44 +110,26 @@ const generateTable = () => {
 }
 
 const generateFilterHTML = () => {
-
   return `
   <form class="form-inline">
     <div class="form-group m-3">
       <input type="text" class="form-control" id="furnitureDescriptionFilter" placeholder="Rechercher un meuble" value="` + filter.description + `"/>
      </div>
-      <div class="form-group m-3">
-        <select class="form-control" id="furnitureTypeFilter">
-          <option value="">Filtrer par type de meuble</option>
-          <option value="Armoire">Armoire</option>
-          <option value="Bahut">Bahut</option>
-          <option value="Bibliothèque">Bibliothèque</option>
-          <option value="Bonnetière">Bonnetière</option>
-          <option value="Buffet">Buffet</option>
-          <option value="Bureau">Bureau</option>
-          <option value="Chaise">Chaise</option>
-          <option value="Chiffonier">Chiffonier</option>
-          <option value="Coffre">Coffre</option>
-          <option value="Coiffeuse">Coiffeuse</option>
-          <option value="Commode">Commode</option>
-          <option value="Confident/Indiscret">Confident/Indiscret</option>
-          <option value="Console">Console</option>
-          <option value="Dresse">Dresse</option>
-          <option value="Fauteil">Fauteil</option>
-          <option value="Guéridon">Guéridon</option>
-          <option value="Lingère">Lingère</option>
-          <option value="Lit">Lit</option>
-          <option value="Penderie">Penderie</option>
-          <option value="Secrétaire">Secrétaire</option>
-          <option value="Table">Table</option>
-          <option value="Tabouret">Tabouret</option>
-          <option value="Vasselier">Vasselier</option>
-          <option value="Valet muet">Valet muet</option>
-        </select>
-     </div>
+      <div class="form-group m-3">` + generateSelectTypeTag() + `</div>
      <button type="submit" id="apply-filters-btn" class="btn btn-primary m-3">Appliquer</button>
      <button type="submit" id="clear-filters-btn" class="btn btn-secondary m-3">Retirer les filtres</button>
   </form> `;
+}
+
+const generateSelectTypeTag = () => {
+  let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
+  furnitureTypeList.forEach(type => ret += generateOptionTypeTag(type));
+  ret += `</select>`;
+  return ret;
+}
+
+const generateOptionTypeTag = (type) => {
+  return `<option value="` + type.typeName + `">` + type.typeName + `</option>`;
 }
 
 const generateAllItemsAndModals = () => {
@@ -265,6 +244,64 @@ const generateOptionForm = () => {
 
 /********************  Backend fetch  **********************/
 
+const getFurnitureList = async () => {
+  let ret = [];
+  await fetch("/furniture/", {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+  }).then((response) => {
+      if (!response.ok)
+          throw new Error("Error code : " + response.status + " : " + response.statusText);
+      return response.json();
+  }).then((data) => {
+       ret = data;
+  }).catch((err) => {
+      console.log("Erreur de fetch !! :´<\n" + err);
+      displayErrorMessage("errorDiv", err);
+    });
+  return ret;
+}
+
+
+const getFurnitureTypeList = async () => {
+  let response = await fetch("/furnitureTypes/", {
+    method: "GET",
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage(err);
+  }
+  return response.json();
+}
+
+const getOptionList= async () => {
+  if(currentUser) {
+    let ret = [];
+    await fetch("/options/", {
+      method: "GET",
+      headers: {
+        "Authorization": currentUser.token,
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
+      if (!response.ok)
+        throw new Error(
+            "Error code : " + response.status + " : " + response.statusText);
+      return response.json();
+    }).then((data) => {
+      ret = data;
+    }).catch((err) => {
+      console.log("Erreur de fetch !! :´<\n" + err);
+      displayErrorMessage("errorDiv", err);
+    });
+    return ret;
+  }
+}
+
+
 
 const cancelOption = (e) => {
   e.preventDefault();
@@ -326,52 +363,6 @@ const addOption =  (e) => {
      console.log("Erreur de fetch !! :´<\n" + err);
      displayErrorMessage("errorDiv", err);
    });
-}
-
-
-const getFurnitureList = async () => {
-  let ret = [];
-  await fetch("/furniture/", {
-      method: "GET",
-      headers: {
-          "Content-Type": "application/json",
-      },
-  }).then((response) => {
-      if (!response.ok)
-          throw new Error("Error code : " + response.status + " : " + response.statusText);
-      return response.json();
-  }).then((data) => {
-       ret = data;
-  }).catch((err) => {
-      console.log("Erreur de fetch !! :´<\n" + err);
-      displayErrorMessage("errorDiv", err);
-    });
-  return ret;
-}
-
-
-const getOptionList= async () => {
-if(currentUser) {
-  let ret = [];
-  await fetch("/options/", {
-    method: "GET",
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if (!response.ok)
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText);
-    return response.json();
-  }).then((data) => {
-    ret = data;
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
-  });
-  return ret;
-}
 }
 
 
