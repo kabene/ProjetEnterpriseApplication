@@ -1,8 +1,8 @@
 package be.vinci.pae.business.ucc;
 
 
-import be.vinci.pae.business.dto.*;
-import be.vinci.pae.business.pojos.FurnitureStatus;
+import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;

@@ -86,7 +86,7 @@ class FurnitureTypeUCCImplTest {
     Mockito.when(mockFurnitureTypeDAO.findAll())
         .thenThrow(new InternalError());
 
-    assertThrows(InternalError.class, ()->
+    assertThrows(InternalError.class, () ->
         furnitureTypeUCC.findAll(),
         "A call to findAll catching InternalError should throw it back");
 

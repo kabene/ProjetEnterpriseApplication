@@ -174,7 +174,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
   public List<UserDTO> getAllConfirmedUsers() {
     List<UserDTO> users = new ArrayList<>();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.is_waiting = false ORDER BY u.last_name";
+      String query = "SELECT u.* FROM satchofurniture.users u "
+          + "WHERE u.is_waiting = false ORDER BY u.last_name";
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
