@@ -98,10 +98,20 @@ public class PhotoResource {
   @GET
   @Path("/favourite/{furnitureId}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getByFurnitureId(@PathParam("furnitureId") int furnitureId) {
+  public Response getFavByFurnitureId(@PathParam("furnitureId") int furnitureId) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
         "GET /photos/favourite/"+furnitureId);
     PhotoDTO photoDTO = photoUCC.getFavourite(furnitureId);
     return Response.ok(Json.filterPublicJsonView(photoDTO, PhotoDTO.class)).build();
+  }
+
+  @GET
+  @Path("/byFurniture/{furnitureId}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getByFurnitureId(@PathParam("furnitureId") int furnitureId) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
+        "GET /photos/byFurniture/"+furnitureId);
+    List<PhotoDTO> photoDTOList = photoUCC.getAllForFurniture(furnitureId);
+    return Response.ok(Json.filterPublicJsonView(photoDTOList, List.class)).build();
   }
 }

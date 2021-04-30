@@ -38,4 +38,12 @@ public interface PhotoUCC {
    * @return favourite photo as PhotoDTO
    */
   PhotoDTO getFavourite(int furnitureId);
+
+  /**
+   * Finds all photos for a specific furniture id.
+   *
+   * @param furnitureId : furniture id
+   * @return list of PhotoDTO
+   */
+  List<PhotoDTO> getAllForFurniture(int furnitureId);
 }

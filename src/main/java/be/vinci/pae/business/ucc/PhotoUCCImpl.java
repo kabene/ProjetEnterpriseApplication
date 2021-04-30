@@ -7,6 +7,7 @@ import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import jakarta.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoUCCImpl implements PhotoUCC {
@@ -100,7 +101,7 @@ public class PhotoUCCImpl implements PhotoUCC {
    */
   @Override
   public PhotoDTO getFavourite(int furnitureId) {
-    PhotoDTO res = null;
+    PhotoDTO res;
     try {
       dalServices.startTransaction();
       FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
@@ -111,6 +112,28 @@ public class PhotoUCCImpl implements PhotoUCC {
       dalServices.commitTransaction();
     }catch (Throwable e) {
       dalServices.rollbackTransaction();
+      throw e;
+    }
+    return res;
+  }
+
+  /**
+   * Finds all photos for a specific furniture id.
+   *
+   * @param furnitureId : furniture id
+   * @return list of PhotoDTO
+   */
+  @Override
+  public List<PhotoDTO> getAllForFurniture(int furnitureId) {
+    List<PhotoDTO> res;
+    try {
+      dalServices.startTransaction();
+      furnitureDAO.findById(furnitureId); //check for not found
+      res = photoDAO.findAllByFurnitureId(furnitureId);
+      dalServices.commitTransaction();
+    } catch(Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
     }
     return res;
   }
