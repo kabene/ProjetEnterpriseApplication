@@ -132,6 +132,7 @@ public class RequestForVisitUCCImpl implements RequestForVisitUCC {
     dto.setFurnitureList(furnitureDAO.findByRequestId(dto.getRequestId()));
     for (FurnitureDTO furnitureDTO : dto.getFurnitureList()) {
       furnitureDTO.setPhotos(photoDAO.findAllByFurnitureId(furnitureDTO.getFurnitureId()));
+      furnitureDTO.setFavouritePhoto(photoDAO.findById(furnitureDTO.getFavouritePhotoId()));
     }
   }
 }
