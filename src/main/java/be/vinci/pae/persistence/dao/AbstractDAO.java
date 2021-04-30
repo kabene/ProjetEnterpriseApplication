@@ -28,13 +28,13 @@ public abstract class AbstractDAO {
     return executeSelectManyResults(query);
   }
 
-  protected <T> List<T> findAll(String tableName, String ... orderBy) {
+  protected <T> List<T> findAll(String tableName, String... orderBy) {
     String query = "SELECT t.* FROM satchoFurniture." + tableName + " t ORDER BY ";
-    int i=0;
-    for(String column : orderBy) {
+    int i = 0;
+    for (String column : orderBy) {
       query += column;
       i++;
-      if(i<orderBy.length) {
+      if (i < orderBy.length) {
         query += ", ";
       }
     }
@@ -43,8 +43,9 @@ public abstract class AbstractDAO {
 
   /**
    * Executes a SELECT type of query containing many results.
+   *
    * @param query : String containing SQL query
-   * @param <T> : class of DTO
+   * @param <T>   : class of DTO
    * @return
    */
   private <T> List<T> executeSelectManyResults(String query) {
