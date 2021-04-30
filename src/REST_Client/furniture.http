@@ -40,3 +40,7 @@ Content-Type: application/json
   "photoId": 1
 }
 ###
+
+PATCH {{baseUrl}}/furniture/refused/3
+Authorization: {{jwt}}
+###
