@@ -14,7 +14,6 @@ import {
 let page = document.querySelector("#page");
 let furnitureList;
 let currentUser;
-let optionList;
 let myOptionList;
 let images = importAllFurnitureImg();
 
@@ -28,7 +27,6 @@ const Furniture = async () => {
     ${generateLoadingAnimation()}`;
 
   furnitureList = await getFurnitureList();
-  optionList = await getOptionList();
   myOptionList = await getMyOptionList();
 
   page.innerHTML = `
@@ -49,7 +47,7 @@ const cancelOption = (e) => {
   e.preventDefault();
   let furnitureId = e.target.id.substring(4);
   let optionId;
-  optionList.forEach(option => {
+  myOptionList.forEach(option => {
     if (option.furnitureId == furnitureId) {
       if (!option.isCanceled) {
         optionId = option.optionId;
@@ -109,7 +107,7 @@ const addOption = (e) => {
 }
 
 const refresh = (data, status) => {
-  optionList.push(data);
+  myOptionList.push(data);
   updateFurnitureList(data.furnitureId, status)
   page.innerHTML = generateTable();
 
@@ -141,31 +139,6 @@ const getFurnitureList = async () => {
     displayErrorMessage("errorDiv", err);
   });
   return ret;
-}
-
-const getOptionList = async () => {
-  if (currentUser) {
-    let ret = [];
-    await fetch("/options/", {
-      method: "GET",
-      headers: {
-        "Authorization": currentUser.token,
-        "Content-Type": "application/json",
-      },
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(
-            "Error code : " + response.status + " : " + response.statusText);
-      }
-      return response.json();
-    }).then((data) => {
-      ret = data;
-    }).catch((err) => {
-      console.log("Erreur de fetch !! :´<\n" + err);
-      displayErrorMessage("errorDiv", err);
-    });
-    return ret;
-  }
 }
 
 const getMyOptionList = async () => {
@@ -233,7 +206,8 @@ const generateItemAndModal = (furniture) => {
   let item = `
         <div>`
       + getTag(furniture) +
-      `<img class="imageFurniturePage img-furniture" src="${findFavImgSrc(furniture,
+      `<img class="imageFurniturePage img-furniture" src="${findFavImgSrc(
+          furniture,
           images)}" alt="thumbnail" data-toggle="modal" data-target="#modal_`
       + furniture.furnitureId + `"/>
             <p class="text-center">` + furniture.description + `</p>`
@@ -299,8 +273,9 @@ const getTag = (furniture) => {
           (optionDate.getTime() / 86400000) + option.duration
           - (today.getTime() / 86400000));
       let plural = "";
-      if (optionDelay > 1)
+      if (optionDelay > 1) {
         plural += "s";
+      }
       ret = `<span class="badge badgeUnderOption">Sous option durant `
           + optionDelay + ` jour` + plural + `</span>`;
     }
@@ -315,7 +290,7 @@ const getOptionButton = (furniture) => {
   let alreadyUnderOption = false;
   if (currentUser) {
     myOptionList.forEach(option => {
-            alreadyUnderOption = true;
+      alreadyUnderOption = true;
     })
   }
   ;
