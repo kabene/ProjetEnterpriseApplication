@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 import java.util.stream.Stream;
+
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeAll;
@@ -732,7 +733,7 @@ class FurnitureUCCImplTest {
 
     assertThrows(ConflictException.class,
         () -> furnitureUCC.updateFavouritePhoto(defaultFurnitureId1, defaultPhotoId1),
-        "calling updateFavouritePhoto with a photo id that references a photo not belonging "
+        "calling updateFavouritePhoto with a photo id that references a photo not belonging"
             + "to the given furniture id should throw ConflictException");
 
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
@@ -1085,8 +1086,8 @@ class FurnitureUCCImplTest {
   @EnumSource(value = FurnitureStatus.class, names = {"REFUSED", "ACCEPTED", "IN_RESTORATION",
       "AVAILABLE_FOR_SALE", "UNDER_OPTION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED",
       "WITHDRAWN"})
-  void test_toAccepted_givenInvalidFurnitureStatus_shouldThrowConflict(FurnitureStatus startingStatus) {
-    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(startingStatus);
+  void test_toAccepted_givenInvalidFurnitureStatus_shouldThrowConflict(FurnitureStatus s) {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(s);
     Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
     Mockito.when(mockRequest1.getRequestStatus()).thenReturn(RequestStatus.CONFIRMED);
     assertThrows(ConflictException.class, () ->
@@ -1135,9 +1136,9 @@ class FurnitureUCCImplTest {
         .thenReturn(mockFurnitureDTO2);
     Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
     Mockito.when(mockRequest1.getRequestStatus()).thenReturn(requestStatus);
-    assertThrows(ConflictException.class, ()->
-        furnitureUCC.toAccepted(defaultFurnitureId1),
-        "A call to toAccepted with an invalid request status should throw ConflictException");
+    assertThrows(ConflictException.class, () ->
+            furnitureUCC.toAccepted(defaultFurnitureId1),
+        "Call to toAccepted with an invalid request status should throw ConflictException");
 
     InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1, mockRequestDAO);
     inOrder.verify(mockDal).startTransaction();
@@ -1242,9 +1243,9 @@ class FurnitureUCCImplTest {
         .thenReturn(mockFurnitureDTO2);
     Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
     Mockito.when(mockRequest1.getRequestStatus()).thenReturn(RequestStatus.WAITING);
-    assertThrows(ConflictException.class, ()->
+    assertThrows(ConflictException.class, () ->
             furnitureUCC.toRefused(defaultFurnitureId1),
-        "A call to toAccepted with an invalid request status should throw ConflictException");
+        "Call to toAccepted with an invalid request status should throw ConflictException");
 
     InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1, mockRequestDAO);
     inOrder.verify(mockDal).startTransaction();
@@ -1259,7 +1260,8 @@ class FurnitureUCCImplTest {
   @ParameterizedTest
   @ArgumentsSource(ValidUpdateInfosProvider.class)
   void test_updateInfos_nominal_shouldReturnDTO(String desc, Integer typeId, Double sellingPrice,
-      Double startingSellingPrice, FurnitureStatus status) {
+                                                Double startingSellingPrice,
+                                                FurnitureStatus status) {
     /*
     Parallel with implementation:
 

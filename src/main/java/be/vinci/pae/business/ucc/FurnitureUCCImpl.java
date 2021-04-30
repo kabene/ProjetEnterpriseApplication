@@ -97,7 +97,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       if (!furnitureDTO.getStatus().equals(FurnitureStatus.REQUESTED_FOR_VISIT)) {
         throw new ConflictException("Error: invalid furniture status");
       }
-      if(!requestDTO.getRequestStatus().equals(RequestStatus.CONFIRMED)) {
+      if (!requestDTO.getRequestStatus().equals(RequestStatus.CONFIRMED)) {
         throw new ConflictException("Error : invalid request status");
       }
       furnitureDTO.setStatus(FurnitureStatus.ACCEPTED);
@@ -127,7 +127,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       if (!furnitureDTO.getStatus().equals(FurnitureStatus.REQUESTED_FOR_VISIT)) {
         throw new ConflictException("Error: invalid furniture status");
       }
-      if(requestDTO.getRequestStatus().equals(RequestStatus.WAITING)) {
+      if (requestDTO.getRequestStatus().equals(RequestStatus.WAITING)) {
         throw new ConflictException("Error : invalid request status");
       }
       furnitureDTO.setStatus(FurnitureStatus.REFUSED);
