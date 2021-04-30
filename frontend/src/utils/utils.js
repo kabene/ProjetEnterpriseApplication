@@ -112,6 +112,17 @@ const findFavImgSrc = (furniture, images) => {
     return furniture.favouritePhoto.source;
 }
 
+
+export const displayImgs = (photosLst) => {
+    photosLst.forEach((photo) => {
+        document.querySelectorAll(`img[photo-id='${photo.photoId}']`)
+        .forEach((img) => {
+            img.src = photo.source;
+            console.log(img.src);
+        })
+    })
+}
+
 export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
      displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, 
      findFavImgSrc};

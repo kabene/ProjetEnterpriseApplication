@@ -1,7 +1,8 @@
 import {findCurrentUser} from "../utils/session";
-import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils";
+import {displayErrorMessage, generateLoadingAnimation,displayImgs} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
+
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -199,10 +200,13 @@ const findTransitionMethod = (btnId, request) => {
  * Then, adds all necessary event listeners.
  * @param {*} request
  */
-const generateCard = (request) => {
+const generateCard = async (request) => {
   let requestCardDiv = document.querySelector("#RequestCardDiv");
   let cardHTML = generateCardHTML(request);
   requestCardDiv.innerHTML = cardHTML;
+  for (const furniture of request.furnitureList) {
+    await getImage(furniture);
+  }
   //event listeners
   addTransitionBtnListeners(request);
   document.querySelectorAll(".favRadio").forEach((element) => {
@@ -425,7 +429,7 @@ const generatePhotoList = (request) => {
     <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
       <div class="row px-0">
         <div class="col-6">
-          <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+          <img class="img-fluid" src="${photo.source}" photo-id=${photo.photoId} alt="photo id:${photo.photoId}"/>
         </div>
         <div class="text-left col-6">
           <label class="form-check-label" for="${favRadioName}">
@@ -840,6 +844,34 @@ async function findVisitRequestList() {
     displayErrorMessage("errorDiv", err);
   });
 }
+
+/**
+ *
+ * @returns {Promise<any>}
+ */
+async function getImage(furniture) {
+
+  return fetch("/photos/favourite/"+furniture.furnitureId, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(
+          response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    let photoList= [data];
+    displayImgs(photoList);
+  }).catch((err) => {
+    console.log("Erreur de fetch !! :´\n" + err);
+    displayErrorMessage("errorDiv", err);
+  });
+}
+
 
 
 
