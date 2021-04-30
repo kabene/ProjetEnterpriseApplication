@@ -1,5 +1,6 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
@@ -87,6 +88,29 @@ public class PhotoUCCImpl implements PhotoUCC {
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
+    }
+    return res;
+  }
+
+  /**
+   * Finds the favourite photo for a specific furniture id.
+   *
+   * @param furnitureId : furniture id
+   * @return favourite photo as PhotoDTO
+   */
+  @Override
+  public PhotoDTO getFavourite(int furnitureId) {
+    PhotoDTO res = null;
+    try {
+      dalServices.startTransaction();
+      FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
+      res = photoDAO.findById(furnitureDTO.getFavouritePhotoId());
+      if(res == null) {
+        throw new InternalError("Unexpected Error"); //shouldn't be possible
+      }
+      dalServices.commitTransaction();
+    }catch (Throwable e) {
+      dalServices.rollbackTransaction();
     }
     return res;
   }

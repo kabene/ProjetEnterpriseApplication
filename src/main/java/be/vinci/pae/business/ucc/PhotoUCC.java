@@ -30,4 +30,12 @@ public interface PhotoUCC {
    * @return the modified resource as PhotoDTO
    */
   PhotoDTO patchDisplayFlags(int id, boolean isVisible, boolean isOnHomePage);
+
+  /**
+   * Finds the favourite photo for a specific furniture id.
+   *
+   * @param furnitureId : furniture id
+   * @return favourite photo as PhotoDTO
+   */
+  PhotoDTO getFavourite(int furnitureId);
 }

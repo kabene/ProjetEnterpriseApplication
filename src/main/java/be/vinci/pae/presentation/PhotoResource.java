@@ -94,4 +94,14 @@ public class PhotoResource {
     PhotoDTO dto = photoUCC.patchDisplayFlags(id, isVisible, isOnHomePage);
     return Response.ok(Json.filterAdminOnlyJsonView(dto, PhotoDTO.class)).build();
   }
+
+  @GET
+  @Path("/favourite/{furnitureId}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getByFurnitureId(@PathParam("furnitureId") int furnitureId) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
+        "GET /photos/favourite/"+furnitureId);
+    PhotoDTO photoDTO = photoUCC.getFavourite(furnitureId);
+    return Response.ok(Json.filterPublicJsonView(photoDTO, PhotoDTO.class)).build();
+  }
 }
