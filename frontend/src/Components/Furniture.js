@@ -61,12 +61,8 @@ const onClickApplyFilter = (e) => {
   e.preventDefault();
   filter.description = document.querySelector("#furnitureDescriptionFilter").value;
   filter.type = document.querySelector("#furnitureTypeFilter").value;
-  console.log(document.querySelector("[value='" + filter.type + "']"))
-  console.log(filter.description);
-  console.log(filter.type);
   page.innerHTML = generateTable();
   addAllEventListeners();
-
   document.querySelector("[value='" + filter.type + "']").setAttribute('selected', 'true');
 }
 
@@ -164,6 +160,14 @@ const generateAllItemsAndModals = () => {
 }
 
 const generateItemAndModal = (furniture) => {
+  if (filter.description !== "") {
+    if (!furniture.description.includes(filter.description))
+      return "";
+  }
+  if (filter.type !== "") {
+    if (filter.type !== furniture.type)
+      return "";
+  }
     let item = `
         <div>
             <img class="imageFurniturePage" src="${findFavImgSrc(furniture, images)}" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
