@@ -9,6 +9,13 @@ let currentUser;
 let optionList;
 let images = importAllFurnitureImg();
 
+const emptyFilter = {
+  username: "",
+  price: "-1",
+  status: "",
+}
+let activeFilters = {... emptyFilter};
+
 const Furniture = async () => {
     currentUser = findCurrentUser();
 
@@ -171,20 +178,38 @@ const generateTable = () => {
     <div class="wrapperFurniturePage">
         <div></div>
         <div>
-            <!-- @author Milan Raring
-                https://freefrontend.com/css-search-boxes/ -->
-            <form action="" class="search-bar">
-                <input type="search" name="search" pattern=".*\S.*" required>
-                <button class="search-btn" type="submit">
-                    <span>Search</span>
-                </button>
-            </form>
+          <h3>Filtrer les meubles:</h3>
+          ` + generateFilterHTML() + `
         </div>
         <div></div>
         <div></div>
         <div class="contentFurniturePage">` + generateAllItemsAndModals() + `</div>
         <div></div>
     </div>`;
+}
+
+const generateFilterHTML = () => {
+  return `
+  <form class="form-inline">
+    <div class="form-group mx-3">
+      <input type="text" class="form-control" id="furnitureFilter" placeholder="Rechercher un meuble"/>
+     </div>
+      <div class="form-group mx-3">
+        <select class="form-control" id="status-filter">
+          <option value="">Filtrer les états</option>
+          <option value="REQUESTED_FOR_VISIT">En demande de visite</option>
+          <option value="ACCEPTED">Accepté</option>
+          <option value="IN_RESTORATION">En restauration</option>
+          <option value="AVAILABLE_FOR_SALE">Disponible à la vente</option>
+          <option value="UNDER_OPTION">Sous option</option>
+          <option value="SOLD">Vendu</option>
+          <option value="WITHDRAWN">Retiré de la vente</option>
+          <option value="REFUSED">Refusé</option>
+        </select>
+     </div>
+     <button type="submit" id="apply-filters-btn" class="btn btn-primary mx-2">Appliquer</button>
+     <button type="submit" id="clear-filters-btn" class="btn btn-secondary mx-2">Retirer les filtres</button>
+  </form> `;
 }
 
 const generateAllItemsAndModals = () => {
