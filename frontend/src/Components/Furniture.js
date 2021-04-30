@@ -245,23 +245,18 @@ const generateOptionForm = () => {
 /********************  Backend fetch  **********************/
 
 const getFurnitureList = async () => {
-  let ret = [];
-  await fetch("/furniture/", {
+  let response = await fetch("/furniture/", {
       method: "GET",
       headers: {
           "Content-Type": "application/json",
       },
-  }).then((response) => {
-      if (!response.ok)
-          throw new Error("Error code : " + response.status + " : " + response.statusText);
-      return response.json();
-  }).then((data) => {
-       ret = data;
-  }).catch((err) => {
-      console.log("Erreur de fetch !! :´<\n" + err);
-      displayErrorMessage("errorDiv", err);
-    });
-  return ret;
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  return response.json();
 }
 
 
@@ -272,36 +267,28 @@ const getFurnitureTypeList = async () => {
   if (!response.ok) {
     const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
     console.error(err);
-    displayErrorMessage(err);
+    displayErrorMessage("errorDiv", err);
   }
   return response.json();
 }
 
 const getOptionList= async () => {
   if(currentUser) {
-    let ret = [];
-    await fetch("/options/", {
+    let response = await fetch("/options/", {
       method: "GET",
       headers: {
         "Authorization": currentUser.token,
         "Content-Type": "application/json",
       },
-    }).then((response) => {
-      if (!response.ok)
-        throw new Error(
-            "Error code : " + response.status + " : " + response.statusText);
-      return response.json();
-    }).then((data) => {
-      ret = data;
-    }).catch((err) => {
-      console.log("Erreur de fetch !! :´<\n" + err);
-      displayErrorMessage("errorDiv", err);
     });
-    return ret;
+    if (!response.ok) {
+      const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+      console.error(err);
+      displayErrorMessage("errorDiv", err);
+    }
+    return response.json();
   }
 }
-
-
 
 const cancelOption = (e) => {
   e.preventDefault();
