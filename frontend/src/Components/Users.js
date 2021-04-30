@@ -10,7 +10,11 @@ let confirmedUsersList;
 let currentUser;
 let timeouts = [];
 let userDetail;
-let valueButtonValid;
+
+let filter = {
+  role : "",
+  info : ""
+}
 
 const Users = async (id) => {
   currentUser = findCurrentUser();
@@ -24,13 +28,14 @@ const Users = async (id) => {
   document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
   document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
+  document.querySelector("#buttonApplyFilter").addEventListener("click", onApplyFilterClick);
+  document.querySelector("#buttonClearFilter").addEventListener("click", onClearFilterClick);
 
-  if(id) {
+  if (id) {
     displayShortElements();
     await displayUserCardById(id);
   }
 }
-
 
 
 /********************  Business methods  **********************/
@@ -133,38 +138,11 @@ const displayUserCardById = async (userId) => {
     valueButtonValid = e.target.id;
     document.querySelector("#accept").addEventListener("click",onValidateClick);
     document.querySelector("#refuse").addEventListener("click",onValidateClick);
-  }else {
+  } else {
     let takeoverBtn = document.querySelector("#takeoverBtn");
     takeoverBtn.className = "profile-edit-btn";
     takeoverBtn.addEventListener("click", (e) => onTakeoverClick(e));
   }
-}
-
-const onTakeoverClick = async (e) => {
-  e.preventDefault();
-  let btn = e.target;
-  let userId = btn.getAttribute("user-id");
-  let response = await fetch(`/users/takeover/${userId}`,{
-    method: "GET",
-    headers: {
-      "Authorization": currentUser.token,
-    },
-  });
-  if(!response.ok) {
-    let err = new Error( "Error code : " + response.status + " : " + response.statusText);
-    displayErrorMessage("errorDiv", err);
-    return;
-  }
-  let data = await response.json();
-
-  let bundle = {
-    ...data,
-    isAdmin: false,
-    isTakeover: true,
-  }
-  setTakeoverSessionData(bundle);
-  Navbar();
-  RedirectUrl("/");
 }
 
 /**
@@ -219,6 +197,34 @@ const removeFromArray = (id, array) => {
   }
 }
 
+const onApplyFilterClick = () => {
+  filter.info = document.querySelector("#userSearchBar").value;
+  filter.role = document.querySelector("#filterRole").value;
+  document.querySelector("#tableDiv").outerHTML = generateTable();
+
+  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
+  if (document.querySelector(".shortElement").style.display === "block") {
+    document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
+    document.querySelector('#largeTable').id = "shortTable";
+    document.querySelector('#largeTableContainer').id = "shortTableContainer";
+  }
+
+}
+
+const onClearFilterClick = () => {
+  filter.info = "";
+  filter.role = "";  
+  document.querySelector("#tableDiv").outerHTML = generateTable();
+  document.querySelector("option[value='']").selected = "true";
+  document.querySelector("#userSearchBar").value = "";
+  
+  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
+  if (document.querySelector(".shortElement").style.display === "block") {
+    document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
+    document.querySelector('#largeTable').id = "shortTable";
+    document.querySelector('#largeTableContainer').id = "shortTableContainer";
+  }
+}
 
 /********************  HTML generation  **********************/
 
@@ -229,10 +235,18 @@ const generateUsersPage = () => {
         </div>
         <div id="largeTableContainer">
           <div>
-            <input type="search" name="search" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
-            <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>`
-            + generateTable() +
-          `</div>
+            <input type="search" name="search" class="m-3" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
+            <select id="filterRole">
+              <option value="">Rechercher par rôle</option>
+              <option value="customer">client</option>
+              <option value="antique_dealer">antiquaire</option>
+              <option value="admin">admin</option>
+            </select>      
+            <button type="submit" id="buttonClearFilter" class="btn btn-secondary m-3">Retirer les filtres</button>
+            <button type="submit" id="buttonApplyFilter" class="btn btn-secondary m-3">Appliquer les filtres</button>
+            <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>
+            ` + generateTable() + `
+          </div>
           <div class="shortElement" id="userCardDiv"></div>
         </div>
         <div id="snackbar"></div>`;
@@ -240,6 +254,7 @@ const generateUsersPage = () => {
 
 const generateTable = () => {
   let res = `
+  <div id="tableDiv">
     <table id="largeTable" class="table table-bordered table-hover">
         <thead class="table-secondary">
             <tr>
@@ -255,7 +270,8 @@ const generateTable = () => {
         <tbody>`
           + getAllUsersRows() + `
         </tbody>
-    </table>`;
+    </table>
+  </div>`;
   return res;
 }
 
@@ -268,6 +284,11 @@ const getAllUsersRows = () => {
 }
 
 const generateRow = (user) => {
+  console.log(user);
+  if (filter.role !== '') {
+    if (filter.role !== user.role)
+      return ``;
+  }
   return ` 
     <tr class="toBeClicked" userId="` + user.id + `">
         <th><p>` + user.lastName + `</p></th>
@@ -501,7 +522,34 @@ const validation = async (e) => {
     displayErrorMessage("errorDiv", err);
     return;
   });
-  return ret; // TODO REFRESH PAGE IN REAL TIME
+  return ret;
+}
+
+const onTakeoverClick = async (e) => {
+  e.preventDefault();
+  let btn = e.target;
+  let userId = btn.getAttribute("user-id");
+  let response = await fetch(`/users/takeover/${userId}`,{
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+    },
+  });
+  if(!response.ok) {
+    let err = new Error( "Error code : " + response.status + " : " + response.statusText);
+    displayErrorMessage("errorDiv", err);
+    return;
+  }
+  let data = await response.json();
+
+  let bundle = {
+    ...data,
+    isAdmin: false,
+    isTakeover: true,
+  }
+  setTakeoverSessionData(bundle);
+  Navbar();
+  RedirectUrl("/");
 }
 
 
