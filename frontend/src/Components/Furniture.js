@@ -161,7 +161,7 @@ const generateAllItemsAndModals = () => {
 
 const generateItemAndModal = (furniture) => {
   if (filter.description !== "") {
-    if (!furniture.description.includes(filter.description))
+    if (!furniture.description.toLowerCase().includes(filter.description.toLowerCase()))
       return "";
   }
   if (filter.type !== "") {
