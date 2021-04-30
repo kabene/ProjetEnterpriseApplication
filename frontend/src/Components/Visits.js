@@ -67,6 +67,7 @@ const loadCard = (requestId) => {
   }
 }
 
+
 /**
  * Reloads the page and re-fetch request information.
  * Displays loading animation while awaiting the fetch.
@@ -493,7 +494,13 @@ const acceptFurniture = async (furnitureId) => {
       throw new Error(result.status + " : " + result.statusText);
     } else {
       let data = await result.json();
-      requestMap[data.requestId] = data;
+      let i=0; //TODO TO CHANGE
+      requestMap[data.requestId].furnitureList.forEach((furniture)=>{
+        i++;
+        if(furniture.furnitureId==data.furnitureId){
+          requestMap[data.requestId].furnitureList[i]=data;
+        }
+      });
       loadCard(data.requestId);
     }
   } catch (err) {
