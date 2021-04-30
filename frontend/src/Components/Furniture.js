@@ -9,12 +9,10 @@ let currentUser;
 let optionList;
 let images = importAllFurnitureImg();
 
-const emptyFilter = {
-  username: "",
-  price: "-1",
-  status: "",
-}
-let activeFilters = {... emptyFilter};
+let filter = {
+  description: "",
+  type: ""
+};
 
 const Furniture = async () => {
     currentUser = findCurrentUser();
@@ -34,14 +32,7 @@ const Furniture = async () => {
     </div>
     ${generateTable()}`;
 
-    document.querySelectorAll(".btnCreateOption").forEach(element =>{
-        element.addEventListener("click", addOption );
-    });
-    document.querySelectorAll(".cancelOptButton").forEach(element=>{
-      element.addEventListener("click",cancelOption);
-    });
-    document.querySelector("#apply-filters-btn").addEventListener("click", onClickApplyFilter);
-    document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
+    addAllEventListeners();
 }
 
 /********************  Business methods  **********************/
@@ -50,13 +41,7 @@ const refresh = (data, status) => {
   optionList.push(data);
   updateFurnitureList(data.furnitureId, status)
   page.innerHTML = generateTable();
-
-  document.querySelectorAll(".btnCreateOption").forEach(element =>{
-    element.addEventListener("click", addOption )
-  });
-  document.querySelectorAll(".cancelOptButton").forEach(element=>{
-    element.addEventListener("click",cancelOption);
-  })
+  addAllEventListeners();
 }
 
 
@@ -74,16 +59,43 @@ const updateFurnitureList = (furnitureId, status) => {
  */
 const onClickApplyFilter = (e) => {
   e.preventDefault();
+  filter.description = document.querySelector("#furnitureDescriptionFilter").value;
+  filter.type = document.querySelector("#furnitureTypeFilter").value;
+  console.log(document.querySelector("[value='" + filter.type + "']"))
+  console.log(filter.description);
+  console.log(filter.type);
   page.innerHTML = generateTable();
+  addAllEventListeners();
+
+  document.querySelector("[value='" + filter.type + "']").setAttribute('selected', 'true');
 }
 
 /**
  * Called when clicking on the cancel filter button.
- * Clear all filters chosen on the furniture and render all the furniture.
+ * Clear all filters chosen on the furniture and render all the furniture if there already was filters.
  */
 const onClickClearFilter = (e) => {
   e.preventDefault();
+  if (filter.description === "" && filter.type === "")
+    return;
+  filter.description = "";
+  filter.type = "";
   page.innerHTML = generateTable();
+  addAllEventListeners();
+}
+
+/**
+ * Add all the event listeners required in the document.
+ */
+const addAllEventListeners = () => {
+  document.querySelectorAll(".btnCreateOption").forEach(element =>{
+    element.addEventListener("click", addOption );
+  });
+  document.querySelectorAll(".cancelOptButton").forEach(element=>{
+    element.addEventListener("click",cancelOption);
+  });
+  document.querySelector("#apply-filters-btn").addEventListener("click", onClickApplyFilter);
+  document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
 }
 
 /********************  HTML generation  **********************/
@@ -105,26 +117,43 @@ const generateTable = () => {
 }
 
 const generateFilterHTML = () => {
+
   return `
   <form class="form-inline">
-    <div class="form-group mx-3">
-      <input type="text" class="form-control" id="furnitureFilter" placeholder="Rechercher un meuble"/>
+    <div class="form-group m-3">
+      <input type="text" class="form-control" id="furnitureDescriptionFilter" placeholder="Rechercher un meuble" value="` + filter.description + `"/>
      </div>
-      <div class="form-group mx-3">
-        <select class="form-control" id="status-filter">
-          <option value="">Filtrer les états</option>
-          <option value="REQUESTED_FOR_VISIT">En demande de visite</option>
-          <option value="ACCEPTED">Accepté</option>
-          <option value="IN_RESTORATION">En restauration</option>
-          <option value="AVAILABLE_FOR_SALE">Disponible à la vente</option>
-          <option value="UNDER_OPTION">Sous option</option>
-          <option value="SOLD">Vendu</option>
-          <option value="WITHDRAWN">Retiré de la vente</option>
-          <option value="REFUSED">Refusé</option>
+      <div class="form-group m-3">
+        <select class="form-control" id="furnitureTypeFilter">
+          <option value="">Filtrer par type de meuble</option>
+          <option value="Armoire">Armoire</option>
+          <option value="Bahut">Bahut</option>
+          <option value="Bibliothèque">Bibliothèque</option>
+          <option value="Bonnetière">Bonnetière</option>
+          <option value="Buffet">Buffet</option>
+          <option value="Bureau">Bureau</option>
+          <option value="Chaise">Chaise</option>
+          <option value="Chiffonier">Chiffonier</option>
+          <option value="Coffre">Coffre</option>
+          <option value="Coiffeuse">Coiffeuse</option>
+          <option value="Commode">Commode</option>
+          <option value="Confident/Indiscret">Confident/Indiscret</option>
+          <option value="Console">Console</option>
+          <option value="Dresse">Dresse</option>
+          <option value="Fauteil">Fauteil</option>
+          <option value="Guéridon">Guéridon</option>
+          <option value="Lingère">Lingère</option>
+          <option value="Lit">Lit</option>
+          <option value="Penderie">Penderie</option>
+          <option value="Secrétaire">Secrétaire</option>
+          <option value="Table">Table</option>
+          <option value="Tabouret">Tabouret</option>
+          <option value="Vasselier">Vasselier</option>
+          <option value="Valet muet">Valet muet</option>
         </select>
      </div>
-     <button type="submit" id="apply-filters-btn" class="btn btn-primary mx-2">Appliquer</button>
-     <button type="submit" id="clear-filters-btn" class="btn btn-secondary mx-2">Retirer les filtres</button>
+     <button type="submit" id="apply-filters-btn" class="btn btn-primary m-3">Appliquer</button>
+     <button type="submit" id="clear-filters-btn" class="btn btn-secondary m-3">Retirer les filtres</button>
   </form> `;
 }
 
