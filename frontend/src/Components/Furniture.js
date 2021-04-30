@@ -249,20 +249,23 @@ const generateItemAndModal = (furniture) => {
 const getTag = (furniture) => {
   let ret;
   if (furniture.status=="SOLD")
-    ret = `<span className="badge badgeSold">VENDU !</span>`;
+    ret = `<span class="badge badgeSold">VENDU !</span>`;
   else if (furniture.status=="UNDER_OPTION") {
-    let optionId;
+    console.log(optionList);
     optionList.forEach(option=>{
-      if(option.furnitureId == furnitureId ) {
+      if(option.furnitureId == furniture.furnitureId ) {
         if (!option.isCanceled){
-          optionId = option.optionId;
+          print(optionList);
+          let optionDate = new Date(option.dateOption);
+          let today = new Date();
+          let optionDelay = Math.floor((optionDate.getTime()/86400000)+option.duration-(today.getTime()/86400000));
+          ret = `<span class="badge badgeUnderOption">Sous option durant ` + optionDelay + ` jours</span>`;
         }
       }
     });
-    ret = `<span className="badge badgeUnderOption">Sous option durant ` + optionId.duration + ` jours</span>`;
-  }
-  else
-    ret = `<span className="badge badgeSold">Error</span>`;
+  } else //nothing
+    ret = "";
+  return ret;
 }
 
 

@@ -2,6 +2,7 @@ package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.pojos.Furniture;
+import be.vinci.pae.business.pojos.FurnitureStatus;
 import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.ConflictException;
@@ -82,8 +83,9 @@ public class FurnitureResource {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/");
     List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
     List<FurnitureDTO> res = furnitureDTOs.parallelStream()
-        .filter((dto) -> dto.getStatus().getValue().equals("available_for_sale")
-            || dto.getStatus().getValue().equals("sold"))
+        .filter((dto) -> dto.getStatus().equals(FurnitureStatus.AVAILABLE_FOR_SALE)
+            || dto.getStatus().equals(FurnitureStatus.SOLD)
+            || dto.getStatus().equals(FurnitureStatus.UNDER_OPTION))
         .map((dto) -> {
           Furniture f = (Furniture) dto;
           f.removeInvisiblePhotos();
