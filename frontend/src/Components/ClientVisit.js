@@ -180,7 +180,7 @@ const generateRequestCard = (request) => {
 								<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Information</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Meubles</a>
+								<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Meubles acceptés/refusés</a>
 							</li>
 						</ul>
 					</div>
@@ -190,7 +190,7 @@ const generateRequestCard = (request) => {
 			<div class="row">
 				<div class="col-md-8">
 					<div class="tab-content profile-tab" id="myTabContent">
-						<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">` + generateRequestInfoCard() + `</div>       
+						<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">` + generateRequestInfoCard(request) + `</div>       
 						<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">` + generateRequestFurnitureCard() + `</div>
 					</div>	
 				</div>
@@ -202,7 +202,7 @@ const generateRequestCard = (request) => {
 }
 
 
-const generateRequestInfoCard = () => {    
+const generateRequestInfoCard = (request) => {    
 	let info = "";
 	if (request.requestStatus === "CANCELED")
 		info = generateCardLabelKeyEntry("Justificatif de refus", "explanatory-note-entry", request.explanatoryNote);
@@ -212,7 +212,7 @@ const generateRequestInfoCard = () => {
 	return generateCardLabelKeyEntry("Adresse de visite", "address-entry", request.address.street + ` ` + request.address.buildingNumber + ` ` + request.address.postcode + `, ` + request.address.commune) + ` 
 	  ` + generateCardLabelKeyEntry("Date de la demande", "request-date-entry", request.requestDate) + `
 	  ` + generateCardLabelKeyEntry("Disponibilités", "time-slot-entry", request.timeSlot)
-	  ` + info + `;
+	   + info;
 }
 
 
