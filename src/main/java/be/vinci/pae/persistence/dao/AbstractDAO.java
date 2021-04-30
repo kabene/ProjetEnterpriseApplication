@@ -64,6 +64,7 @@ public abstract class AbstractDAO {
     return dtoList;
   }
 
+
   protected <T> T findById(int id, String tableName, String idName) {
     T res;
     String query = "SELECT t.* FROM satchofurniture." + tableName + " t WHERE t." + idName + " = ?";

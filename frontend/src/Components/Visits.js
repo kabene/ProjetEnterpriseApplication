@@ -291,7 +291,7 @@ const generateModalBodyFromTransitionId = (transitionId) => {
  */
 const generateToAcceptForm = () => {
   let res = `
-    <form class="form-group">
+    <form class="form-group d-block">
       <label for="acceptInput" class="mr-3">Entrez la date et heure de la visite: </label>
       <div class="mx-auto my-2">
         <input class=" mx-3 form-control" name="acceptInputDate" id="acceptInputDate" type="date" max="9999-12-12T00:00:00.00"/>
