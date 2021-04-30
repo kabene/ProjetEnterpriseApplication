@@ -403,26 +403,19 @@ const generateCardHTML = (request) => {
 const generatePhotoList = (request) => {
   let photos = "";
   request.furnitureList.forEach(furniture => {
-    let fav = furniture.favouritePhoto;
-    let favPhoto;
-    if (!fav) {
-      favPhoto = notFoundPhoto;
-    } else {
-      favPhoto = fav.source;
-    }
-
-    photos += `
-    <div class="p-1 w-50 container photo-list-container" request-id="${request.requestId}">
+    furniture.photos.forEach(photo => {
+      photos += `
+    <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
       <div class="row px-0">
         <div class="col-6">
-          <img class="img-fluid" src="${favPhoto}" alt="photo id:${fav.photoId}"/>
+          <img class="img-fluid" src="${photo.source}" photo-id=${photo.photoId} alt="photo id:${photo.photoId}"/>
         </div>
         ${generateRadioBtns(request, furniture)}
       </div>
     </div>`;
-  });
+    });
 
-  let res = `
+    let res = `
   <form>
     <input id="originalFav" type="hidden" request-id="${request.requestId}"/>
     <div class="form-check d-flex flex-lg-fill flex-row">
@@ -430,7 +423,8 @@ const generatePhotoList = (request) => {
     </div>
     ${generateChooseFurnitureBtn(request)}
   </form>`;
-  return res;
+    return res;
+  });
 }
 
 const generateRadioBtns = (request, furniture) => {
