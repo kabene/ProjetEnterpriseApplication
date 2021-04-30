@@ -1,3 +1,4 @@
+import notFoundPhoto from "../img/notFoundPhoto.png";
 import {getUserSessionData} from "../utils/session";
 import {removeTimeouts, generateLoadingAnimation, displayErrorMessage} from "../utils/utils";
 
@@ -191,7 +192,7 @@ const generateRequestCard = (request) => {
 				<div class="col-md-8">
 					<div class="tab-content profile-tab" id="myTabContent">
 						<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">` + generateRequestInfoCard(request) + `</div>       
-						<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">` + generateRequestFurnitureCard() + `</div>
+						<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">` + generateRequestFurnitureCard(request) + `</div>
 					</div>	
 				</div>
 			</div>
@@ -216,10 +217,40 @@ const generateRequestInfoCard = (request) => {
 }
 
 
-const generateRequestFurnitureCard = () => {
-	return `
-	
-	`;
+const generateRequestFurnitureCard = (request) => {
+  let photoList = generatePhotoList(request);
+  
+  let res = `
+  <form>
+    <input id="originalFav" type="hidden"/>
+    <div class="form-check d-flex flex-lg-fill flex-row">
+      ` + photoList + `
+    </div>
+  </form>`;
+  return res;
+}
+
+
+const generatePhotoList = (request) => {
+    let photoList = "";
+    request.furnitureList.forEach(furniture => {
+        let photoTag;
+        if (!furniture.favouritePhoto)
+          photoTag = `<img class="img-fluid" src="` + notFoundPhoto + `" alt="photoNotFound"/>`;
+        else
+        photoTag = `<img class="img-fluid" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
+        
+        photoList += `
+        <div class="p-1 w-50 container photo-list-container"">
+          <div class="row px-0">
+            <div class="col-6">
+                ` + photoTag + `
+                <p> ` +  generateStatusInfos(furniture.status).status + `</p>
+            </div>
+          </div>
+        </div>`;
+    });
+    return photoList;
 }
 
 
