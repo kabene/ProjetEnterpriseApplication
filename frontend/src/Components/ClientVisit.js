@@ -321,7 +321,7 @@ const generateStatusInfos = (status) => {
         break;
       case "CANCELED":
         res.classname = "danger";
-        res.status = "Refusé";
+        res.status = "Annulé";
         break;
       default:
         res.classname = "";
