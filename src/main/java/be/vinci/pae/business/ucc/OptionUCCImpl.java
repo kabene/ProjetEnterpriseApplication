@@ -107,7 +107,7 @@ public class OptionUCCImpl implements OptionUCC {
     try {
       dalServices.startTransaction();
       dtos = optionDAO.findAll();
-      for(OptionDTO optionDTO : dtos) {
+      for (OptionDTO optionDTO : dtos) {
         completeOptionDTO(optionDTO);
       }
       dalServices.commitTransaction();
@@ -130,9 +130,9 @@ public class OptionUCCImpl implements OptionUCC {
     try {
       dalServices.startTransaction();
       dtos = optionDAO.findByUserId(currentUser.getId()).stream()
-          .filter((o)->!o.isCanceled())
+          .filter((o) -> !o.isCanceled())
           .collect(Collectors.toList());
-      for(OptionDTO optionDTO : dtos) {
+      for (OptionDTO optionDTO : dtos) {
         completeOptionDTO(optionDTO);
       }
       dalServices.commitTransaction();
@@ -192,7 +192,7 @@ public class OptionUCCImpl implements OptionUCC {
    * @param dto : the FurnitureDTO to complete
    */
   private void completeOptionDTO(OptionDTO dto) {
-    if(dto.getUserId() != null) {
+    if (dto.getUserId() != null) {
       dto.setUser(userDAO.findById(dto.getUserId()));
     }
   }
