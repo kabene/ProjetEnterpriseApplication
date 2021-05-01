@@ -38,7 +38,8 @@ public class PhotoUCCImpl implements PhotoUCC {
         FurnitureDTO furnitureDTO = furnitureDAO.findById(photo.getFurnitureId());
         furnitureDTO.setPhotos(new ArrayList<>());
         photo.setFurniture(furnitureDTO);
-        photo.getFurniture().setType(furnitureTypeDAO.findById(photo.getFurniture().getTypeId()).getTypeName());
+        photo.getFurniture().setType(furnitureTypeDAO.findById(photo.getFurniture().getTypeId())
+            .getTypeName());
       }
       dalServices.commitTransaction();
     } catch (Throwable e) {

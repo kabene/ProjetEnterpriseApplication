@@ -121,9 +121,9 @@ class PhotoUCCImplTest {
   @Test
   void test_getAllVisibleHomePage_shouldReturnAllVisibleHomePage() {
     List<PhotoDTO> photoDTOS = Arrays.asList(mockPhotoDTO1, mockPhotoDTO2, mockPhotoDTO3);
-    for (PhotoDTO photoDTO : photoDTOS)
+    for (PhotoDTO photoDTO : photoDTOS) {
       Mockito.when(photoDTO.getFurniture()).thenReturn(mockFurnitureDTO1);
-
+    }
     Mockito.when(mockFurnitureDAO.findById(mockFurnitureDTO1.getFurnitureId()))
         .thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureTypeDAO.findById(mockFurnitureTypeDTO.getTypeId()))
