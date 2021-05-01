@@ -9,6 +9,7 @@ import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.OptionDAO;
+import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class OptionUCCImpl implements OptionUCC {
   private ConnectionDalServices dalServices;
   @Inject
   private OptionDAO optionDAO;
+  @Inject
+  private UserDAO userDAO;
   @Inject
   private FurnitureDAO furnitureDAO;
 
@@ -41,6 +44,7 @@ public class OptionUCCImpl implements OptionUCC {
       furnitureDTO.setStatus(FurnitureStatus.UNDER_OPTION);
       furnitureDAO.updateStatusOnly(furnitureDTO);
       opt = optionDAO.introduceOption(user, furnitureId, duration);
+      completeOptionDTO(opt);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -78,6 +82,7 @@ public class OptionUCCImpl implements OptionUCC {
 
       optionDAO.cancelOption(optionId);
       opt = optionDAO.findById(optionId);
+      completeOptionDTO(opt);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -98,6 +103,9 @@ public class OptionUCCImpl implements OptionUCC {
     try {
       dalServices.startTransaction();
       dtos = optionDAO.findAll();
+      for(OptionDTO optionDTO : dtos) {
+        completeOptionDTO(optionDTO);
+      }
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -118,11 +126,25 @@ public class OptionUCCImpl implements OptionUCC {
     try {
       dalServices.startTransaction();
       dtos = optionDAO.findByUserId(currentUser.getId());
+      for(OptionDTO optionDTO : dtos) {
+        completeOptionDTO(optionDTO);
+      }
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }
     return dtos;
+  }
+
+  /**
+   * Completes the OptionDTO given as an argument with it's references in the db.
+   *
+   * @param dto : the FurnitureDTO to complete
+   */
+  private void completeOptionDTO(OptionDTO dto) {
+    if(dto.getUserId() != null) {
+      dto.setUser(userDAO.findById(dto.getUserId()));
+    }
   }
 }
