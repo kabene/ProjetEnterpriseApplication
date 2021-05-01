@@ -169,7 +169,16 @@ const generatePageHtml = (largeTable = true) => {
             <th class="w-25"></th>
             <th class="align-middle">Description</th>
             <th class="${notNeededClassName}">Type</th>
-            <th class="align-middle">État <i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend("rouge","danger")}: Un meuble est sous option. <br/> ${generateBadgeLegend("vert","success")}: Le meuble est disponible a la meuble.<br/>${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état transient.  <br/>${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite. <br/> ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ces meubles. </div></i>  </th>
+            <th class="align-middle">État 
+              <i class="hover material-icons">&#xe88e; 
+              <div class="tooltip"> 
+                ${generateBadgeLegend("rouge","danger")}: Le meuble est sous option.<br/>
+                ${generateBadgeLegend("vert","success")}: Le meuble est disponible à la vente.<br/>
+                ${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état de transition.<br/>
+                ${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite.<br/>
+                ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ce meuble. 
+              </div></i>  
+            </th>
             <th class="${notNeededClassName}">Vendeur</th>
             <th class="${notNeededClassName}">Acheteur</th>
             <th class="${notNeededClassName}">Prix de vente</th>

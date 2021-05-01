@@ -493,8 +493,8 @@ body, .search-bar {
 /* end source */
 
 .tooltip {
-  background-color:#d6d8db ;
-  border-radius: 5%;
+  background-color:#e6e9ee ;
+  border-radius: 2%;
   /* hide and position tooltip */
   -webkit-transition: opacity 0.5s;
   -moz-transition: opacity 0.5s;
