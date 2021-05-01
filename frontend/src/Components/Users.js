@@ -92,6 +92,7 @@ const onRowClick = (e) => {
                     , 750));
   //magnify
   document.querySelector('#shortTable').id = "largeTable";
+  document.querySelector("#buttonsFilterSpan").style.display = "";
   if (document.querySelector('#shortTableContainer') !== null) //can be undefined because of the setTimeout in displayShortElements
     document.querySelector('#shortTableContainer').id = "largeTableContainer";
 }
@@ -103,6 +104,7 @@ const displayShortElements = () => {
   removeTimeouts(timeouts);
   //shrink
   document.querySelector('#largeTable').id = "shortTable";
+  document.querySelector("#buttonsFilterSpan").style.display = "block";
   timeouts.push(setTimeout( () => document.querySelector('#largeTableContainer').id = "shortTableContainer"
                     , 750));
   //hide
@@ -242,9 +244,11 @@ const generateUsersPage = () => {
               <option value="customer">client</option>
               <option value="antique_dealer">antiquaire</option>
               <option value="admin">admin</option>
-            </select>      
-            <button type="submit" id="buttonClearFilter" class="btn btn-secondary m-3">Retirer les filtres</button>
-            <button type="submit" id="buttonApplyFilter" class="btn btn-secondary m-3">Appliquer les filtres</button>
+            </select>
+            <span id='buttonsFilterSpan'>   
+              <button type="submit" id="buttonClearFilter" class="btn btn-secondary m-3">Retirer les filtres</button>
+              <button type="submit" id="buttonApplyFilter" class="btn btn-secondary m-3">Appliquer les filtres</button>
+            </span>
             <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>
             ` + generateTable() + `
           </div>
