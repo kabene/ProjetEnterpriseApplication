@@ -417,7 +417,7 @@ body, .search-bar {
 }
 
 #userSearchBar {
-  width: 24em;
+  width: 25em;
   margin-left: 1em;
   margin-bottom: 1em;
   transition: 1s;
