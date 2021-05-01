@@ -1,6 +1,7 @@
 package be.vinci.pae.business.dto;
 
 import be.vinci.pae.business.pojos.FurnitureImpl;
+import be.vinci.pae.business.pojos.FurnitureStatus;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.List;
 
@@ -27,9 +28,9 @@ public interface FurnitureDTO {
 
   void setSeller(UserDTO buyer);
 
-  String getCondition();
+  FurnitureStatus getStatus();
 
-  void setCondition(String cond);
+  void setStatus(FurnitureStatus status);
 
   String getSaleWithdrawalDate();
 
@@ -82,4 +83,32 @@ public interface FurnitureDTO {
   OptionDTO getOption();
 
   void setOption(OptionDTO option);
+
+  Integer getRequestId();
+
+  void setRequestId(Integer requestId);
+
+  RequestForVisitDTO getRequest();
+
+  void setRequest(RequestForVisitDTO request);
+
+  Double getPurchasePrice();
+
+  void setPurchasePrice(Double purchasePrice);
+
+  String getCustomerWithdrawalDate();
+
+  void setCustomerWithdrawalDate(String customerWithdrawalDate);
+
+  String getDepositDate();
+
+  void setDepositDate(String depositDate);
+
+  Boolean isSuitable();
+
+  void setSuitable(Boolean isSuitable);
+
+  Boolean isAvailableForSale();
+
+  void setAvailableForSale(Boolean isAvailableForSale);
 }

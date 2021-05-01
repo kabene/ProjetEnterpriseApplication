@@ -30,7 +30,7 @@ public interface OptionDAO {
    * @param id id of the option.
    * @return OptionDTO that represent the option
    */
-  OptionDTO getOption(int id);
+  OptionDTO findById(int id);
 
   /**
    * list all the options .
@@ -47,4 +47,12 @@ public interface OptionDAO {
    */
   OptionDTO findByFurnitureId(int furnitureId);
 
+
+  /**
+   * list all user's options.
+   *
+   * @param userId user id.
+   * @return list of all user's options.
+   */
+  List<OptionDTO> findByUserId(int userId);
 }

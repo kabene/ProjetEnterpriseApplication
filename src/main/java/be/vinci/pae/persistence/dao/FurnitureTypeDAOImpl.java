@@ -1,35 +1,50 @@
 package be.vinci.pae.persistence.dao;
 
-import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
+import be.vinci.pae.business.dto.FurnitureTypeDTO;
+import be.vinci.pae.business.factories.FurnitureTypeFactory;
 import jakarta.inject.Inject;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
-public class FurnitureTypeDAOImpl implements FurnitureTypeDAO {
-
+public class FurnitureTypeDAOImpl extends AbstractDAO implements FurnitureTypeDAO {
   @Inject
-  ConnectionBackendDalServices dalServices;
+  FurnitureTypeFactory furnitureTypeFactory;
 
+  /**
+   * Finds one furniture type with its id.
+   *
+   * @param id : the type's id
+   * @return the type label as a String
+   */
   @Override
-  public String findById(int id) {
-    String res = "";
-    String query = "SELECT t.* FROM satchofurniture.furniture_types t WHERE t.type_id = ?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, id);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        res = rs.getString("type_name");
-      } else {
-        throw new NotFoundException("Error: furniture type not found");
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-    return res;
+  public FurnitureTypeDTO findById(int id) {
+    return findById(id, "furniture_types", "type_id");
+  }
+
+  /**
+   * Finds all types in the DB.
+   *
+   * @return the types as a List of Strings.
+   */
+  @Override
+  public List<FurnitureTypeDTO> findAll() {
+    return findAll("furniture_types");
+  }
+
+
+  /**
+   * Creates a string containing a furnitureType using a ResultSet.
+   *
+   * @param rs : the ResultSet containing the information
+   * @return a FurnitureTypeDTO containing the information from the result set
+   * @throws SQLException in case of problem during access to the ResultSet
+   */
+  @Override
+  protected FurnitureTypeDTO toDTO(ResultSet rs) throws SQLException {
+    FurnitureTypeDTO dto = furnitureTypeFactory.getFurnitureTypeDTO();
+    dto.setTypeName(rs.getString("type_name"));
+    dto.setTypeId(rs.getInt("type_id"));
+    return dto;
   }
 }

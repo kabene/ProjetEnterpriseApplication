@@ -46,11 +46,11 @@ public interface UserDAO {
   boolean usernameAlreadyTaken(String username);
 
   /**
-   * getAllusers of the db.
+   * getAllUsers of the db.
    *
    * @return list contains the users of the db.
    */
-  List<UserDTO> getAllUsers();
+  List<UserDTO> findAll();
 
   /**
    * get all user waiting for registration validation of the db.

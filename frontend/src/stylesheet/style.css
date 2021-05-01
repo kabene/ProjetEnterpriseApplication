@@ -31,6 +31,8 @@
   }
 }
 
+
+
 .navbarButton {
   height: 4em;
   margin-right: 1.5em;
@@ -64,14 +66,6 @@
 
 /********************************On HomePage**********************************/
 
-.badgeSold {
-  transform: rotateZ(-25deg);
-  margin-top: 2em;
-  margin-left: 5em;
-  color: red;
-  background-color: lightgray;
-  height: 2em;
-}
 
 
 /********************************On Footer**********************************/
@@ -131,12 +125,12 @@ footer {
   color: #6c757d;
   cursor: pointer;
 }
-.proile-rating{
+.profile-rating{
   font-size: 12px;
   color: #818182;
   margin-top: 5%;
 }
-.proile-rating span{
+.profile-rating span{
   color: #495057;
   font-size: 15px;
   font-weight: 600;
@@ -202,9 +196,6 @@ footer {
   border: solid 1px grey;
 }
 
-.contentFurniturePage > div {
-}
-
 .imageFurniturePage {
   margin: auto;
   display: block;
@@ -232,6 +223,34 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+img-furniture {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.badgeSold {
+  transform: rotateZ(-25deg) translateY(2em);;
+  margin-top: 2em;
+  margin-left: 2em;
+  color: red;
+  background-color: rgba(211,211,211, 0.4);
+
+  height: 2em;
+  font-size: large;
+}
+
+.badgeUnderOption {
+  margin-top: 2em;
+  margin-right: 1em;
+  transform: translateY(2em);
+  color: blue;
+  background-color: rgba(211,211,211, 0.4);
+  height: 2em;
+  font-size: large;
+}
+
 
 
 /* source @author Milan Raring
@@ -391,10 +410,24 @@ body, .search-bar {
   grid-gap: 5em;
   text-align: -webkit-center;
   overflow-x: auto;
+  overflow-y: auto;
 }
 #shortTable {
-  width: 15em;
+  width: 20em;
   transition: 1s;
+}
+
+.selected-row {
+  background-color: lightslategray!important;
+  color: white!important;
+}
+
+.selected-row a {
+  color: white;
+}
+
+.selected-row a:visited {
+  color: white;
 }
 
 .msgTable {
@@ -406,7 +439,7 @@ body, .search-bar {
 }
 
 #userSearchBar {
-  width: 24em;
+  width: 25em;
   margin-left: 1em;
   margin-bottom: 1em;
   transition: 1s;
@@ -475,3 +508,20 @@ body, .search-bar {
   to {bottom: 0; opacity: 0;}
 }
 /* end source */
+
+.tooltip {
+  background-color:#e6e9ee ;
+  border-radius: 2%;
+  /* hide and position tooltip */
+  -webkit-transition: opacity 0.5s;
+  -moz-transition: opacity 0.5s;
+  -ms-transition: opacity 0.5s;
+  -o-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+
+.hover:hover .tooltip {
+  /* display tooltip on hover */
+  padding: 10px;
+  opacity: 1;
+}

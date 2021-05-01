@@ -1,7 +1,6 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
@@ -13,12 +12,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAOImpl implements UserDAO {
+public class UserDAOImpl extends AbstractDAO implements UserDAO {
 
   @Inject
   private UserFactory userFactory;
-  @Inject
-  private ConnectionBackendDalServices dalServices;
 
   /**
    * Executes a query to find a user having a specific username.
@@ -55,23 +52,7 @@ public class UserDAOImpl implements UserDAO {
    */
   @Override
   public UserDTO findById(int userId) {
-    UserDTO userFound;
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.user_id = ?";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, userId);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        userFound = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: user not found");
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return userFound;
+    return findById(userId, "users", "user_id");
   }
 
   /**
@@ -154,24 +135,13 @@ public class UserDAOImpl implements UserDAO {
   }
 
   /**
-   * getAllusers of the db.
+   * find all users of the db.
    *
    * @return list contains the users of the db.
    */
   @Override
-  public List<UserDTO> getAllUsers() {
-    List<UserDTO> users = new ArrayList<>();
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        users.add(toDTO(rs));
-      }
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return users;
+  public List<UserDTO> findAll() {
+    return findAll("users");
   }
 
   /**
@@ -183,7 +153,8 @@ public class UserDAOImpl implements UserDAO {
   public List<UserDTO> getAllWaitingUsers() {
     List<UserDTO> users = new ArrayList<>();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.waiting = true";
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.is_waiting = true"
+          + " ORDER BY u.last_name, u.first_name";
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
@@ -204,7 +175,9 @@ public class UserDAOImpl implements UserDAO {
   public List<UserDTO> getAllConfirmedUsers() {
     List<UserDTO> users = new ArrayList<>();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.waiting = false";
+      String query = "SELECT u.* FROM satchofurniture.users u "
+          + "WHERE u.is_waiting = false"
+          + " ORDER BY u.last_name, u.first_name";
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
@@ -229,9 +202,10 @@ public class UserDAOImpl implements UserDAO {
       String query = "SELECT u.* FROM satchofurniture.users u "
           + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
           + "WHERE lower(a.commune) LIKE lower(?) "
-          + "OR lower(u.first_name) LIKE lower(?)"
-          + "OR lower(u.last_name) LIKE lower(?)"
-          + "OR lower(a.postcode) LIKE lower(?)";
+          + "OR lower(u.first_name) LIKE lower(?) "
+          + "OR lower(u.last_name) LIKE lower(?) "
+          + "OR lower(a.postcode) LIKE lower(?) "
+          + " ORDER BY u.last_name, u.first_name";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, "%" + userSearch + "%");
       ps.setString(2, "%" + userSearch + "%");
@@ -257,10 +231,10 @@ public class UserDAOImpl implements UserDAO {
   public void setRole(int id, boolean value) {
     String query;
     if (value) {
-      query = "UPDATE  satchoFurniture.users u SET waiting = false WHERE  u.user_id = ?";
+      query = "UPDATE  satchoFurniture.users u SET is_waiting = false WHERE  u.user_id = ?";
     } else {
       query = "UPDATE satchoFurniture.users u "
-          + "SET  role = 'customer', waiting = false "
+          + "SET  role = 'customer', is_waiting = false "
           + "WHERE u.user_id = ?";
     }
     PreparedStatement ps = dalServices.makeStatement(query);
@@ -280,7 +254,8 @@ public class UserDAOImpl implements UserDAO {
    * @param rs : the ResultSet containing the information
    * @throws SQLException in case of problem during access to the ResultSet
    */
-  private UserDTO toDTO(ResultSet rs) throws SQLException {
+  @Override
+  protected UserDTO toDTO(ResultSet rs) throws SQLException {
     UserDTO userFound = userFactory.getUserDTO();
     userFound.setId(rs.getInt("user_id"));
     userFound.setLastName(rs.getString("last_name"));
@@ -293,7 +268,7 @@ public class UserDAOImpl implements UserDAO {
     userFound.setPassword(rs.getString("password"));
     userFound.setPurchasedFurnitureNbr(rs.getInt("purchased_furniture_nbr"));
     userFound.setSoldFurnitureNbr(rs.getInt("sold_furniture_nbr"));
-    userFound.setWaiting(rs.getBoolean("waiting"));
+    userFound.setWaiting(rs.getBoolean("is_waiting"));
     return userFound;
   }
 

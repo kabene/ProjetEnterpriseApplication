@@ -4,7 +4,6 @@ import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.OptionFactory;
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,12 +11,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OptionDAOImpl implements OptionDAO {
+public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
 
   @Inject
   private OptionFactory optionFactory;
-  @Inject
-  private ConnectionBackendDalServices dalServices;
 
 
   /**
@@ -78,49 +75,26 @@ public class OptionDAOImpl implements OptionDAO {
    * @return OptionDTO that represent the option
    */
   @Override
-  public OptionDTO getOption(int id) {
-    OptionDTO optionFound;
-    String query = "SELECT o.* FROM satchofurniture.options o WHERE o.option_id=? ";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setInt(1, id);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        optionFound = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: option not found");
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return optionFound;
+  public OptionDTO findById(int id) {
+    return findById(id, "options", "option_id");
   }
 
   /**
-   * list all the options .
+   * Finds all options.
    *
    * @return list of all the options.
    */
   @Override
   public List<OptionDTO> findAll() {
-    List<OptionDTO> res = new ArrayList<>();
-    String query = " SELECT * FROM satchofurniture.options ";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        res.add(toDTO(rs));
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return res;
+    return findAll("options");
   }
 
+  /**
+   * search an option by furniture id.
+   *
+   * @param furnitureId furniture id.
+   * @return found option.
+   */
   @Override
   public OptionDTO findByFurnitureId(int furnitureId) {
     OptionDTO opt;
@@ -143,14 +117,41 @@ public class OptionDAOImpl implements OptionDAO {
     return opt;
   }
 
+  /**
+   * list all user's options.
+   *
+   * @param userId user id.
+   * @return list of all user's options.
+   */
+  @Override
+  public List<OptionDTO> findByUserId(int userId) {
+    List<OptionDTO> optionList = new ArrayList<>();
+    String query = "SELECT o.* FROM satchofurniture.options o "
+        + "WHERE o.user_id = ? AND o.is_canceled = 'false'";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setInt(1, userId);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        optionList.add(toDTO(rs));
+      }
+      rs.close();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return optionList;
+  }
 
   /**
    * Creates and fills a OptionDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information
+   * @return a dto containing the information from the result set
    * @throws SQLException in case of problem during access to the ResultSet
    */
-  private OptionDTO toDTO(ResultSet rs) throws SQLException {
+  @Override
+  protected OptionDTO toDTO(ResultSet rs) throws SQLException {
     OptionDTO optionFound = optionFactory.getOptionDTO();
     optionFound.setOptionId(rs.getInt("option_id"));
     optionFound.setDuration(rs.getInt("duration"));

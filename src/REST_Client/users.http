@@ -3,8 +3,8 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "other",
-  "password": "azerty"
+  "username": "notExistingUser",
+  "password": "usrpw"
 }
 ###
 
@@ -14,8 +14,8 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "ex",
-  "password": "qwerty"
+  "username": "bazz",
+  "password": "badpwusr"
 }
 ###
 
@@ -24,7 +24,7 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "ex"
+  "username": "bazz"
 }
 ###
 
@@ -33,8 +33,8 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "ex",
-  "password": "azerty",
+  "username": "bazz",
+  "password": "mdpusr.2",
   "rememberMe": true
 }
 
@@ -48,21 +48,46 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "username": "johndoe",
-  "password": "azerty",
+  "username": "bert",
+  "password": "Jaune;10.",
   "rememberMe": true
 }
 > {%
  client.global.set("jwt", response.body.token);
  %}
+###
 
+GET {{baseUrl}}/users/takeover/5
+Authorization: {{jwt}}
 
-####
+> {%
+client.global.set("takeover_jwt", response.body.token);
+%}
+###
+
 // me -> get current user
 GET {{baseUrl}}/users/me
 Authorization: {{jwt}}
 ###
 
+// me -> get takeover user
+GET {{baseUrl}}/users/me
+Authorization: {{takeover_jwt}}
+###
+
+//login with remember me -> store jwt
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "username": "achil",
+  "password": "mdpusr.2",
+  "rememberMe": true
+}
+> {%
+ client.global.set("jwt", response.body.token);
+ %}
+####
 
 // remember me -> generate & store new jwt
 GET {{baseUrl}}/users/login

@@ -1,24 +1,29 @@
 package be.vinci.pae.main;
 
 
+import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.FurnitureFactory;
+import be.vinci.pae.business.factories.FurnitureTypeFactory;
 import be.vinci.pae.business.factories.OptionFactory;
 import be.vinci.pae.business.factories.PhotoFactory;
-import be.vinci.pae.business.ucc.FurnitureUCC;
+import be.vinci.pae.business.factories.UserFactory;
+import be.vinci.pae.business.factories.RequestForVisitFactory;
+import be.vinci.pae.business.ucc.FurnitureTypeUCC;
+import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.business.ucc.OptionUCC;
+import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.business.ucc.PhotoUCC;
+import be.vinci.pae.business.ucc.RequestForVisitUCC;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
+import be.vinci.pae.persistence.dao.UserDAO;
+import be.vinci.pae.persistence.dao.AddressDAO;
+import be.vinci.pae.persistence.dao.RequestForVisitDAO;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
-import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
 import be.vinci.pae.persistence.dao.OptionDAO;
+import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import be.vinci.pae.presentation.authentication.Authentication;
-import be.vinci.pae.business.factories.AddressFactory;
-import be.vinci.pae.business.factories.UserFactory;
-import be.vinci.pae.business.ucc.UserUCC;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
-import be.vinci.pae.persistence.dao.AddressDAO;
-import be.vinci.pae.persistence.dao.UserDAO;
 import be.vinci.pae.utils.Configurate;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.ext.Provider;
@@ -45,7 +50,8 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("OptionDAO"))).to(OptionDAO.class)
           .in(Singleton.class);
-
+      bind(Class.forName(Configurate.getConfiguration("RequestForVisitDAO")))
+          .to(RequestForVisitDAO.class).in(Singleton.class);
 
       //FACTORY
       bind(Class.forName(Configurate.getConfiguration("UserFactory"))).to(UserFactory.class)
@@ -60,6 +66,10 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("OptionFactory"))).to(OptionFactory.class)
           .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("RequestForVisitFactory")))
+          .to(RequestForVisitFactory.class).in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("FurnitureTypeFactory")))
+          .to(FurnitureTypeFactory.class).in(Singleton.class);
 
       //UCC
       bind(Class.forName(Configurate.getConfiguration("UserUCC"))).to(UserUCC.class)
@@ -70,10 +80,14 @@ public class ApplicationBinder extends AbstractBinder {
           .in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("OptionUCC"))).to(OptionUCC.class)
           .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("RequestForVisitUCC")))
+          .to(RequestForVisitUCC.class).in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("FurnitureTypeUCC")))
+          .to(FurnitureTypeUCC.class).in(Singleton.class);
 
       //OTHERS
-      bind(Class.forName(Configurate.getConfiguration("Authentication"))).to(Authentication.class)
-          .in(Singleton.class);
+      bind(Class.forName(Configurate.getConfiguration("Authentication")))
+          .to(Authentication.class).in(Singleton.class);
       bind(Class.forName(Configurate.getConfiguration("ConnectionDalServices")))
           .to(ConnectionDalServices.class)
           .to(ConnectionBackendDalServices.class)

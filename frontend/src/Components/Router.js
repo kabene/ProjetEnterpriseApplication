@@ -5,8 +5,10 @@ import Users from "./Users.js";
 import Visits from "./Visits.js";
 import ErrorPage from "./ErrorPage.js";
 import FurnitureList from "./FurnitureList.js";
-import VisitRequest from "./VisitRequest.js";
+import ClientVisit from "./ClientVisit.js";
 import LogoutComponent from "./LogoutComponent.js";
+import ReleaseTakeoverComponent from "./ReleaseTakeoverComponent";
+import {fetchMe} from "../utils/utils.js";
 import { getUserLocalData, getUserSessionData, setUserLocalData, setUserSessionData } from "../utils/session.js";
 import { setLayout } from "../utils/render.js";
 
@@ -16,9 +18,10 @@ const routes = {
     "/furniture": Furniture,
     "/users": Users,
     "/visits": Visits,
+    "/myVisits": ClientVisit,
     "/furnitureList": FurnitureList,
-    "/visitRequest": VisitRequest,
-    "/logout": LogoutComponent
+    "/logout": LogoutComponent,
+    "/releaseTakeover": ReleaseTakeoverComponent,
 };
 
 let componentToRender;
@@ -31,10 +34,10 @@ const Router = () => {
 }
 
 //onLoadHandler
-const onLoadHandler = async (e) => {
+const onLoadHandler = async () => {
     let url = window.location.pathname;
     console.log("onLoad : ", url);
-    getRememberMe(); // logs in if remember me
+    await getRememberMe(); // logs in if remember me
     componentToRender = routes[url];
     if(!componentToRender){
         ErrorPage(url)
@@ -62,7 +65,7 @@ const onNavigateHandler = (e) => {
 };
 
 //onHistoryHandler (arrows <- -> )
-const onHistoryHandler = (e) => {
+const onHistoryHandler = () => {
     console.log("onHistory : ", window.location.pathname);
     removeModals();
     componentToRender = routes[window.location.pathname];
@@ -88,12 +91,13 @@ const RedirectUrl = (uri, data) => {
         componentToRender(data);
 };
 
-const getRememberMe = () => {
+const getRememberMe = async () => {
     let sessionData = getUserSessionData();
     if(!sessionData) {
         let token = getUserLocalData();
         if(token) {
-            fetch("/users/login", {
+            console.log("GET /users/login");
+            await fetch("/users/login", {
                 method: "GET",
                 headers: {
                     Authorization: token
@@ -114,10 +118,13 @@ const getRememberMe = () => {
     }
 }
 
-const onUserLogin = (data) => {
+const onUserLogin = async (data) => {
     console.log("Logged in via remember me token : ", data)
-    const user = {...data, isAutenticated: true};
-    setUserSessionData(user);
+    
+    let user = await fetchMe(data.token);
+    const bundle = {...data, isAutenticated: true, isAdmin: user.role === "admin"};
+
+    setUserSessionData(bundle);
     setUserLocalData(data.token);
     setLayout();
 }
@@ -129,6 +136,5 @@ const removeModals = () => {
         m.parentNode.removeChild(m);
     }
 }
-
 
 export {Router, RedirectUrl};

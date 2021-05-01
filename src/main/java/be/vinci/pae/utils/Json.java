@@ -11,7 +11,7 @@ public class Json {
    * Filters a pojo to send as a response using public json view.
    * @param item : pojo to filter
    * @param targetClass : class to filter as.
-   * @param <T> : class to filter as
+   * @param <T> : type of item parameter.
    * @return the filtered pojo.
    */
   public static <T> T filterPublicJsonView(T item, Class<T> targetClass) {
@@ -22,7 +22,7 @@ public class Json {
    * Filters a pojo to send as a response using admin only json view.
    * @param item : pojo to filter
    * @param targetClass : class to filter as.
-   * @param <T> : class to filter as
+   * @param <T> : type of item parameter.
    * @return the filtered pojo.
    */
   public static <T> T filterAdminOnlyJsonView(T item, Class<T> targetClass) {
@@ -30,16 +30,22 @@ public class Json {
   }
 
 
+  /**
+   * Filters a pojo to send as a response using json view.
+   * @param item : pojo to filter
+   * @param targetClass : class to filter as.
+   * @param view : view that determines how to filter the item.
+   * @param <T> : type of item parameter.
+   * @return the filtered pojo.
+   */
   private static <T> T filterUsingView(T item, Class<T> targetClass, Class view) {
     try {
       String adminOnlyItemAsString = jsonMapper.writerWithView(view)
           .writeValueAsString(item);
-      T res =  jsonMapper.readerWithView(view).forType(targetClass)
+      return jsonMapper.readerWithView(view).forType(targetClass)
           .readValue(adminOnlyItemAsString);
-      return res;
     } catch (JsonProcessingException e) {
-      e.printStackTrace();
-      return null;
+      throw new InternalError(e);
     }
   }
 }

@@ -11,37 +11,37 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class OptionImpl implements OptionDTO {
 
   @JsonView(Views.Public.class)
-  private int optionId;
+  private Integer optionId;
   @JsonView(Views.Public.class)
-  private int duration;
+  private Integer duration;
   @JsonView(Views.Public.class)
   private String dateOption;
+  @JsonView(Views.AdminOnly.class)
+  private Integer userId;
   @JsonView(Views.Public.class)
-  private int userId;
+  private Integer furnitureId;
   @JsonView(Views.Public.class)
-  private int furnitureId;
-  @JsonView(Views.Public.class)
-  private boolean isCanceled;
-  @JsonView(Views.Public.class)
+  private Boolean isCanceled;
+  @JsonView(Views.AdminOnly.class)
   private UserDTO user;
 
   @Override
-  public int getOptionId() {
+  public Integer getOptionId() {
     return optionId;
   }
 
   @Override
-  public void setOptionId(int optionId) {
+  public void setOptionId(Integer optionId) {
     this.optionId = optionId;
   }
 
   @Override
-  public int getDuration() {
+  public Integer getDuration() {
     return duration;
   }
 
   @Override
-  public void setDuration(int duration) {
+  public void setDuration(Integer duration) {
     this.duration = duration;
   }
 
@@ -56,12 +56,12 @@ public class OptionImpl implements OptionDTO {
   }
 
   @Override
-  public int getUserId() {
+  public Integer getUserId() {
     return userId;
   }
 
   @Override
-  public void setUserId(int clientId) {
+  public void setUserId(Integer clientId) {
     this.userId = clientId;
   }
 
@@ -76,22 +76,22 @@ public class OptionImpl implements OptionDTO {
   }
 
   @Override
-  public int getFurnitureId() {
+  public Integer getFurnitureId() {
     return furnitureId;
   }
 
   @Override
-  public void setFurnitureId(int furnitureId) {
+  public void setFurnitureId(Integer furnitureId) {
     this.furnitureId = furnitureId;
   }
 
   @Override
-  public boolean isCanceled() {
+  public Boolean isCanceled() {
     return isCanceled;
   }
 
   @Override
-  public void setCanceled(boolean isCanceled) {
+  public void setCanceled(Boolean isCanceled) {
     this.isCanceled = isCanceled;
   }
 }

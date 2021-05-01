@@ -1,18 +1,19 @@
 package be.vinci.pae.business.pojos;
 
-import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @JsonInclude(Include.NON_NULL)
-public class FurnitureImpl implements FurnitureDTO {
+public class FurnitureImpl implements Furniture {
 
   @JsonView(Views.Public.class)
   private Integer furnitureId;
@@ -25,7 +26,7 @@ public class FurnitureImpl implements FurnitureDTO {
   @JsonView(Views.AdminOnly.class)
   private UserDTO seller;
   @JsonView(Views.Public.class)
-  private String condition;
+  private FurnitureStatus status;
   @JsonView(Views.AdminOnly.class)
   private String saleWithdrawalDate;
   @JsonView(Views.Public.class)
@@ -50,8 +51,22 @@ public class FurnitureImpl implements FurnitureDTO {
   private Boolean isToPickUp;
   @JsonView(Views.AdminOnly.class)
   private String pickUpDate;
-  @JsonView(Views.AdminOnly.class)
+  @JsonView(Views.Public.class)
   private OptionDTO option;
+  @JsonView(Views.AdminOnly.class)
+  private Integer requestId;
+  @JsonView(Views.AdminOnly.class)
+  private Double purchasePrice;
+  @JsonView(Views.AdminOnly.class)
+  private String customerWithdrawalDate;
+  @JsonView(Views.AdminOnly.class)
+  private String depositDate;
+  @JsonView(Views.AdminOnly.class)
+  private Boolean suitable;
+  @JsonView(Views.AdminOnly.class)
+  private Boolean availableForSale;
+  @JsonView(Views.AdminOnly.class)
+  private RequestForVisitDTO request;
 
 
   @Override
@@ -105,13 +120,13 @@ public class FurnitureImpl implements FurnitureDTO {
   }
 
   @Override
-  public String getCondition() {
-    return condition;
+  public FurnitureStatus getStatus() {
+    return status;
   }
 
   @Override
-  public void setCondition(String cond) {
-    this.condition = cond;
+  public void setStatus(FurnitureStatus status) {
+    this.status = status;
   }
 
   @Override
@@ -242,5 +257,85 @@ public class FurnitureImpl implements FurnitureDTO {
   @Override
   public void setOption(OptionDTO option) {
     this.option = option;
+  }
+
+  @Override
+  public Integer getRequestId() {
+    return this.requestId;
+  }
+
+  @Override
+  public void setRequestId(Integer requestId) {
+    this.requestId = requestId;
+  }
+
+  @Override
+  public RequestForVisitDTO getRequest() {
+    return this.request;
+  }
+
+  @Override
+  public void setRequest(RequestForVisitDTO request) {
+    this.request = request;
+  }
+
+  @Override
+  public Double getPurchasePrice() {
+    return this.purchasePrice;
+  }
+
+  @Override
+  public void setPurchasePrice(Double purchasePrice) {
+    this.purchasePrice = purchasePrice;
+  }
+
+  @Override
+  public String getCustomerWithdrawalDate() {
+    return customerWithdrawalDate;
+  }
+
+  @Override
+  public void setCustomerWithdrawalDate(String customerWithdrawalDate) {
+    this.customerWithdrawalDate = customerWithdrawalDate;
+  }
+
+  @Override
+  public String getDepositDate() {
+    return depositDate;
+  }
+
+  @Override
+  public void setDepositDate(String depositDate) {
+    this.depositDate = depositDate;
+  }
+
+  @Override
+  public Boolean isSuitable() {
+    return this.suitable;
+  }
+
+  @Override
+  public void setSuitable(Boolean isSuitable) {
+    this.suitable = isSuitable;
+  }
+
+  @Override
+  public Boolean isAvailableForSale() {
+    return this.availableForSale;
+  }
+
+  @Override
+  public void setAvailableForSale(Boolean isAvailableForSale) {
+    this.availableForSale = isAvailableForSale;
+  }
+
+  /**
+   * Removes all photos that doesn't have the isVisible flag set to true from its 'photos' list.
+   */
+  @Override
+  public void removeInvisiblePhotos() {
+    this.photos = this.photos.parallelStream()
+        .filter(PhotoDTO::isVisible)
+        .collect(Collectors.toList());
   }
 }

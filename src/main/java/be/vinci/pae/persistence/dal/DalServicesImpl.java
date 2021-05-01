@@ -34,8 +34,8 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
         .get();//Returns the value in the current thread's copy of this thread-local variable.
     try {
       prep = co.prepareStatement(query);
-    } catch (Exception throwables) {
-      throw new InternalError();
+    } catch (Exception e) {
+      throw new InternalError(e);
     }
     return prep;
   }
@@ -54,8 +54,8 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
       conn.setAutoCommit(false);
       // Sets the current thread's copy of this thread-local variable to the specified value.
       connect.set(conn);
-    } catch (Exception throwables) {
-      throw new InternalError(throwables.getMessage());
+    } catch (Exception e) {
+      throw new InternalError(e);
     }
 
   }
@@ -73,9 +73,8 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
       conn.commit();
       conn.close();
       this.connect.set(null);
-    } catch (Exception throwables) {
-      //throwables.printStackTrace();
-      throw new InternalError(throwables.getMessage());
+    } catch (Exception e) {
+      throw new InternalError(e);
     }
 
   }
@@ -93,8 +92,8 @@ public class DalServicesImpl implements ConnectionDalServices, ConnectionBackend
       conn.rollback();
       conn.close();
       this.connect.set(null);
-    } catch (Exception throwables) {
-      throw new InternalError(throwables.getMessage());
+    } catch (Exception e) {
+      throw new InternalError(e);
     } finally {
       this.connect.set(null);
     }

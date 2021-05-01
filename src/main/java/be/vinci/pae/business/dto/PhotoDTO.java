@@ -14,6 +14,10 @@ public interface PhotoDTO {
 
   void setFurnitureId(Integer id);
 
+  FurnitureDTO getFurniture();
+
+  void setFurniture(FurnitureDTO furniture);
+
   Boolean isOnHomePage();
 
   void setOnHomePage(Boolean onHomePage);

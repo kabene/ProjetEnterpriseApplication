@@ -13,5 +13,10 @@ Content-Type: application/json
 Authorization: {{jwt}}
 ###
 
-GET {{baseUrl}}/option/list
+GET {{baseUrl}}/options/
 Authorization: {{jwt}}
+###
+
+GET {{baseUrl}}/options/me
+Authorization: {{jwt}}
+###
