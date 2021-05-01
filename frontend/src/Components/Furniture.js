@@ -130,11 +130,11 @@ const generateFilterHTML = () => {
   <form class="form-inline">
     <div class="form-group m-3">
       <input type="text" class="form-control" id="furnitureDescriptionFilter" placeholder="Rechercher un meuble" value="` + filter.description + `"/>
-     </div>
-      <div class="form-group m-3">` + generateSelectTypeTag() + `</div>
+    </div>
+    <div class="form-group m-3">` + generateSelectTypeTag() + `</div>
      <button type="submit" id="apply-filters-btn" class="btn btn-primary m-3">Appliquer</button>
      <button type="submit" id="clear-filters-btn" class="btn btn-secondary m-3">Retirer les filtres</button>
-  </form> `;
+  </form>`;
 }
 
 const generateSelectTypeTag = () => {

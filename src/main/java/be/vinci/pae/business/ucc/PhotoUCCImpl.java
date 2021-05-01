@@ -1,11 +1,15 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
+import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import jakarta.inject.Inject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoUCCImpl implements PhotoUCC {
@@ -14,6 +18,8 @@ public class PhotoUCCImpl implements PhotoUCC {
   private PhotoDAO photoDAO;
   @Inject
   private FurnitureDAO furnitureDAO;
+  @Inject
+  private FurnitureTypeDAO furnitureTypeDAO;
   @Inject
   private ConnectionDalServices dalServices;
 
@@ -28,6 +34,13 @@ public class PhotoUCCImpl implements PhotoUCC {
     try {
       dalServices.startTransaction();
       res = photoDAO.getAllHomePageVisiblePhotos();
+      for (PhotoDTO photo : res) {
+        FurnitureDTO furnitureDTO = furnitureDAO.findById(photo.getFurnitureId());
+        furnitureDTO.setPhotos(new ArrayList<>());
+        photo.setFurniture(furnitureDTO);
+        photo.getFurniture().setType(furnitureTypeDAO.findById(photo.getFurniture().getTypeId())
+            .getTypeName());
+      }
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();

@@ -483,7 +483,7 @@ const onChooseFurnitureBtnClick = async (e) => {
 
 const acceptFurniture = async (furnitureId) => {
   try {
-    let result =await fetch("/furniture/accepted/" + furnitureId, {
+    let result = await fetch("/furniture/accepted/" + furnitureId, {
       method: "PATCH",
       headers: {
         "Authorization": currentUser.token,
@@ -493,14 +493,15 @@ const acceptFurniture = async (furnitureId) => {
       throw new Error(result.status + " : " + result.statusText);
     } else {
       let data = await result.json();
-      requestMap[data.requestId] = data;
+      let index = requestMap[data.requestId].furnitureList.findIndex(
+          furniture => furniture.furnitureId === data.furnitureId);
+      requestMap[data.requestId].furnitureList[index] = data;
       loadCard(data.requestId);
     }
   } catch (err) {
     displayErrorMessage("errorDiv", err);
   }
 }
-
 
 const refuseFurniture = async (furnitureId) => {
   try {
@@ -515,7 +516,9 @@ const refuseFurniture = async (furnitureId) => {
       );
     } else {
       let data = await result.json();
-      requestMap[data.requestId] = data;
+      let index = requestMap[data.requestId].furnitureList.findIndex(
+          furniture => furniture.furnitureId === data.furnitureId);
+      requestMap[data.requestId].furnitureList[index] = data;
       loadCard(data.requestId);
     }
   } catch (err) {
@@ -660,7 +663,7 @@ const generatePageHtml = (largeTable = true) => {
             <th class="align-middle">Client</th>
             <th class="${notNeededClassName}">Adresse</th>
             <th class="align-middle">Date de la demande</th>
-             <th class="align-middle">États</th>
+            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend("rouge","danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend("vert","success")}: La demande de visite est acceptée.</div></i></th>
           </tr>
         </thead>
         <tbody>
@@ -670,8 +673,8 @@ const generatePageHtml = (largeTable = true) => {
     </div>
     <div class="shortElement ${shortElementClassName}" id="RequestCardDiv">Hello</div>
   </div>
-    
   </div>`;
+
   return res;
 }
 
@@ -747,6 +750,16 @@ const generateColoredStatus = (request) => {
 const generateBadgeStatus = (request) => {
   let infos = generateStatusInfos(request.requestStatus);
   let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.status}</span>`;
+  return res;
+}
+/**
+ *  generate the badges for the legend tooltip
+ * @param name
+ * @param status
+ * @returns {string}
+ */
+const generateBadgeLegend = (name, status) => {
+  let res = `<span class="badge badge-pill badge-${status} text-light">${name}</span>`;
   return res;
 }
 

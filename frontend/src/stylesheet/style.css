@@ -31,6 +31,8 @@
   }
 }
 
+
+
 .navbarButton {
   height: 4em;
   margin-right: 1.5em;
@@ -506,3 +508,20 @@ body, .search-bar {
   to {bottom: 0; opacity: 0;}
 }
 /* end source */
+
+.tooltip {
+  background-color:#e6e9ee ;
+  border-radius: 2%;
+  /* hide and position tooltip */
+  -webkit-transition: opacity 0.5s;
+  -moz-transition: opacity 0.5s;
+  -ms-transition: opacity 0.5s;
+  -o-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+
+.hover:hover .tooltip {
+  /* display tooltip on hover */
+  padding: 10px;
+  opacity: 1;
+}

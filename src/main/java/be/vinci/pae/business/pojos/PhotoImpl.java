@@ -1,5 +1,6 @@
 package be.vinci.pae.business.pojos;
 
+import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,6 +14,8 @@ public class PhotoImpl implements PhotoDTO {
   private Integer photoId;
   @JsonView(Views.Public.class)
   private Integer furnitureId;
+  @JsonView(Views.Public.class)
+  private FurnitureDTO furniture;
   @JsonView(Views.Public.class)
   private Boolean onHomePage;
   @JsonView(Views.Public.class)
@@ -38,6 +41,16 @@ public class PhotoImpl implements PhotoDTO {
   @Override
   public void setFurnitureId(Integer id) {
     furnitureId = id;
+  }
+
+  @Override
+  public FurnitureDTO getFurniture() {
+    return this.furniture;
+  }
+
+  @Override
+  public void setFurniture(FurnitureDTO furniture) {
+    this.furniture = furniture;
   }
 
   @Override
