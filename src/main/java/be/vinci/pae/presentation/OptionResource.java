@@ -58,6 +58,24 @@ public class OptionResource {
   }
 
   /**
+   * GET all option resources of the current user.
+   *
+   * @param request : the request context
+   * @return list of user's options as json.
+   */
+  @GET
+  @Path("/me")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  @AllowTakeover
+  public Response getAllUserOptions(@Context ContainerRequest request) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /option/me");
+    UserDTO currentUser = (UserDTO) request.getProperty("user");
+    List<OptionDTO> res = optionUCC.myOptions(currentUser);
+    return Response.ok(Json.filterAdminOnlyJsonView(res, List.class)).build();
+  }
+
+  /**
    * POST a new option resource.
    *
    * @param reqNode body of the request.
