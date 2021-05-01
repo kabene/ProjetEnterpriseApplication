@@ -55,7 +55,6 @@ public class FurnitureImpl implements Furniture {
   private OptionDTO option;
   @JsonView(Views.AdminOnly.class)
   private Integer requestId;
-  //TODO add request
   @JsonView(Views.AdminOnly.class)
   private Double purchasePrice;
   @JsonView(Views.AdminOnly.class)
