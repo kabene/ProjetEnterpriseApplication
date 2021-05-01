@@ -167,7 +167,7 @@ const generatePageHtml = (largeTable = true) => {
             <th class="w-25"></th>
             <th class="align-middle">Description</th>
             <th class="${notNeededClassName}">Type</th>
-            <th class="align-middle">État </th>
+            <th class="align-middle">État <i data-toggle="tooltip" data-placement="right"  title="•Rouge:plus d'operation pas vendu. \n •Vert:plus d'opération et vendu \n •Orange:opération à réaliser \n  •Bleu:doit être accepté dans sa demande de visite"class="material-icons">&#xe88e;</i></th>
             <th class="${notNeededClassName}">Vendeur</th>
             <th class="${notNeededClassName}">Acheteur</th>
             <th class="${notNeededClassName}">Prix de vente</th>
