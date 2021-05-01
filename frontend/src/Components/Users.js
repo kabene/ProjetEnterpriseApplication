@@ -307,6 +307,12 @@ const getAllUsersRows = () => {
   return res;
 }
 
+/**
+ * generate a tr element containing the information of a user.
+ * if the filters doesn't correspond to the user info then returning a empty string.
+ * @param {*} user the user containg the information to put in a tr element.
+ * @returns a tr element containing the information of the user if they correspond to the filters.
+ */
 const generateRow = (user) => {
   //filter
   if (filter.role !== '') {
