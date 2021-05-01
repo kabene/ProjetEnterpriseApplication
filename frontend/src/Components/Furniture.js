@@ -4,157 +4,41 @@ import {displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilen
 
 
 let page = document.querySelector("#page");
-let furnitureList;
+
 let currentUser;
+
+let images;
+let furnitureList;
+let furnitureTypeList;
 let optionList;
-let images = importAllFurnitureImg();
+
+const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"></div>  </div>`;
+
+let filter = {
+  description: "",
+  type: ""
+};
 
 const Furniture = async () => {
-    currentUser = findCurrentUser();
+  page.innerHTML =  errorDiv + generateLoadingAnimation();
+  currentUser = findCurrentUser();
 
-    page.innerHTML = `
-    <div class="col-5 mx-auto">
-        <div id="errorDiv" class="d-none"></div>
-    </div>
-    ${generateLoadingAnimation()}`;
+  images = importAllFurnitureImg()
+  furnitureList = await getFurnitureList();
+  furnitureTypeList = await getFurnitureTypeList();
+  optionList = await getOptionList();
 
-    furnitureList = await getFurnitureList();
-    optionList = await getOptionList();
-
-    page.innerHTML = `
-    <div class="col-5 mx-auto">
-        <div id="errorDiv" class="d-none"></div>
-    </div>
-    ${generateTable()}`;
-
-    document.querySelectorAll(".btnCreateOption").forEach(element =>{
-        element.addEventListener("click", addOption );
-    });
-    document.querySelectorAll(".cancelOptButton").forEach(element=>{
-      element.addEventListener("click",cancelOption);
-    })
+  page.innerHTML = errorDiv + generateTable();
+  addAllEventListeners();
 }
 
-const cancelOption= (e)=>{
-  e.preventDefault();
-  let furnitureId = e.target.id.substring(4);
-  let optionId;
-  optionList.forEach(option=>{
-    if(option.furnitureId == furnitureId ) {
-      if (!option.isCanceled){
-        optionId = option.optionId;
-      }
-    }
-  });
-
-   fetch("/options/cancel/"+optionId,{
-    method: "PATCH",
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if(!response.ok) {
-      throw new Error(response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    refresh(data, "AVAILABLE_FOR_SALE");
-  }).catch((err) => {
-     console.log("Erreur de fetch !! :´<\n" + err);
-     displayErrorMessage("errorDiv", err);
-   });
-}
-
-
-
-
-const addOption =  (e) => {
-  e.preventDefault();
-  let furnitureId = e.target.id.substring(3);
-  let duration = e.target.parentElement.parentElement.querySelector("input").value;
-
-  let bundle = {
-    furnitureId: furnitureId,
-    duration: duration,
-  }
-  console.log(bundle);
-   fetch("/options/", {
-    method: "POST",
-    body: JSON.stringify(bundle),
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-    }).then((response) => {
-      if(!response.ok) {
-        throw new Error(response.status + " : " + response.statusText);
-      }
-      return response.json();
-    }).then((data) => {
-      refresh(data.option, "UNDER_OPTION");
-    }).catch((err) => {
-     console.log("Erreur de fetch !! :´<\n" + err);
-     displayErrorMessage("errorDiv", err);
-   });
-
-}
+/********************  Business methods  **********************/
 
 const refresh = (data, status) => {
   optionList.push(data);
   updateFurnitureList(data.furnitureId, status)
   page.innerHTML = generateTable();
-
-  document.querySelectorAll(".btnCreateOption").forEach(element =>{
-    element.addEventListener("click", addOption )
-  });
-  document.querySelectorAll(".cancelOptButton").forEach(element=>{
-    element.addEventListener("click",cancelOption);
-  })
-}
-
-const getFurnitureList = async () => {
-    let ret = [];
-    await fetch("/furniture/", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    }).then((response) => {
-        if (!response.ok)
-            throw new Error("Error code : " + response.status + " : " + response.statusText);
-        return response.json();
-    }).then((data) => {
-         ret = data;
-    }).catch((err) => {
-        console.log("Erreur de fetch !! :´<\n" + err);
-        displayErrorMessage("errorDiv", err);
-      });
-    return ret;
-}
-
-const getOptionList= async () => {
-  if(currentUser) {
-    let ret = [];
-    await fetch("/options/", {
-      method: "GET",
-      headers: {
-        "Authorization": currentUser.token,
-        "Content-Type": "application/json",
-      },
-    }).then((response) => {
-      if (!response.ok)
-        throw new Error(
-            "Error code : " + response.status + " : " + response.statusText);
-      return response.json();
-    }).then((data) => {
-      ret = data;
-    }).catch((err) => {
-      console.log("Erreur de fetch !! :´<\n" + err);
-      displayErrorMessage("errorDiv", err);
-    });
-    return ret;
-  }
+  addAllEventListeners();
 }
 
 
@@ -166,25 +50,86 @@ const updateFurnitureList = (furnitureId, status) => {
     })
 }
 
+/**
+ * Called when clicking on the apply filter button.
+ * Apply all filters chosen on the furniture and render them.
+ */
+const onClickApplyFilter = (e) => {
+  e.preventDefault();
+  filter.description = document.querySelector("#furnitureDescriptionFilter").value;
+  filter.type = document.querySelector("#furnitureTypeFilter").value;
+  page.innerHTML = generateTable();
+  addAllEventListeners();
+  document.querySelector("[value='" + filter.type + "']").setAttribute('selected', 'true');
+}
+
+/**
+ * Called when clicking on the cancel filter button.
+ * Clear all filters chosen on the furniture and render all the furniture if there already was filters.
+ */
+const onClickClearFilter = (e) => {
+  e.preventDefault();
+  if (filter.description === "" && filter.type === "")
+    return;
+  filter.description = "";
+  filter.type = "";
+  page.innerHTML = generateTable();
+  addAllEventListeners();
+}
+
+/**
+ * Add all the event listeners required in the document.
+ */
+const addAllEventListeners = () => {
+  document.querySelectorAll(".btnCreateOption").forEach(element =>{
+    element.addEventListener("click", addOption );
+  });
+  document.querySelectorAll(".cancelOptButton").forEach(element=>{
+    element.addEventListener("click",cancelOption);
+  });
+  document.querySelector("#apply-filters-btn").addEventListener("click", onClickApplyFilter);
+  document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
+}
+
+/********************  HTML generation  **********************/
+
+
 const generateTable = () => {
     return `
     <div class="wrapperFurniturePage">
         <div></div>
         <div>
-            <!-- @author Milan Raring
-                https://freefrontend.com/css-search-boxes/ -->
-            <form action="" class="search-bar">
-                <input type="search" name="search" pattern=".*\S.*" required>
-                <button class="search-btn" type="submit">
-                    <span>Search</span>
-                </button>
-            </form>
+          <h3>Filtrer les meubles:</h3>
+          ` + generateFilterHTML() + `
         </div>
         <div></div>
         <div></div>
         <div class="contentFurniturePage">` + generateAllItemsAndModals() + `</div>
         <div></div>
     </div>`;
+}
+
+const generateFilterHTML = () => {
+  return `
+  <form class="form-inline">
+    <div class="form-group m-3">
+      <input type="text" class="form-control" id="furnitureDescriptionFilter" placeholder="Rechercher un meuble" value="` + filter.description + `"/>
+     </div>
+      <div class="form-group m-3">` + generateSelectTypeTag() + `</div>
+     <button type="submit" id="apply-filters-btn" class="btn btn-primary m-3">Appliquer</button>
+     <button type="submit" id="clear-filters-btn" class="btn btn-secondary m-3">Retirer les filtres</button>
+  </form> `;
+}
+
+const generateSelectTypeTag = () => {
+  let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
+  furnitureTypeList.forEach(type => ret += generateOptionTypeTag(type));
+  ret += `</select>`;
+  return ret;
+}
+
+const generateOptionTypeTag = (type) => {
+  return `<option value="` + type.typeName + `">` + type.typeName + `</option>`;
 }
 
 const generateAllItemsAndModals = () => {
@@ -194,6 +139,14 @@ const generateAllItemsAndModals = () => {
 }
 
 const generateItemAndModal = (furniture) => {
+  if (filter.description !== "") {
+    if (!furniture.description.toLowerCase().includes(filter.description.toLowerCase()))
+      return "";
+  }
+  if (filter.type !== "") {
+    if (filter.type !== furniture.type)
+      return "";
+  }
     let item = `
         <div>
             <img class="imageFurniturePage" src="${findFavImgSrc(furniture, images)}" alt="thumbnail" data-toggle="modal" data-target="#modal_` + furniture.furnitureId +`"/>
@@ -287,5 +240,118 @@ const generateOptionForm = () => {
   `;
     return res;
 }
+
+
+/********************  Backend fetch  **********************/
+
+const getFurnitureList = async () => {
+  let response = await fetch("/furniture/", {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  return response.json();
+}
+
+
+const getFurnitureTypeList = async () => {
+  let response = await fetch("/furnitureTypes/", {
+    method: "GET",
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  return response.json();
+}
+
+const getOptionList= async () => {
+  if(currentUser) {
+    let response = await fetch("/options/", {
+      method: "GET",
+      headers: {
+        "Authorization": currentUser.token,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+      console.error(err);
+      displayErrorMessage("errorDiv", err);
+    }
+    return response.json();
+  }
+}
+
+const cancelOption = (e) => {
+  e.preventDefault();
+  let furnitureId = e.target.id.substring(4);
+  let optionId;
+  optionList.forEach(option=>{
+    if(option.furnitureId == furnitureId ) {
+      if (!option.isCanceled){
+        optionId = option.optionId;
+      }
+    }
+  });
+
+   fetch("/options/cancel/"+optionId,{
+    method: "PATCH",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if(!response.ok) {
+      throw new Error(response.status + " : " + response.statusText);
+    }
+    return response.json();
+  }).then((data) => {
+    refresh(data, "AVAILABLE_FOR_SALE");
+  }).catch((err) => {
+     console.log("Erreur de fetch !! :´<\n" + err);
+     displayErrorMessage("errorDiv", err);
+   });
+}
+
+
+const addOption =  (e) => {
+  e.preventDefault();
+  let furnitureId = e.target.id.substring(3);
+  let duration = e.target.parentElement.parentElement.querySelector("input").value;
+
+  let bundle = {
+    furnitureId: furnitureId,
+    duration: duration,
+  }
+  console.log(bundle);
+   fetch("/options/", {
+    method: "POST",
+    body: JSON.stringify(bundle),
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+    }).then((response) => {
+      if(!response.ok) {
+        throw new Error(response.status + " : " + response.statusText);
+      }
+      return response.json();
+    }).then((data) => {
+      refresh(data.option, "UNDER_OPTION");
+    }).catch((err) => {
+     console.log("Erreur de fetch !! :´<\n" + err);
+     displayErrorMessage("errorDiv", err);
+   });
+}
+
+
 
 export default Furniture;
