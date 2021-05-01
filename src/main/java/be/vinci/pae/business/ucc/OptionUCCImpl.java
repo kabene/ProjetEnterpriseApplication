@@ -151,7 +151,7 @@ public class OptionUCCImpl implements OptionUCC {
     try {
       dalServices.startTransaction();
       Date today = new Date();
-      int oneDayInMs = 86400000;
+      double oneDayInMs = 86400000.0;
 
       List<OptionDTO> optionList = optionDAO.findAll();
       optionList = optionList.stream()
@@ -168,9 +168,9 @@ public class OptionUCCImpl implements OptionUCC {
             .from(optionLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         int optionDelay = (int) Math.floor(
-            (optionDate.getTime() / oneDayInMs)
+            optionDate.getTime() / oneDayInMs
                 + option.getDuration()
-                - (today.getTime() / oneDayInMs));
+                - today.getTime() / oneDayInMs);
 
         if (optionDelay < 0) { //expired
           FurnitureDTO furnitureDTO = furnitureDAO.findById(option.getFurnitureId());

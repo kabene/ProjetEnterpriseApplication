@@ -1,7 +1,6 @@
 package be.vinci.pae.main;
 
 
-import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.utils.Configurate;
 import be.vinci.pae.business.ucc.OptionUCC;
 import java.io.IOException;
@@ -9,7 +8,6 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -23,7 +21,6 @@ import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
-import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider.App;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**

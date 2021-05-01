@@ -2,7 +2,6 @@ package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.pojos.Furniture;
-import be.vinci.pae.business.pojos.FurnitureStatus;
 import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.ConflictException;

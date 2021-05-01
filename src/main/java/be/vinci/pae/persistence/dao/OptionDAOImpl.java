@@ -125,7 +125,7 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
    */
   @Override
   public List<OptionDTO> findByUserId(int userId) {
-    List<OptionDTO> optionList = new ArrayList<>();;
+    List<OptionDTO> optionList = new ArrayList<>();
     String query = "SELECT o.* FROM satchofurniture.options o "
         + "WHERE o.user_id = ? AND o.is_canceled = 'false'";
     PreparedStatement ps = dalServices.makeStatement(query);
