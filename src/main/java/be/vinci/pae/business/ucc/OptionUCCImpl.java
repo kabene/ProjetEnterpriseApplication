@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OptionUCCImpl implements OptionUCC {
 
@@ -118,7 +119,7 @@ public class OptionUCCImpl implements OptionUCC {
   }
 
   /**
-   * list all options of the current user.
+   * list all active options of the current user.
    *
    * @param currentUser user.
    * @return list of all currentUser's option.
@@ -128,7 +129,9 @@ public class OptionUCCImpl implements OptionUCC {
     List<OptionDTO> dtos;
     try {
       dalServices.startTransaction();
-      dtos = optionDAO.findByUserId(currentUser.getId());
+      dtos = optionDAO.findByUserId(currentUser.getId()).stream()
+          .filter((o)->!o.isCanceled())
+          .collect(Collectors.toList());
       for(OptionDTO optionDTO : dtos) {
         completeOptionDTO(optionDTO);
       }
@@ -145,25 +148,41 @@ public class OptionUCCImpl implements OptionUCC {
    */
   @Override
   public void updateExpiredOptions() {
-    List<OptionDTO> optionList = listOption();
-    for (OptionDTO option : optionList) {
-      if (!option.isCanceled()) {
-        String[] dateTable = option.getDateOption().split("-");
-        LocalDate optionLocalDate = LocalDate
-            .of(Integer.parseInt(dateTable[0]),
-                Integer.parseInt(dateTable[1]),
-                Integer.parseInt(dateTable[2]));
-        Date optionDate = Date
-            .from(optionLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date today = new Date();
-        int optionDelay = (int) Math.floor(
-            (optionDate.getTime() / 86400000)
-                + option.getDuration()
-                - (today.getTime() / 86400000)) + 1;
-        if (optionDelay < 1) {
-          cancelOption(option.getUser(), option.getOptionId());
-        }
+    try {
+      dalServices.startTransaction();
+      Date today = new Date();
+      int oneDayInMs = 86400000;
+
+      List<OptionDTO> optionList = optionDAO.findAll();
+      optionList = optionList.stream()
+          .filter((o) -> !o.isCanceled())
+          .collect(Collectors.toList());
+
+      for (OptionDTO option : optionList) {
+          String[] dateTable = option.getDateOption().split("-");
+          LocalDate optionLocalDate = LocalDate
+              .of(Integer.parseInt(dateTable[0]),
+                  Integer.parseInt(dateTable[1]),
+                  Integer.parseInt(dateTable[2]));
+          Date optionDate = Date
+              .from(optionLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+          int optionDelay = (int) Math.floor(
+              (optionDate.getTime() / oneDayInMs)
+                  + option.getDuration()
+                  - (today.getTime() / oneDayInMs));
+
+          if (optionDelay < 0) { //expired
+            FurnitureDTO furnitureDTO = furnitureDAO.findById(option.getFurnitureId());
+            furnitureDTO.setStatus(FurnitureStatus.AVAILABLE_FOR_SALE);
+            furnitureDAO.updateStatusOnly(furnitureDTO);
+            optionDAO.cancelOption(option.getOptionId());
+          }
       }
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
     }
   }
 
@@ -177,6 +196,4 @@ public class OptionUCCImpl implements OptionUCC {
       dto.setUser(userDAO.findById(dto.getUserId()));
     }
   }
-
-
 }
