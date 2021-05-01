@@ -45,8 +45,7 @@ public class FurnitureResource {
   public Response getById(@PathParam("id") int id) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/" + id);
     FurnitureDTO furnitureDTO = furnitureUCC.getOne(id);
-    if (!furnitureDTO.getStatus().getValue().equals("available_for_sale")
-        && !furnitureDTO.getStatus().getValue().equals("sold")) {
+    if (!furnitureDTO.getStatus().isPubliclyAvailable()) {
       throw new ConflictException("Unavailable resource (inaccessible status)");
     }
     Furniture f = (Furniture) furnitureDTO;
@@ -83,9 +82,7 @@ public class FurnitureResource {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "GET /furniture/");
     List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
     List<FurnitureDTO> res = furnitureDTOs.parallelStream()
-        .filter((dto) -> dto.getStatus().equals(FurnitureStatus.AVAILABLE_FOR_SALE)
-            || dto.getStatus().equals(FurnitureStatus.SOLD)
-            || dto.getStatus().equals(FurnitureStatus.UNDER_OPTION))
+        .filter((dto) -> dto.getStatus().isPubliclyAvailable())
         .map((dto) -> {
           Furniture f = (Furniture) dto;
           f.removeInvisiblePhotos();
