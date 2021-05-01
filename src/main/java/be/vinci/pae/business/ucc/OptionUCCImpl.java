@@ -159,25 +159,25 @@ public class OptionUCCImpl implements OptionUCC {
           .collect(Collectors.toList());
 
       for (OptionDTO option : optionList) {
-          String[] dateTable = option.getDateOption().split("-");
-          LocalDate optionLocalDate = LocalDate
-              .of(Integer.parseInt(dateTable[0]),
-                  Integer.parseInt(dateTable[1]),
-                  Integer.parseInt(dateTable[2]));
-          Date optionDate = Date
-              .from(optionLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        String[] dateTable = option.getDateOption().split("-");
+        LocalDate optionLocalDate = LocalDate
+            .of(Integer.parseInt(dateTable[0]),
+                Integer.parseInt(dateTable[1]),
+                Integer.parseInt(dateTable[2]));
+        Date optionDate = Date
+            .from(optionLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-          int optionDelay = (int) Math.floor(
-              (optionDate.getTime() / oneDayInMs)
-                  + option.getDuration()
-                  - (today.getTime() / oneDayInMs));
+        int optionDelay = (int) Math.floor(
+            (optionDate.getTime() / oneDayInMs)
+                + option.getDuration()
+                - (today.getTime() / oneDayInMs));
 
-          if (optionDelay < 0) { //expired
-            FurnitureDTO furnitureDTO = furnitureDAO.findById(option.getFurnitureId());
-            furnitureDTO.setStatus(FurnitureStatus.AVAILABLE_FOR_SALE);
-            furnitureDAO.updateStatusOnly(furnitureDTO);
-            optionDAO.cancelOption(option.getOptionId());
-          }
+        if (optionDelay < 0) { //expired
+          FurnitureDTO furnitureDTO = furnitureDAO.findById(option.getFurnitureId());
+          furnitureDTO.setStatus(FurnitureStatus.AVAILABLE_FOR_SALE);
+          furnitureDAO.updateStatusOnly(furnitureDTO);
+          optionDAO.cancelOption(option.getOptionId());
+        }
       }
       dalServices.commitTransaction();
     } catch (Throwable e) {
