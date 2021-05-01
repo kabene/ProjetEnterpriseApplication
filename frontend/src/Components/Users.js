@@ -10,7 +10,14 @@ let confirmedUsersList;
 let currentUser;
 let timeouts = [];
 let userDetail;
-let valueButtonValid;
+
+let nbrCurrentUserWaiting;
+let nbrCurrentUserAccepted;
+
+let filter = {
+  role : "",
+  info : ""
+}
 
 const Users = async (id) => {
   currentUser = findCurrentUser();
@@ -24,13 +31,14 @@ const Users = async (id) => {
   document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
   document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
+  document.querySelector("#buttonApplyFilter").addEventListener("click", onApplyFilterClick);
+  document.querySelector("#buttonClearFilter").addEventListener("click", onClearFilterClick);
 
-  if(id) {
+  if (id) {
     displayShortElements();
     await displayUserCardById(id);
   }
 }
-
 
 
 /********************  Business methods  **********************/
@@ -84,6 +92,7 @@ const onRowClick = (e) => {
                     , 750));
   //magnify
   document.querySelector('#shortTable').id = "largeTable";
+  document.querySelector("#buttonsFilterSpan").style.display = "";
   if (document.querySelector('#shortTableContainer') !== null) //can be undefined because of the setTimeout in displayShortElements
     document.querySelector('#shortTableContainer').id = "largeTableContainer";
 }
@@ -95,6 +104,7 @@ const displayShortElements = () => {
   removeTimeouts(timeouts);
   //shrink
   document.querySelector('#largeTable').id = "shortTable";
+  document.querySelector("#buttonsFilterSpan").style.display = "block";
   timeouts.push(setTimeout( () => document.querySelector('#largeTableContainer').id = "shortTableContainer"
                     , 750));
   //hide
@@ -133,38 +143,11 @@ const displayUserCardById = async (userId) => {
     valueButtonValid = e.target.id;
     document.querySelector("#accept").addEventListener("click",onValidateClick);
     document.querySelector("#refuse").addEventListener("click",onValidateClick);
-  }else {
+  } else {
     let takeoverBtn = document.querySelector("#takeoverBtn");
     takeoverBtn.className = "profile-edit-btn";
     takeoverBtn.addEventListener("click", (e) => onTakeoverClick(e));
   }
-}
-
-const onTakeoverClick = async (e) => {
-  e.preventDefault();
-  let btn = e.target;
-  let userId = btn.getAttribute("user-id");
-  let response = await fetch(`/users/takeover/${userId}`,{
-    method: "GET",
-    headers: {
-      "Authorization": currentUser.token,
-    },
-  });
-  if(!response.ok) {
-    let err = new Error( "Error code : " + response.status + " : " + response.statusText);
-    displayErrorMessage("errorDiv", err);
-    return;
-  }
-  let data = await response.json();
-
-  let bundle = {
-    ...data,
-    isAdmin: false,
-    isTakeover: true,
-  }
-  setTakeoverSessionData(bundle);
-  Navbar();
-  RedirectUrl("/");
 }
 
 /**
@@ -219,6 +202,32 @@ const removeFromArray = (id, array) => {
   }
 }
 
+const onApplyFilterClick = () => {
+  filter.info = document.querySelector("#userSearchBar").value;
+  filter.role = document.querySelector("#filterRole").value;
+  document.querySelector("#tableDiv").outerHTML = generateTable();
+
+  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
+  if (document.querySelector(".shortElement").style.display === "block") {
+    document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
+    document.querySelector('#largeTable').id = "shortTable";
+  }
+
+}
+
+const onClearFilterClick = () => {
+  filter.info = "";
+  filter.role = "";  
+  document.querySelector("#tableDiv").outerHTML = generateTable();
+  document.querySelector("option[value='']").selected = "true";
+  document.querySelector("#userSearchBar").value = "";
+  
+  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
+  if (document.querySelector(".shortElement").style.display === "block") {
+    document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
+    document.querySelector('#largeTable').id = "shortTable";
+  }
+}
 
 /********************  HTML generation  **********************/
 
@@ -229,10 +238,28 @@ const generateUsersPage = () => {
         </div>
         <div id="largeTableContainer">
           <div>
-            <input type="search" name="search" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
-            <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>`
-            + generateTable() +
-          `</div>
+            <div class="form-inline">
+              <div class="form-group mx-3">
+                <input type="search" name="search" class="m-3 form-control" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
+              </div>
+              <div class="form-group mx-3">
+                <select class="form-control" id="filterRole">
+                  <option value="">Rechercher par rôle</option>
+                  <option value="customer">client</option>
+                  <option value="antique_dealer">antiquaire</option>
+                  <option value="admin">admin</option>
+                </select>
+              </div>
+              <div class="form-group mx-3">
+                <span id='buttonsFilterSpan'>   
+                  <button type="submit" id="buttonApplyFilter" class="btn btn-primary m-3">Appliquer</button>
+                  <button type="submit" id="buttonClearFilter" class="btn btn-secondary m-3">Retirer les filtres</button>
+                </span>
+              </div>
+            </div>
+            <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>
+            ` + generateTable() + `
+          </div>
           <div class="shortElement" id="userCardDiv"></div>
         </div>
         <div id="snackbar"></div>`;
@@ -240,6 +267,7 @@ const generateUsersPage = () => {
 
 const generateTable = () => {
   let res = `
+  <div id="tableDiv">
     <table id="largeTable" class="table table-bordered table-hover">
         <thead class="table-secondary">
             <tr>
@@ -255,19 +283,62 @@ const generateTable = () => {
         <tbody>`
           + getAllUsersRows() + `
         </tbody>
-    </table>`;
+    </table>
+  </div>`;
   return res;
 }
 
+/**
+ * generate all the rows needed and 2 messages informing the number of user waiting or accepted.
+ * @returns an html element containing all the rows (filtered or not) and the messages informing the number of user waiting and accepted.
+ */
 const getAllUsersRows = () => {
-  let res = "<tr><th colspan = '7' class='msgTable' id='msgTableWaiting'>" + waitingUsersList.length + " inscription(s) en attente</th></tr>";
-  waitingUsersList.forEach(user => res += generateRow(user));
-  res += "<tr><th colspan = '7' class='msgTable' id='msgTableConfirmed'>" + confirmedUsersList.length + " client(s) inscrit(s)</th></tr>"
-  confirmedUsersList.forEach(user => res += generateRow(user));
+  nbrCurrentUserWaiting = 0;
+  nbrCurrentUserAccepted = 0;
+
+  let rows = ``;
+  waitingUsersList.forEach(user => {
+    let row = generateRow(user);
+    if (row !== ``) {
+      nbrCurrentUserWaiting++;
+      rows += row;
+    }
+  });
+  let res = "<tr><th colspan = '7' class='msgTable' id='msgTableWaiting'>" + nbrCurrentUserWaiting+ " inscription(s) en attente</th></tr>" + rows;
+
+  rows = ``;
+  confirmedUsersList.forEach(user => {
+    let row = generateRow(user);
+    if (row !== ``) {
+      nbrCurrentUserAccepted++;
+      rows += row;
+    }
+  });
+  res += "<tr><th colspan = '7' class='msgTable' id='msgTableConfirmed'>" + nbrCurrentUserAccepted + " client(s) inscrit(s)</th></tr>" + rows;
+
   return res;
 }
 
+/**
+ * generate a tr element containing the information of a user.
+ * if the filters doesn't correspond to the user info then returning a empty string.
+ * @param {*} user the user containg the information to put in a tr element.
+ * @returns a tr element containing the information of the user if they correspond to the filters.
+ */
 const generateRow = (user) => {
+  //filter
+  if (filter.role !== '') {
+    if (filter.role !== user.role)
+      return ``;
+  }
+  if (filter.info !== '') {
+    let info = filter.info.toLowerCase();
+    let postcode = "" + user.address.postcode;
+    if (!user.firstName.toLowerCase().includes(info) && !user.lastName.toLowerCase().includes(info) 
+        && !(user.address.commune.toLowerCase() === info) && !(postcode === info))
+      return ``;
+  }
+
   return ` 
     <tr class="toBeClicked" userId="` + user.id + `">
         <th><p>` + user.lastName + `</p></th>
@@ -501,7 +572,34 @@ const validation = async (e) => {
     displayErrorMessage("errorDiv", err);
     return;
   });
-  return ret; // TODO REFRESH PAGE IN REAL TIME
+  return ret;
+}
+
+const onTakeoverClick = async (e) => {
+  e.preventDefault();
+  let btn = e.target;
+  let userId = btn.getAttribute("user-id");
+  let response = await fetch(`/users/takeover/${userId}`,{
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+    },
+  });
+  if(!response.ok) {
+    let err = new Error( "Error code : " + response.status + " : " + response.statusText);
+    displayErrorMessage("errorDiv", err);
+    return;
+  }
+  let data = await response.json();
+
+  let bundle = {
+    ...data,
+    isAdmin: false,
+    isTakeover: true,
+  }
+  setTakeoverSessionData(bundle);
+  Navbar();
+  RedirectUrl("/");
 }
 
 

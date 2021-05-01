@@ -147,7 +147,8 @@ public class FurnitureResource {
   public Response toRefused(@PathParam("id") int furnitureId) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "/furniture/refused/" + furnitureId);
     FurnitureDTO furnitureDTO = furnitureUCC.toRefused(furnitureId);
-    return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
+    FurnitureDTO res = Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class);
+    return Response.ok(res).build();
   }
 
   /**

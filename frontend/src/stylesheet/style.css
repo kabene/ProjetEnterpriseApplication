@@ -194,9 +194,6 @@ footer {
   border: solid 1px grey;
 }
 
-.contentFurniturePage > div {
-}
-
 .imageFurniturePage {
   margin: auto;
   display: block;
@@ -440,7 +437,7 @@ body, .search-bar {
 }
 
 #userSearchBar {
-  width: 24em;
+  width: 25em;
   margin-left: 1em;
   margin-bottom: 1em;
   transition: 1s;

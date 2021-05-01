@@ -1,3 +1,4 @@
+import notFoundPhoto from "../img/notFoundPhoto.png";
 import {findCurrentUser} from "../utils/session";
 import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils";
 import {RedirectUrl} from "./Router";
@@ -60,6 +61,10 @@ const loadCard = (requestId) => {
       });
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
+  let choiceBtn = document.querySelector("#choose-furniture-btn"); //TODO
+  if (choiceBtn) {
+    choiceBtn.addEventListener("click", onChooseFurnitureBtnClick)
+  }
 }
 
 /**
@@ -182,9 +187,9 @@ const addTransitionBtnListeners = (request) => {
 const findTransitionMethod = (btnId, request) => {
   switch (btnId) {
     case "btnToConfirmed":
-       return (e) => toAccept(e, request);
+      return (e) => toConfirmed(e, request);
     case "btnToCanceled":
-       return (e) => toRefuse(e, request);
+      return (e) => toCanceled(e, request);
     default:
       return (e) => {
         e.preventDefault();
@@ -286,7 +291,7 @@ const generateModalBodyFromTransitionId = (transitionId) => {
  */
 const generateToAcceptForm = () => {
   let res = `
-    <form class="form-group">
+    <form class="form-group d-block">
       <label for="acceptInput" class="mr-3">Entrez la date et heure de la visite: </label>
       <div class="mx-auto my-2">
         <input class=" mx-3 form-control" name="acceptInputDate" id="acceptInputDate" type="date" max="9999-12-12T00:00:00.00"/>
@@ -393,75 +398,150 @@ const generateCardHTML = (request) => {
 
 const generatePhotoList = (request) => {
   let photos = "";
-  request.furnitureList.forEach(furniture=> {
-    furniture.photos.forEach(photo => {
-      let favRadioName = `radioFav${photo.photoId}`;
-      let visibleCheckName = `checkboxVisible${photo.photoId}`;
-      let homePageCheckName = `checkboxHomepage${photo.photoId}`;
+  request.furnitureList.forEach(furniture => {
+    let fav = furniture.favouritePhoto;
+    let favPhoto;
+    if (!fav) {
+      favPhoto = notFoundPhoto;
+    } else {
+      favPhoto = fav.source;
+    }
 
-      let favChecked = ``;
-      if (furniture.favouritePhoto && photo.photoId
-          === furniture.favouritePhoto.photoId) {
-        favChecked = `checked`;
-      }
-
-      let visibleCheckedOriginaly = false;
-      let homePageCheckedOriginaly = false;
-      let visibileChecked = ``;
-      let homePageChecked = ``;
-      if (photo.isVisible) {
-        visibileChecked = `checked`;
-        visibleCheckedOriginaly = true;
-
-        if (photo.onHomePage && photo.isVisible) {
-          homePageChecked = `checked`;
-          homePageCheckedOriginaly = true;
-        }
-      } else {
-        homePageChecked = `disabled`;
-      }
-
-      photos += `
-    <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
+    photos += `
+    <div class="p-1 w-50 container photo-list-container" request-id="${request.requestId}">
       <div class="row px-0">
         <div class="col-6">
-          <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+          <img class="img-fluid" src="${favPhoto}" alt="photo id:${fav.photoId}"/>
         </div>
-        <div class="text-left col-6">
-          <label class="form-check-label" for="${favRadioName}">
-            <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId="${photo.photoId}" furnitureid="${photo.furnitureId}" ${favChecked}>
-            Photo favorite
-          </label>
-          <br/>
-          <label class="form-check-label" for="${visibleCheckName}">
-            <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
-            Visible
-          </label>
-          <br/>
-          <label class="form-check-label" for="${homePageCheckName}">
-            <input id="${homePageCheckName}" type="checkbox" class="form-check-input homepageCheckbox" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
-            Affiché sur la page d'accueil
-          </label>
-        </div>
+        ${generateRadioBtns(request, furniture)}
       </div>
     </div>`;
-    });
-  let pId
-  if(!furniture.favouritePhoto){
-    pId = "notFound";
-  }else {
-    pId = furniture.favouritePhoto.photoId;
-  }
+  });
+
   let res = `
   <form>
-    <input id="originalFav" type="hidden" photoId="${pId}" furnitureId="${furniture.furnitureId}"/>
+    <input id="originalFav" type="hidden" request-id="${request.requestId}"/>
     <div class="form-check d-flex flex-lg-fill flex-row">
       ${photos}
     </div>
-    <button id="saveBtnPhoto" class="btn btn-primary my-5 float-right">Enregistrer les modifications</button>
+    ${generateChooseFurnitureBtn(request)}
   </form>`;
   return res;
-  });
+}
+
+const generateRadioBtns = (request, furniture) => {
+  let res = ``;
+  if (request.requestStatus === "CONFIRMED" && furniture.status
+      === "REQUESTED_FOR_VISIT") {
+    res =
+        `<div class="text-left col-6 furniture-choices">
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/>
+       <span class="text-success">Convient</span>
+      </label>
+    </div>
+    <div class="form-check"> 
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="RefuseFurniture"/>
+        <span class="text-danger">Ne convient pas</span>
+      </label>
+    </div>
+  </div>`
+  }
+  return res;
+}
+
+const generateChooseFurnitureBtn = (request) => {
+  let res = "";
+  if (request.requestStatus === "CONFIRMED") {
+    res = `<button id="choose-furniture-btn" class="btn btn-primary choose-furniture-btn my-5 float-right">Enregistrer le choix</button>`
+  }
+  return res;
+}
+
+const onChooseFurnitureBtnClick = async (e) => {
+  e.preventDefault()
+  if (verifyValidChoices() === true) {
+    const matches = document.querySelectorAll(".form-check-input:checked");
+    for (const i in matches) {
+      let radio = matches[i];
+      if (radio.tagName === "INPUT") {
+        let furnitureId = radio.getAttribute("furniture-id");
+        switch (radio.id) {
+          case "AcceptFurniture":
+            await acceptFurniture(furnitureId);
+            break;
+          case "RefuseFurniture":
+            await refuseFurniture(furnitureId);
+            break;
+        }
+      }
+    }
+  }
+}
+
+const acceptFurniture = async (furnitureId) => {
+  try {
+    let result =await fetch("/furniture/accepted/" + furnitureId, {
+      method: "PATCH",
+      headers: {
+        "Authorization": currentUser.token,
+      },
+    });
+    if (!result.ok) {
+      throw new Error(result.status + " : " + result.statusText);
+    } else {
+      let data = await result.json();
+      requestMap[data.requestId] = data;
+      loadCard(data.requestId);
+    }
+  } catch (err) {
+    displayErrorMessage("errorDiv", err);
+  }
+}
+
+
+const refuseFurniture = async (furnitureId) => {
+  try {
+    let result = await fetch("/furniture/refused/" + furnitureId, {
+      method: "PATCH",
+      headers: {
+        "Authorization": currentUser.token,
+      },
+    });
+    if (!result.ok) {
+      throw new Error(result.status + " : " + result.statusText
+      );
+    } else {
+      let data = await result.json();
+      requestMap[data.requestId] = data;
+      loadCard(data.requestId);
+    }
+  } catch (err) {
+    displayErrorMessage("errorDiv", err);
+  }
+}
+
+const verifyValidChoices = (e) => {
+  let matchesDiv = document.querySelectorAll(".furniture-choices")
+  for (const i in matchesDiv) {
+    let choiceDiv = matchesDiv[i];
+    if (choiceDiv.tagName === "DIV") {
+      let checkCnt = 0;
+      const matches = choiceDiv.querySelectorAll(".form-check-input")
+      for (const j in matches) {
+        let input = matches[j]
+        if (input.tagName === "INPUT" && input.checked) {
+          checkCnt++;
+        }
+      }
+      if (checkCnt !== 1) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 const generateSummaryCardHeader = (request) => {
@@ -622,15 +702,12 @@ const generateAllRows = (notNeededClassName) => {
  */
 const generateRow = (request, notNeededClassName) => {
   let statusHtml;
-  let thumbnailClass = "mx-auto";
 
   if (!notNeededClassName.includes("d-none")) { //large table
     statusHtml = generateColoredStatus(request);
-    thumbnailClass += " w-50"
   } else { //short table
     let infos = generateStatusInfos(request.requestStatus);
     statusHtml = generateDot(infos.classname);
-    thumbnailClass += " w-100"
   }
   let res = `
     <tr class="toBeClicked" requestId="${request.requestId}">
@@ -708,15 +785,15 @@ const generateStatusInfos = (status) => {
   switch (status) {
     case "CONFIRMED":
       res.classname = "success";
-      res.status = "Accepté";
+      res.status = "Confirmée";
       break;
     case "WAITING":
       res.classname = "warning";
-      res.status = "en attente";
+      res.status = "En attente";
       break;
     case "CANCELED":
       res.classname = "danger";
-      res.status = "Refusé";
+      res.status = "Annulée";
       break;
     default:
       res.classname = "";
@@ -744,14 +821,16 @@ const changeContainerId = () => {
  * @param e
  * @param request
  */
-const toAccept=(e,request)=>{
+const toConfirmed = (e, request) => {
   e.preventDefault();
-  let acceptDate=e.target.parentElement.parentElement.querySelector("#acceptInputDate").value;
-  let acceptTime=e.target.parentElement.parentElement.querySelector("#acceptInputTime").value;
-  if(acceptDate && acceptTime){
-    let date=acceptDate+" "+acceptTime;
-    let bundle={
-      visitDateTime:date,
+  let acceptDate = e.target.parentElement.parentElement.querySelector(
+      "#acceptInputDate").value;
+  let acceptTime = e.target.parentElement.parentElement.querySelector(
+      "#acceptInputTime").value;
+  if (acceptDate && acceptTime) {
+    let date = acceptDate + " " + acceptTime;
+    let bundle = {
+      visitDateTime: date,
     }
     fetch("/requestForVisit/accept/" + request.requestId, {
       method: "PATCH",
@@ -766,30 +845,31 @@ const toAccept=(e,request)=>{
         throw new Error(response.statusText);
       }
       return response.json();
-    }).then((data)=>{
-      requestMap[data.requestId]=data;
+    }).then((data) => {
+      requestMap[data.requestId] = data;
       loadCard(data.requestId);
-    }).catch((err)=>{
+    }).catch((err) => {
       displayErrorMessage("errorDiv", err);
     });
-  }else {
-    let error =new Error();
-    throw displayErrorMessage('tous les champs doivent être sélectionner',error);
+  } else {
+    let error = new Error();
+    throw displayErrorMessage('tous les champs doivent être sélectionner',
+        error);
   }
 }
 /**
  * refuse
  * @param e
- * @param furniture
+ * @param request
  */
-const toRefuse= (e, request) => {
+const toCanceled = (e, request) => {
   e.preventDefault();
   let explain = e.target.parentElement.parentElement.querySelector(
       "#cancelInput").value;
   let bundle = {
     explanatoryNote: explain,
   };
-  fetch("/requestForVisit/cancel/" + request.requestId ,{
+  fetch("/requestForVisit/cancel/" + request.requestId, {
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -840,7 +920,5 @@ async function findVisitRequestList() {
     displayErrorMessage("errorDiv", err);
   });
 }
-
-
 
 export default Visits;
