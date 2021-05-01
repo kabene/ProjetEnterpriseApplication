@@ -99,15 +99,21 @@ const addOption = (e) => {
     return response.json();
   }).then((data) => {
     refresh(data.option, "UNDER_OPTION");
-  }).catch((err) => {
+  })/*.catch((err) => {
     console.log("Erreur de fetch !! :´<\n" + err);
     displayErrorMessage("errorDiv", err);
-  });
+  })*/;
 
 }
 
 const refresh = (data, status) => {
   myOptionList.push(data);
+  let furnitureId = data.furnitureId;
+  furnitureList.forEach(furniture => {
+    if (furniture.furnitureId == furnitureId) {
+      furniture.option = data;
+    }
+  });
   updateFurnitureList(data.furnitureId, status)
   page.innerHTML = generateTable();
 
@@ -271,7 +277,7 @@ const getTag = (furniture) => {
       let today = new Date();
       let optionDelay = Math.floor(
           (optionDate.getTime() / 86400000) + option.duration
-          - (today.getTime() / 86400000));
+          - (today.getTime() / 86400000))+1;
       let plural = "";
       if (optionDelay > 1) {
         plural += "s";

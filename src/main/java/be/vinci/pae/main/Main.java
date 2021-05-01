@@ -1,9 +1,17 @@
 package be.vinci.pae.main;
 
 
+import be.vinci.pae.business.dto.OptionDTO;
 import be.vinci.pae.utils.Configurate;
+import be.vinci.pae.business.ucc.OptionUCC;
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.logging.Handler;
@@ -11,8 +19,11 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider.App;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -22,6 +33,11 @@ public class Main {
 
   private static final String FILE_LOGGER_NAME = "be.vinci.pae-file";
   public static final String CONSOLE_LOGGER_NAME = "be.vinci.pae-console";
+
+  private static ApplicationBinder applicationBinder = new ApplicationBinder();
+
+  private static OptionUCC optionUCC;
+
 
   /**
    * Starts the http server.
@@ -68,6 +84,46 @@ public class Main {
     consoleLogger.setUseParentHandlers(true);
 
     consoleLogger.setParent(fileLogger);
+
+    //Option's automatic transition (every 24h = 86400000ms)
+    ServiceLocator locator = ServiceLocatorUtilities.bind(applicationBinder);
+    optionUCC = locator.getService(OptionUCC.class);
+
+    Timer t = new Timer();
+    TimerTask tt = new TimerTask() {
+
+      @Override
+      public void run() {
+        Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
+            .log(Level.INFO, "Option's automatic transition.");
+        List<OptionDTO> optionList = optionUCC.listOption();
+        for (OptionDTO option : optionList) {
+          if (!option.isCanceled()) {
+            String[] dateTable = option.getDateOption().split("-");
+            LocalDate optionLocalDate = LocalDate
+                .of(Integer.parseInt(dateTable[0]),
+                    Integer.parseInt(dateTable[1]),
+                    Integer.parseInt(dateTable[2]));
+            Date optionDate = Date
+                .from(optionLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Date today = new Date();
+            int optionDelay = (int) Math.floor(
+                (optionDate.getTime() / 86400000)
+                    + option.getDuration()
+                    - (today.getTime() / 86400000)) + 1;
+            if (optionDelay < 1) {
+              optionUCC.cancelOption(option.getUser(), option.getOptionId());
+            }
+          }
+        }
+      }
+    };
+
+    Date startSchedulerDate = Date
+        .from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+    t.scheduleAtFixedRate(tt, startSchedulerDate, 86400000);
+
     try {
       //start server
       final HttpServer server = startServer();
@@ -81,4 +137,5 @@ public class Main {
       fileHandler.close();
     }
   }
+
 }
