@@ -96,26 +96,7 @@ public class Main {
       public void run() {
         Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
             .log(Level.INFO, "Option's automatic transition.");
-        List<OptionDTO> optionList = optionUCC.listOption();
-        for (OptionDTO option : optionList) {
-          if (!option.isCanceled()) {
-            String[] dateTable = option.getDateOption().split("-");
-            LocalDate optionLocalDate = LocalDate
-                .of(Integer.parseInt(dateTable[0]),
-                    Integer.parseInt(dateTable[1]),
-                    Integer.parseInt(dateTable[2]));
-            Date optionDate = Date
-                .from(optionLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            Date today = new Date();
-            int optionDelay = (int) Math.floor(
-                (optionDate.getTime() / 86400000)
-                    + option.getDuration()
-                    - (today.getTime() / 86400000)) + 1;
-            if (optionDelay < 1) {
-              optionUCC.cancelOption(option.getUser(), option.getOptionId());
-            }
-          }
-        }
+        optionUCC.updateExpiredOptions();
       }
     };
 

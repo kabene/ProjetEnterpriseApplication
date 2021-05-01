@@ -41,4 +41,9 @@ public interface OptionUCC {
    * @return list of all currentUser's option.
    */
   List<OptionDTO> myOptions(UserDTO currentUser);
+
+  /**
+   * cancels expired options.
+   */
+  void updateExpiredOptions();
 }

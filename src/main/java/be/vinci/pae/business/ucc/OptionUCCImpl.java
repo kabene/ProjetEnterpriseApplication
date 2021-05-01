@@ -11,6 +11,9 @@ import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.OptionDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 public class OptionUCCImpl implements OptionUCC {
@@ -138,6 +141,33 @@ public class OptionUCCImpl implements OptionUCC {
   }
 
   /**
+   * cancels expired options.
+   */
+  @Override
+  public void updateExpiredOptions() {
+    List<OptionDTO> optionList = listOption();
+    for (OptionDTO option : optionList) {
+      if (!option.isCanceled()) {
+        String[] dateTable = option.getDateOption().split("-");
+        LocalDate optionLocalDate = LocalDate
+            .of(Integer.parseInt(dateTable[0]),
+                Integer.parseInt(dateTable[1]),
+                Integer.parseInt(dateTable[2]));
+        Date optionDate = Date
+            .from(optionLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date today = new Date();
+        int optionDelay = (int) Math.floor(
+            (optionDate.getTime() / 86400000)
+                + option.getDuration()
+                - (today.getTime() / 86400000)) + 1;
+        if (optionDelay < 1) {
+          cancelOption(option.getUser(), option.getOptionId());
+        }
+      }
+    }
+  }
+
+  /**
    * Completes the OptionDTO given as an argument with it's references in the db.
    *
    * @param dto : the FurnitureDTO to complete
@@ -147,4 +177,6 @@ public class OptionUCCImpl implements OptionUCC {
       dto.setUser(userDAO.findById(dto.getUserId()));
     }
   }
+
+
 }
