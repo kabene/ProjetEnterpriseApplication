@@ -31,10 +31,7 @@
   }
 }
 
-.tooltip-inner {
-  white-space:pre;
-  max-width:none;
-}
+
 
 .navbarButton {
   height: 4em;
@@ -494,3 +491,20 @@ body, .search-bar {
   to {bottom: 0; opacity: 0;}
 }
 /* end source */
+
+.tooltip {
+  background-color:#d6d8db ;
+  border-radius: 5%;
+  /* hide and position tooltip */
+  -webkit-transition: opacity 0.5s;
+  -moz-transition: opacity 0.5s;
+  -ms-transition: opacity 0.5s;
+  -o-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+
+.hover:hover .tooltip {
+  /* display tooltip on hover */
+  padding: 10px;
+  opacity: 1;
+}

@@ -6,6 +6,7 @@ import {
   displayErrorMessage,
   generateLoadingAnimation,
 } from "../utils/utils.js"
+
 let page = document.querySelector("#page");
 let mainPage;
 let furnitureList;
@@ -21,7 +22,7 @@ const emptyFilter = {
   price: "-1",
   status: "",
 }
-let activeFilters = {... emptyFilter};
+let activeFilters = {...emptyFilter};
 
 const FurnitureList = async (id) => {
   currentUser = findCurrentUser();
@@ -49,8 +50,9 @@ const generateLargeTablePage = () => {
 
   placeFilterForm();
   document.querySelectorAll(".toBeClicked").forEach(
-    element => element.addEventListener("click", displayShortElements));
-  document.querySelector("#buttonReturn").addEventListener("click",displayLargeTable);
+      element => element.addEventListener("click", displayShortElements));
+  document.querySelector("#buttonReturn").addEventListener("click",
+      displayLargeTable);
 }
 
 /**
@@ -89,7 +91,7 @@ const findTypeList = async () => {
     let response = await fetch("/furnitureTypes/", {
       method: "GET",
     });
-    if(!response.ok) {
+    if (!response.ok) {
       throw new Error(response.status + " : " + response.statusText);
     }
     let data = await response.json();
@@ -167,7 +169,7 @@ const generatePageHtml = (largeTable = true) => {
             <th class="w-25"></th>
             <th class="align-middle">Description</th>
             <th class="${notNeededClassName}">Type</th>
-            <th class="align-middle">État <i data-toggle="tooltip" data-placement="right"  title="•Rouge:plus d'operation pas vendu. \n •Vert:plus d'opération et vendu \n •Orange:opération à réaliser \n  •Bleu:doit être accepté dans sa demande de visite"class="material-icons">&#xe88e;</i></th>
+            <th class="align-middle">État <i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend("rouge","danger")}: Un meuble est sous option. <br/> ${generateBadgeLegend("vert","success")}: Le meuble est disponible a la meuble.<br/>${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état transient.  <br/>${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite. <br/> ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ces meubles. </div></i>  </th>
             <th class="${notNeededClassName}">Vendeur</th>
             <th class="${notNeededClassName}">Acheteur</th>
             <th class="${notNeededClassName}">Prix de vente</th>
@@ -180,14 +182,8 @@ const generatePageHtml = (largeTable = true) => {
     <div class="shortElement ${shortElementClassName}" id="furnitureCardDiv">Hello</div>
   </div>
   </div>`;
-  $(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();
-  });
   return res;
 }
-
-
-
 
 const generateAllRows = (notNeededClassName) => {
   let res = "";
@@ -197,7 +193,7 @@ const generateAllRows = (notNeededClassName) => {
     } else if (furniture !== furnitureMap[furniture.furnitureId]) {
       furniture = furnitureMap[furniture.furnitureId];
     }
-    if(respectsAllActiveFilters(furniture)){
+    if (respectsAllActiveFilters(furniture)) {
       res += generateRow(furniture, notNeededClassName);
     }
     furnitureMap[furniture.furnitureId] = furniture;
@@ -239,7 +235,7 @@ const generateRow = (furniture, notNeededClassName) => {
  * @returns html
  */
 const generateFavouritePhotoImgTag = (furniture) => {
-  if(!furniture.favouritePhoto) {
+  if (!furniture.favouritePhoto) {
     return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
   }
   return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" furnitureId="${furniture.furnitureId}" id="list-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
@@ -251,7 +247,7 @@ const generateFavouritePhotoImgTag = (furniture) => {
  * @returns html
  */
 const generateCardFavouritePhotoImgTag = (furniture) => {
-  if(!furniture.favouritePhoto) {
+  if (!furniture.favouritePhoto) {
     return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
   }
   return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" furnitureId="${furniture.furnitureId}" id="card-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
@@ -313,24 +309,24 @@ const generateStatusInfos = (status) => {
       res.status = "En restauration";
       break;
     case "UNDER_OPTION":
-      res.classname = "warning";
+      res.classname = "danger";
       res.status = "Sous option";
       break;
     case "SOLD":
-      res.classname = "danger";
+      res.classname = "secondary";
       res.status = "Vendu";
       break;
     case "WITHDRAWN":
-      res.classname = "danger";
+      res.classname = "secondary";
       res.status = "Retiré de la vente";
       break;
     case "REFUSED":
-      res.classname = "danger";
+      res.classname = "secondary";
       res.status = "Refusé";
       break;
     case "REQUESTED_FOR_VISIT":
       res.classname = "info";
-      res.status="En attente de visite";
+      res.status = "En attente de visite";
       break;
     case "RESERVED":
     case "DELIVERED":
@@ -342,7 +338,6 @@ const generateStatusInfos = (status) => {
   return res;
 }
 
-
 const generateColoredStatus = (furniture) => {
   let infos = generateStatusInfos(furniture.status);
   return `<p class="text-${infos.classname}">${infos.status}</p>`;
@@ -352,10 +347,24 @@ const generateColoredStatus = (furniture) => {
 const generateDot = (colorClassName) => {
   return `<span class="badge badge-pill p-1 badge-${colorClassName}"> </span>`;
 }
-
+/**
+ *
+ * @param furniture
+ * @returns {string}
+ */
 const generateBadgeStatus = (furniture) => {
   let infos = generateStatusInfos(furniture.status);
   let res = `<span class="badge badge-pill badge-${infos.classname} text-light">${infos.status}</span>`;
+  return res;
+}
+/**
+ *  generate the badges for the legend tooltip
+ * @param name
+ * @param status
+ * @returns {string}
+ */
+const generateBadgeLegend = (name, status) => {
+  let res = `<span class="badge badge-pill badge-${status} text-light">${name}</span>`;
   return res;
 }
 
@@ -405,7 +414,7 @@ const displayShortElements = async (e) => {
     generateCard(furniture);
     document.querySelectorAll(".userLink").forEach(
         (link) => link.addEventListener("click", onUserLinkClicked));
-      isDisplayingLargeTable = false;
+    isDisplayingLargeTable = false;
   } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
   }
@@ -455,7 +464,8 @@ const generateCard = (furniture) => {
   document.querySelectorAll(".visibleCheckbox").forEach((element) => {
     element.addEventListener("click", onVisibleCheckClicked);
   });
-  document.querySelector("#saveBtnPhoto").addEventListener("click", onSaveModifPhotos);
+  document.querySelector("#saveBtnPhoto").addEventListener("click",
+      onSaveModifPhotos);
   document.querySelector("#home-tab").addEventListener("click", () => {
     openTab = "infos";
   });
@@ -470,7 +480,7 @@ const generateCard = (furniture) => {
 
 const updateSaveInfoBtn = () => {
   let saveInfoBtn = document.querySelector("#save-info-btn");
-  if(verifyDifferentInfo()) {
+  if (verifyDifferentInfo()) {
     saveInfoBtn.disabled = false;
   } else {
     saveInfoBtn.disabled = true;
@@ -486,29 +496,30 @@ const verifyDifferentInfo = () => {
   let selectType = document.querySelector("#select-type");
   let inputSellingPrice = document.querySelector("#input-selling-price");
 
-  let originalDescriptionInput = document.querySelector("#original-description");
+  let originalDescriptionInput = document.querySelector(
+      "#original-description");
   let originalTypeInput = document.querySelector("#original-type-id");
   let originalSellingPrice = document.querySelector("#original-selling-price");
 
   //description
   let newDesc = inputDescription.value;
   let oldDesc = originalDescriptionInput.value;
-  if(newDesc !== oldDesc) {
-    if(newDesc !== ""){
+  if (newDesc !== oldDesc) {
+    if (newDesc !== "") {
       return true;
     }
   }
   //type id
   let newTypeId = selectType.value;
   let oldTypeId = originalTypeInput.value;
-  if(newTypeId !== oldTypeId) {
+  if (newTypeId !== oldTypeId) {
     return true;
   }
   //selling price
-  if(inputSellingPrice) {
+  if (inputSellingPrice) {
     let newSellingPrice = inputSellingPrice.value;
     let oldSellingPrice = originalSellingPrice.value;
-    if(newSellingPrice !== oldSellingPrice) {
+    if (newSellingPrice !== oldSellingPrice) {
       return true;
     }
   }
@@ -534,7 +545,7 @@ const generateCardHTML = (furniture) => {
 
   let infoTab = openTabObject;
   let photoTab = closedTabObject;
-  if(openTab === "photos"){
+  if (openTab === "photos") {
     infoTab = closedTabObject;
     photoTab = openTabObject;
   }
@@ -549,7 +560,8 @@ const generateCardHTML = (furniture) => {
                 <p>${generateCardFavouritePhotoImgTag(furniture)}</p>
               </div>
               <div class="col-md-6 text-left">
-                <h5 id="descriptionCardEntry">${generateFurnitureDescriptionCardEntry(furniture)}</h5>
+                <h5 id="descriptionCardEntry">${generateFurnitureDescriptionCardEntry(
+      furniture)}</h5>
                 <p class="profile-rating">ÉTAT : <span id="statusCardEntry">${generateBadgeStatus(
       furniture)}</span></p>
               </div>
@@ -611,29 +623,29 @@ const addImgForm = () => {
 
 /**
  * load the image and transform it to base64  then  listen the click on accept to send the image
- * 
- * @param {*} furniture 
+ *
+ * @param {*} furniture
  */
 const addImage = (furniture) => {
   document.getElementById("addImg").addEventListener("change", () => {
     var FR = new FileReader();
     let bas;
     var file = document.querySelector('input[type=file]').files[0];
-      if (typeof (FR) != "undefined") {
-        FR.addEventListener("load", function (e) {
-          bas = e.target.result;
-          document.getElementById("sendImg").addEventListener("click",(e) => {
-            e.preventDefault();
-            fetching(bas, furniture.furnitureId);
-          });
+    if (typeof (FR) != "undefined") {
+      FR.addEventListener("load", function (e) {
+        bas = e.target.result;
+        document.getElementById("sendImg").addEventListener("click", (e) => {
+          e.preventDefault();
+          fetching(bas, furniture.furnitureId);
         });
-        if (file) {
-          FR.readAsDataURL(file);
-        }
-        //addImgForm();
-      }else{
-        throw new Error('le navigateur ne supporte pas FileReader');
+      });
+      if (file) {
+        FR.readAsDataURL(file);
       }
+      //addImgForm();
+    } else {
+      throw new Error('le navigateur ne supporte pas FileReader');
+    }
     addImgForm();
   });
 }
@@ -651,7 +663,7 @@ const fetching = async (base64, furnitureId) => {
       "Content-Type": "application/json",
     }
   });
-  if(!response.ok) {
+  if (!response.ok) {
     displayErrorMessage("errorDiv", new Error("Erreur de fetch :<"));
     return;
   }
@@ -668,7 +680,8 @@ const generatePhotoList = (furniture) => {
     let homePageCheckName = `checkboxHomepage${photo.photoId}`;
 
     let favChecked = ``;
-    if(furniture.favouritePhoto && photo.photoId === furniture.favouritePhoto.photoId) {
+    if (furniture.favouritePhoto && photo.photoId
+        === furniture.favouritePhoto.photoId) {
       favChecked = `checked`;
     }
 
@@ -676,15 +689,15 @@ const generatePhotoList = (furniture) => {
     let homePageCheckedOriginaly = false;
     let visibileChecked = ``;
     let homePageChecked = ``;
-    if(photo.isVisible) {
+    if (photo.isVisible) {
       visibileChecked = `checked`;
       visibleCheckedOriginaly = true;
 
-      if(photo.onHomePage && photo.isVisible) {
+      if (photo.onHomePage && photo.isVisible) {
         homePageChecked = `checked`;
         homePageCheckedOriginaly = true;
       }
-    }else {
+    } else {
       homePageChecked = `disabled`;
     }
 
@@ -714,9 +727,9 @@ const generatePhotoList = (furniture) => {
     </div>`;
   });
   let pId
-  if(!furniture.favouritePhoto){
+  if (!furniture.favouritePhoto) {
     pId = "notFound";
-  }else {
+  } else {
     pId = furniture.favouritePhoto.photoId;
   }
   let res = `
@@ -736,7 +749,7 @@ const onFavRadioSelected = (e) => {
 
 const unselectAllFavRadioExcept = (radioId) => {
   document.querySelectorAll(".favRadio").forEach((element) => {
-    if(element.id !== radioId){
+    if (element.id !== radioId) {
       element.checked = false;
     }
   })
@@ -746,11 +759,11 @@ const onVisibleCheckClicked = (e) => {
   let photoId = e.target.getAttribute("photoid");
   let homepageCheckbox = document.querySelector(`#checkboxHomepage${photoId}`);
 
-  if(!e.target.checked) {
+  if (!e.target.checked) {
     homepageCheckbox.checked = false;
     homepageCheckbox.disabled = true;
     e.target.checked = false;
-  }else {
+  } else {
     homepageCheckbox.disabled = false;
   }
 }
@@ -762,7 +775,7 @@ const onSaveModifPhotos = async (e) => {
   let furnitureId = originalFav.getAttribute("furnitureid");
   //fav
   let selectedFavId = findSelectedFav();
-  if(originalFavPhotoId != selectedFavId) {
+  if (originalFavPhotoId != selectedFavId) {
     let newFurniture = await patchNewFav(furnitureId, selectedFavId);
     furnitureMap[furnitureId] = newFurniture;
   }
@@ -780,7 +793,7 @@ const onSaveModifPhotos = async (e) => {
 const findSelectedFav = () => {
   let res = null;
   document.querySelectorAll(".favRadio").forEach((radioBtn) => {
-    if(radioBtn.checked) {
+    if (radioBtn.checked) {
       res = radioBtn.getAttribute("photoid");
     }
   });
@@ -807,20 +820,21 @@ const findAllPhotosForFlagUpdate = () => {
 
     let visibleChecked = "false";
     let homepageChecked = "false";
-    if(visibleCheckbox.checked) {
+    if (visibleCheckbox.checked) {
       visibleChecked = "true";
     }
-    if(!homepageCheckbox.disabled && homepageCheckbox.checked) {
+    if (!homepageCheckbox.disabled && homepageCheckbox.checked) {
       homepageChecked = "true";
     }
 
-    if(visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
+    if (visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
       isModified = true;
-    } else if(homepageCheckbox.getAttribute("checked_originaly") != homepageChecked) {
+    } else if (homepageCheckbox.getAttribute("checked_originaly")
+        != homepageChecked) {
       isModified = true;
     }
 
-    if(isModified) {
+    if (isModified) {
       let bundle = {
         photoId: photoId,
         isVisible: visibleCheckbox.checked,
@@ -840,10 +854,10 @@ const findAllPhotosForFlagUpdate = () => {
  * @returns {*} new photo obj.
  */
 const patchNewFav = async (furnitureId, favPhotoId) => {
-  let bundle =  {
+  let bundle = {
     photoId: favPhotoId,
   };
-  let response = await fetch("/furniture/favouritePhoto/"+furnitureId, {
+  let response = await fetch("/furniture/favouritePhoto/" + furnitureId, {
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -851,9 +865,9 @@ const patchNewFav = async (furnitureId, favPhotoId) => {
       "Content-Type": "application/json",
     },
   });
-  if(!response.ok) {
+  if (!response.ok) {
     displayErrorMessage("errorDiv", new Error(
-      response.status + " : " + response.statusText
+        response.status + " : " + response.statusText
     ));
     return;
   }
@@ -872,7 +886,7 @@ const patchNewFav = async (furnitureId, favPhotoId) => {
  * @return new photo (fetch response)
  */
 const patchDisplayFlags = async (bundle) => {
-  let addr = "/photos/displayFlags/"+bundle.photoId;
+  let addr = "/photos/displayFlags/" + bundle.photoId;
   let response = await fetch(addr, {
     method: "PATCH",
     body: JSON.stringify(bundle),
@@ -881,9 +895,9 @@ const patchDisplayFlags = async (bundle) => {
       "Content-Type": "application/json",
     },
   });
-  if(!response.ok) {
+  if (!response.ok) {
     displayErrorMessage("errorDiv", new Error(
-      response.status + " : " + response.statusText
+        response.status + " : " + response.statusText
     ));
     return;
   }
@@ -897,13 +911,14 @@ const patchDisplayFlags = async (bundle) => {
  * @param {Array} array result of findAllPhotosForFlagUpdate()
  */
 const patchDisplayFlagsAllPhotos = async (array) => {
-  for(const obj of array) {
+  for (const obj of array) {
     let newPhoto = await patchDisplayFlags(obj);
     //update furnitureMap
-    if(newPhoto){
+    if (newPhoto) {
       let furnitureId = newPhoto.furnitureId;
-      let photoIndex = findPhotoIndexById(furnitureMap[furnitureId].photos, newPhoto.photoId);
-      if(photoIndex != -1){
+      let photoIndex = findPhotoIndexById(furnitureMap[furnitureId].photos,
+          newPhoto.photoId);
+      if (photoIndex != -1) {
         furnitureMap[furnitureId].photos[photoIndex] = newPhoto;
       }
     }
@@ -957,12 +972,12 @@ const generateTypeCardEntry = (furniture) => {
 
 const generateAllTypeOptions = (furniture) => {
   let res = "";
-  for(const typeIndex in typeList) {
+  for (const typeIndex in typeList) {
     let typeObject = typeList[typeIndex];
     let opt;
-    if(furniture.typeId === typeObject.typeId) {
+    if (furniture.typeId === typeObject.typeId) {
       opt = `<option value="${typeObject.typeId}" selected>${typeObject.typeName}</option>`;
-    }else {
+    } else {
       opt = `<option value="${typeObject.typeId}">${typeObject.typeName}</option>`;
     }
     res += opt;
@@ -972,20 +987,20 @@ const generateAllTypeOptions = (furniture) => {
 
 const generateBuyingPriceCardEntry = (furniture) => {
   let res = "";
-  if(furniture.purchasePrice !== undefined) {
+  if (furniture.purchasePrice !== undefined) {
     res = generateCardLabelKeyEntry("Prix d'achat",
-    "purchase-price-card-entry",
-    `${furniture.purchasePrice}€`);
+        "purchase-price-card-entry",
+        `${furniture.purchasePrice}€`);
   }
   return res;
 }
 
 const generateBuyingDateCardEntry = (furniture) => {
   let res = "";
-  if(furniture.customerWithdrawalDate !== undefined) {
+  if (furniture.customerWithdrawalDate !== undefined) {
     res = generateCardLabelKeyEntry("Date de retrait chez le vendeur",
-    "purchase-price-card-entry",
-    furniture.customerWithdrawalDate);
+        "purchase-price-card-entry",
+        furniture.customerWithdrawalDate);
   }
   return res;
 }
@@ -1031,7 +1046,7 @@ const generateOptionCardEntry = (furniture) => {
 
 const generateSellingPriceCardEntry = (furniture) => {
   if (furniture.sellingPrice) {
-    if(furniture.status === "AVAILABLE_FOR_SALE"){
+    if (furniture.status === "AVAILABLE_FOR_SALE") {
       let input = `
       <div class="input-group">
         <input type="number" min="0.01" step="0.01" class="form-control input-furniture-info w-lg-25 w-50" id="input-selling-price" value="${furniture.sellingPrice}"/>
@@ -1041,10 +1056,10 @@ const generateSellingPriceCardEntry = (furniture) => {
         <input type="hidden" id="original-selling-price" value="${furniture.sellingPrice}"/>
       </div>`;
       return generateCardLabelKeyEntryHtml("Prix de vente",
-        input);
-    }else {
+          input);
+    } else {
       return generateCardLabelKeyEntry("Prix de vente", "sellingPriceCardEntry",
-        furniture.sellingPrice + "€");
+          furniture.sellingPrice + "€");
     }
   }
   return "";
@@ -1052,7 +1067,8 @@ const generateSellingPriceCardEntry = (furniture) => {
 
 const generateSpecialSalePriceCardEntry = (furniture) => {
   if (furniture.specialSalePrice) {
-    return generateCardLabelKeyEntry("Prix de vente spécial", "specialSalePriceCardEntry",
+    return generateCardLabelKeyEntry("Prix de vente spécial",
+        "specialSalePriceCardEntry",
         furniture.specialSalePrice + "€");
   }
   return "";
@@ -1147,7 +1163,7 @@ const generateToSoldForm = () => {
   let furniture = furnitureMap[furnitureId];
   let status = furniture.status;
   let res = "";
-  switch(status) {
+  switch (status) {
     case "AVAILABLE_FOR_SALE":
       res = `
         <div class="form-group">
@@ -1187,7 +1203,8 @@ const addTransitionBtnListeners = (furniture) => {
     element.addEventListener("click",
         findTransitionMethod(element.id, furniture));
   });
-  document.querySelector("#save-info-btn").addEventListener("click", onSaveInfoBtnClicked)
+  document.querySelector("#save-info-btn").addEventListener("click",
+      onSaveInfoBtnClicked)
 }
 
 const findTransitionMethod = (btnId, furniture) => {
@@ -1199,13 +1216,14 @@ const findTransitionMethod = (btnId, furniture) => {
     case "btnWithdraw":
       return (e) => withdraw(e, furniture);
     case "btnToSold":
-        return (e) => toSold(e, furniture);
+      return (e) => toSold(e, furniture);
     default:
       return (e) => {
         e.preventDefault();
         console.log("unrecognized button id: " + btnId); //'do nothing' method
       };
-  };
+  }
+  ;
 }
 
 const onSaveInfoBtnClicked = async (e) => {
@@ -1214,7 +1232,8 @@ const onSaveInfoBtnClicked = async (e) => {
   let selectType = document.querySelector("#select-type");
   let inputSellingPrice = document.querySelector("#input-selling-price");
 
-  let originalDescriptionInput = document.querySelector("#original-description");
+  let originalDescriptionInput = document.querySelector(
+      "#original-description");
   let originalTypeInput = document.querySelector("#original-type-id");
   let originalSellingPrice = document.querySelector("#original-selling-price");
 
@@ -1222,8 +1241,8 @@ const onSaveInfoBtnClicked = async (e) => {
   //description
   let newDesc = inputDescription.value;
   let oldDesc = originalDescriptionInput.value;
-  if(newDesc !== oldDesc) {
-    if(newDesc !== ""){
+  if (newDesc !== oldDesc) {
+    if (newDesc !== "") {
       bundle = {
         ...bundle,
         description: newDesc,
@@ -1233,26 +1252,26 @@ const onSaveInfoBtnClicked = async (e) => {
   //type id
   let newTypeId = selectType.value;
   let oldTypeId = originalTypeInput.value;
-  if(newTypeId !== oldTypeId) {
+  if (newTypeId !== oldTypeId) {
     bundle = {
       ...bundle,
       typeId: newTypeId,
     }
   }
   //selling price
-  if(inputSellingPrice) {
+  if (inputSellingPrice) {
     let newSellingPrice = inputSellingPrice.value;
     let oldSellingPrice = originalSellingPrice.value;
-    if(newSellingPrice !== oldSellingPrice) {
+    if (newSellingPrice !== oldSellingPrice) {
       bundle = {
         ...bundle,
         sellingPrice: newSellingPrice,
       }
     }
   }
-  if(bundle !== {}) {
+  if (bundle !== {}) {
     try {
-      let response = await fetch("furniture/infos/"+currentFurnitureId, {
+      let response = await fetch("furniture/infos/" + currentFurnitureId, {
         method: "PATCH",
         body: JSON.stringify(bundle),
         headers: {
@@ -1260,13 +1279,13 @@ const onSaveInfoBtnClicked = async (e) => {
           "Content-Type": "application/json",
         },
       });
-      if(!response.ok) {
+      if (!response.ok) {
         throw new Error(response.status + " : " + response.statusText);
       }
       let data = await response.json();
       furnitureMap[data.furnitureId] = data;
       loadCard(data.furnitureId);
-    }catch(err) {
+    } catch (err) {
       displayErrorMessage("errorDiv", err);
     }
   }
@@ -1355,18 +1374,20 @@ const toSold = async (e, furniture) => {
   let specialSalePrice = "";
   let buyerUsername;
   let bundle;
-  if(furniture.status === "AVAILABLE_FOR_SALE"){
-    specialSalePrice = e.target.parentElement.parentElement.querySelector("#specialSalePriceInput").value;
-    buyerUsername = e.target.parentElement.parentElement.querySelector("#buyerUsernameInput").value;
-  }else if(furniture.status === "UNDER_OPTION"){
+  if (furniture.status === "AVAILABLE_FOR_SALE") {
+    specialSalePrice = e.target.parentElement.parentElement.querySelector(
+        "#specialSalePriceInput").value;
+    buyerUsername = e.target.parentElement.parentElement.querySelector(
+        "#buyerUsernameInput").value;
+  } else if (furniture.status === "UNDER_OPTION") {
     buyerUsername = furniture.option.user.username;
   }
-  if(specialSalePrice !== "") {
+  if (specialSalePrice !== "") {
     bundle = {
       buyerUsername: buyerUsername,
       specialSalePrice: specialSalePrice,
     }
-  }else {
+  } else {
     bundle = {
       buyerUsername: buyerUsername,
     }
@@ -1401,14 +1422,15 @@ const loadCard = (furnitureId) => {
   mainPage.innerHTML = generatePageHtml(false);
   generateCard(furnitureMap[furnitureId]);
   document.querySelectorAll(".toBeClicked").forEach(
-    (element) => {
-      let elementFurnId = element.getAttribute("furnitureid");
-      if(elementFurnId == furnitureId) {
-        element.className = "toBeClicked bg-secondary text-light";
-      }
-      element.addEventListener("click", displayShortElements)
-    });
-  document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
+      (element) => {
+        let elementFurnId = element.getAttribute("furnitureid");
+        if (elementFurnId == furnitureId) {
+          element.className = "toBeClicked bg-secondary text-light";
+        }
+        element.addEventListener("click", displayShortElements)
+      });
+  document.querySelector("#buttonReturn").addEventListener("click",
+      displayLargeTable);
   placeFilterForm();
 }
 
@@ -1437,17 +1459,19 @@ const respectsUserFilter = (furniture) => {
   if (activeFilters.username === "") {
     return true; //inactive filter -> TRUE
   }
-  if(!furniture.seller && !furniture.buyer) return false; // active filter + no user -> FALSE
+  if (!furniture.seller && !furniture.buyer) {
+    return false;
+  } // active filter + no user -> FALSE
 
-  if(furniture.seller !== undefined) {
-    if(furniture.seller.username.includes(activeFilters.username)) {
+  if (furniture.seller !== undefined) {
+    if (furniture.seller.username.includes(activeFilters.username)) {
       return true;
     }
   }
-  if(!furniture.buyer){
+  if (!furniture.buyer) {
     return false;
-  }else {
-    if(furniture.buyer.username.includes(activeFilters.username)) {
+  } else {
+    if (furniture.buyer.username.includes(activeFilters.username)) {
       return true;
     }
   }
@@ -1461,10 +1485,12 @@ const respectsUserFilter = (furniture) => {
  * @returns {boolean} true if furniture respects active price filters.
  */
 const respectsPriceFilters = (furniture) => {
-  if(activeFilters.price === "-1") return true; //inactive filters
+  if (activeFilters.price === "-1") {
+    return true;
+  } //inactive filters
   let minPrice = -1;
   let maxPrice = -1;
-  switch(activeFilters.price) {
+  switch (activeFilters.price) {
     case "1":
       minPrice = 1;
       maxPrice = 10;
@@ -1488,10 +1514,16 @@ const respectsPriceFilters = (furniture) => {
     default:
   }
   //active filters
-  if(!furniture.sellingPrice) return false; //no price
+  if (!furniture.sellingPrice) {
+    return false;
+  } //no price
 
-  if(minPrice !== -1 && furniture.sellingPrice < minPrice) return false; //under minPrice
-  if(maxPrice !== -1 && furniture.sellingPrice > maxPrice) return false; //above maxPrice
+  if (minPrice !== -1 && furniture.sellingPrice < minPrice) {
+    return false;
+  } //under minPrice
+  if (maxPrice !== -1 && furniture.sellingPrice > maxPrice) {
+    return false;
+  } //above maxPrice
 
   return true;
 }
@@ -1503,7 +1535,9 @@ const respectsPriceFilters = (furniture) => {
  * @returns {boolean} true if furniture respects active status filter.
  */
 const respectsStatusFilter = (furniture) => {
-  if(activeFilters.status === "") return true; //inactive filter
+  if (activeFilters.status === "") {
+    return true;
+  } //inactive filter
   return furniture.status === activeFilters.status;
 }
 
@@ -1512,7 +1546,7 @@ const respectsStatusFilter = (furniture) => {
  */
 const clearFilters = (e) => {
   e.preventDefault();
-  activeFilters = {... emptyFilter};
+  activeFilters = {...emptyFilter};
   refreshDisplay();
 }
 
@@ -1555,10 +1589,11 @@ const placeFilterForm = () => {
  * Refresh the current display
  */
 const refreshDisplay = () => {
-  if(isDisplayingLargeTable === false && typeof(currentFurnitureId) !== undefined){
+  if (isDisplayingLargeTable === false && typeof (currentFurnitureId)
+      !== undefined) {
     let furnitureId = currentFurnitureId;
     loadCard(furnitureId);
-  }else {
+  } else {
     generateLargeTablePage();
   }
   placeFilterForm();
@@ -1571,7 +1606,7 @@ const refreshDisplay = () => {
 const displayNoResultMsg = () => {
   let tbody = document.querySelector("#furniture-list-body");
   const noResultHTML = "";
-  if (tbody.innerHTML === noResultHTML){
+  if (tbody.innerHTML === noResultHTML) {
     tbody.innerHTML = `<th colspan="8"><p>Aucun résultat</p></th>`;
   }
 }
