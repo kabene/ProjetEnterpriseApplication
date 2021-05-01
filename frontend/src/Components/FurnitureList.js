@@ -481,7 +481,6 @@ const verifyDifferentInfo = () => {
   let originalTypeInput = document.querySelector("#original-type-id");
   let originalSellingPrice = document.querySelector("#original-selling-price");
 
-  let bundle = {};
   //description
   let newDesc = inputDescription.value;
   let oldDesc = originalDescriptionInput.value;
@@ -635,12 +634,11 @@ const fetching = async (base64, furnitureId) => {
     source: base64,
     furnitureId: furnitureId
   }
-  let pers = getUserSessionData();
   let response = await fetch("/photos/", {
     method: "POST",
     body: JSON.stringify(toSend),
     headers: {
-      Authorization: pers.token,
+      Authorization: currentUser.token,
       "Content-Type": "application/json",
     }
   });
