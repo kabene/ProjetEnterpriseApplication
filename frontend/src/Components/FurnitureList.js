@@ -1095,7 +1095,7 @@ const generateAllTransitionBtns = (furniture) => {
       break;
     case "UNDER_OPTION":
       res += generateTransitionModal("ToSold", "Indiquer vendu");
-      res += generateTransitionModal("ToAvailable", "Annuler l'option en cours");
+      //res += generateTransitionModal("ToAvailable2", "Annuler l'option en cours"); //TODO: ajouter fonctionnalité ou retirer
       break;
     case "SOLD":
     case "WITHDRAWN":
