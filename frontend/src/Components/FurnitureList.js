@@ -324,6 +324,9 @@ const generateStatusInfos = (status) => {
       res.status = "Refusé";
       break;
     case "REQUESTED_FOR_VISIT":
+      res.classname = "warning";
+      res.status="En attente d'acceptation";
+      break;
     case "RESERVED":
     case "DELIVERED":
     case "COLLECTED":
@@ -333,6 +336,7 @@ const generateStatusInfos = (status) => {
   }
   return res;
 }
+
 
 const generateColoredStatus = (furniture) => {
   let infos = generateStatusInfos(furniture.status);
@@ -1095,6 +1099,7 @@ const generateAllTransitionBtns = (furniture) => {
       break;
     case "UNDER_OPTION":
       res += generateTransitionModal("ToSold", "Indiquer vendu");
+      break;
     case "SOLD":
     case "WITHDRAWN":
     case "REQUESTED_FOR_VISIT":
