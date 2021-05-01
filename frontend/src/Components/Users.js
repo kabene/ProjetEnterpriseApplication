@@ -11,6 +11,9 @@ let currentUser;
 let timeouts = [];
 let userDetail;
 
+let nbrCurrentUserWaiting;
+let nbrCurrentUserAccepted;
+
 let filter = {
   role : "",
   info : ""
@@ -273,30 +276,51 @@ const generateTable = () => {
   return res;
 }
 
+/**
+ * generate all the rows needed and 2 messages informing the number of user waiting or accepted.
+ * @returns an html element containing all the rows (filtered or not) and the messages informing the number of user waiting and accepted.
+ */
 const getAllUsersRows = () => {
-  let res = "<tr><th colspan = '7' class='msgTable' id='msgTableWaiting'>" + waitingUsersList.length + " inscription(s) en attente</th></tr>";
-  waitingUsersList.forEach(user => res += generateRow(user));
-  res += "<tr><th colspan = '7' class='msgTable' id='msgTableConfirmed'>" + confirmedUsersList.length + " client(s) inscrit(s)</th></tr>"
-  confirmedUsersList.forEach(user => res += generateRow(user));
+  nbrCurrentUserWaiting = 0;
+  nbrCurrentUserAccepted = 0;
+
+  let rows = ``;
+  waitingUsersList.forEach(user => {
+    let row = generateRow(user);
+    if (row !== ``) {
+      nbrCurrentUserWaiting++;
+      rows += row;
+    }
+  });
+  let res = "<tr><th colspan = '7' class='msgTable' id='msgTableWaiting'>" + nbrCurrentUserWaiting+ " inscription(s) en attente</th></tr>" + rows;
+
+  rows = ``;
+  confirmedUsersList.forEach(user => {
+    let row = generateRow(user);
+    if (row !== ``) {
+      nbrCurrentUserAccepted++;
+      rows += row;
+    }
+  });
+  res += "<tr><th colspan = '7' class='msgTable' id='msgTableConfirmed'>" + nbrCurrentUserAccepted + " client(s) inscrit(s)</th></tr>" + rows;
+
   return res;
 }
 
 const generateRow = (user) => {
+  //filter
   if (filter.role !== '') {
     if (filter.role !== user.role)
       return ``;
   }
-  console.log(filter.info);
-  console.log(user.address.commune);
   if (filter.info !== '') {
     let info = filter.info.toLowerCase();
-    let bool = user.address.commune.toLowerCase() === info
-    console.log(bool);
     let postcode = "" + user.address.postcode;
     if (!user.firstName.toLowerCase().includes(info) && !user.lastName.toLowerCase().includes(info) 
         && !(user.address.commune.toLowerCase() === info) && !(postcode === info))
       return ``;
   }
+
   return ` 
     <tr class="toBeClicked" userId="` + user.id + `">
         <th><p>` + user.lastName + `</p></th>
