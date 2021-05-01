@@ -167,7 +167,7 @@ const generatePageHtml = (largeTable = true) => {
             <th class="w-25"></th>
             <th class="align-middle">Description</th>
             <th class="${notNeededClassName}">Type</th>
-            <th class="align-middle">État <i data-toggle="tooltip"  class="material-icons">&#xe88e;</i></th>
+            <th class="align-middle">État <i data-toggle="tooltip" data-placement="right"  title="•Rouge:plus d'operation pas vendu. \n •Vert:plus d'opération et vendu \n •Orange:opération à réaliser \n  •Bleu:doit être accepté dans sa demande de visite"class="material-icons">&#xe88e;</i></th>
             <th class="${notNeededClassName}">Vendeur</th>
             <th class="${notNeededClassName}">Acheteur</th>
             <th class="${notNeededClassName}">Prix de vente</th>
@@ -179,10 +179,15 @@ const generatePageHtml = (largeTable = true) => {
     </div>
     <div class="shortElement ${shortElementClassName}" id="furnitureCardDiv">Hello</div>
   </div>
-    
   </div>`;
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+  });
   return res;
 }
+
+
+
 
 const generateAllRows = (notNeededClassName) => {
   let res = "";
@@ -308,7 +313,7 @@ const generateStatusInfos = (status) => {
       res.status = "En restauration";
       break;
     case "UNDER_OPTION":
-      res.classname = "danger";
+      res.classname = "warning";
       res.status = "Sous option";
       break;
     case "SOLD":
