@@ -438,7 +438,7 @@ class OptionUCCImplTest {
     Mockito.when(mockFurnitureDAO.updateStatusOnly(mockFurnitureDTO1))
         .thenThrow(new InternalError());
 
-    assertThrows(InternalError.class, ()->
+    assertThrows(InternalError.class, () ->
         optionUCC.updateExpiredOptions());
 
     InOrder inOrder = Mockito.inOrder(mockDal, mockOptionDAO, mockFurnitureDAO);
