@@ -1,4 +1,5 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
+import noFurniturePhoto from "../img/noFurniture.png";
 import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils.js";
 
 let page = document.querySelector("#page");
@@ -6,14 +7,21 @@ let page = document.querySelector("#page");
 let visiblePhotos;
 let furnitureTypeList;
 
+const errorDiv = `
+<div class="col-5 mx-auto">
+  <div id="errorDiv" class="d-none"></div>
+</div>`;
+
 let filterType = "";
+let nbrPhotosInCarousel;
 
 const HomePage = async () => {
-	page.innerHTML = generateLoadingAnimation();
+	page.innerHTML = errorDiv + generateLoadingAnimation();
 	visiblePhotos = await getVisiblePhotos();
 	furnitureTypeList = await getFurnitureTypeList();
+	console.log(visiblePhotos);
 
-	page.innerHTML = getPageHTML();
+	page.innerHTML = errorDiv + getPageHTML();
 
 	addAllEventListeners();
 }
@@ -31,7 +39,7 @@ const HomePage = async () => {
   filterType = document.querySelector("#furnitureTypeFilter").value;
 	page.innerHTML = getPageHTML();
   addAllEventListeners();
-  document.querySelector("[value='" + filter.type + "']").setAttribute('selected', 'true');
+  document.querySelector("[value='" + filterType + "']").setAttribute('selected', 'true');
 }
 
 /**
@@ -94,10 +102,11 @@ const generateOptionTypeTag = (type) => {
 }
 
 const getCarousel = () => {
+	let photos = getHTMLVisiblePhotos();
 	return `<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 						<ol class="carousel-indicators bg-secondary"> ` + getHTMLCarouselIndicators() + ` </ol>
 						<div class="carousel-inner">
-							` + getHTMLVisiblePhotos() + `
+							` + photos + `
 						</div>
 						<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
 							<span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
@@ -113,30 +122,41 @@ const getCarousel = () => {
 
 const getHTMLCarouselIndicators = () => {
 	let ret = `<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
-	for (let i = 1; i < visiblePhotos.length; i++) 
+	for (let i = 1; i < nbrPhotosInCarousel; i++) 
 		ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i + `"></li>`;
 	return ret;
 }
 
+/**
+ * create an html element containing all the modal item required with the current filter and update the number in photo in the carousel.
+ * @returns an html element containing all the modal item required with the current filter.
+ */
 const getHTMLVisiblePhotos = () => {
-	let visiblePhotoTmp = visiblePhotos;
-	let firstPhoto = visiblePhotos.pop();
-	if (typeof firstPhoto === "undefined") {
+	let ret = "";
+	nbrPhotosInCarousel = 0;
+
+	visiblePhotos.forEach(photo => {
+		if (filterType === '' || filterType === photo.furniture.type) {
+			if (nbrPhotosInCarousel === 0) {
+				ret += `
+			<div class="carousel-item active">
+				<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+			</div>`;
+			} else {
+				ret += `
+				<div class="carousel-item">
+					<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+				</div>`;
+			}
+			nbrPhotosInCarousel++;
+		}
+	});
+	if (nbrPhotosInCarousel === 0) {
 		return `
 		<div class="carousel-item active">
-			<img class="d-block img-fluid mx-auto mb-5" src="` + notFoundPhoto + `" alt="Meuble 1">
+			<img class="d-block img-fluid mx-auto mb-5" src="` + noFurniturePhoto + `" alt="Aucun meuble trouvé">
 		</div>`;
 	}
-	let ret = `
-		<div class="carousel-item active">
-			<img class="d-block img-fluid mx-auto mb-5" src="` + firstPhoto.source + `" alt="Meuble 1" onError="this.src='` + notFoundPhoto + `'">
-		</div>`;
-	visiblePhotoTmp.forEach(photo => {
-		ret += `
-		<div class="carousel-item">
-			<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
-		</div>`;
-	});
 	return ret;
 }
 
