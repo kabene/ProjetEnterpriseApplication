@@ -663,7 +663,7 @@ const generatePageHtml = (largeTable = true) => {
             <th class="align-middle">Client</th>
             <th class="${notNeededClassName}">Adresse</th>
             <th class="align-middle">Date de la demande</th>
-             <th class="align-middle">États</th>
+            <th class="align-middle">États <i data-toggle="tooltip" data-placement="right"  title="•Rouge: visite refusée. \n •Vert: visite acceptée et prévue"class="material-icons">&#xe88e;</i></th>
           </tr>
         </thead>
         <tbody>
@@ -673,8 +673,10 @@ const generatePageHtml = (largeTable = true) => {
     </div>
     <div class="shortElement ${shortElementClassName}" id="RequestCardDiv">Hello</div>
   </div>
-    
   </div>`;
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+  });
   return res;
 }
 
