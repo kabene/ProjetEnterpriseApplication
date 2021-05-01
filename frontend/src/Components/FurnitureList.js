@@ -167,7 +167,7 @@ const generatePageHtml = (largeTable = true) => {
             <th class="w-25"></th>
             <th class="align-middle">Description</th>
             <th class="${notNeededClassName}">Type</th>
-            <th class="align-middle">État</th>
+            <th class="align-middle">État <i data-toggle="tooltip"  class="material-icons">&#xe88e;</i></th>
             <th class="${notNeededClassName}">Vendeur</th>
             <th class="${notNeededClassName}">Acheteur</th>
             <th class="${notNeededClassName}">Prix de vente</th>
@@ -300,7 +300,7 @@ const generateStatusInfos = (status) => {
       res.status = "Disponible à la vente";
       break;
     case "ACCEPTED":
-      res.classname = "info";
+      res.classname = "warning";
       res.status = "Accepté";
       break;
     case "IN_RESTORATION":
@@ -316,16 +316,16 @@ const generateStatusInfos = (status) => {
       res.status = "Vendu";
       break;
     case "WITHDRAWN":
-      res.classname = "dark";
+      res.classname = "danger";
       res.status = "Retiré de la vente";
       break;
     case "REFUSED":
-      res.classname = "dark";
+      res.classname = "danger";
       res.status = "Refusé";
       break;
     case "REQUESTED_FOR_VISIT":
-      res.classname = "warning";
-      res.status="En attente d'acceptation";
+      res.classname = "info";
+      res.status="En attente de visite";
       break;
     case "RESERVED":
     case "DELIVERED":
