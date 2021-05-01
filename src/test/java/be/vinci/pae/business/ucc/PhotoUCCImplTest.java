@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
+import be.vinci.pae.business.dto.FurnitureTypeDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.business.pojos.PhotoImpl;
 import be.vinci.pae.exceptions.ConflictException;
@@ -8,6 +9,7 @@ import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.main.TestBinder;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
+import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
 import java.util.stream.Stream;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -34,6 +36,7 @@ class PhotoUCCImplTest {
   private static PhotoUCC photoUCC;
   private static PhotoDAO mockPhotoDAO;
   private static FurnitureDAO mockFurnitureDAO;
+  private static FurnitureTypeDAO mockFurnitureTypeDAO;
   private static ConnectionDalServices mockDal;
 
   private static final String defaultSource1 = "a";
@@ -54,6 +57,8 @@ class PhotoUCCImplTest {
   private static FurnitureDTO mockFurnitureDTO1;
   private static FurnitureDTO mockFurnitureDTO2;
 
+  private static FurnitureTypeDTO mockFurnitureTypeDTO;
+
   private static final int defaultFurnitureId1 = 1;
   private static final int defaultFurnitureId2 = 2;
 
@@ -64,6 +69,7 @@ class PhotoUCCImplTest {
     photoUCC = locator.getService(PhotoUCC.class);
     mockPhotoDAO = locator.getService(PhotoDAO.class);
     mockFurnitureDAO = locator.getService(FurnitureDAO.class);
+    mockFurnitureTypeDAO = locator.getService(FurnitureTypeDAO.class);
     mockDal = locator.getService(ConnectionDalServices.class);
 
     mockPhotoDTO1 = Mockito.mock(PhotoImpl.class);
@@ -72,6 +78,8 @@ class PhotoUCCImplTest {
 
     mockFurnitureDTO1 = Mockito.mock(FurnitureDTO.class);
     mockFurnitureDTO2 = Mockito.mock(FurnitureDTO.class);
+
+    mockFurnitureTypeDTO = Mockito.mock(FurnitureTypeDTO.class);
   }
 
   @BeforeEach
@@ -113,6 +121,13 @@ class PhotoUCCImplTest {
   @Test
   void test_getAllVisibleHomePage_shouldReturnAllVisibleHomePage() {
     List<PhotoDTO> photoDTOS = Arrays.asList(mockPhotoDTO1, mockPhotoDTO2, mockPhotoDTO3);
+    for (PhotoDTO photoDTO : photoDTOS)
+      Mockito.when(photoDTO.getFurniture()).thenReturn(mockFurnitureDTO1);
+
+    Mockito.when(mockFurnitureDAO.findById(mockFurnitureDTO1.getFurnitureId()))
+        .thenReturn(mockFurnitureDTO1);
+    Mockito.when(mockFurnitureTypeDAO.findById(mockFurnitureTypeDTO.getTypeId()))
+        .thenReturn(mockFurnitureTypeDTO);
 
     Mockito.when(mockPhotoDAO.getAllHomePageVisiblePhotos()).thenReturn(photoDTOS);
 
