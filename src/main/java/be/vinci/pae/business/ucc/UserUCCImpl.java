@@ -1,8 +1,8 @@
 package be.vinci.pae.business.ucc;
 
 
-import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.dto.UserDTO;
+import be.vinci.pae.business.dto.AddressDTO;
 import be.vinci.pae.business.pojos.User;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;
@@ -12,6 +12,7 @@ import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.AddressDAO;
 import be.vinci.pae.persistence.dao.UserDAO;
 import jakarta.inject.Inject;
+
 import java.util.List;
 
 
@@ -44,7 +45,7 @@ public class UserUCCImpl implements UserUCC {
       if (!userFound.checkPassword(password)) {
         throw new ForbiddenException("Error: invalid credentials");
       }
-      userFound.setAddress(addressDAO.findById(userFound.getAddressId()));
+      completeUserDTO(userFound);
       dalServices.commitTransaction();
       return userFound;
     } catch (NotFoundException e) {
@@ -81,6 +82,7 @@ public class UserUCCImpl implements UserUCC {
       userDTO.setWaiting(!userDTO.getRole().equals("customer"));
       userDAO.register(user, id);
       userDTO = userDAO.findByUsername(userDTO.getUsername());
+      completeUserDTO(userDTO);
       dalServices.commitTransaction();
       return userDTO;
     } catch (Throwable e) {
@@ -100,6 +102,9 @@ public class UserUCCImpl implements UserUCC {
     try {
       dalServices.startTransaction();
       list = userDAO.findAll();
+      for (UserDTO user : list) {
+        completeUserDTO(user);
+      }
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -119,6 +124,9 @@ public class UserUCCImpl implements UserUCC {
     try {
       dalServices.startTransaction();
       list = userDAO.getAllWaitingUsers();
+      for (UserDTO user : list) {
+        completeUserDTO(user);
+      }
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -138,6 +146,9 @@ public class UserUCCImpl implements UserUCC {
     try {
       dalServices.startTransaction();
       list = userDAO.getAllConfirmedUsers();
+      for (UserDTO user : list) {
+        completeUserDTO(user);
+      }
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -158,6 +169,9 @@ public class UserUCCImpl implements UserUCC {
     try {
       dalServices.startTransaction();
       list = userDAO.findBySearch(userSearch);
+      for (UserDTO user : list) {
+        completeUserDTO(user);
+      }
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -178,7 +192,7 @@ public class UserUCCImpl implements UserUCC {
     try {
       dalServices.startTransaction();
       res = userDAO.findById(userId);
-      res.setAddress(addressDAO.findById(res.getAddressId()));
+      completeUserDTO(res);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
@@ -201,11 +215,24 @@ public class UserUCCImpl implements UserUCC {
       dalServices.startTransaction();
       userDAO.setRole(userId, value);
       res = userDAO.findById(userId);
+      completeUserDTO(res);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }
     return res;
+  }
+
+
+  /**
+   * Completes the UserDTO given as an argument with it's references in the db.
+   *
+   * @param dto : the UserDTO to complete
+   */
+  private void completeUserDTO(UserDTO dto) {
+    if (dto.getAddressId() != null) {
+      dto.setAddress(addressDAO.findById(dto.getAddressId()));
+    }
   }
 }

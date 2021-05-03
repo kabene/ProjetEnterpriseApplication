@@ -5,7 +5,6 @@ import Users from "./Users.js";
 import Visits from "./Visits.js";
 import ErrorPage from "./ErrorPage.js";
 import FurnitureList from "./FurnitureList.js";
-import VisitRequest from "./VisitRequest.js";
 import ClientVisit from "./ClientVisit.js";
 import LogoutComponent from "./LogoutComponent.js";
 import ReleaseTakeoverComponent from "./ReleaseTakeoverComponent";
@@ -21,7 +20,6 @@ const routes = {
     "/visits": Visits,
     "/myVisits": ClientVisit,
     "/furnitureList": FurnitureList,
-    "/visitRequest": VisitRequest,
     "/logout": LogoutComponent,
     "/releaseTakeover": ReleaseTakeoverComponent,
 };

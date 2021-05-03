@@ -47,4 +47,12 @@ public interface OptionDAO {
    */
   OptionDTO findByFurnitureId(int furnitureId);
 
+
+  /**
+   * list all user's options.
+   *
+   * @param userId user id.
+   * @return list of all user's options.
+   */
+  List<OptionDTO> findByUserId(int userId);
 }

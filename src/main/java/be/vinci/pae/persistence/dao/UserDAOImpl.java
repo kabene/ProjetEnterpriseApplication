@@ -153,7 +153,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
   public List<UserDTO> getAllWaitingUsers() {
     List<UserDTO> users = new ArrayList<>();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.is_waiting = true";
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.is_waiting = true"
+          + " ORDER BY u.last_name, u.first_name";
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
@@ -174,7 +175,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
   public List<UserDTO> getAllConfirmedUsers() {
     List<UserDTO> users = new ArrayList<>();
     try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.is_waiting = false";
+      String query = "SELECT u.* FROM satchofurniture.users u "
+          + "WHERE u.is_waiting = false"
+          + " ORDER BY u.last_name, u.first_name";
       PreparedStatement ps = dalServices.makeStatement(query);
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
@@ -199,9 +202,10 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
       String query = "SELECT u.* FROM satchofurniture.users u "
           + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
           + "WHERE lower(a.commune) LIKE lower(?) "
-          + "OR lower(u.first_name) LIKE lower(?)"
-          + "OR lower(u.last_name) LIKE lower(?)"
-          + "OR lower(a.postcode) LIKE lower(?)";
+          + "OR lower(u.first_name) LIKE lower(?) "
+          + "OR lower(u.last_name) LIKE lower(?) "
+          + "OR lower(a.postcode) LIKE lower(?) "
+          + " ORDER BY u.last_name, u.first_name";
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setString(1, "%" + userSearch + "%");
       ps.setString(2, "%" + userSearch + "%");
