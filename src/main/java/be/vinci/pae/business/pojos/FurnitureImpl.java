@@ -40,7 +40,7 @@ public class FurnitureImpl implements Furniture {
   @JsonView(Views.Public.class)
   private PhotoDTO favouritePhoto;
   @JsonView(Views.Public.class)
-  private List<PhotoDTO> photos;
+  private List<PhotoDTO> photos = new ArrayList<>();;
   @JsonView(Views.Public.class)
   private Double sellingPrice;
   @JsonView(Views.AdminOnly.class)
@@ -191,7 +191,7 @@ public class FurnitureImpl implements Furniture {
 
   @Override
   public List<PhotoDTO> getPhotos() {
-    return new ArrayList<>(photos);
+    return this.photos;
   }
 
   @Override
