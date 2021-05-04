@@ -6,13 +6,9 @@ import {fetchMe} from "../utils/utils.js";
 
 let page = document.querySelector("#page");
 
-let loginForm = document.querySelector("#loginForm");;
-let registerForm = document.querySelector("#registerForm");
-
-let errorDiv = document.querySelector("#errorDiv");
-
-let loginButton = document.querySelector("#loginButton");
-let registerButton = document.querySelector("#registerButton");
+let loginForm;
+let registerForm;
+let errorDiv;
 
 
 const Authentication = () => {
@@ -22,9 +18,13 @@ const Authentication = () => {
   }
 
   page.innerHTML = generatePage();
+
+  loginForm = document.querySelector("#loginForm");
+  registerForm = document.querySelector("#registerForm");
+  errorDiv = document.querySelector("#errorDiv");
   
-  loginButton.addEventListener("click", onLogin);
-  registerButton.addEventListener("click", onSignUp);
+  document.querySelector("#loginButton").addEventListener("click", onLogin);
+  document.querySelector("#registerButton").addEventListener("click", onSignUp);
 }
 
 
@@ -42,10 +42,10 @@ const onLogin = async (e) => {
   loginForm.className = "was-validated";
   errorDiv.className = "d-none";
 
-  if (username === "" || password === "")
-    return;
-
   let user = getUserFromLoginForm();
+  
+  if (user.username === "" || user.password === "")
+    return;
 
   let data = await login(user);
 

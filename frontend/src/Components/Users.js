@@ -329,15 +329,16 @@ const removeActiveRow = () => {
  const isUserRespectingFilter = (user) => {
   if (filter.role !== '') {
     if (filter.role !== user.role)
-      return ``;
+      return false;
   }
   if (filter.info !== '') {
     let info = filter.info.toLowerCase();
     let postcode = "" + user.address.postcode;
     if (!user.firstName.toLowerCase().includes(info) && !user.lastName.toLowerCase().includes(info) 
         && !(user.address.commune.toLowerCase() === info) && !(postcode === info))
-      return ``;
+      return false;
   }
+  return true;
 }
 
 
@@ -631,116 +632,89 @@ const generateUserCard = (userDetail) => {
 /********************  Backend fetch  **********************/
 
 const clientDetail = async (id) => {
-  let userDetails;
-  await fetch(`/users/detail/${id}`, {
+  let response = await fetch(`/users/detail/${id}`, {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error( "Error code : " + response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    userDetails = data;
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
-  return userDetails;
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  return response.json();
 }
+
 
 const getWaitingUserList = async () => {
-  let ret = [];
-  await fetch("/users/detail/waiting", {
+  let response = await fetch("/users/detail/waiting", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error( "Error code : " + response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    ret = data.users;
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
-  return ret;
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  let jsonResponse = await response.json();
+  return jsonResponse.users;
 }
 
+
 const getConfirmedUsersList = async () => {
-  let ret = [];
-  await fetch("/users/detail/confirmed", {
+  let response = await fetch("/users/detail/confirmed", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Error code : " + response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    ret = data.users;
-  }).catch((err) => {
-    console.error(err);
   });
-  return ret;
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  let jsonResponse = await response.json();
+  return jsonResponse.users;
 }
 
 
 const validation = async (e) => {
-  let value = e.target.id;
-  let val;
-  if (value === "refuse") {
-    val = {value: false,}
-  } else if (value=="accept") {
-    val = {value: true,}
-  }
-  let ret = [];
-  await fetch(`/users/validate/${userDetail.id}`, {
+  let val = e.target.id === "accept" ? {value: true} : {value: false};
+  let response = await fetch(`/users/validate/${userDetail.id}`, {
     method: "PATCH",
     body:JSON.stringify(val),
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Error code : " + response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    ret = data;
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
-    return;
   });
-  return ret;
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  return response.json();
 }
 
 const onTakeoverClick = async (e) => {
   e.preventDefault();
-  let btn = e.target;
-  let userId = btn.getAttribute("user-id");
+  let userId = e.target.getAttribute("user-id");
   let response = await fetch(`/users/takeover/${userId}`,{
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
     },
   });
-  if(!response.ok) {
-    let err = new Error( "Error code : " + response.status + " : " + response.statusText);
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
     displayErrorMessage("errorDiv", err);
-    return;
   }
   let data = await response.json();
 

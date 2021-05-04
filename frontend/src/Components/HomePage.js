@@ -198,6 +198,6 @@ const getFurnitureTypeList = async () => {
 	  displayErrorMessage("errorDiv", err);
 	}
 	return response.json();
-  }
+}
 
 export default HomePage;
