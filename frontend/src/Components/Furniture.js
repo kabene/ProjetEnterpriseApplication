@@ -172,25 +172,37 @@ const generateItemAndModal = (furniture) => {
         <div class="modal fade" id="modal__` + furniture.furnitureId + `">
           <div class="modal-dialog modal-xl">
             <div class="modal-content">
-              <div class="row mx-auto pt-5">
-                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                  <ol class="carousel-indicators bg-secondary">` + getHTMLCarouselIndicators(tabPhotoToRender.length) + `</ol>
-                  <div class="carousel-inner">` + getHTMLCarouselPhotos(tabPhotoToRender) + `</div>
-                  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                  </a>
-                  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                  </a>
-                </div>
-              </div>
+              ${getHTMLEntireCarousel(tabPhotoToRender)}
             </div>
           </div>                     
         </div>`;
 
   return item + modal;
+}
+
+/**
+ * Generates the html for one carousel
+ * @param {Array<photo>} tabPhotoToRender table of all the photos to render in the carousel
+ * @returns html
+ */
+const getHTMLEntireCarousel = (tabPhotoToRender) => {
+  return `
+  <div class="row mx-auto pt-5">
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators bg-secondary">` + getHTMLCarouselIndicators(tabPhotoToRender.length) + `</ol>
+      <div class="carousel-inner">
+        ${getHTMLCarouselPhotos(tabPhotoToRender)}
+      </div>
+      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+        </a>
+      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </div>`;
 }
 
 /**
