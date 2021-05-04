@@ -112,15 +112,18 @@ const findFavImgSrc = (furniture, images) => {
     return furniture.favouritePhoto.source;
 }
 
-
+/**
+ * Finds all <img/> tags with the matching photo-id attribute and updates their src
+ * 
+ * @param {Array<photo>} photosLst 
+ */
 export const displayImgs = (photosLst) => {
     photosLst.forEach((photo) => {
         document.querySelectorAll(`img[photo-id='${photo.photoId}']`)
         .forEach((img) => {
             img.src = photo.source;
-            console.log(img.src);
-        })
-    })
+        });
+    });
 }
 
 export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
