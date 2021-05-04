@@ -101,7 +101,7 @@ const addAllEventListeners = () => {
 }
 
 const updateModal = (tabPhotoToRender, furniture) => {
-  let query = `.modal-content[furniture-id=${furniture.furnitureId}]`;
+  let query = `.modal-content[furniture-id='${furniture.furnitureId}']`;
   let div = document.querySelector(query);
   if(div) {
     div.innerHTML = getHTMLEntireCarousel(tabPhotoToRender);
