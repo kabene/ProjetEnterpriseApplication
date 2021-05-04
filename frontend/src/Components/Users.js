@@ -72,9 +72,6 @@ const setDefaultLargeValues = (displayNotNeeded) => {
   //remove the background on the selected row (if exists)
   removeActiveRow();
 
-  //put inline display to the filter button
-  document.querySelector("#buttonsFilterSpan").style.display = "";
-
   //change the class of divs from small to large (if are small)
   let tableContainer = document.querySelector('#shortTableContainer');
   if (tableContainer/* !== null*/)
@@ -102,9 +99,6 @@ const setDefaultShortValues = (changeTableContainer) => {
 
   //hide the element only needed when the table is large
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
-
-  //put block display to the filter button
-  document.querySelector("#buttonsFilterSpan").style.display = "block";
 
   //change the class of table from large to small (if is large)
   let table = document.querySelector("#largeTable");
@@ -347,27 +341,29 @@ const generateUsersPage = () => {
         <div class="col-5 mx-auto">
           <div id="errorDiv" class="d-none"></div>
         </div>
+        <div class="form-inline">
+          <div class="form-group mx-3">
+            <input type="search" name="search" class="m-3 form-control" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
+          </div>
+          <div class="form-group mx-3">
+            <select class="form-control" id="filterRole">
+              <option value="">Rechercher par rôle</option>
+              <option value="customer">client</option>
+              <option value="antique_dealer">antiquaire</option>
+              <option value="admin">admin</option>
+            </select>
+          </div>
+          <div class="form-group mx-3">
+            <span id='buttonsFilterSpan'>   
+              <button type="submit" id="buttonApplyFilter" class="btn btn-primary m-3">Appliquer</button>
+              <button type="submit" id="buttonClearFilter" class="btn btn-secondary m-3">Retirer les filtres</button>
+            </span>
+          </div>
+        </div>
+        </hr>
         <div id="largeTableContainer">
           <div>
-            <div class="form-inline">
-              <div class="form-group mx-3">
-                <input type="search" name="search" class="m-3 form-control" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
-              </div>
-              <div class="form-group mx-3">
-                <select class="form-control" id="filterRole">
-                  <option value="">Rechercher par rôle</option>
-                  <option value="customer">client</option>
-                  <option value="antique_dealer">antiquaire</option>
-                  <option value="admin">admin</option>
-                </select>
-              </div>
-              <div class="form-group mx-3">
-                <span id='buttonsFilterSpan'>   
-                  <button type="submit" id="buttonApplyFilter" class="btn btn-primary m-3">Appliquer</button>
-                  <button type="submit" id="buttonClearFilter" class="btn btn-secondary m-3">Retirer les filtres</button>
-                </span>
-              </div>
-            </div>
+            
             <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>
             ` + generateTable() + `
           </div>
