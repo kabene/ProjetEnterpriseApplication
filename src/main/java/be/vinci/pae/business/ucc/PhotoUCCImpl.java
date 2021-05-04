@@ -121,10 +121,6 @@ public class PhotoUCCImpl implements PhotoUCC {
             "Error : no favourite photo for furniture " + furnitureDTO.getFurnitureId());
       }
       res = photoDAO.findById(furnitureDTO.getFavouritePhotoId());
-      if (res == null) {
-        throw new InternalError("Unexpected Error");
-        //shouldn't be possible
-      }
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();
