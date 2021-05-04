@@ -161,10 +161,14 @@ const generateRow = (request) => {
      </tr>`;
 }
 
-
+/**
+ * generate the whole card for a given request.
+ * @param {*} request the request that needs a card.
+ * @returns the whole card for a given request.
+ */
 const generateRequestCard = (request) => {
-    let page =
-    `<div class="container emp-profile">
+  return`
+  <div class="container emp-profile">
 		<form>
 			<div class="row">
 				<div class="col-12">
@@ -199,12 +203,15 @@ const generateRequestCard = (request) => {
 				</div>
 			</div>
 		</form>           
-  	</div>`;
-
-    return page;
+  </div>`;
 }
 
 
+/**
+ * generate the whole info card for the request.
+ * @param {*} request the request that need an info card.
+ * @returns the whole info card for the request.
+ */
 const generateRequestInfoCard = (request) => {    
 	let info = "";
 	if (request.requestStatus === "CANCELED")
@@ -215,47 +222,74 @@ const generateRequestInfoCard = (request) => {
 	return generateCardLabelKeyEntry("Adresse de visite", "address-entry", request.address.street + ` ` + request.address.buildingNumber + ` ` + request.address.postcode + `, ` + request.address.commune) + ` 
 	  ` + generateCardLabelKeyEntry("Date de la demande", "request-date-entry", request.requestDate) + `
 	  ` + generateCardLabelKeyEntry("Disponibilités", "time-slot-entry", request.timeSlot)
-	   + info;
+	  + info;
 }
 
 
+/**
+ * generate the whole furniture card for a given request.
+ * @param {*} request the request that needs a furniture card.
+ * @returns the whole furniture card for a given request.
+ */
 const generateRequestFurnitureCard = (request) => {
-  let photoList = generatePhotoList(request);
-  
-  let res = `
+  return `
   <form>
     <input id="originalFav" type="hidden"/>
-    <div class="form-check d-flex flex-lg-fill flex-row">
-      ` + photoList + `
-    </div>
+    <div class="form-check d-flex flex-lg-fill flex-row">` + generatePhotoList(request) + `</div>
   </form>`;
-  return res;
 }
 
 
+/**
+ * generate a list of container having each a photo and a status.
+ * @param {*} request the request containing all the furniture.
+ * @returns a list of container having each a photo and a status.
+ */
 const generatePhotoList = (request) => {
-    let photoList = "";
-    request.furnitureList.forEach(furniture => {
-        let photoTag;
-        if (!furniture.favouritePhoto)
-          photoTag = `<img class="img-fluid" src="` + notFoundPhoto + `" alt="photoNotFound"/>`;
-        else
-          photoTag = `<img class="img-fluid" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
-        
-        photoList += `
-        <div class="p-1 w-50 container photo-list-container"">
-          <div class="row px-0">
-            <div class="col-6">
-                ` + photoTag + `
-                <p> ` +  generateStatusInfos(furniture.status).status + `</p>
-            </div>
-          </div>
-        </div>`;
-    });
-    return photoList;
+  let photoList = "";
+  request.furnitureList.forEach(furniture => photoList += generateSinglePhotoCaintainer(furniture));
+  return photoList;
 }
 
 
+/**
+ * generate a container having the favourite photo of the furniture and his status.
+ * @param {*} furniture the furniture containing the favourite photo.
+ * @returns a container having the favourite photo of the furniture and his status.
+ */
+const generateSinglePhotoCaintainer = (furniture) => {
+  return `
+  <div class="p-1 w-50 container photo-list-container"">
+    <div class="row px-0">
+      <div class="col-6">
+        ` + generateFavouritePhotoImgTag(furniture) + `
+        <p>` + generateStatusInfos(furniture.status).status + `</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+
+/**
+ * generate a <img/> tag containing the favourite photo of the given furniture.
+ * @param {*} furniture the furniture containing the photo to generate
+ * @returns an <img/> tag containing the favourite photo of the furniture.
+ */
+const generateFavouritePhotoImgTag = (furniture) => {
+  if (!furniture.favouritePhoto)
+    return `<img class="img-fluid" src="` + notFoundPhoto + `" alt="photoNotFound"/>`;
+  else
+    return `<img class="img-fluid" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
+}
+
+
+/**
+ * create a div containing a label used in the requestCard.
+ * @param {*} label the 'title' of the value.
+ * @param {*} id the HTML id of the value.
+ * @param {*} value the value to display in a <p> tag.
+ * @returns a div containing a label used in the requestCard.
+ */
 const generateCardLabelKeyEntry = (label, id, value) => {
     let res = `
     <div class="row text-left">
@@ -272,9 +306,9 @@ const generateCardLabelKeyEntry = (label, id, value) => {
 
 
 /**
- * Generate status entry for request list as colored bootstrap badge (used in cards)
- * @param {*} furniture
- * @returns
+ * Generate status entry for request list as colored bootstrap badge (used in cards).
+ * @param {*} request the request that will have the badge.
+ * @returns a bootstrap badge.
  */
  const generateBadgeStatus = (request) => {
     let infos = generateStatusInfos(request.requestStatus);
@@ -283,10 +317,10 @@ const generateCardLabelKeyEntry = (label, id, value) => {
 }
 
 
-  /**
+/**
  * Generate status entry for request list as colored <p> html tag (used in large tables)
  * @param {*} request : request  object
- * @returns {String} html <p> tag
+ * @returns an html <p> tag
  */
 const generateColoredStatus = (requestStatus) => {
     let infos = generateStatusInfos(requestStatus);
@@ -294,18 +328,23 @@ const generateColoredStatus = (requestStatus) => {
 }
 
 
+/**
+ * create a dot of a certain color in function of the given class name given.
+ * @param {*} colorClassName the name of the bootstrap class corresponding to a color.
+ * @returns a dot of a certain color.
+ */
 const generateDot = (colorClassName) => {
     return `<span class="badge badge-pill p-1 badge-` + colorClassName + `"> </span>`;
 }
   
 
-  /**
+/**
  * find status label & color classname (primary / danger / etc...) for a given status
  * @param {String} status
  * @returns {
  * classname: bootstrap color suffix,
  * status: status label,
- * } object
+ * }
  */
 const generateStatusInfos = (status) => {
     let res = {
@@ -336,6 +375,10 @@ const generateStatusInfos = (status) => {
 /********************  Backend fetch  **********************/
 
 
+/**
+ * ask the backend for all the request for visits of a client and return a promise of the result.
+ * @returns a promise of an array containing the result of the fetch.
+ */
 const getUserRequestsForVisit = async () => {
     let response = await fetch("/requestForVisit/me", {
         method: "GET",
