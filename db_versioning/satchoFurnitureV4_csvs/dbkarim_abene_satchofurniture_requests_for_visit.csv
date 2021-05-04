@@ -1,0 +1,6 @@
+#,request_id,request_date,time_slot,address_id,visit_date_time,explanatory_note,status,user_id
+1,1,2021-03-24,lundi de 18h à 22h,4,2021-03-29 20:00:00.000000,,confirmed,4
+2,2,2021-03-25,lundi de 18h à 22h,4,,Meuble trop récent,canceled,4
+3,3,2021-03-25,tous les jours de 15h à 18h,5,2021-03-29 15:00:00.000000,,confirmed,5
+4,4,2021-04-21,tous les matins 9h à 13h,7,,,waiting,6
+5,5,2021-04-22,tous les matins 16h à 19h,3,2021-04-26 18:00:00.000000,,confirmed,3
