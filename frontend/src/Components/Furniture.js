@@ -1,6 +1,5 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 
-
 import {findCurrentUser} from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
 import {displayErrorMessage, importAllFurnitureImg, generateLoadingAnimation} from "../utils/utils.js"

@@ -19,7 +19,6 @@ const HomePage = async () => {
 	page.innerHTML = errorDiv + generateLoadingAnimation();
 	visiblePhotos = await getVisiblePhotos();
 	furnitureTypeList = await getFurnitureTypeList();
-	console.log(visiblePhotos);
 
 	page.innerHTML = errorDiv + getPageHTML();
 
@@ -37,10 +36,11 @@ const HomePage = async () => {
  const onClickApplyFilter = (e) => {
   e.preventDefault();
   filterType = document.querySelector("#furnitureTypeFilter").value;
-	page.innerHTML = getPageHTML();
+	page.innerHTML = errorDiv + getPageHTML();
   addAllEventListeners();
   document.querySelector("[value='" + filterType + "']").setAttribute('selected', 'true');
 }
+
 
 /**
  * Called when clicking on the cancel filter button.
@@ -51,9 +51,10 @@ const onClickClearFilter = (e) => {
   if (filterType === "")
     return;
   filterType = "";
-  page.innerHTML = getPageHTML();
+  page.innerHTML = errorDiv + getPageHTML();
   addAllEventListeners();
 }
+
 
 /**
  * Add all the event listeners required in the document.
@@ -65,6 +66,7 @@ const onClickClearFilter = (e) => {
 
 /********************  HTML generation  **********************/
 
+
 const getPageHTML = () => {
 	return `
 	<div class="col-5 mx-auto">
@@ -75,11 +77,12 @@ const getPageHTML = () => {
     ` + generateFilterHTML() + `
   </div>
   <div class="row mx-0 pt-5">
-    <div class="col-2 col-lg-4"></div>
+  	<div class="col-2 col-lg-4"></div>
     <div class="col-8 col-lg-4">` + getCarousel() + `</div>
     <div class="col-2 col-lg-4"></div>
   </div>`;
 }
+
 
 const generateFilterHTML = () => {
   return `
@@ -90,6 +93,7 @@ const generateFilterHTML = () => {
   </form>`;
 }
 
+
 const generateSelectTypeTag = () => {
   let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
   furnitureTypeList.forEach(type => ret += generateOptionTypeTag(type));
@@ -97,9 +101,11 @@ const generateSelectTypeTag = () => {
   return ret;
 }
 
+
 const generateOptionTypeTag = (type) => {
   return `<option value="` + type.typeName + `">` + type.typeName + `</option>`;
 }
+
 
 const getCarousel = () => {
 	let photos = getHTMLVisiblePhotos();
@@ -120,12 +126,14 @@ const getCarousel = () => {
 `;
 }
 
+
 const getHTMLCarouselIndicators = () => {
 	let ret = `<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
 	for (let i = 1; i < nbrPhotosInCarousel; i++) 
 		ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i + `"></li>`;
 	return ret;
 }
+
 
 /**
  * create an html element containing all the modal item required with the current filter and update the number in photo in the carousel.
@@ -163,6 +171,7 @@ const getHTMLVisiblePhotos = () => {
 
 /********************  Backend fetch  **********************/
 
+
 const getVisiblePhotos = async () => {
 	let response = await fetch("/photos/homePage", {
 		method: "GET",
@@ -177,6 +186,7 @@ const getVisiblePhotos = async () => {
   }
 	return response.json();
 }
+
 
 const getFurnitureTypeList = async () => {
 	let response = await fetch("/furnitureTypes/", {
