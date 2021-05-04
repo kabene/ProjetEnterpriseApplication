@@ -31,7 +31,7 @@ const Furniture = async () => {
   myOptionList = await getMyOptionList();
 
   page.innerHTML = errorDiv + generateTable();
-  getFavs();
+  getFavs().then(() => getPhotos());
   addAllEventListeners();
 }
 
@@ -356,7 +356,7 @@ const getFurnitureList = async () => {
  const getFavs = async () => {
   let furniture;
   for(furniture of furnitureList) {
-    console.log("starting fetch "+furniture.furnitureId);
+    console.log({msg: "starting fetch (fav)", furnitureId: furniture.furnitureId});
     await fetchFav(furniture);
   }
   let loadArea = document.querySelector("#loadArea");
@@ -372,8 +372,17 @@ const fetchFav = async (furniture) => {
     if(response.ok) {
       let fav = await response.json();
       displayImgs([fav]);
+      //TODO: updateCache
       console.log("fav fetched");
     }
+  }
+}
+
+const getPhotos = async () => {
+  let furniture;
+  for(furniture of furnitureList) {
+    console.log({msg: "starting fetch (all)", furnitureId: furniture.furnitureId});
+    await fetchAllPhotos(furniture);
   }
 }
 
@@ -386,6 +395,7 @@ const fetchAllPhotos = async (furniture) => {
     if(response.ok) {
       let photoArray = await response.json();
       updateModal(photoArray, furniture);
+      //TODO: updateCache
       console.log("photos fetched");
     }
   }
