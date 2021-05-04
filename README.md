@@ -276,6 +276,35 @@
         (Renvoie la ressource modifiée au format json)
     </td>
 </tr>
+<tr>
+    <td>photos/favourite/{furnitureId}</td>
+    <td>GET</td>
+    <td>Aucun</td>
+    <td>Non</td>
+    <td>
+        Renvoie la ressource de type "photo" référencée comme photo préférée pour un meuble particulier
+    </td>
+</tr>
+<tr>
+    <td>photos/byFurniture/{furnitureId}</td>
+    <td>GET</td>
+    <td>Aucun</td>
+    <td>Non</td>
+    <td>
+        Renvoie toutes les ressources de type "photo" référencant une certaine furnitureId
+        (ne renvoie que les photos visibles)
+    </td>
+</tr>
+<tr>
+    <td>photos/byFurniture/all/{furnitureId}</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>Non</td>
+    <td>
+        Renvoie toutes les ressources de type "photo" référencant une certaine furnitureId
+        (sans exception)
+    </td>
+</tr>
 </table>
 
 <table style="caption-side: top">
