@@ -341,23 +341,26 @@ const generateUsersPage = () => {
         <div class="col-5 mx-auto">
           <div id="errorDiv" class="d-none"></div>
         </div>
-        <div class="form-inline">
-          <div class="form-group mx-3">
-            <input type="search" name="search" class="m-3 form-control" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
-          </div>
-          <div class="form-group mx-3">
-            <select class="form-control" id="filterRole">
-              <option value="">Rechercher par rôle</option>
-              <option value="customer">client</option>
-              <option value="antique_dealer">antiquaire</option>
-              <option value="admin">admin</option>
-            </select>
-          </div>
-          <div class="form-group mx-3">
-            <span id='buttonsFilterSpan'>   
-              <button type="submit" id="buttonApplyFilter" class="btn btn-primary m-3">Appliquer</button>
-              <button type="submit" id="buttonClearFilter" class="btn btn-secondary m-3">Retirer les filtres</button>
-            </span>
+        <div class="container-fluid px-3 py-2 border border-top-0 border-right-0 border-left-0">
+          <h3>Filtrer les utilisateurs:</h3>
+          <div class="form-inline">
+            <div class="form-group mx-3">
+              <input type="search" name="search" class="m-3 form-control" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
+            </div>
+            <div class="form-group mx-3">
+              <select class="form-control" id="filterRole">
+                <option value="">Rechercher par rôle</option>
+                <option value="customer">client</option>
+                <option value="antique_dealer">antiquaire</option>
+                <option value="admin">admin</option>
+              </select>
+            </div>
+            <div class="form-group mx-3">
+              <span id='buttonsFilterSpan'>   
+                <button type="submit" id="buttonApplyFilter" class="btn btn-primary m-3">Appliquer</button>
+                <button type="submit" id="buttonClearFilter" class="btn btn-secondary m-3">Retirer les filtres</button>
+              </span>
+            </div>
           </div>
         </div>
         <div id="largeTableContainer">
