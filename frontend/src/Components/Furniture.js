@@ -160,7 +160,7 @@ const generateItemAndModal = (furniture) => {
   let item = `
         <div>
           ` + getTag(furniture) + `
-          <img class="imageFurniturePage img-furniture" src="` + furniture.favouritePhoto.source + `" alt="thumbnail" data-toggle="modal" data-target="#modal_`+ furniture.furnitureId + `" onError="this.src='` + notFoundPhoto + `'"/>
+          <img class="imageFurniturePage img-furniture" src="` + furniture.favouritePhoto.source + `" alt="thumbnail" data-toggle="modal" data-target="#modal__`+ furniture.furnitureId + `" onError="this.src='` + notFoundPhoto + `'"/>
           <p class="text-center">` + furniture.description + `</p>`
           + getOptionButton(furniture) +
         `</div>`; //TODO: fixer la taille des images
@@ -168,7 +168,7 @@ const generateItemAndModal = (furniture) => {
   let tabPhotoToRender = getTabPhotoToRender(furniture);
 
   let modal = `
-        <div class="modal fade" id="modal_` + furniture.furnitureId + `">
+        <div class="modal fade" id="modal__` + furniture.furnitureId + `">
           <div class="modal-dialog modal-xl">
             <div class="modal-content">
               <div class="row mx-0 pt-5">
