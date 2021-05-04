@@ -17,3 +17,4 @@ create table options
 alter table options
     owner to karim_abene;
 
+INSERT INTO satchofurniture.options (option_id, duration, date_option, user_id, furniture_id, is_canceled) VALUES (1, 5, '2021-05-04 09:14:25.882715', 3, 6, false);
