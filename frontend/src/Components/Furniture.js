@@ -100,12 +100,38 @@ const addAllEventListeners = () => {
   document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
 }
 
+/**
+ * Updates the modal of a specific piece of furniture.
+ * 
+ * @param {Array} tabPhotoToRender new array of photos to display
+ * @param {*} furniture piece of furniture
+ */
 const updateModal = (tabPhotoToRender, furniture) => {
   let query = `.modal-content[furniture-id='${furniture.furnitureId}']`;
   let div = document.querySelector(query);
   if(div) {
     div.innerHTML = getHTMLEntireCarousel(tabPhotoToRender);
   }
+}
+
+/**
+ * Updates furnitureList with new favouritePhoto
+ * (furniture.favouritePhoto)
+ * @param {*} furniture 
+ * @param {*} photo 
+ */
+const updateCacheFav = (furniture, photo) => {
+  furniture.favouritePhoto = photo;
+}
+
+/**
+ * Updates furniture list with new array of photos
+ * (furniture.photos)
+ * @param {*} furniture 
+ * @param {*} photoArray 
+ */
+const updateCacheAllPhotos = (furniture, photoArray) => {
+  furniture.photos = photoArray;
 }
 
 /********************  HTML generation  **********************/
@@ -372,7 +398,7 @@ const fetchFav = async (furniture) => {
     if(response.ok) {
       let fav = await response.json();
       displayImgs([fav]);
-      //TODO: updateCache
+      updateCacheFav(furniture, fav);
       console.log("fav fetched");
     }
   }
@@ -395,7 +421,7 @@ const fetchAllPhotos = async (furniture) => {
     if(response.ok) {
       let photoArray = await response.json();
       updateModal(photoArray, furniture);
-      //TODO: updateCache
+      updateCacheAllPhotos(furniture, photoArray);
       console.log("photos fetched");
     }
   }
