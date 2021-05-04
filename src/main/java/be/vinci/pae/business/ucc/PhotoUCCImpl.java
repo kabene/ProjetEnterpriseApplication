@@ -122,7 +122,8 @@ public class PhotoUCCImpl implements PhotoUCC {
       }
       res = photoDAO.findById(furnitureDTO.getFavouritePhotoId());
       if (res == null) {
-        throw new InternalError("Unexpected Error"); //shouldn't be possible
+        throw new InternalError("Unexpected Error");
+        //shouldn't be possible
       }
       dalServices.commitTransaction();
     } catch (Throwable e) {

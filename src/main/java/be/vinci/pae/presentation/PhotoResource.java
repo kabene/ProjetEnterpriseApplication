@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Singleton
 @Path("/photos")
@@ -111,6 +112,17 @@ public class PhotoResource {
   public Response getByFurnitureId(@PathParam("furnitureId") int furnitureId) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
         "GET /photos/byFurniture/"+furnitureId);
+    List<PhotoDTO> photoDTOList = photoUCC.getAllForFurniture(furnitureId)
+        .stream().filter(PhotoDTO::isVisible).collect(Collectors.toList());
+    return Response.ok(Json.filterPublicJsonView(photoDTOList, List.class)).build();
+  }
+
+  @GET
+  @Path("/byFurniture/all/{furnitureId}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getByFurnitureIdAll(@PathParam("furnitureId") int furnitureId) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
+        "GET /photos/byFurniture/all/"+furnitureId);
     List<PhotoDTO> photoDTOList = photoUCC.getAllForFurniture(furnitureId);
     return Response.ok(Json.filterPublicJsonView(photoDTOList, List.class)).build();
   }

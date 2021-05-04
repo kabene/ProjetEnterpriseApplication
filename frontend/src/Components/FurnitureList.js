@@ -17,6 +17,8 @@ let currentUser;
 let isDisplayingLargeTable; //state of display (true = large list, false = furniture card)
 let currentFurnitureId; //to read only if largeTable === false
 let openTab = "infos";
+let favFetched = false;
+let photosFetchedMap = [];
 const emptyFilter = {
   username: "",
   price: "-1",
@@ -1620,9 +1622,15 @@ const displayNoResultMsg = () => {
  * fetch all favourite photos for main list thumbnails
  */
 const getFavs = async () => {
-  furnitureMap.forEach(async (furniture) => {
-    await fetchFav(furniture);
-  })  
+  if(!favFetched) {
+    let furniture;
+    for(furniture of furnitureMap){
+      if(furniture){
+        await fetchFav(furniture);
+      }
+    }
+    favFetched = true;
+  }
 }
 
 const fetchFav = async (furniture) => {
@@ -1641,16 +1649,22 @@ const fetchFav = async (furniture) => {
 }
 
 const fetchAllPhotos = async (furniture) => {
-  if(!furniture.photos || furniture.photos.length === 0) { //no photos -> fetch
-    let path = "/photos/byFurniture/"+furniture.furnitureId;
-    let response = await fetch(path, {
-      method: "GET",
-    });
-    if(response.ok) {
-      let photoArray = await response.json();
-      updateCachePhotos(furniture, photoArray);
-      refreshDisplay();
-      console.log("photos fetched");
+  if(!photosFetchedMap[furniture.furnitureId]){
+    photosFetchedMap[furniture.furnitureId] = true;
+    if(!furniture.photos || furniture.photos.length === 0) { //no photos -> fetch
+      let path = "/photos/byFurniture/all/"+furniture.furnitureId;
+      let response = await fetch(path, {
+        method: "GET",
+        headers: {
+          Authorization: currentUser.token,
+        }
+      });
+      if(response.ok) {
+        let photoArray = await response.json();
+        updateCachePhotos(furniture, photoArray);
+        refreshDisplay();
+        console.log("photos fetched");
+      }
     }
   }
 }
