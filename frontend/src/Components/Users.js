@@ -229,6 +229,26 @@ const onClearFilterClick = () => {
   }
 }
 
+
+/**
+ * check if a user respect the current filter.
+ * @param {*} user the user to check if he is correct following the filter criterias.
+ * @returns true if the user is correct, else false.
+ */
+ const isUserRespectingFilter = (user) => {
+  if (filter.role !== '') {
+    if (filter.role !== user.role)
+      return ``;
+  }
+  if (filter.info !== '') {
+    let info = filter.info.toLowerCase();
+    let postcode = "" + user.address.postcode;
+    if (!user.firstName.toLowerCase().includes(info) && !user.lastName.toLowerCase().includes(info) 
+        && !(user.address.commune.toLowerCase() === info) && !(postcode === info))
+      return ``;
+  }
+}
+
 /********************  HTML generation  **********************/
 
 const generateUsersPage = () => {
@@ -326,30 +346,21 @@ const getAllUsersRows = () => {
  * @returns a tr element containing the information of the user if they correspond to the filters.
  */
 const generateRow = (user) => {
-  //filter
-  if (filter.role !== '') {
-    if (filter.role !== user.role)
-      return ``;
-  }
-  if (filter.info !== '') {
-    let info = filter.info.toLowerCase();
-    let postcode = "" + user.address.postcode;
-    if (!user.firstName.toLowerCase().includes(info) && !user.lastName.toLowerCase().includes(info) 
-        && !(user.address.commune.toLowerCase() === info) && !(postcode === info))
-      return ``;
-  }
+  if (!isUserRespectingFilter(user))
+    return "";
 
   return ` 
     <tr class="toBeClicked" userId="` + user.id + `">
-        <th><p>` + user.lastName + `</p></th>
-        <th><p>` + user.firstName + `</p></th>
-        <th class="notNeeded"><p>` + user.username + `</p></th>
-        <th class="notNeeded"><p>` + user.email + `</p></th>
-        <th class="notNeeded"><p>` + user.purchasedFurnitureNbr + `</p></th>
-        <th class="notNeeded"><p>` + user.soldFurnitureNbr + `</p></th>
-        <th class="notNeeded"><p>` + user.role + `</p></th>
+      <th><p>` + user.lastName + `</p></th>
+      <th><p>` + user.firstName + `</p></th>
+      <th class="notNeeded"><p>` + user.username + `</p></th>
+      <th class="notNeeded"><p>` + user.email + `</p></th>
+      <th class="notNeeded"><p>` + user.purchasedFurnitureNbr + `</p></th>
+      <th class="notNeeded"><p>` + user.soldFurnitureNbr + `</p></th>
+      <th class="notNeeded"><p>` + user.role + `</p></th>
    </tr>`;
 }
+
 
 const generateUserCard = (userDetail) => {
   let status;
