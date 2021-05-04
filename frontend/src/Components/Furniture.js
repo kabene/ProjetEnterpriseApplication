@@ -1,5 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 
+
 import {findCurrentUser} from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
 import {displayErrorMessage, importAllFurnitureImg, generateLoadingAnimation} from "../utils/utils.js"
@@ -211,8 +212,15 @@ const getHTMLCarouselIndicators = (nbrPhoto) => {
  */
 const getHTMLCarouselPhotos = (tabPhotoToRender) => {
   let ret = "";
-  tabPhotoToRender.forEach(photo => {
+  if (tabPhotoToRender.length === 0) {
     ret = `
+    <div class="carousel-item active text-center">
+      <img class="w-75 my-3" src="` + notFoundPhoto + `" alt="Photo meuble">
+    </div>
+    `;
+  }
+  tabPhotoToRender.forEach(photo => {
+    ret += `
     <div class="carousel-item active text-center">
       <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
     </div>`;
