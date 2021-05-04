@@ -172,7 +172,7 @@ const generateItemAndModal = (furniture) => {
         <div class="modal fade" id="modal__` + furniture.furnitureId + `">
           <div class="modal-dialog modal-xl">
             <div class="modal-content">
-              <div class="row mx-0 pt-5">
+              <div class="row mx-auto pt-5">
                 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                   <ol class="carousel-indicators bg-secondary">` + getHTMLCarouselIndicators(tabPhotoToRender.length) + `</ol>
                   <div class="carousel-inner">` + getHTMLCarouselPhotos(tabPhotoToRender) + `</div>
