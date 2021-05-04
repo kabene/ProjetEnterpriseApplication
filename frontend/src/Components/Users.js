@@ -360,10 +360,8 @@ const generateUsersPage = () => {
             </span>
           </div>
         </div>
-        </hr>
         <div id="largeTableContainer">
           <div>
-            
             <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>
             ` + generateTable() + `
           </div>
