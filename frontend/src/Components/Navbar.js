@@ -45,7 +45,7 @@ const generateNavBarButtons = (user) => {
       <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/authentication">S'identifier</button>
     </li>`;
   }
-  let userPrintable = escapeHtml(pers.user.username);
+  let userPrintable = escapeHtml(user.user.username);
   if (user.isAdmin) {
     return `
     <li class="nav-item">

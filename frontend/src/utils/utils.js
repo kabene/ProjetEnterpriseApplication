@@ -94,5 +94,3 @@ const findFurnitureImgSrcFromFilename = (filename, images) => {
 
 export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
      displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename};
-
-
