@@ -405,7 +405,7 @@ class PhotoUCCImplTest {
   void test_getAllForFurniture_catchesInternal_shouldThrowInternal() {
     Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId1))
         .thenThrow(new InternalError());
-    assertThrows(InternalError.class, ()-> photoUCC.getAllForFurniture(defaultFurnitureId1));
+    assertThrows(InternalError.class, () -> photoUCC.getAllForFurniture(defaultFurnitureId1));
 
     InOrder inOrder = Mockito.inOrder(mockDal, mockPhotoDAO);
     inOrder.verify(mockDal).startTransaction();

@@ -42,7 +42,6 @@ public class FurnitureImpl implements FurnitureDTO {
   private PhotoDTO favouritePhoto;
   @JsonView(Views.Public.class)
   private List<PhotoDTO> photos = new ArrayList<>();
-  ;
   @JsonView(Views.Public.class)
   private Double sellingPrice;
   @JsonView(Views.AdminOnly.class)
