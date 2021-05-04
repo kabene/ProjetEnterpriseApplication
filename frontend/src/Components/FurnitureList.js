@@ -411,7 +411,7 @@ const displayShortElements = async (e) => {
   }
   if (furniture) {
     currentFurnitureId = id;
-    generateCard(furniture);
+    loadCard(currentFurnitureId);
     document.querySelectorAll(".userLink").forEach(
         (link) => link.addEventListener("click", onUserLinkClicked));
     isDisplayingLargeTable = false;
@@ -457,6 +457,7 @@ const generateCard = (furniture) => {
   let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
   let cardHTML = generateCardHTML(furniture);
   furnitureCardDiv.innerHTML = cardHTML;
+  fetchAllPhotos(furniture);
   addTransitionBtnListeners(furniture);
   document.querySelectorAll(".favRadio").forEach((element) => {
     element.addEventListener("click", onFavRadioSelected);
@@ -527,7 +528,10 @@ const verifyDifferentInfo = () => {
 }
 
 const changeContainerId = () => {
-  document.querySelector('#largeTableContainer').id = "shortTableContainer";
+  let tableContainer = document.querySelector('#largeTableContainer')
+  if(tableContainer){
+    tableContainer.id = "shortTableContainer";
+  }
 }
 
 const generateCardHTML = (furniture) => {
@@ -1421,7 +1425,7 @@ const loadCard = (furnitureId) => {
   currentFurnitureId = furnitureId;
   mainPage.innerHTML = generatePageHtml(false);
   generateCard(furnitureMap[furnitureId]);
-  getFavs();
+  getFavs().then(() => fetchAllPhotos(furnitureMap[furnitureId]));
   document.querySelectorAll(".toBeClicked").forEach(
       (element) => {
         let elementFurnId = element.getAttribute("furnitureid");
@@ -1618,7 +1622,6 @@ const displayNoResultMsg = () => {
 const getFavs = async () => {
   furnitureMap.forEach(async (furniture) => {
     await fetchFav(furniture);
-    console.log("fav fetched");
   })  
 }
 
@@ -1627,14 +1630,27 @@ const fetchFav = async (furniture) => {
     let path = "/photos/favourite/"+furniture.furnitureId;
     let response = await fetch(path, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
     if(response.ok) {
       let fav = await response.json();
       updateCacheFav(furniture, fav);
       displayImgs([fav]);
+      console.log("fav fetched");
+    }
+  }
+}
+
+const fetchAllPhotos = async (furniture) => {
+  if(!furniture.photos || furniture.photos.length === 0) { //no photos -> fetch
+    let path = "/photos/byFurniture/"+furniture.furnitureId;
+    let response = await fetch(path, {
+      method: "GET",
+    });
+    if(response.ok) {
+      let photoArray = await response.json();
+      updateCachePhotos(furniture, photoArray);
+      refreshDisplay();
+      console.log("photos fetched");
     }
   }
 }
@@ -1644,7 +1660,12 @@ const updateCacheFav = (furniture, photo) => {
 }
 
 const updateCachePhotos = (furniture, photoArray) => {
-  //TODO
+  let furnitureId = furniture.furnitureId;
+  if(!furniture.photos) {
+    furnitureMap[furnitureId] = {...furniture, photos: photoArray}
+  }else {
+    furniture.photos = photoArray
+  }
 }
 
 export default FurnitureList;

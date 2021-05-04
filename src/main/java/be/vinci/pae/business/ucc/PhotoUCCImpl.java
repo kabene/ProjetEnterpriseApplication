@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
 import be.vinci.pae.exceptions.ConflictException;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
@@ -74,8 +75,8 @@ public class PhotoUCCImpl implements PhotoUCC {
   /**
    * updates one photo's display flags (isVisible & isOnHomePage) by id.
    *
-   * @param id : the photo's id
-   * @param isVisible : the photo's new visibility flag.
+   * @param id           : the photo's id
+   * @param isVisible    : the photo's new visibility flag.
    * @param isOnHomePage : the photo's new isOnHomePage flag.
    * @return the modified resource as PhotoDTO
    */
@@ -115,12 +116,16 @@ public class PhotoUCCImpl implements PhotoUCC {
     try {
       dalServices.startTransaction();
       FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
+      if (furnitureDTO.getFavouritePhotoId() == null) {
+        throw new NotFoundException(
+            "Error : no favourite photo for furniture " + furnitureDTO.getFurnitureId());
+      }
       res = photoDAO.findById(furnitureDTO.getFavouritePhotoId());
-      if(res == null) {
+      if (res == null) {
         throw new InternalError("Unexpected Error"); //shouldn't be possible
       }
       dalServices.commitTransaction();
-    }catch (Throwable e) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }
@@ -141,7 +146,7 @@ public class PhotoUCCImpl implements PhotoUCC {
       furnitureDAO.findById(furnitureId); //check for not found
       res = photoDAO.findAllByFurnitureId(furnitureId);
       dalServices.commitTransaction();
-    } catch(Throwable e) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }

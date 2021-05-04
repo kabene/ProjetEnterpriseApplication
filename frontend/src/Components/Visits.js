@@ -408,11 +408,14 @@ const generateFurnitureList = (request) => {
   request.furnitureList.forEach(furniture => {
     let photoId = furniture.favouritePhotoId;
     let src = "none";
+    if(!furniture.favouritePhotoId) {
+      src = notFoundPhoto;
+    }
     if(furniture.favouritePhoto) {
       src = furniture.favouritePhoto.source;
     }
     photos += `
-    <div class="p-1 w-50 container photo-list-container" photoId=${photoId}>
+    <div class="p-1 w-50 container photo-list-container mx-0" photoId=${photoId}>
       <div class="row px-0">
         <div class="col-6">
           <img class="img-fluid" src="${src}" photo-id="${photoId}" alt="photo id:${photoId}"/>
@@ -424,7 +427,7 @@ const generateFurnitureList = (request) => {
   let res = `
       <form>
         <input id="originalFav" type="hidden" request-id="${request.requestId}"/>
-        <div class="form-check d-flex flex-lg-fill flex-row">
+        <div class="form-check d-flex flex-lg-fill flex-wrap justify-content-start align-items-center">
           ${photos}
         </div>
         ${generateChooseFurnitureBtn(request)}
@@ -950,6 +953,9 @@ async function getImage(furniture) {
     },
   }).then((response) => {
     if (!response.ok) {
+      if(response.status === 404) {
+        return;
+      }
       throw new Error(
           response.status + " : " + response.statusText
       );
@@ -958,10 +964,10 @@ async function getImage(furniture) {
   }).then((data) => {
     //cache
     updateFavCache(data, furniture);
-    let photoList= [data];
-    displayImgs(photoList);
+    if(data){
+      displayImgs([data]);
+    }
   }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
     displayErrorMessage("errorDiv", err);
   });
 }
