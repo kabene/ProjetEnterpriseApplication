@@ -166,10 +166,7 @@ const generateItemAndModal = (furniture) => {
   let item = `
         <div>`
       + getTag(furniture) +
-      `<img class="imageFurniturePage img-furniture" src="${findFavImgSrc(
-          furniture,
-          images)}" alt="thumbnail" data-toggle="modal" data-target="#modal_`
-      + furniture.furnitureId + `"/>
+      `<img class="imageFurniturePage img-furniture" src="${findFavImgSrc(furniture,images)}" alt="thumbnail" photo-id="${furniture.favouritePhotoId}" furniture-id="${furniture.furnitureId}" data-toggle="modal" data-target="#modal_` + furniture.furnitureId + `"/>
             <p class="text-center">` + furniture.description + `</p>`
       + getOptionButton(furniture) +
       `</div>`; //TODO: fixer la taille des images
@@ -310,6 +307,52 @@ const getFurnitureList = async () => {
   });
   return ret;
 }
+
+//--
+
+/**
+ * fetch all favourite photos for main list thumbnails
+ */
+ const getFavs = async () => {
+  furnitureList.forEach(async (furniture) => {
+    await fetchFav(furniture);
+  })
+}
+
+const fetchFav = async (furniture) => {
+  if(!furniture.favouritePhoto){
+    let path = "/photos/favourite/"+furniture.furnitureId;
+    let response = await fetch(path, {
+      method: "GET",
+    });
+    if(response.ok) {
+      let fav = await response.json();
+      //updateCacheFav(furniture, fav);
+      displayImgs([fav]);
+      console.log("fav fetched");
+    }
+  }
+}
+
+const fetchAllPhotos = async (furniture) => {
+  if(!furniture.photos || furniture.photos.length === 0) { //no photos -> fetch
+    let path = "/photos/byFurniture/"+furniture.furnitureId;
+    let response = await fetch(path, {
+      method: "GET",
+    });
+    if(response.ok) {
+      let photoArray = await response.json();
+      //updateCachePhotos(furniture, photoArray);
+      page.innerHTML = generateTable();
+      addAllEventListeners();
+      console.log("photos fetched");
+    }
+  }
+}
+
+
+//--
+
 
 
 const getFurnitureTypeList = async () => {
