@@ -3,7 +3,7 @@ import notFoundPhoto from "../img/notFoundPhoto.png";
 
 import {findCurrentUser} from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {displayErrorMessage, importAllFurnitureImg, generateLoadingAnimation} from "../utils/utils.js"
+import {displayErrorMessage, importAllFurnitureImg, generateLoadingAnimation, displayImgs} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 
@@ -31,6 +31,7 @@ const Furniture = async () => {
   myOptionList = await getMyOptionList();
 
   page.innerHTML = errorDiv + generateTable();
+  getFavs();
   addAllEventListeners();
 }
 
@@ -99,11 +100,20 @@ const addAllEventListeners = () => {
   document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
 }
 
+const updateModal = (tabPhotoToRender, furniture) => {
+  let query = `.modal-content[furniture-id=${furniture.furnitureId}]`;
+  let div = document.querySelector(query);
+  if(div) {
+    div.innerHTML = getHTMLEntireCarousel(tabPhotoToRender);
+  }
+}
+
 /********************  HTML generation  **********************/
 
 
 const generateTable = () => {
   return `
+    <div id="loadArea" class="d-block">${generateLoadingAnimation()}</div>
     <div class="wrapperFurniturePage">
         <div></div>
         <div>
@@ -157,11 +167,16 @@ const generateItemAndModal = (furniture) => {
     if (filter.type !== furniture.type)
       return "";
   }
-
+  let src = "none";
+  if(furniture.favouritePhoto) {
+    src = furniture.favouritePhoto.source;
+  }else if (furniture.noFavFound) {
+    src = notFoundPhoto;
+  }
   let item = `
         <div>
           ` + getTag(furniture) + `
-          <img class="imageFurniturePage img-furniture" src="` + furniture.favouritePhoto.source + `" alt="thumbnail"  photo-id="${furniture.favouritePhotoId}" furniture-id="${furniture.furnitureId}" data-toggle="modal" data-target="#modal__`+ furniture.furnitureId + `" onError="this.src='` + notFoundPhoto + `'"/>
+          <img class="imageFurniturePage img-furniture" src="` + src + `" alt="thumbnail"  photo-id="${furniture.favouritePhotoId}" furniture-id="${furniture.furnitureId}" data-toggle="modal" data-target="#modal__`+ furniture.furnitureId + `"/>
           <p class="text-center">` + furniture.description + `</p>`
           + getOptionButton(furniture) +
         `</div>`; //TODO: fixer la taille des images
@@ -171,7 +186,7 @@ const generateItemAndModal = (furniture) => {
   let modal = `
         <div class="modal fade" id="modal__` + furniture.furnitureId + `">
           <div class="modal-dialog modal-xl">
-            <div class="modal-content">
+            <div class="modal-content" furniture-id="${furniture.furnitureId}">
               ${getHTMLEntireCarousel(tabPhotoToRender)}
             </div>
           </div>                     
@@ -186,6 +201,9 @@ const generateItemAndModal = (furniture) => {
  * @returns html
  */
 const getHTMLEntireCarousel = (tabPhotoToRender) => {
+  if(tabPhotoToRender.length === 0) {
+    return generateLoadingAnimation();
+  }
   return `
   <div class="row mx-auto pt-5">
     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -336,9 +354,13 @@ const getFurnitureList = async () => {
  * fetch all favourite photos for main list thumbnails
  */
  const getFavs = async () => {
-  furnitureList.forEach(async (furniture) => {
+  let furniture;
+  for(furniture of furnitureList) {
+    console.log("starting fetch "+furniture.furnitureId);
     await fetchFav(furniture);
-  })
+  }
+  let loadArea = document.querySelector("#loadArea");
+  loadArea.className = "d-none";
 }
 
 const fetchFav = async (furniture) => {
@@ -349,7 +371,6 @@ const fetchFav = async (furniture) => {
     });
     if(response.ok) {
       let fav = await response.json();
-      //updateCacheFav(furniture, fav);
       displayImgs([fav]);
       console.log("fav fetched");
     }
@@ -364,9 +385,7 @@ const fetchAllPhotos = async (furniture) => {
     });
     if(response.ok) {
       let photoArray = await response.json();
-      //updateCachePhotos(furniture, photoArray);
-      page.innerHTML = generateTable();
-      addAllEventListeners();
+      updateModal(photoArray, furniture);
       console.log("photos fetched");
     }
   }
