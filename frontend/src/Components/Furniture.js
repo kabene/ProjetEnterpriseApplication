@@ -1,15 +1,9 @@
+import notFoundPhoto from "../img/notFoundPhoto.png";
+
+
 import {findCurrentUser} from "../utils/session";
-import {
-  generateCloseBtn,
-  generateModalPlusTriggerBtn
-} from "../utils/modals.js";
-import {
-  displayErrorMessage,
-  importAllFurnitureImg,
-  findFurnitureImgSrcFromFilename,
-  findFavImgSrc,
-  generateLoadingAnimation
-} from "../utils/utils.js"
+import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
+import {displayErrorMessage, importAllFurnitureImg, generateLoadingAnimation} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 
@@ -43,8 +37,6 @@ const Furniture = async () => {
 /********************  Business methods  **********************/
 
 
-
-
 const refresh = (data, status) => {
   myOptionList.push(data);
   let furnitureId = data.furnitureId;
@@ -54,7 +46,7 @@ const refresh = (data, status) => {
     }
   });
   updateFurnitureList(data.furnitureId, status)
-  page.innerHTML = generateTable();
+  page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
 }
 
@@ -74,7 +66,7 @@ const onClickApplyFilter = (e) => {
   e.preventDefault();
   filter.description = document.querySelector("#furnitureDescriptionFilter").value;
   filter.type = document.querySelector("#furnitureTypeFilter").value;
-  page.innerHTML = generateTable();
+  page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
   document.querySelector("[value='" + filter.type + "']").setAttribute('selected', 'true');
 }
@@ -89,7 +81,7 @@ const onClickClearFilter = (e) => {
     return;
   filter.description = "";
   filter.type = "";
-  page.innerHTML = generateTable();
+  page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
 }
 
@@ -137,6 +129,7 @@ const generateFilterHTML = () => {
   </form>`;
 }
 
+
 const generateSelectTypeTag = () => {
   let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
   furnitureTypeList.forEach(type => ret += generateOptionTypeTag(type));
@@ -155,6 +148,7 @@ const generateAllItemsAndModals = () => {
 }
 
 const generateItemAndModal = (furniture) => {
+  //filter
   if (filter.description !== "") {
     if (!furniture.description.toLowerCase().includes(filter.description.toLowerCase()))
       return "";
@@ -163,85 +157,111 @@ const generateItemAndModal = (furniture) => {
     if (filter.type !== furniture.type)
       return "";
   }
+
   let item = `
-        <div>`
-      + getTag(furniture) +
-      `<img class="imageFurniturePage img-furniture" src="${findFavImgSrc(
-          furniture,
-          images)}" alt="thumbnail" data-toggle="modal" data-target="#modal_`
-      + furniture.furnitureId + `"/>
-            <p class="text-center">` + furniture.description + `</p>`
-      + getOptionButton(furniture) +
-      `</div>`; //TODO: fixer la taille des images
+        <div>
+          ` + getTag(furniture) + `
+          <img class="imageFurniturePage img-furniture" src="` + furniture.favouritePhoto.source + `" alt="thumbnail" data-toggle="modal" data-target="#modal__`+ furniture.furnitureId + `" onError="this.src='` + notFoundPhoto + `'"/>
+          <p class="text-center">` + furniture.description + `</p>`
+          + getOptionButton(furniture) +
+        `</div>`; //TODO: fixer la taille des images
 
   let tabPhotoToRender = getTabPhotoToRender(furniture);
 
   let modal = `
-        <div class="modal fade" id="modal_` + furniture.furnitureId + `">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <!-- Modal Header -->
-                    <div class="modal-header"></div>
-                    <!-- Modal Body -->
-                    <div class="modal-body">
-                        <div class="row mx-0 pt-5">
-                            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                                <ol class="carousel-indicators bg-secondary">
-                                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
-  for (let i = 1; i < tabPhotoToRender.length; i++) {
-    modal += `<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>`;
-  }
-  modal +=
-      `</ol>
-                                <div class="carousel-inner">`;
-  for (let i = 0; i < tabPhotoToRender.length; i++) {
-    modal += `
-                                        <div class="carousel-item active text-center">
-                                            <img class="w-75" src="${findFurnitureImgSrcFromFilename(
-        tabPhotoToRender[i].source, images)}" alt="Photo meuble">
-                                        </div>`;
-  }
-  modal +=
-      `</div>
-                                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                                    <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                                    <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
-                                    <span class="sr-only">Next</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>                         
+        <div class="modal fade" id="modal__` + furniture.furnitureId + `">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              ${getHTMLEntireCarousel(tabPhotoToRender)}
+            </div>
+          </div>                     
         </div>`;
+
   return item + modal;
 }
 
+/**
+ * Generates the html for one carousel
+ * @param {Array<photo>} tabPhotoToRender table of all the photos to render in the carousel
+ * @returns html
+ */
+const getHTMLEntireCarousel = (tabPhotoToRender) => {
+  return `
+  <div class="row mx-auto pt-5">
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators bg-secondary">` + getHTMLCarouselIndicators(tabPhotoToRender.length) + `</ol>
+      <div class="carousel-inner">
+        ${getHTMLCarouselPhotos(tabPhotoToRender)}
+      </div>
+      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+        </a>
+      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </div>`;
+}
+
+/**
+ * create an html element containing all the carouselIndicators (small bars below the carousel).
+ * @param {*} nbrPhoto the number of photo in the carousel.
+ * @returns a html element containing all the carouselIndicators needed for the carousel.
+ */
+const getHTMLCarouselIndicators = (nbrPhoto) => {
+	let ret = `<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
+	for (let i = 1; i < nbrPhoto; i++) 
+		ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i + `"></li>`;
+	return ret;
+}
+
+/**
+ * create an html element containing all the photo to render in the carousel.
+ * @param {*} tabPhotoToRender the array containing all the photo that has to be in the carousel.
+ * @returns an html element containing all the photo to render in the carousel.
+ */
+const getHTMLCarouselPhotos = (tabPhotoToRender) => {
+  let ret = "";
+  if (tabPhotoToRender.length === 0) {
+    ret = `
+    <div class="carousel-item active text-center">
+      <img class="w-75 my-3" src="` + notFoundPhoto + `" alt="Photo introuvable">
+    </div>
+    `;
+  }
+  tabPhotoToRender.forEach(photo => {
+    if (ret === "") {
+      ret += `
+      <div class="carousel-item active text-center">
+        <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
+      </div>`;
+    } else {
+      ret += `
+      <div class="carousel-item text-center">
+        <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
+      </div>`;
+    }
+  });
+  return ret;
+}
+
 const getTag = (furniture) => {
-  let ret;
-  if (furniture.status == "SOLD") {
+  let ret = "";
+  if (furniture.status == "SOLD")
     ret = `<span class="badge badgeSold">VENDU !</span>`;
-  } else if (furniture.status == "UNDER_OPTION") {
+  else if (furniture.status == "UNDER_OPTION") {
     let option = furniture.option;
     if (!option.isCanceled) {
       let optionDate = new Date(option.dateOption);
       let today = new Date();
-      let optionDelay = Math.floor(
-          (optionDate.getTime() / 86400000) + option.duration
-          - (today.getTime() / 86400000))+1;
+      let optionDelay = Math.floor((optionDate.getTime() / 86400000) + option.duration - (today.getTime() / 86400000))+1;
       let plural = "";
-      if (optionDelay > 1) {
+      if (optionDelay > 1)
         plural += "s";
-      }
-      ret = `<span class="badge badgeUnderOption">Sous option durant `
-          + optionDelay + ` jour` + plural + `</span>`;
+      ret = `<span class="badge badgeUnderOption">Sous option durant ` + optionDelay + ` jour` + plural + `</span>`;
     }
-  } else //nothing
-  {
-    ret = "";
   }
   return ret;
 }
