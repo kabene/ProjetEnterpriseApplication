@@ -45,15 +45,12 @@ const refresh = (data, status) => {
   let furnitureId = data.furnitureId;
 
   mapFurniture.get(parseInt(furnitureId)).option = data;
-  updateFurnitureList(furnitureId, status)
+  mapFurniture.get(parseInt(furnitureId)).status = status;
 
   page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
 }
 
-const updateFurnitureList = (furnitureId, status) => {
-  mapFurniture.get(parseInt(furnitureId)).status = status;
-}
 
 /**
  * Called when clicking on the apply filter button.
@@ -67,6 +64,7 @@ const onClickApplyFilter = (e) => {
   addAllEventListeners();
   document.querySelector("[value='" + filter.type + "']").setAttribute('selected', 'true');
 }
+
 
 /**
  * Called when clicking on the cancel filter button.
@@ -82,6 +80,7 @@ const onClickClearFilter = (e) => {
   addAllEventListeners();
 }
 
+
 /**
  * Add all the event listeners required in the document.
  */
@@ -94,6 +93,24 @@ const addAllEventListeners = () => {
   });
   document.querySelector("#apply-filters-btn").addEventListener("click", onClickApplyFilter);
   document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
+}
+
+
+/**
+ * check if a furniture respect the current filter.
+ * @param {*} furniture the user to check if he is correct following the filter criterias.
+ * @returns true if the furniture is correct, else false.
+ */
+ const isFurnitureRespectingFilter = (furniture) => {
+  if (filter.description !== "") {
+    if (!furniture.description.toLowerCase().includes(filter.description.toLowerCase()))
+      return false;
+  }
+  if (filter.type !== "") {
+    if (filter.type !== furniture.type)
+      return false;
+  }
+  return true;
 }
 
 /********************  HTML generation  **********************/
@@ -113,6 +130,7 @@ const generateTable = () => {
         <div></div>
     </div>`;
 }
+
 
 const generateFilterHTML = () => {
   return `
@@ -134,9 +152,11 @@ const generateSelectTypeTag = () => {
   return ret;
 }
 
+
 const generateOptionTypeTag = (type) => {
   return `<option value="` + type.typeName + `">` + type.typeName + `</option>`;
 }
+
 
 const generateAllItemsAndModals = () => {
   let res = "";
@@ -144,16 +164,10 @@ const generateAllItemsAndModals = () => {
   return res;
 }
 
+
 const generateItemAndModal = (furniture) => {
-  //filter
-  if (filter.description !== "") {
-    if (!furniture.description.toLowerCase().includes(filter.description.toLowerCase()))
-      return "";
-  }
-  if (filter.type !== "") {
-    if (filter.type !== furniture.type)
-      return "";
-  }
+  if (!isFurnitureRespectingFilter(furniture))
+    return "";
 
   let item = `
         <div>
@@ -163,19 +177,18 @@ const generateItemAndModal = (furniture) => {
           + getOptionButton(furniture) +
         `</div>`; //TODO: fixer la taille des images
 
-  let tabPhotoToRender = getTabPhotoToRender(furniture);
-
   let modal = `
         <div class="modal fade" id="modal__` + furniture.furnitureId + `">
           <div class="modal-dialog modal-xl">
             <div class="modal-content">
-              ${getHTMLEntireCarousel(tabPhotoToRender)}
+              ` + getHTMLEntireCarousel(furniture.photos) + `
             </div>
           </div>                     
         </div>`;
 
   return item + modal;
 }
+
 
 /**
  * Generates the html for one carousel
@@ -202,6 +215,7 @@ const getHTMLEntireCarousel = (tabPhotoToRender) => {
   </div>`;
 }
 
+
 /**
  * create an html element containing all the carouselIndicators (small bars below the carousel).
  * @param {*} nbrPhoto the number of photo in the carousel.
@@ -213,6 +227,7 @@ const getHTMLCarouselIndicators = (nbrPhoto) => {
 		ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i + `"></li>`;
 	return ret;
 }
+
 
 /**
  * create an html element containing all the photo to render in the carousel.
@@ -244,6 +259,7 @@ const getHTMLCarouselPhotos = (tabPhotoToRender) => {
   return ret;
 }
 
+
 const getTag = (furniture) => {
   let ret = "";
   if (furniture.status == "SOLD")
@@ -263,33 +279,24 @@ const getTag = (furniture) => {
   return ret;
 }
 
+
 const getOptionButton = (furniture) => {
-  let alreadyUnderOption = false;
+  let isOnMyOption = false;
+
   if (currentUser) {
-    mapOption.forEach(option => {
-      alreadyUnderOption = true;
-    })
+    if (mapOption.has(furniture.furnitureId))
+    isOnMyOption = true;
   }
-  ;
-  if (furniture.status === "AVAILABLE_FOR_SALE" && typeof currentUser
-      !== "undefined") { //place option
-
-    let sendBtn = generateCloseBtn("Confirmer", "btn" + furniture.furnitureId,
-        "btnCreateOption btn btn-primary mx-5");
-    return generateModalPlusTriggerBtn("modal_" + furniture.furnitureId,
-        "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>",
-        generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
-  } else if (furniture.status === "UNDER_OPTION" && alreadyUnderOption
-      && typeof currentUser !== "undefined") { //cancel option
-    return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn-danger cancelOptButton">annuler l'option</button>`;
-  } else { // nothing
+  
+  if (furniture.status === "AVAILABLE_FOR_SALE" && currentUser) {
+    let sendBtn = generateCloseBtn("Confirmer", "btn" + furniture.furnitureId, "btnCreateOption btn btn-primary mx-5");
+    return generateModalPlusTriggerBtn("modal_" + furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
+  } else if (isOnMyOption)
+    return `<button type="button" id="cbtn` + furniture.furnitureId + `" class="btn btn-danger cancelOptButton">Annuler l'option</button>`;
+  else
     return "";
-  }
 }
 
-const getTabPhotoToRender = (furniture) => {
-  return furniture.photos;
-}
 
 const generateOptionForm = () => {
   let res = `
