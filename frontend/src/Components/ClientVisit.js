@@ -4,18 +4,22 @@ import {removeTimeouts, generateLoadingAnimation, displayErrorMessage} from "../
 
 let page = document.querySelector("#page");
 let currentUser;
+
 let mapRequests;
+
 let timeouts = [];
+
+const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"></div>  </div>`;
 
 
 const VisitRequest = async () => {
     currentUser = getUserSessionData();
-    page.innerHTML = generateLoadingAnimation();
+    page.innerHTML = errorDiv + generateLoadingAnimation();
 
     let listRequests = await getUserRequestsForVisit();
     mapRequests = new Map(listRequests.map(request => [request.requestId, request]));
-	console.log(mapRequests);
-    page.innerHTML = generateVisitPage();
+    
+    page.innerHTML = errorDiv + generateVisitPage();
 
     document.querySelectorAll(".requestTableRow").forEach(requestTableRow => requestTableRow.addEventListener("click", onRequestTableRowClick));
     document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
@@ -27,19 +31,17 @@ const VisitRequest = async () => {
 
 
 /**
- * Called when clicking a row in the body table.
- * Display the short elements if the table is large, else just refresh the user card.
+ * display the short elements if the table is large, else just refresh the user card.
  */
 const onRequestTableRowClick = (e) => {
-    if (document.querySelector('#shortTableContainer') == null)
+    if (!document.querySelector('#shortTableContainer'))
         displayShortElements();
     onUserClickHandler(e);
   }
 
 
 /**
-  * Called when clicking on the buttonReturn.
-  * Hide all the short elements, display the large ones and magnify the large.
+  * hide all the short elements, display the large ones and magnify the large.
   */
  const displayLargeTable = () => {
     removeTimeouts(timeouts);
@@ -238,7 +240,7 @@ const generatePhotoList = (request) => {
         if (!furniture.favouritePhoto)
           photoTag = `<img class="img-fluid" src="` + notFoundPhoto + `" alt="photoNotFound"/>`;
         else
-        photoTag = `<img class="img-fluid" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
+          photoTag = `<img class="img-fluid" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
         
         photoList += `
         <div class="p-1 w-50 container photo-list-container"">
@@ -345,7 +347,7 @@ const getUserRequestsForVisit = async () => {
     if (!response.ok) {
         const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
         console.error(err);
-        displayErrorMessage(err);
+        displayErrorMessage(err, errorDiv);
     }
     return response.json();
 }
