@@ -215,15 +215,22 @@ const getHTMLCarouselPhotos = (tabPhotoToRender) => {
   if (tabPhotoToRender.length === 0) {
     ret = `
     <div class="carousel-item active text-center">
-      <img class="w-75 my-3" src="` + notFoundPhoto + `" alt="Photo meuble">
+      <img class="w-75 my-3" src="` + notFoundPhoto + `" alt="Photo introuvable">
     </div>
     `;
   }
   tabPhotoToRender.forEach(photo => {
-    ret += `
-    <div class="carousel-item active text-center">
-      <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
-    </div>`;
+    if (ret === "") {
+      ret += `
+      <div class="carousel-item active text-center">
+        <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
+      </div>`;
+    } else {
+      ret += `
+      <div class="carousel-item text-center">
+        <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
+      </div>`;
+    }
   });
   return ret;
 }
