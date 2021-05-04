@@ -1,8 +1,6 @@
 import {removeSessionData, removeLocalData} from "../utils/session.js";
-import {RedirectUrl} from "./Router.js";
-import {setLayout} from "../utils/render.js"
-
-let page = document.querySelector("#page");
+import RedirectUrl from "./Router.js";
+import setLayout from "../utils/render.js"
 
 const LogoutComponent = () => {
     removeSessionData();
