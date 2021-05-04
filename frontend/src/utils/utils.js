@@ -9,13 +9,13 @@ import {getUserSessionData} from "./session";
  * @param {*} text  the text to escape
  */
 function escapeHtml(text) {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;")
-        .replace(/\//g, "&#047;");
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+    .replace(/\//g, "&#047;");
 }
 
 /**
@@ -23,49 +23,43 @@ function escapeHtml(text) {
  * @param {string} token : jwt
  * 
  */
-async function fetchMe (token){
-    if(!token) token = getUserSessionData().token;
-    let res;
-    await fetch("/users/me", {
-        method: "GET",
-        headers: {
-            "Authorization": token,
-            "Content-Type": "application/json",
-        },
-    }).then((response) => {
-        if (response.ok) {
-            return response.json();   
-        }
-    })
-    .then((data) => {
-        res = data;
-    })
-    .catch((err) => {
-        console.log("Erreur de fetch !! :´\n" + err);
-    });
-    return res;
+async function fetchMe (token) {
+  if(!token) 
+		token = getUserSessionData().token;
+  let response = await fetch("/users/me", {
+    method: "GET",
+    headers: {
+      "Authorization": token,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+  }
+	return response.json();
 }
 
 const removeTimeouts = (timeouts) => {
-    timeouts.forEach(timeout => clearTimeout(timeout))
+  timeouts.forEach(timeout => clearTimeout(timeout))
 }
 
 const generateLoadingAnimation = () => {
 return `
     <div class="text-center">
-        <h2>Loading <div class="spinner-border"></div></h2>
+      <h2>Loading <div class="spinner-border"></div></h2>
     </div>`
 }
 
 function displayErrorMessage(alertDivId, error) {
-    let message = error.message;
-    let div = document.querySelector(`#${alertDivId}`);
-    div.className = "mx-1";
-    div.innerHTML = `
-    <div class="alert alert-danger alert-dismissible fade show">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <p>${message}</p>
-    </div>`;
+  let message = error.message;
+  let div = document.querySelector(`#${alertDivId}`);
+  div.className = "mx-1";
+  div.innerHTML = `
+  <div class="alert alert-danger alert-dismissible fade show">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p>${message}</p>
+  </div>`;
 }
 
 /**
@@ -79,10 +73,10 @@ function displayErrorMessage(alertDivId, error) {
  * @returns an array containing all images 
  */
 const importAllFurnitureImg = () => {
-    let r = require.context('../img/furniture', true, /\.(png|jpe?g|svg)$/);
-    let images = {};
-    r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
-    return images;
+	let r = require.context('../img/furniture', true, /\.(png|jpe?g|svg)$/);
+  let images = {};
+  r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
+  return images;
 }
 
 /**
@@ -93,27 +87,12 @@ const importAllFurnitureImg = () => {
  * @returns <img/> src
  */
 const findFurnitureImgSrcFromFilename = (filename, images) => {
-    if(!images[filename]) {
-      return imageNotFound;
-    }
-    return images[filename].default;
-}
-
-/**
- * finds favourite image src from loaded images array and Furniture object
- * @param {*} furniture
- * @param {Array} images
- * @returns <img/> src
- */
-const findFavImgSrc = (furniture, images) => {
-    if(!furniture.favouritePhoto) {
-      return imageNotFound;
-    }
-    return furniture.favouritePhoto.source;
+  if(!images[filename])
+    return imageNotFound;
+  return images[filename].default;
 }
 
 export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
-     displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, 
-     findFavImgSrc};
+     displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename};
 
 
