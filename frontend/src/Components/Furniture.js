@@ -2,16 +2,15 @@ import notFoundPhoto from "../img/notFoundPhoto.png";
 
 import {findCurrentUser} from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {displayErrorMessage, importAllFurnitureImg, generateLoadingAnimation} from "../utils/utils.js"
+import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 
 let currentUser;
 
-let images;
-let furnitureList;
-let furnitureTypeList;
-let myOptionList;
+let mapFurniture;
+let mapFurnitureType;
+let mapOption;
 
 const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"></div>  </div>`;
 
@@ -24,10 +23,15 @@ const Furniture = async () => {
   page.innerHTML =  errorDiv + generateLoadingAnimation();
   currentUser = findCurrentUser();
 
-  images = importAllFurnitureImg()
-  furnitureList = await getFurnitureList();
-  furnitureTypeList = await getFurnitureTypeList();
-  myOptionList = await getMyOptionList();
+  let furnitureList = await getFurnitureList();
+  mapFurniture = new Map(furnitureList.map(furniture => [furniture.furnitureId, furniture]));
+
+  let furnitureTypeList = await getFurnitureTypeList();
+  mapFurnitureType = new Map(furnitureTypeList.map(furnitureType => [furnitureType.typeId, furnitureType]));
+
+  let myOptionList = await getMyOptionList();
+  if (myOptionList)
+    mapOption = new Map(myOptionList.map(option => [option.furnitureId, option]));
 
   page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
@@ -37,24 +41,18 @@ const Furniture = async () => {
 
 
 const refresh = (data, status) => {
-  myOptionList.push(data);
+  mapOption.set(data.furnitureId, data);
   let furnitureId = data.furnitureId;
-  furnitureList.forEach(furniture => {
-    if (furniture.furnitureId == furnitureId) {
-      furniture.option = data;
-    }
-  });
-  updateFurnitureList(data.furnitureId, status)
+
+  mapFurniture.get(parseInt(furnitureId)).option = data;
+  updateFurnitureList(furnitureId, status)
+
   page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
 }
 
 const updateFurnitureList = (furnitureId, status) => {
-  furnitureList.forEach(furniture => {
-    if (furniture.furnitureId === furnitureId) {
-      furniture.status = status;
-    }
-  })
+  mapFurniture.get(parseInt(furnitureId)).status = status;
 }
 
 /**
@@ -131,7 +129,7 @@ const generateFilterHTML = () => {
 
 const generateSelectTypeTag = () => {
   let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
-  furnitureTypeList.forEach(type => ret += generateOptionTypeTag(type));
+  mapFurnitureType.forEach(type => ret += generateOptionTypeTag(type));
   ret += `</select>`;
   return ret;
 }
@@ -142,7 +140,7 @@ const generateOptionTypeTag = (type) => {
 
 const generateAllItemsAndModals = () => {
   let res = "";
-  furnitureList.forEach(furniture => res += generateItemAndModal(furniture));
+  mapFurniture.forEach(furniture => res += generateItemAndModal(furniture));
   return res;
 }
 
@@ -268,7 +266,7 @@ const getTag = (furniture) => {
 const getOptionButton = (furniture) => {
   let alreadyUnderOption = false;
   if (currentUser) {
-    myOptionList.forEach(option => {
+    mapOption.forEach(option => {
       alreadyUnderOption = true;
     })
   }
@@ -308,26 +306,20 @@ const generateOptionForm = () => {
 
 /********************  Backend fetch  **********************/
 
+
 const getFurnitureList = async () => {
-  let ret = [];
-  await fetch("/furniture/", {
+  let response = await fetch("/furniture/", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    ret = data;
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
-  return ret;
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  return response.json();
 }
 
 
@@ -343,95 +335,74 @@ const getFurnitureTypeList = async () => {
   return response.json();
 }
 
-const getMyOptionList = async () => {
-  if (currentUser) {
-    let ret = [];
 
-    await fetch("/options/me", {
-      method: "GET",
-      headers: {
-        "Authorization": currentUser.token,
-        //"Content-Type": "application/json",
-      },
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(
-            "Error code : " + response.status + " : " + response.statusText);
-      }
-      return response.json();
-    }).then((data) => {
-      ret = data;
-    }).catch((err) => {
-      console.log("Erreur de fetch !! :´<\n" + err);
-      displayErrorMessage("errorDiv", err);
-    });
-    return ret;
+const getMyOptionList = async () => {
+  if (!currentUser) 
+    return;
+  let response = await fetch("/options/me", {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+    },
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
   }
+  return response.json();
 }
 
-const cancelOption = (e) => {
+
+const cancelOption = async (e) => {
   e.preventDefault();
   let furnitureId = e.target.id.substring(4);
   let optionId;
-  myOptionList.forEach(option => {
-    if (option.furnitureId == furnitureId) {
-      if (!option.isCanceled) {
-        optionId = option.optionId;
-      }
-    }
-  });
+  
+  let option = mapOption.get(parseInt(furnitureId));
+  if (!option.isCanceled)
+    optionId = option.optionId;
 
-  fetch("/options/cancel/" + optionId, {
+  let response = await fetch("/options/cancel/" + optionId, {
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    refresh(data, "AVAILABLE_FOR_SALE");
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  let jsonResponse = await response.json();
+  refresh(jsonResponse, "AVAILABLE_FOR_SALE");
 }
 
-const addOption = (e) => {
+
+const addOption = async (e) => {
   e.preventDefault();
-  let furnitureId = e.target.id.substring(3);
-  let duration = e.target.parentElement.parentElement.querySelector(
-      "input").value;
 
   let bundle = {
-    furnitureId: furnitureId,
-    duration: duration,
+    furnitureId: e.target.id.substring(3),
+    duration: e.target.parentElement.parentElement.querySelector("input").value,
   }
-  console.log(bundle);
-  fetch("/options/", {
+  
+  let response = await fetch("/options/", {
     method: "POST",
     body: JSON.stringify(bundle),
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    refresh(data.option, "UNDER_OPTION");
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
-
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  let jsonResponse = await response.json();
+  refresh(jsonResponse.option, "UNDER_OPTION");
 }
-
-
 
 export default Furniture;
