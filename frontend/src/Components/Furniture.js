@@ -45,7 +45,7 @@ const refresh = (data, status) => {
     }
   });
   updateFurnitureList(data.furnitureId, status)
-  page.innerHTML = generateTable();
+  page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
 }
 
@@ -65,7 +65,7 @@ const onClickApplyFilter = (e) => {
   e.preventDefault();
   filter.description = document.querySelector("#furnitureDescriptionFilter").value;
   filter.type = document.querySelector("#furnitureTypeFilter").value;
-  page.innerHTML = generateTable();
+  page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
   document.querySelector("[value='" + filter.type + "']").setAttribute('selected', 'true');
 }
@@ -80,7 +80,7 @@ const onClickClearFilter = (e) => {
     return;
   filter.description = "";
   filter.type = "";
-  page.innerHTML = generateTable();
+  page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
 }
 
@@ -127,6 +127,7 @@ const generateFilterHTML = () => {
      <button type="submit" id="clear-filters-btn" class="btn btn-secondary m-3">Retirer les filtres</button>
   </form>`;
 }
+
 
 const generateSelectTypeTag = () => {
   let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
