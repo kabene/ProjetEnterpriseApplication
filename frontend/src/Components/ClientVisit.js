@@ -7,6 +7,9 @@ let currentUser;
 
 let mapRequests;
 
+let activeRequestID = "";
+let displayInfoItemInRequestCard = true;
+
 let timeouts = [];
 
 const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"></div>  </div>`;
@@ -14,6 +17,7 @@ const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"
 
 const VisitRequest = async () => {
     currentUser = getUserSessionData();
+
     page.innerHTML = errorDiv + generateLoadingAnimation();
 
     let listRequests = await getUserRequestsForVisit();
@@ -21,9 +25,8 @@ const VisitRequest = async () => {
     
     page.innerHTML = errorDiv + generateVisitPage();
 
-    document.querySelectorAll(".requestTableRow").forEach(requestTableRow => requestTableRow.addEventListener("click", onRequestTableRowClick));
-    document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
-    document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
+    setDefaultLargeValues(true);
+    setDefaultEventListener();
 }
 
 
@@ -31,74 +34,119 @@ const VisitRequest = async () => {
 
 
 /**
- * display the short elements if the table is large, else just refresh the user card.
+ * set all the default event listeners needed in the page.
  */
-const onRequestTableRowClick = (e) => {
-    if (!document.querySelector('#shortTableContainer'))
-        displayShortElements();
-    onUserClickHandler(e);
-  }
+const setDefaultEventListener = () => {
+  document.querySelectorAll(".requestTableRow").forEach(requestTableRow => requestTableRow.addEventListener("click", onRequestTableRowClick));
+  document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
+}
 
 
 /**
-  * hide all the short elements, display the large ones and magnify the large.
-  */
- const displayLargeTable = () => {
-    removeTimeouts(timeouts);
-    //hide
-    document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
-    //remove the bg-secondary
-    document.querySelectorAll(".requestTableRow").forEach(element => element.className = "requestTableRow");
-    //magnify
-    document.querySelector('#shortTable').id = "largeTable";
-    if (document.querySelector('#shortTableContainer') !== null) //can be undefined because of the setTimeout in displayShortElements
-        document.querySelector('#shortTableContainer').id = "largeTableContainer";
-	
-    document.querySelectorAll(".requestState").forEach(element => {
-        let status = element.getAttribute("status");
-        element.innerHTML = generateColoredStatus(status);
-    });
+ * display the short elements if the table is large, else just refresh the user card.
+ */
+const onRequestTableRowClick = (e) => {
+  if (!document.querySelector('#shortTableContainer'))
+    displayShortElements();
+  onUserClickHandler(e);
+}
+
+
+/**
+ * set the default values of elements when the table is large.
+ */
+const setDefaultLargeValues = () => {
+  //hide the element only displayed when the user table is small
+  document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
+  //remove the background on the selected row (if exists)
+  removeActiveRow();
+  //change the class of divs from small to large (if are small)
+  let tableContainer = document.querySelector('#shortTableContainer');
+  if (tableContainer/* !== null*/)
+    tableContainer.id = "largeTableContainer";
+  let table = document.querySelector('#shortTable');
+  if (table)
+    table.id = "largeTable";
+  //set the info item to be displayed by default in the user card
+  displayInfoItemInRequestCard = true;
+  //create a colored status for each request
+  document.querySelectorAll(".requestState").forEach(element => {
+    let status = element.getAttribute("status");
+    element.innerHTML = generateColoredStatus(status);
+  });
+}
+
+
+/**
+ * set the default values of elements when the table is short.
+ * @param {boolean} changeTableContainer a boolean that inform the method if we need to change the class of the table container from large to short.
+ */
+const setDefaultShortValues = (changeTableContainer) => {
+  //display the short element only displayed when the user table is small
+  document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
+  //change the class of table from large to small (if is large)
+  let table = document.querySelector("#largeTable");
+  if (table)
+    table.id = "shortTable";
+  //change the class of table container from large to short (if is large and is asked to) 
+  if (changeTableContainer) {
+    let tableContainer = document.querySelector('#largeTableContainer');
+    if (tableContainer)
+      tableContainer.id = "shortTableContainer";
   }
+  //create a color dot for the request status.
+  document.querySelectorAll(".requestState").forEach(element => {
+    let status = element.getAttribute("status");
+    let classname = generateStatusInfos(status).classname;
+    element.innerHTML = generateDot(classname);
+  });
+  //change the class of table container from large to short (if is large and is asked to) 
+  if (changeTableContainer) {
+    let tableContainer = document.querySelector('#largeTableContainer');
+    if (tableContainer)
+      document.querySelector('#largeTableContainer').id = "shortTableContainer";
+  }
+}
+
+
+/**
+* hide all the short elements, display the large ones and magnify the large.
+*/
+const displayLargeTable = () => {
+  removeTimeouts(timeouts);
+  setDefaultLargeValues();
+}
 
   
-  /**
-   * Shrink the large table, hide the not needed element in the table and display the user card needed.
-   */
-  const displayShortElements = () => {
-    removeTimeouts(timeouts);
-    //shrink
-    document.querySelector('#largeTable').id = "shortTable";
-    timeouts.push(setTimeout( () => document.querySelector('#largeTableContainer').id = "shortTableContainer"
+/**
+ * Shrink the large table, hide the not needed element in the table and display the user card needed.
+ */
+const displayShortElements = () => {
+  removeTimeouts(timeouts);
+  setDefaultShortValues(false);
+  timeouts.push(setTimeout( () => document.querySelector('#largeTableContainer').id = "shortTableContainer"
                       , 750));
-    //display
-    document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
-    document.querySelectorAll(".requestState").forEach(element => {
-        let status = element.getAttribute("status");
-        let classname = generateStatusInfos(status).classname;
-        element.innerHTML = generateDot(classname);
-    });
-  }
+}
 
   
-  /**
-   * Called when clicking on one of the rows of the table's body (large or short).
-   * Display the card of the request that has been clicked on the table.
-   */
-  const onUserClickHandler = async (e) => {
-    //remove the bg-secondary
-    document.querySelectorAll(".requestTableRow").forEach(element => element.className = "requestTableRow");
-    //get the tr element
-    let element = e.target;
-    while (!element.className.includes("requestTableRow"))
-        element = element.parentElement;
-    element.className += " bg-secondary text-light";
-	
-    await displayRequestCardById(element.attributes["requestId"].value);
-  }
+/**
+ * change the active row and display the user card needed.
+ */
+const onUserClickHandler = (e) => {
+  removeActiveRow();
+  //get the tr element
+  let element = e.target;
+  while (!element.className.includes("requestTableRow"))
+      element = element.parentElement;
+  setActiveRow(element.getAttribute("requestId"));
+
+  displayRequestCardById(element.attributes["requestId"].value);
+}
 
 
-  /**
- * Displays the card of the corresponding request
+
+/**
+ * displays the card of the corresponding request
  * @param {*} requestId the request's id 
  */
 const displayRequestCardById = async (requestId) => {
@@ -106,6 +154,31 @@ const displayRequestCardById = async (requestId) => {
     requestCardDiv.innerHTML = generateLoadingAnimation();
     //generate the user card
     requestCardDiv.innerHTML = generateRequestCard(mapRequests.get(parseInt(requestId)));
+}
+
+
+/**
+ * Set a row to active by changing his background to grey and his text to white.
+ * @param {*} userID the id of the user needed for finding the new active row.
+ */
+ const setActiveRow = (requestID) => {
+  let activeRow = document.querySelector(".requestTableRow[requestId='" + requestID + "']")
+  if (activeRow)
+    activeRow.className += " bg-secondary text-light";
+    activeRequestID = requestID;
+}
+
+
+/**
+ * set the active row to inactive and remove his background and text color.
+ */
+const removeActiveRow = () => {
+  let activeRow = document.querySelector(".requestTableRow[requestId='" + activeRequestID + "']")
+  if (activeRow) {
+    activeRow.classList.remove("bg-secondary");
+    activeRow.classList.remove("text-light");
+  }
+  activeRequestID = "";
 }
 
 
@@ -128,7 +201,7 @@ const generateVisitPage = () => {
 
   
 const generateTable = () => {
-    let res = `
+  let res = `
       <table id="largeTable" class="table table-bordered table-hover">
           <thead class="table-secondary">
               <tr>
@@ -146,14 +219,14 @@ const generateTable = () => {
 
 
 const getAllRequestsRows = () => {
-    let res = "";  
-    mapRequests.forEach(request => res += generateRow(request));
-    return res;
+  let res = "";  
+  mapRequests.forEach(request => res += generateRow(request));
+  return res;
 }
 
 
 const generateRow = (request) => {
-    return ` 
+  return ` 
       <tr class="requestTableRow" requestId="` + request.requestId + `">
         <th>` + request.requestDate + `</th>
         <th>` + request.address.street + ` ` + request.address.buildingNumber + ` ` + request.address.postcode + `, ` + request.address.commune + `</th>
@@ -291,7 +364,7 @@ const generateFavouritePhotoImgTag = (furniture) => {
  * @returns a div containing a label used in the requestCard.
  */
 const generateCardLabelKeyEntry = (label, id, value) => {
-    let res = `
+  let res = `
     <div class="row text-left">
       <div class="col-md-6">
         <label> ` + label + `</label>
@@ -301,7 +374,7 @@ const generateCardLabelKeyEntry = (label, id, value) => {
       </div>
     </div>
     `;
-    return res;
+  return res;
 }
 
 
@@ -311,9 +384,9 @@ const generateCardLabelKeyEntry = (label, id, value) => {
  * @returns a bootstrap badge.
  */
  const generateBadgeStatus = (request) => {
-    let infos = generateStatusInfos(request.requestStatus);
-    let res = `<span class="badge badge-pill badge-` + infos.classname + ` text-light"> ` + infos.status + `</span>`;
-    return res;
+  let infos = generateStatusInfos(request.requestStatus);
+  let res = `<span class="badge badge-pill badge-` + infos.classname + ` text-light"> ` + infos.status + `</span>`;
+  return res;
 }
 
 
@@ -323,8 +396,8 @@ const generateCardLabelKeyEntry = (label, id, value) => {
  * @returns an html <p> tag
  */
 const generateColoredStatus = (requestStatus) => {
-    let infos = generateStatusInfos(requestStatus);
-    return `<p class="text-` + infos.classname + `"> ` + infos.status + `</p>`;
+  let infos = generateStatusInfos(requestStatus);
+  return `<p class="text-` + infos.classname + `"> ` + infos.status + `</p>`;
 }
 
 
@@ -334,7 +407,7 @@ const generateColoredStatus = (requestStatus) => {
  * @returns a dot of a certain color.
  */
 const generateDot = (colorClassName) => {
-    return `<span class="badge badge-pill p-1 badge-` + colorClassName + `"> </span>`;
+  return `<span class="badge badge-pill p-1 badge-` + colorClassName + `"> </span>`;
 }
   
 
@@ -347,28 +420,28 @@ const generateDot = (colorClassName) => {
  * }
  */
 const generateStatusInfos = (status) => {
-    let res = {
-      classname: "",
-      status: "",
-    }
-    switch (status) {
-      case "CONFIRMED":
-        res.classname = "success";
-        res.status = "Accepté";
-        break;
-      case "WAITING":
-        res.classname = "warning";
-        res.status = "en attente";
-        break;
-      case "CANCELED":
-        res.classname = "danger";
-        res.status = "Annulé";
-        break;
-      default:
-        res.classname = "";
-        res.status = status;
-    }
-    return res;
+  let res = {
+    classname: "",
+    status: "",
+  }
+  switch (status) {
+    case "CONFIRMED":
+      res.classname = "success";
+      res.status = "Accepté";
+      break;
+    case "WAITING":
+      res.classname = "warning";
+      res.status = "en attente";
+      break;
+    case "CANCELED":
+      res.classname = "danger";
+      res.status = "Annulé";
+      break;
+    default:
+      res.classname = "";
+      res.status = status;
+  }
+  return res;
 }  
 
 
@@ -380,19 +453,19 @@ const generateStatusInfos = (status) => {
  * @returns a promise of an array containing the result of the fetch.
  */
 const getUserRequestsForVisit = async () => {
-    let response = await fetch("/requestForVisit/me", {
-        method: "GET",
-        headers: {
-          "Authorization": currentUser.token,
-          "Content-Type": "application/json",
-        },
-    })
-    if (!response.ok) {
-        const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
-        console.error(err);
-        displayErrorMessage(err, errorDiv);
-    }
-    return response.json();
+  let response = await fetch("/requestForVisit/me", {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+      "Content-Type": "application/json",
+    },
+  })
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage(err, errorDiv);
+  }
+  return response.json();
 }
 
 export default VisitRequest;

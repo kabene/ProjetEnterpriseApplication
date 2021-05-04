@@ -36,7 +36,7 @@ const Users = async (id) => {
 
   page.innerHTML = generateUsersPage();
 
-  setDefaultLargeValues();
+  setDefaultLargeValues(true);
   setDefaultEventListener();
 
   //display a user if we got an id
@@ -68,10 +68,8 @@ const setDefaultEventListener = () => {
 const setDefaultLargeValues = (displayNotNeeded) => {
   //hide the element only displayed when the user table is small
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
-
   //remove the background on the selected row (if exists)
   removeActiveRow();
-
   //change the class of divs from small to large (if are small)
   let tableContainer = document.querySelector('#shortTableContainer');
   if (tableContainer/* !== null*/)
@@ -79,10 +77,8 @@ const setDefaultLargeValues = (displayNotNeeded) => {
   let table = document.querySelector('#shortTable');
   if (table)
     table.id = "largeTable";
-
   //set the info item to be displayed by default in the user card
   displayInfoItemInUserCard = true;
-
   //display the element not needed when the table is short if asked to
   if (displayNotNeeded)
     document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "");
@@ -96,15 +92,12 @@ const setDefaultLargeValues = (displayNotNeeded) => {
 const setDefaultShortValues = (changeTableContainer) => {
   //display the short element only displayed when the user table is small
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
-
   //hide the element only needed when the table is large
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
-
   //change the class of table from large to small (if is large)
   let table = document.querySelector("#largeTable");
   if (table)
     table.id = "shortTable";
-
   //change the class of table container from large to short (if is large and is asked to) 
   if (changeTableContainer) {
     let tableContainer = document.querySelector('#largeTableContainer');
