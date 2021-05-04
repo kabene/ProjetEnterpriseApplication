@@ -96,33 +96,48 @@ public class PhotoResource {
     return Response.ok(Json.filterAdminOnlyJsonView(dto, PhotoDTO.class)).build();
   }
 
+  /**
+   * GET the favouritePhoto for a specific piece of furniture.
+   * @param furnitureId : furniture id
+   * @return http response containing a photoDTO
+   */
   @GET
   @Path("/favourite/{furnitureId}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getFavByFurnitureId(@PathParam("furnitureId") int furnitureId) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
-        "GET /photos/favourite/"+furnitureId);
+        "GET /photos/favourite/" + furnitureId);
     PhotoDTO photoDTO = photoUCC.getFavourite(furnitureId);
     return Response.ok(Json.filterPublicJsonView(photoDTO, PhotoDTO.class)).build();
   }
 
+  /**
+   * GET all visible photos for a specific furnitureId.
+   * @param furnitureId : furniture id
+   * @return http response containing an array of photoDTO
+   */
   @GET
   @Path("/byFurniture/{furnitureId}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getByFurnitureId(@PathParam("furnitureId") int furnitureId) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
-        "GET /photos/byFurniture/"+furnitureId);
+        "GET /photos/byFurniture/" + furnitureId);
     List<PhotoDTO> photoDTOList = photoUCC.getAllForFurniture(furnitureId)
         .stream().filter(PhotoDTO::isVisible).collect(Collectors.toList());
     return Response.ok(Json.filterPublicJsonView(photoDTOList, List.class)).build();
   }
 
+  /**
+   * GET all photos for a specific furnitureId.
+   * @param furnitureId : furniture id
+   * @return http response containing an array of photoDTO
+   */
   @GET
   @Path("/byFurniture/all/{furnitureId}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getByFurnitureIdAll(@PathParam("furnitureId") int furnitureId) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
-        "GET /photos/byFurniture/all/"+furnitureId);
+        "GET /photos/byFurniture/all/" + furnitureId);
     List<PhotoDTO> photoDTOList = photoUCC.getAllForFurniture(furnitureId);
     return Response.ok(Json.filterPublicJsonView(photoDTOList, List.class)).build();
   }

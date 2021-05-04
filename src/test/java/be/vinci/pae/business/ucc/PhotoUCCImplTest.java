@@ -341,7 +341,8 @@ class PhotoUCCImplTest {
     inOrder.verify(mockDal, Mockito.never()).rollbackTransaction();
   }
 
-  @DisplayName("TEST PhotoUCC.getFavourite() : given invalid furniture id, should throw NotFoundException")
+  @DisplayName("TEST PhotoUCC.getFavourite() : given invalid furniture id, "
+      + "should throw NotFoundException")
   @Test
   void test_getFavourite_invalidFurnitureId_shouldThrowNotFound() {
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenThrow(new NotFoundException());
@@ -355,7 +356,8 @@ class PhotoUCCImplTest {
     inOrder.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST PhotoUCC.getFavourite() : given invalid furniture id, should throw NotFoundException")
+  @DisplayName("TEST PhotoUCC.getFavourite() : given invalid furniture id, "
+      + "should throw NotFoundException")
   @Test
   void test_getFavourite_noFav_shouldThrowNotFound() {
     Mockito.when(mockFurnitureDTO1.getFavouritePhotoId()).thenReturn(null);
