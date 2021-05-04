@@ -1,8 +1,8 @@
 import {getUserSessionData,setUserSessionData,setUserLocalData} from "../utils/session";
-import displayErrorMessage from "../utils/utils.js"
+import {displayErrorMessage} from "../utils/utils.js"
 import Navbar from "./Navbar";
-import RedirectUrl from "./Router";
-import fetchMe from "../utils/utils.js";
+import {RedirectUrl} from "./Router";
+import {fetchMe} from "../utils/utils.js";
 
 let page = document.querySelector("#page");
 
@@ -282,7 +282,7 @@ const login = async (user) => {
     }
   });
   if (!response.ok) {
-    const err;
+    let err;
     if (response.status === 403) 
       err = ("Pseudo ou mot de passe incorrect");
     else

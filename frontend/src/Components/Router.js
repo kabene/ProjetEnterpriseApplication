@@ -9,8 +9,8 @@ import ClientVisit from "./ClientVisit.js";
 import LogoutComponent from "./LogoutComponent.js";
 import ReleaseTakeoverComponent from "./ReleaseTakeoverComponent";
 import {fetchMe} from "../utils/utils.js";
-import { getUserLocalData, getUserSessionData, setUserLocalData, setUserSessionData } from "../utils/session.js";
-import { setLayout } from "../utils/render.js";
+import {getUserLocalData, getUserSessionData, setUserLocalData, setUserSessionData} from "../utils/session.js";
+import {setLayout} from "../utils/render.js";
 
 const routes = {
     "/": HomePage,
