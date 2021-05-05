@@ -1,9 +1,13 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {findCurrentUser} from "../utils/session";
-import {displayErrorMessage, gdpr, generateLoadingAnimation,displayImgs} from "../utils/utils";
+import {
+  displayErrorMessage,
+  gdpr,
+  generateLoadingAnimation,
+  displayImgs
+} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
-
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -211,7 +215,7 @@ const generateCard = async (request) => {
   let cardHTML = generateCardHTML(request);
   requestCardDiv.innerHTML = cardHTML;
   for (const furniture of request.furnitureList) {
-    if(!furniture.favouritePhoto){
+    if (!furniture.favouritePhoto) {
       await getImage(furniture);
     }
   }
@@ -409,10 +413,10 @@ const generateFurnitureList = (request) => {
   request.furnitureList.forEach(furniture => {
     let photoId = furniture.favouritePhotoId;
     let src = "none";
-    if(!furniture.favouritePhotoId) {
+    if (!furniture.favouritePhotoId) {
       src = notFoundPhoto;
     }
-    if(furniture.favouritePhoto) {
+    if (furniture.favouritePhoto) {
       src = furniture.favouritePhoto.source;
     }
     photos += `
@@ -455,7 +459,9 @@ const generateRadioBtns = (request, furniture) => {
         `<div class="text-left col-6 furniture-choices">
     <div class="form-check">
       <label class="form-check-label">
-        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/><input type="number" id="priceToAccept" step="0.1" min="0.1"/>
+      <div class="flex-row">
+        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/> <input type="number" id="priceToAccept" step="0.1" min="0.1"/>
+      </div>
        <span class="text-success">Convient</span>
       </label>
     </div>
@@ -477,7 +483,6 @@ const generateChooseFurnitureBtn = (request) => {
   }
   return res;
 }
-
 
 const onChooseFurnitureBtnClick = async (e) => {
   e.preventDefault()
@@ -682,7 +687,10 @@ const generatePageHtml = (largeTable = true) => {
             <th class="align-middle">Client</th>
             <th class="${notNeededClassName}">Adresse</th>
             <th class="align-middle">Date de la demande</th>
-            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend("rouge","danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend("vert","success")}: La demande de visite est acceptée.</div></i></th>
+            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend(
+      "rouge",
+      "danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend(
+      "vert", "success")}: La demande de visite est acceptée.</div></i></th>
           </tr>
         </thead>
         <tbody>
@@ -959,14 +967,14 @@ async function findVisitRequestList() {
  */
 async function getImage(furniture) {
 
-  return fetch("/photos/favourite/"+furniture.furnitureId, {
+  return fetch("/photos/favourite/" + furniture.furnitureId, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   }).then((response) => {
     if (!response.ok) {
-      if(response.status === 404) {
+      if (response.status === 404) {
         return;
       }
       throw new Error(
@@ -977,7 +985,7 @@ async function getImage(furniture) {
   }).then((data) => {
     //cache
     updateFavCache(data, furniture);
-    if(data){
+    if (data) {
       displayImgs([data]);
     }
   }).catch((err) => {
@@ -990,6 +998,5 @@ const updateFavCache = (photo, furniture) => {
   let index = furnitureList.indexOf(furniture);
   furnitureList[index] = {...furniture, favouritePhoto: photo};
 }
-
 
 export default Visits;
