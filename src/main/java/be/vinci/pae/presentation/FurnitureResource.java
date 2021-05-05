@@ -121,10 +121,10 @@ public class FurnitureResource {
   public Response toAccepted(@PathParam("id") int furnitureId, JsonNode reqNode) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
         .log(Level.INFO, "/furniture/accepted/" + furnitureId);
-    if(reqNode.get("buyingPrice") == null) {
+    if(reqNode.get("purchasePrice") == null) {
       throw new BadRequestException("Error: malformed request");
     }
-    double purchasePrice = reqNode.get("buyingPrice").asDouble();
+    double purchasePrice = reqNode.get("purchasePrice").asDouble();
     if(purchasePrice <= 0) {
       throw new BadRequestException("Error: malformed request (negative price)");
     }
