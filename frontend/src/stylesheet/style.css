@@ -601,5 +601,8 @@ body, .search-bar {
 .border-bottom{
   border-bottom:solid;
   border-color: #6c757d;
-
+}
+.priceLabel{
+  width: max-content;
+  display: block;
 }
