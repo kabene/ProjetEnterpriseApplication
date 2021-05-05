@@ -74,7 +74,6 @@ const getPageHTML = () => {
     <div id="errorDiv" class="d-none"></div>
   </div>
 	<div>
-    <h3>Filtrer les meubles:</h3>
     ` + generateFilterHTML() + `
   </div>
   <div class="row mx-0 pt-5">
