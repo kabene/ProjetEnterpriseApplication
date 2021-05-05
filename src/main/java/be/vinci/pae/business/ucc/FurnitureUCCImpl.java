@@ -7,6 +7,7 @@ import be.vinci.pae.business.dto.RequestForVisitDTO;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.pojos.FurnitureStatus;
 import be.vinci.pae.business.pojos.RequestStatus;
+import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
@@ -85,10 +86,11 @@ public class FurnitureUCCImpl implements FurnitureUCC {
    * Sets the status of the piece of furniture to ACCEPTED.
    *
    * @param furnitureId : the furniture id
+   * @param purchasePrice : the buying price
    * @return modified resource as a FurnitureDTO
    */
   @Override
-  public FurnitureDTO toAccepted(int furnitureId) {
+  public FurnitureDTO toAccepted(int furnitureId, double purchasePrice) {
     FurnitureDTO res;
     try {
       dalServices.startTransaction();
@@ -101,7 +103,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
         throw new ConflictException("Error : invalid request status");
       }
       furnitureDTO.setStatus(FurnitureStatus.ACCEPTED);
-      res = furnitureDAO.updateStatusOnly(furnitureDTO);
+      furnitureDTO.setPurchasePrice(purchasePrice);
+      res = furnitureDAO.updateToAccepted(furnitureDTO);
       completeFurnitureDTO(res);
       dalServices.commitTransaction();
     } catch (Throwable e) {

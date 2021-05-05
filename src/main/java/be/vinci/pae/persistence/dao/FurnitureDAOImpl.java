@@ -85,6 +85,31 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
   }
 
   /**
+   * Updates the status (to ACCEPTED) and purchasePrice of a piece of furniture.
+   *
+   * @param furnitureDTO : furniture id.
+   * @return modified dto.
+   */
+  @Override
+  public FurnitureDTO updateToAccepted(FurnitureDTO furnitureDTO) {
+    String query = "UPDATE satchofurniture.furniture "
+        + "SET status = ?, "
+        + "purchase_price = ? "
+        + "WHERE furniture_id = ?";
+    PreparedStatement ps = dalServices.makeStatement(query);
+    try {
+      ps.setString(1, furnitureDTO.getStatus().getValue());
+      ps.setDouble(2, furnitureDTO.getPurchasePrice());
+      ps.setInt(3, furnitureDTO.getFurnitureId());
+      ps.execute();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return furnitureDTO;
+  }
+
+  /**
    * updates the status of the piece of furniture to AVAILABLE_FOR_SALE and sets the selling price
    * into the database.
    *

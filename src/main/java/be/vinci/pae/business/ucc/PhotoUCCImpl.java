@@ -97,7 +97,6 @@ public class PhotoUCCImpl implements PhotoUCC {
             "Error: impossible flag configuration "
                 + "(non-visible photos cannot be displayed on the homepage)");
       }
-      //TODO: verify origin
       foundDto.setVisible(isVisible);
       foundDto.setOnHomePage(isOnHomePage);
 
