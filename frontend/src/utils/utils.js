@@ -115,7 +115,7 @@ const getGDPR = () => {
   if (!getGDPRLocalData()) {
    return `<div id="gdpr-cookie-message" style="display: block;">
   <h4>Cookies &amp; Vie privée</h4>
-  <p> Ce site web utilise des cookies et des technologies similaires. Pour consulter la politique européene en matière de cookies clickez sur plus d'informations.</p>
+  <p> Ce site web utilise des cookies et des technologies similaires. Pour consulter la politique européene en matière de cookies, cliquez sur plus d'informations.</p>
   <div>
     <a href="https://ec.europa.eu/info/cookies_fr" target="_blank">Plus d'informations</a>
     <button id="gdpr-cookie-accept" type="button">Accepter</button>
