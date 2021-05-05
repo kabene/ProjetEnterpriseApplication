@@ -1,10 +1,13 @@
 package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.PhotoDTO;
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.ucc.PhotoUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.main.Main;
 import be.vinci.pae.presentation.filters.Admin;
+import be.vinci.pae.presentation.filters.AllowTakeover;
+import be.vinci.pae.presentation.filters.Authorize;
 import be.vinci.pae.utils.Json;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.inject.Inject;
@@ -16,6 +19,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -24,6 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
 @Path("/photos")
@@ -141,4 +146,18 @@ public class PhotoResource {
     List<PhotoDTO> photoDTOList = photoUCC.getAllForFurniture(furnitureId);
     return Response.ok(Json.filterPublicJsonView(photoDTOList, List.class)).build();
   }
+
+  @GET
+  @Authorize
+  @AllowTakeover
+  @Path("/byFurniture/request/{furnitureId}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getRequestPhotosByFurnitureId(@PathParam("furnitureId") int furnitureId, @Context ContainerRequest request) {
+    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
+        "GET /photos/byFurniture/request/" + furnitureId);
+    UserDTO currentUser = (UserDTO) request.getProperty("user");
+    List<PhotoDTO> photoDTOList = photoUCC.getRequestPhotos(currentUser, furnitureId);
+    return Response.ok(Json.filterPublicJsonView(photoDTOList, List.class)).build();
+  }
+
 }

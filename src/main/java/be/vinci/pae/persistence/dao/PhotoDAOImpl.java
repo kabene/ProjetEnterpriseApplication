@@ -40,6 +40,32 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
   }
 
   /**
+   * finds all photos from request by furniture id.
+   *
+   * @param furnitureId : furniture id.
+   * @return list of photoDTO.
+   */
+  @Override
+  public List<PhotoDTO> findAllRequestPhotosByFurnitureId(int furnitureId) {
+    List<PhotoDTO> res = new ArrayList<>();
+    String query = "SELECT p.* FROM satchofurniture.photos p WHERE p.furniture_id = ? "
+        + "AND p.is_from_request = true";
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setInt(1, furnitureId);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        res.add(toDTO(rs));
+      }
+      rs.close();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e.getMessage());
+    }
+    return res;
+  }
+
+  /**
    * Finds one photo by id.
    *
    * @param photoId : the researched photoId.

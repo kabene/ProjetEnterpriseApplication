@@ -12,8 +12,6 @@ let requestMap = [];
 let timeouts = [];
 let currentUser;
 let pageHTML;
-let currentRequestId;
-let isDisplayingLargeTable;
 let openTab = "infos";
 
 /**
