@@ -147,12 +147,19 @@ public class PhotoResource {
     return Response.ok(Json.filterPublicJsonView(photoDTOList, List.class)).build();
   }
 
+  /**
+   * GET all request photos for a specific furniture id.
+   * @param furnitureId : furniture id
+   * @param request : request context
+   * @return http response containing an array of photoDTO
+   */
   @GET
   @Authorize
   @AllowTakeover
   @Path("/byFurniture/request/{furnitureId}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getRequestPhotosByFurnitureId(@PathParam("furnitureId") int furnitureId, @Context ContainerRequest request) {
+  public Response getRequestPhotosByFurnitureId(@PathParam("furnitureId") int furnitureId,
+      @Context ContainerRequest request) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO,
         "GET /photos/byFurniture/request/" + furnitureId);
     UserDTO currentUser = (UserDTO) request.getProperty("user");

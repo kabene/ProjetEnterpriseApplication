@@ -173,12 +173,12 @@ public class PhotoUCCImpl implements PhotoUCC {
       RequestForVisitDTO requestDTO = requestDAO.findById(furnitureDTO.getRequestId());
       int ownerId = requestDTO.getUserId();
       int currentUserId = currentUserDTO.getId();
-      if(currentUserId != ownerId) {
+      if (currentUserId != ownerId) {
         throw new UnauthorizedException("Error : you are not the owner of this request for visit");
       }
       res = photoDAO.findAllRequestPhotosByFurnitureId(furnitureId);
       dalServices.commitTransaction();
-    } catch(Throwable e) {
+    } catch (Throwable e) {
       dalServices.rollbackTransaction();
       throw e;
     }
