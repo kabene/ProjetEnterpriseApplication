@@ -3,12 +3,7 @@ import notFoundPhoto from "../img/notFoundPhoto.png";
 
 import {findCurrentUser} from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {
-  displayErrorMessage,
-  importAllFurnitureImg,
-  generateLoadingAnimation,
-  gdpr
-} from "../utils/utils.js"
+import {displayErrorMessage, importAllFurnitureImg, generateLoadingAnimation, gdpr} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 

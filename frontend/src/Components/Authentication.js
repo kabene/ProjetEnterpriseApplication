@@ -1,12 +1,5 @@
-import {
-  displayErrorMessage,
-  gdpr,
-} from "../utils/utils.js"
-import {
-  getUserSessionData,
-  setUserSessionData,
-  setUserLocalData,
-} from "../utils/session";
+import {displayErrorMessage, gdpr,} from "../utils/utils.js"
+import {getUserSessionData, setUserSessionData, setUserLocalData,} from "../utils/session";
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
 import {fetchMe} from "../utils/utils.js";

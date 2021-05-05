@@ -1,11 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {getUserSessionData} from "../utils/session";
-import {
-  removeTimeouts,
-  generateLoadingAnimation,
-  displayErrorMessage,
-  gdpr
-} from "../utils/utils";
+import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr} from "../utils/utils";
 
 let page = document.querySelector("#page");
 let currentUser;

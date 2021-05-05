@@ -2,10 +2,7 @@ import notFoundPhoto from "../img/notFoundPhoto.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {findCurrentUser} from "../utils/session.js";
-import {
-  displayErrorMessage, gdpr,
-  generateLoadingAnimation,
-} from "../utils/utils.js"
+import {displayErrorMessage, gdpr, generateLoadingAnimation,} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 let mainPage;

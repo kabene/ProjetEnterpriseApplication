@@ -1,10 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import noFurniturePhoto from "../img/noFurniture.png";
-import {
-  displayErrorMessage,
-  generateLoadingAnimation,
-  gdpr
-} from "../utils/utils.js";
+import {displayErrorMessage, generateLoadingAnimation, gdpr} from "../utils/utils.js";
 
 
 let page = document.querySelector("#page");
