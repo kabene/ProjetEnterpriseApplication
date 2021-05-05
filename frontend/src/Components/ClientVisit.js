@@ -1,6 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {getUserSessionData} from "../utils/session";
-import {removeTimeouts, generateLoadingAnimation, displayErrorMessage} from "../utils/utils";
+import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr} from "../utils/utils";
 
 let page = document.querySelector("#page");
 let currentUser;
@@ -20,6 +20,7 @@ const VisitRequest = async () => {
     document.querySelectorAll(".requestTableRow").forEach(requestTableRow => requestTableRow.addEventListener("click", onRequestTableRowClick));
     document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
     document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
+    gdpr(page);
 }
 
 

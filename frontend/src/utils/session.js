@@ -50,6 +50,22 @@ const removeSessionStorageData = (storeName) => {
 
 // localstorage
 
+//GDPR
+const getGDPRLocalData=()=>{
+  const flag=localStorage.getItem("gdpr");
+  if (!flag) return ;
+  return flag;
+}
+const setGDPRLocalData=(res)=>{
+  const storageValue = JSON.stringify(res);
+  localStorage.setItem("gdpr", storageValue);
+}
+const removeGDPRLocalData=()=>{
+  localStorage.removeItem("gdpr");
+}
+
+
+
 const getUserLocalData = () => {
   const retrievedUser = localStorage.getItem(USER_STORE_NAME);
   if (!retrievedUser) return;
@@ -69,5 +85,6 @@ export {
   findCurrentUser,
   getUserSessionData, setUserSessionData, removeSessionData,
   getUserLocalData,setUserLocalData,removeLocalData, 
-  getTakeoverSessionData, setTakeoverSessionData, removeTakeoverSessionData
+  getTakeoverSessionData, setTakeoverSessionData, removeTakeoverSessionData,
+  getGDPRLocalData,setGDPRLocalData,removeGDPRLocalData
 };

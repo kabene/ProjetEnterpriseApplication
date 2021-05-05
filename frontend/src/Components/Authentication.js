@@ -1,9 +1,5 @@
-import {displayErrorMessage} from "../utils/utils.js"
-import {
-  getUserSessionData,
-  setUserSessionData,
-  setUserLocalData
-} from "../utils/session";
+import {displayErrorMessage, gdpr,} from "../utils/utils.js"
+import {getUserSessionData, setUserSessionData, setUserLocalData,} from "../utils/session";
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
 import {fetchMe} from "../utils/utils.js";
@@ -127,7 +123,7 @@ const Authentication = () => {
 
   let registerButton = document.querySelector("#registerButton");
   registerButton.addEventListener("click", onSignUp);
-
+  gdpr(page);
   const user = getUserSessionData();
   if (user) {
     Navbar();

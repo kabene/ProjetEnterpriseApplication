@@ -1,18 +1,25 @@
 import {findCurrentUser, setTakeoverSessionData} from "../utils/session";
-import {removeTimeouts, generateLoadingAnimation, displayErrorMessage} from "../utils/utils";
+import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr} from "../utils/utils";
 import {Loader} from "@googlemaps/js-api-loader";
-import { RedirectUrl } from "./Router";
+import {RedirectUrl} from "./Router";
 import Navbar from "./Navbar";
 
 let page = document.querySelector("#page");
+
+let currentUser;
+let userDetail;
+
 let waitingUsersList;
 let confirmedUsersList;
-let currentUser;
-let timeouts = [];
-let userDetail;
 
 let nbrCurrentUserWaiting;
 let nbrCurrentUserAccepted;
+
+let activeUserID = "";
+
+let displayInfoItemInUserCard = true;
+
+let timeouts = [];
 
 let filter = {
   role : "",
@@ -24,16 +31,16 @@ const Users = async (id) => {
 
   page.innerHTML = generateLoadingAnimation();
 
-  await getUserLists();
+  waitingUsersList = await getWaitingUserList();
+  confirmedUsersList = await getConfirmedUsersList();
 
   page.innerHTML = generateUsersPage();
+  gdpr(page);
 
-  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
-  document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
-  document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
-  document.querySelector("#buttonApplyFilter").addEventListener("click", onApplyFilterClick);
-  document.querySelector("#buttonClearFilter").addEventListener("click", onClearFilterClick);
+  setDefaultLargeValues();
+  setDefaultEventListener();
 
+  //display a user if we got an id
   if (id) {
     displayShortElements();
     await displayUserCardById(id);
@@ -43,102 +50,140 @@ const Users = async (id) => {
 
 /********************  Business methods  **********************/
 
-const getUserLists = async () => {
-
-  const waiting = () => new Promise(resolve => {
-    console.log("GET users/waiting");
-    getWaitingUserList().then((data) => {
-      waitingUsersList = data;
-      console.log(waitingUsersList);
-      resolve();
-    });
-  });
-
-  const confirmed = () => new Promise(resolve => {
-    console.log("GET users/confirmed");
-    getConfirmedUsersList().then((data) => {
-      confirmedUsersList = data;
-      console.log(confirmedUsersList);
-      resolve();
-    });
-  });
-
-  //await Promise.all([waiting(), confirmed()]);
-  await waiting();
-  await confirmed();
-}
 
 /**
- * Called when clicking a row in the body table.
- * Display the short elements if the table is large, else just refresh the user card.
+ * set all the default event listeners needed in the page.
+ */
+const setDefaultEventListener = () => {
+  document.querySelector("#buttonApplyFilter").addEventListener("click", onApplyFilterClick);
+  document.querySelector("#buttonClearFilter").addEventListener("click", onClearFilterClick);
+  document.querySelector("#buttonReturn").addEventListener("click", displayLargeTable);
+  document.querySelectorAll(".toBeClicked").forEach(row => row.addEventListener("click", onRowClick));
+}
+
+
+/**
+ * set the default values of elements when the table is large.
+ * @param {*} displayNotNeeded a boolean that inform if the methods needs to display the element not needed when the table is short.
+ */
+const setDefaultLargeValues = (displayNotNeeded) => {
+  //hide the element only displayed when the user table is small
+  document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
+
+  //remove the background on the selected row (if exists)
+  removeActiveRow();
+
+  //change the class of divs from small to large (if are small)
+  let tableContainer = document.querySelector('#shortTableContainer');
+  if (tableContainer/* !== null*/)
+    tableContainer.id = "largeTableContainer";
+  let table = document.querySelector('#shortTable');
+  if (table)
+    table.id = "largeTable";
+
+  //set the info item to be displayed by default in the user card
+  displayInfoItemInUserCard = true;
+
+  //display the element not needed when the table is short if asked to
+  if (displayNotNeeded)
+    document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "");
+}
+
+
+/**
+ * set the default values of elements when the table is short.
+ * @param {boolean} changeTableContainer a boolean that inform the method if we need to change the class of the table container from large to short.
+ */
+const setDefaultShortValues = (changeTableContainer) => {
+  //display the short element only displayed when the user table is small
+  document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
+
+  //hide the element only needed when the table is large
+  document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
+
+  //change the class of table from large to small (if is large)
+  let table = document.querySelector("#largeTable");
+  if (table)
+    table.id = "shortTable";
+
+  //change the class of table container from large to short (if is large and is asked to) 
+  if (changeTableContainer) {
+    let tableContainer = document.querySelector('#largeTableContainer');
+    if (tableContainer)
+      tableContainer.id = "shortTableContainer";
+  }
+}
+
+
+/**
+ * display the short elements if the table is large, else just refresh the user card.
  */
 const onRowClick = (e) => {
-  if (document.querySelector('#shortTableContainer') == null) {
+  if (document.querySelector('#shortTableContainer') == null)
     displayShortElements();
-  }
   onUserClickHandler(e);
 }
 
+
 /**
- * Called when clicking on the buttonReturn.
- * Hide all the short elements, display the large ones and magnify the large.
+ * display the large table and make an animation with the table.
  */
  const displayLargeTable = () => {
   removeTimeouts(timeouts);
-  //hide
-  document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
-  //display
+  setDefaultLargeValues(false);
+  
   timeouts.push(setTimeout(() => document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "")
                     , 750));
-  //magnify
-  document.querySelector('#shortTable').id = "largeTable";
-  document.querySelector("#buttonsFilterSpan").style.display = "";
-  if (document.querySelector('#shortTableContainer') !== null) //can be undefined because of the setTimeout in displayShortElements
-    document.querySelector('#shortTableContainer').id = "largeTableContainer";
 }
 
+
 /**
- * Shrink the large table, hide the not needed element in the table and display the user card needed.
+ * display the short elements and make an animation with the table.
  */
 const displayShortElements = () => {
   removeTimeouts(timeouts);
-  //shrink
-  document.querySelector('#largeTable').id = "shortTable";
-  document.querySelector("#buttonsFilterSpan").style.display = "block";
+  setDefaultShortValues(false);
+  
   timeouts.push(setTimeout( () => document.querySelector('#largeTableContainer').id = "shortTableContainer"
                     , 750));
-  //hide
-  document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
-  //display
-  document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
+
 }
 
 /**
- * Called when clicking on one of the rows of the table's body (large or short).
- * Display the card of the user that has been clicked on the table.
+ * change the active row and display the user card needed.
  */
-const onUserClickHandler = async (e) => {
+const onUserClickHandler = (e) => {
+  removeActiveRow();
   //get the tr element
   let element = e.target;
   while (!element.className.includes("toBeClicked"))
     element = element.parentElement;
-  let userId = element.attributes["userId"].value;
-  await displayUserCardById(userId);
+  setActiveRow(element.getAttribute("userID"));
+	
+  displayUserCardById(element.attributes["userId"].value);
 }
 
 /**
- * Displays the card of the corresponding user
- * @param {*} userId the user's id 
+ * display the card of the corresponding user.
+ * @param {*} userId the id of the selected user. 
  */
 const displayUserCardById = async (userId) => {
   let userCardDiv = document.querySelector("#userCardDiv");
   userCardDiv.innerHTML = generateLoadingAnimation();
+
   //generate the user card
   userDetail = await clientDetail(userId);
   userCardDiv.innerHTML = generateUserCard(userDetail);
+
+  //add event listeners for nav item
+  document.querySelector("#home-tab").addEventListener("click", () => displayInfoItemInUserCard = true);
+  document.querySelector("#profile-tab").addEventListener("click", () => displayInfoItemInUserCard = false);
+
+  //display the map
   await AddressToGeo(userDetail.address.street + ` ` +  userDetail.address.buildingNumber + `, ` +  userDetail.address.postcode + ` ` + userDetail.address.commune)
                       .catch((err) => console.error(err));
-  //add event listener to validation button if the user of the user card is waiting
+
+  //add event listener to validation button if the selected user is waiting or a take-over button if he's not
   if (userDetail.waiting) {
     valueButtonValid = e.target.id;
     document.querySelector("#accept").addEventListener("click",onValidateClick);
@@ -151,8 +196,7 @@ const displayUserCardById = async (userId) => {
 }
 
 /**
- * Called when click on accepter or refuser button
- * Accept or refuse the user's request, display a small notification and update the card and the table
+ * accept or refuse the user's request, display a small notification and update the card and the table
  */
 const onValidateClick = async (e) => {
   let validationButton = document.querySelector("#validationButton");
@@ -202,32 +246,94 @@ const removeFromArray = (id, array) => {
   }
 }
 
+/**
+ * apply new filter and reset the table (keep the activeTr background if is still present).
+ */
 const onApplyFilterClick = () => {
-  filter.info = document.querySelector("#userSearchBar").value;
-  filter.role = document.querySelector("#filterRole").value;
-  document.querySelector("#tableDiv").outerHTML = generateTable();
-
-  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
-  if (document.querySelector(".shortElement").style.display === "block") {
-    document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
-    document.querySelector('#largeTable').id = "shortTable";
-  }
-
+  changeFilter(document.querySelector("#userSearchBar").value, document.querySelector("#filterRole").value);
+  resetTable();
+  setActiveRow(activeUserID);
 }
 
+/**
+ * remove all the filter and reset the table (keep the activeTr background).
+ */
 const onClearFilterClick = () => {
-  filter.info = "";
-  filter.role = "";  
-  document.querySelector("#tableDiv").outerHTML = generateTable();
+  resetFilter();
+  resetTable();
+  setActiveRow(activeUserID);
+}
+
+/**
+ * change the current filter with what's given in parameters.
+ * @param {*} info the filter by name, forename, postcode and commune.
+ * @param {*} role the filter by role.
+ */
+const changeFilter = (info, role) => {
+  filter.info = info;
+  filter.role = role;
+}
+
+/**
+ * reset all the active filters and reset the filter form(searchbar and select tag). 
+ */
+const resetFilter = () => {
+  changeFilter("", "");
   document.querySelector("option[value='']").selected = "true";
   document.querySelector("#userSearchBar").value = "";
-  
-  document.querySelectorAll(".toBeClicked").forEach(element => element.addEventListener("click", onRowClick));
-  if (document.querySelector(".shortElement").style.display === "block") {
-    document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
-    document.querySelector('#largeTable').id = "shortTable";
-  }
 }
+
+/**
+ * reset the whole table div and set the default event listener and the default short values if the table is currently short.
+ */
+const resetTable = () => {
+  document.querySelector("#tableDiv").outerHTML = generateTable();
+  setDefaultEventListener();
+
+  if (document.querySelector(".shortElement").style.display === "block")
+    setDefaultShortValues(true)
+}
+
+/**
+ * Set a row to active by changing his background to grey and his text to white.
+ * @param {*} userID the id of the user needed for finding the new active row.
+ */
+const setActiveRow = (userID) => {
+  let activeRow = document.querySelector(".toBeClicked[userID='" + userID + "']")
+  if (activeRow)
+    activeRow.className += " bg-secondary text-light";
+  activeUserID = userID;
+}
+
+/**
+ * set the active row to inactive and remove his background and text color.
+ */
+const removeActiveRow = () => {
+  let activeRow = document.querySelector(".toBeClicked[userID='" + activeUserID + "']")
+  if (activeRow) {
+    activeRow.classList.remove("bg-secondary");
+    activeRow.classList.remove("text-light");
+  }
+  activeUserID = "";
+}
+
+/**
+ * translate a english user's role into french.
+ * @param {*} role the role to translate in french.
+ * @returns the translation in French of the given role or an empty String if the role doesn't exists.
+ */
+const translateRoleToFrench = (role) => {
+  switch (role) {
+    case "customer":
+      return "client"
+    case "antique_dealer":
+      return "antiquaire"
+    case "admin":
+      return "administrateur"
+    default:
+      return "";
+  }
+} 
 
 /********************  HTML generation  **********************/
 
@@ -236,27 +342,30 @@ const generateUsersPage = () => {
         <div class="col-5 mx-auto">
           <div id="errorDiv" class="d-none"></div>
         </div>
+        <div class="container-fluid px-3 py-2 border border-top-0 border-right-0 border-left-0">
+          <h3>Filtrer les utilisateurs:</h3>
+          <div class="form-inline">
+            <div class="form-group mx-3">
+              <input type="search" name="search" class="m-3 form-control" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
+            </div>
+            <div class="form-group mx-3">
+              <select class="form-control" id="filterRole">
+                <option value="">Rechercher par rôle</option>
+                <option value="customer">client</option>
+                <option value="antique_dealer">antiquaire</option>
+                <option value="admin">admin</option>
+              </select>
+            </div>
+            <div class="form-group mx-3">
+              <span id='buttonsFilterSpan'>   
+                <button type="submit" id="buttonApplyFilter" class="btn btn-primary m-3">Appliquer</button>
+                <button type="submit" id="buttonClearFilter" class="btn btn-secondary m-3">Retirer les filtres</button>
+              </span>
+            </div>
+          </div>
+        </div>
         <div id="largeTableContainer">
           <div>
-            <div class="form-inline">
-              <div class="form-group mx-3">
-                <input type="search" name="search" class="m-3 form-control" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">
-              </div>
-              <div class="form-group mx-3">
-                <select class="form-control" id="filterRole">
-                  <option value="">Rechercher par rôle</option>
-                  <option value="customer">client</option>
-                  <option value="antique_dealer">antiquaire</option>
-                  <option value="admin">admin</option>
-                </select>
-              </div>
-              <div class="form-group mx-3">
-                <span id='buttonsFilterSpan'>   
-                  <button type="submit" id="buttonApplyFilter" class="btn btn-primary m-3">Appliquer</button>
-                  <button type="submit" id="buttonClearFilter" class="btn btn-secondary m-3">Retirer les filtres</button>
-                </span>
-              </div>
-            </div>
             <button type="button" id="buttonReturn" class="shortElement btn btn-dark m-3">Retour à la liste</button>
             ` + generateTable() + `
           </div>
@@ -296,6 +405,7 @@ const getAllUsersRows = () => {
   nbrCurrentUserWaiting = 0;
   nbrCurrentUserAccepted = 0;
 
+  //generate rows of waiting users
   let rows = ``;
   waitingUsersList.forEach(user => {
     let row = generateRow(user);
@@ -306,6 +416,7 @@ const getAllUsersRows = () => {
   });
   let res = "<tr><th colspan = '7' class='msgTable' id='msgTableWaiting'>" + nbrCurrentUserWaiting+ " inscription(s) en attente</th></tr>" + rows;
 
+  //generate rows of confirmed users
   rows = ``;
   confirmedUsersList.forEach(user => {
     let row = generateRow(user);
@@ -347,7 +458,7 @@ const generateRow = (user) => {
         <th class="notNeeded"><p>` + user.email + `</p></th>
         <th class="notNeeded"><p>` + user.purchasedFurnitureNbr + `</p></th>
         <th class="notNeeded"><p>` + user.soldFurnitureNbr + `</p></th>
-        <th class="notNeeded"><p>` + user.role + `</p></th>
+        <th class="notNeeded"><p>` + translateRoleToFrench(user.role) + `</p></th>
    </tr>`;
 }
 
@@ -356,7 +467,36 @@ const generateUserCard = (userDetail) => {
   if (userDetail.waiting)
     status = 'En attente';
   else 
-  status = "Considéré";
+    status = "Considéré";
+  
+  let navLinkInfo = {
+    status: "",
+    ariaSelected: "",
+    tabFade: ""
+  }
+  let navLinkAddress = {
+    status: "",
+    ariaSelected: "",
+    tabFade: ""
+  }
+  if (displayInfoItemInUserCard) {
+    navLinkInfo.status = "active";
+    navLinkInfo.ariaSelected = "true";
+    navLinkInfo.tabFade = "active show"
+  } else {
+    navLinkAddress.status = "active";
+    navLinkAddress.ariaSelected = "true";
+    navLinkAddress.tabFade = "active show"
+  }
+
+  let confirmationButtons = "";
+  if(userDetail.waiting) {
+    confirmationButtons = `
+    <input type="button" class="profile-edit-btn" id="accept" value="accepter" style="color: #0062cc; margin:5px"/>
+    <input type="button" class="profile-edit-btn" id="refuse" value="refuser" style="color: red; margin:5px"/>
+    `;
+  } 
+
  let page= `
    <div class="container emp-profile">
     <form>
@@ -371,23 +511,23 @@ const generateUserCard = (userDetail) => {
             </p>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item">
-                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">informations personnelles</a>
+                <a class="nav-link ` + navLinkInfo.status + `" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="` + navLinkInfo.ariaSelected + `">informations personnelles</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">adresses et plan</a>
+                <a class="nav-link ` + navLinkAddress.status + `" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="` + navLinkAddress.ariaSelected + `">adresses et plan</a>
               </li>
             </ul>
           </div>
         </div>
         <div class="col-md-2">
-          <input type="submit" id="takeoverBtn" class="d-none" user-id="${userDetail.id}" name="btnAddMore" value="prendre le controle"/>
+          <input type="submit" id="takeoverBtn" class="d-none" user-id="` + userDetail.id + `" name="btnAddMore" value="prendre le controle"/>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-8">
           <div class="tab-content profile-tab" id="myTabContent">
-            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="tab-pane fade ` + navLinkInfo.tabFade + `" id="home" role="tabpanel" aria-labelledby="home-tab">
 
               <div class="row">
                 <div class="col-md-6">
@@ -443,15 +583,9 @@ const generateUserCard = (userDetail) => {
               </div>
             </div>
 
-            <div class="col-md-2" id="validationButton" style="display: flex"> `;
-      if(userDetail.waiting) {
-        page += `<input type="button" class="profile-edit-btn" id="accept" value="accepter" style="color: #0062cc; margin:5px"/>
-                 <input type="button" class="profile-edit-btn" id="refuse" value="refuser" style="color: red; margin:5px"/>
-                 `;
-      }
-       page += `</div>
+            <div class="col-md-2" id="validationButton" style="display: flex"> ` + confirmationButtons + `</div>
           </div>         
-          <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+          <div class="tab-pane fade ` + navLinkAddress.tabFade + `" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             <div class="row">
               <div class="col-md-6">
                 <label> Adresse </label>
@@ -644,7 +778,7 @@ const map = async (latitude, lngitude) => {
       })
     });
   } else {
-    console.log("adresse not found");
+    console.error("adresse not found");
     let map;
     const additionalOptions = {};
     const place = {lat: 41.726931, lng: -49.948253};

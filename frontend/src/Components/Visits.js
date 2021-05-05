@@ -1,6 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {findCurrentUser} from "../utils/session";
-import {displayErrorMessage, generateLoadingAnimation,displayImgs} from "../utils/utils";
+import {displayErrorMessage, gdpr, generateLoadingAnimation,displayImgs} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
 
@@ -27,6 +27,7 @@ const Visits = async (id) => {
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
+  gdpr(page);
   await findVisitRequestList();
   if (!id) {
     isDisplayingLargeTable = true;
@@ -404,7 +405,7 @@ const generateCardHTML = (request) => {
 
 const generateFurnitureList = (request) => {
   let photos = "";
-  
+
   request.furnitureList.forEach(furniture => {
     let photoId = furniture.favouritePhotoId;
     let src = "none";

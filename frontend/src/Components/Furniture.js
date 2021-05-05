@@ -3,7 +3,7 @@ import notFoundPhoto from "../img/notFoundPhoto.png";
 
 import {findCurrentUser} from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {displayErrorMessage, importAllFurnitureImg, generateLoadingAnimation, displayImgs} from "../utils/utils.js"
+import {displayErrorMessage, importAllFurnitureImg, generateLoadingAnimation, displayImgs, gdpr} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 
@@ -32,6 +32,7 @@ const Furniture = async () => {
 
   page.innerHTML = errorDiv + generateTable();
   getFavs().then(() => getPhotos());
+  gdpr(page);
   addAllEventListeners();
 }
 
@@ -102,7 +103,7 @@ const addAllEventListeners = () => {
 
 /**
  * Updates the modal of a specific piece of furniture.
- * 
+ *
  * @param {Array} tabPhotoToRender new array of photos to display
  * @param {*} furniture piece of furniture
  */
@@ -117,8 +118,8 @@ const updateModal = (tabPhotoToRender, furniture) => {
 /**
  * Updates furnitureList with new favouritePhoto
  * (furniture.favouritePhoto)
- * @param {*} furniture 
- * @param {*} photo 
+ * @param {*} furniture
+ * @param {*} photo
  */
 const updateCacheFav = (furniture, photo) => {
   furniture.favouritePhoto = photo;
@@ -127,8 +128,8 @@ const updateCacheFav = (furniture, photo) => {
 /**
  * Updates furniture list with new array of photos
  * (furniture.photos)
- * @param {*} furniture 
- * @param {*} photoArray 
+ * @param {*} furniture
+ * @param {*} photoArray
  */
 const updateCacheAllPhotos = (furniture, photoArray) => {
   furniture.photos = photoArray;

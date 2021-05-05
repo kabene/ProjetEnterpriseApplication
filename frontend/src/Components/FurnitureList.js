@@ -6,6 +6,7 @@ import {
   displayErrorMessage,
   generateLoadingAnimation,
   displayImgs,
+  gdpr,
 } from "../utils/utils.js"
 
 let page = document.querySelector("#page");
@@ -28,7 +29,7 @@ let activeFilters = {...emptyFilter};
 
 const FurnitureList = async (id) => {
   currentUser = findCurrentUser();
-
+  gdpr(page);
   let pageHTML = `
   <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
