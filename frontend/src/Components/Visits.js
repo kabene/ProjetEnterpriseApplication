@@ -1,6 +1,10 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {findCurrentUser} from "../utils/session";
-import {displayErrorMessage, gdpr, generateLoadingAnimation} from "../utils/utils";
+import {
+  displayErrorMessage,
+  gdpr,
+  generateLoadingAnimation
+} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
 
@@ -409,7 +413,7 @@ const generatePhotoList = (request) => {
     }
 
     photos += `
-    <div class="p-1 w-50 container photo-list-container" request-id="${request.requestId}">
+    <div class="p-1 w-50 container photo-list-container border-bottom" request-id="${request.requestId}">
       <div class="row px-0">
         <div class="col-6">
           <img class="img-fluid" src="${favPhoto}" alt="photo id:${fav.photoId}"/>
@@ -422,12 +426,23 @@ const generatePhotoList = (request) => {
   let res = `
   <form>
     <input id="originalFav" type="hidden" request-id="${request.requestId}"/>
-    <div class="form-check d-flex flex-lg-fill flex-row">
+    <div class="form-check d-flex flex-lg-fill flex-column">
       ${photos}
     </div>
     ${generateChooseFurnitureBtn(request)}
   </form>`;
   return res;
+}
+
+const priceField = () => {
+  let radio = document.querySelector('#AcceptFurniture');
+  radio.addEventListener('change', () => {
+    if (this.checked()) {
+
+    } else {
+
+    }
+  });
 }
 
 const generateRadioBtns = (request, furniture) => {
@@ -438,7 +453,7 @@ const generateRadioBtns = (request, furniture) => {
         `<div class="text-left col-6 furniture-choices">
     <div class="form-check">
       <label class="form-check-label">
-        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/>
+        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/><input type="number" id="priceToAccept" step="0.1" min="0.1"/>
        <span class="text-success">Convient</span>
       </label>
     </div>
@@ -664,7 +679,10 @@ const generatePageHtml = (largeTable = true) => {
             <th class="align-middle">Client</th>
             <th class="${notNeededClassName}">Adresse</th>
             <th class="align-middle">Date de la demande</th>
-            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend("rouge","danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend("vert","success")}: La demande de visite est acceptée.</div></i></th>
+            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend(
+      "rouge",
+      "danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend(
+      "vert", "success")}: La demande de visite est acceptée.</div></i></th>
           </tr>
         </thead>
         <tbody>
