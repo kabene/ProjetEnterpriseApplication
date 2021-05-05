@@ -1027,7 +1027,8 @@ class FurnitureUCCImplTest {
         .thenReturn(mockFurnitureDTO2);
     Mockito.when(mockFurnitureDTO1.getRequestId()).thenReturn(defaultRequestId1);
     Mockito.when(mockRequest1.getRequestStatus()).thenReturn(RequestStatus.CONFIRMED);
-    assertEquals(mockFurnitureDTO2, furnitureUCC.toAccepted(defaultFurnitureId1, defaultPurchasePrice),
+    assertEquals(mockFurnitureDTO2,
+        furnitureUCC.toAccepted(defaultFurnitureId1, defaultPurchasePrice),
         "A valid call of toAccepted() with specialSalePrice should "
             + "return the corresponding dto");
 
@@ -1238,8 +1239,8 @@ class FurnitureUCCImplTest {
   @ParameterizedTest
   @ArgumentsSource(ValidUpdateInfosProvider.class)
   void test_updateInfos_nominal_shouldReturnDTO(String desc, Integer typeId, Double sellingPrice,
-                                                Double startingSellingPrice,
-                                                FurnitureStatus status) {
+      Double startingSellingPrice,
+      FurnitureStatus status) {
     /*
     Parallel with implementation:
 
