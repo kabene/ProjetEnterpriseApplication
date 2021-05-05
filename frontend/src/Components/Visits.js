@@ -1,12 +1,9 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {findCurrentUser} from "../utils/session";
-import {
-  displayErrorMessage,
-  gdpr,
-  generateLoadingAnimation
-} from "../utils/utils";
+import {displayErrorMessage, gdpr, generateLoadingAnimation,displayImgs} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
+
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -15,8 +12,6 @@ let requestMap = [];
 let timeouts = [];
 let currentUser;
 let pageHTML;
-let currentRequestId;
-let isDisplayingLargeTable;
 let openTab = "infos";
 
 /**
@@ -209,10 +204,15 @@ const findTransitionMethod = (btnId, request) => {
  * Then, adds all necessary event listeners.
  * @param {*} request
  */
-const generateCard = (request) => {
+const generateCard = async (request) => {
   let requestCardDiv = document.querySelector("#RequestCardDiv");
   let cardHTML = generateCardHTML(request);
   requestCardDiv.innerHTML = cardHTML;
+  for (const furniture of request.furnitureList) {
+    if(!furniture.favouritePhoto){
+      await getImage(furniture);
+    }
+  }
   //event listeners
   addTransitionBtnListeners(request);
   document.querySelectorAll(".favRadio").forEach((element) => {
@@ -389,7 +389,7 @@ const generateCardHTML = (request) => {
             
             </div>       
             <div class="tab-pane fade ${furnitureTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-              ${generatePhotoList(request)}
+              ${generateFurnitureList(request)}
             </div>
             ${generateButtonRow(request)}
           </div>
@@ -401,28 +401,28 @@ const generateCardHTML = (request) => {
   return res;
 }
 
-const generatePhotoList = (request) => {
+const generateFurnitureList = (request) => {
   let photos = "";
-  request.furnitureList.forEach(furniture => {
-    let fav = furniture.favouritePhoto;
-    let favPhoto;
-    if (!fav) {
-      favPhoto = notFoundPhoto;
-    } else {
-      favPhoto = fav.source;
-    }
 
+  request.furnitureList.forEach(furniture => {
+    let photoId = furniture.favouritePhotoId;
+    let src = "none";
+    if(!furniture.favouritePhotoId) {
+      src = notFoundPhoto;
+    }
+    if(furniture.favouritePhoto) {
+      src = furniture.favouritePhoto.source;
+    }
     photos += `
-    <div class="p-1 w-50 container photo-list-container border-bottom" request-id="${request.requestId}">
+    <div class="p-1 w-50 container photo-list-container mx-0 border-bottom" photoId=${photoId}>
       <div class="row px-0">
         <div class="col-6">
-          <img class="img-fluid" src="${favPhoto}" alt="photo id:${fav.photoId}"/>
+          <img class="img-fluid" src="${src}" photo-id="${photoId}" alt="photo id:${photoId}"/>
         </div>
         ${generateRadioBtns(request, furniture)}
       </div>
     </div>`;
   });
-
   let res = `
   <form>
     <input id="originalFav" type="hidden" request-id="${request.requestId}"/>
@@ -679,10 +679,7 @@ const generatePageHtml = (largeTable = true) => {
             <th class="align-middle">Client</th>
             <th class="${notNeededClassName}">Adresse</th>
             <th class="align-middle">Date de la demande</th>
-            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend(
-      "rouge",
-      "danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend(
-      "vert", "success")}: La demande de visite est acceptée.</div></i></th>
+            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend("rouge","danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend("vert","success")}: La demande de visite est acceptée.</div></i></th>
           </tr>
         </thead>
         <tbody>
@@ -952,5 +949,44 @@ async function findVisitRequestList() {
     displayErrorMessage("errorDiv", err);
   });
 }
+
+/**
+ *
+ * @returns {Promise<any>}
+ */
+async function getImage(furniture) {
+
+  return fetch("/photos/favourite/"+furniture.furnitureId, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      if(response.status === 404) {
+        return;
+      }
+      throw new Error(
+          response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    //cache
+    updateFavCache(data, furniture);
+    if(data){
+      displayImgs([data]);
+    }
+  }).catch((err) => {
+    displayErrorMessage("errorDiv", err);
+  });
+}
+
+const updateFavCache = (photo, furniture) => {
+  let furnitureList = requestMap[furniture.requestId].furnitureList;
+  let index = furnitureList.indexOf(furniture);
+  furnitureList[index] = {...furniture, favouritePhoto: photo};
+}
+
 
 export default Visits;

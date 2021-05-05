@@ -17,12 +17,14 @@ let filterType = "";
 let nbrPhotosInCarousel;
 
 const HomePage = async () => {
-  page.innerHTML = errorDiv + generateLoadingAnimation();
-  visiblePhotos = await getVisiblePhotos();
-  furnitureTypeList = await getFurnitureTypeList();
-  console.log(visiblePhotos);
-  page.innerHTML = errorDiv + getPageHTML();
-  gdpr(page);
+	page.innerHTML = errorDiv + generateLoadingAnimation();
+	furnitureTypeList = await getFurnitureTypeList();
+	getVisiblePhotos();
+	console.log(visiblePhotos);
+
+	page.innerHTML = errorDiv + getPageHTML();
+	gdpr(page);
+	addAllEventListeners();
 }
 
 /********************  Business methods  **********************/
@@ -103,23 +105,28 @@ const generateOptionTypeTag = (type) => {
 }
 
 const getCarousel = () => {
-  let photos = getHTMLVisiblePhotos();
-  return `<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-						<ol class="carousel-indicators bg-secondary"> `
-      + getHTMLCarouselIndicators() + ` </ol>
-						<div class="carousel-inner">
-							` + photos + `
-						</div>
-						<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-							<span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
-							<span class="sr-only">Previous</span>
-						</a>
-						<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-							<span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
-							<span class="sr-only">Next</span>
-						</a>
-					</div>
-`;
+	if(visiblePhotos){
+		let photos = getHTMLVisiblePhotos();
+		return `
+		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+			<ol class="carousel-indicators bg-secondary"> ` + getHTMLCarouselIndicators() + ` </ol>
+			<div class="carousel-inner">
+				` + photos + `
+			</div>
+			<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+				<span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
+				<span class="sr-only">Previous</span>
+			</a>
+			<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+				<span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
+				<span class="sr-only">Next</span>
+			</a>
+		</div>
+		`;
+	} else {
+		return generateLoadingAnimation();
+	}
+
 }
 
 const getHTMLCarouselIndicators = () => {
@@ -166,18 +173,23 @@ const getHTMLVisiblePhotos = () => {
   return ret;
 }
 
+const getVisiblePhotos = async () => {
+	let data = await fetchVisiblePhotos();
+	visiblePhotos = data;
+	page.innerHTML = getPageHTML();
+}
+
 /********************  Backend fetch  **********************/
 
-const getVisiblePhotos = async () => {
-  let response = await fetch("/photos/homePage", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (!response.ok) {
-    const err = "Erreur de fetch\nError code : " + response.status + " : "
-        + response.statusText;
+const fetchVisiblePhotos = async () => {
+	let response = await fetch("/photos/homePage", {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+	if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
     console.error(err);
     displayErrorMessage("errorDiv", err);
   }

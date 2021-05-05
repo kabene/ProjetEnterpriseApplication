@@ -2,13 +2,17 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.dto.PhotoDTO;
+import be.vinci.pae.business.dto.RequestForVisitDTO;
+import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.exceptions.ConflictException;
+import be.vinci.pae.exceptions.NotFoundException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.persistence.dal.ConnectionDalServices;
 import be.vinci.pae.persistence.dao.FurnitureDAO;
 import be.vinci.pae.persistence.dao.FurnitureTypeDAO;
 import be.vinci.pae.persistence.dao.PhotoDAO;
+import be.vinci.pae.persistence.dao.RequestForVisitDAO;
 import jakarta.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +24,8 @@ public class PhotoUCCImpl implements PhotoUCC {
   private FurnitureDAO furnitureDAO;
   @Inject
   private FurnitureTypeDAO furnitureTypeDAO;
+  @Inject
+  private RequestForVisitDAO requestDAO;
   @Inject
   private ConnectionDalServices dalServices;
 
@@ -75,8 +81,8 @@ public class PhotoUCCImpl implements PhotoUCC {
   /**
    * updates one photo's display flags (isVisible & isOnHomePage) by id.
    *
-   * @param id : the photo's id
-   * @param isVisible : the photo's new visibility flag.
+   * @param id           : the photo's id
+   * @param isVisible    : the photo's new visibility flag.
    * @param isOnHomePage : the photo's new isOnHomePage flag.
    * @return the modified resource as PhotoDTO
    */
@@ -96,6 +102,81 @@ public class PhotoUCCImpl implements PhotoUCC {
       foundDto.setOnHomePage(isOnHomePage);
 
       res = photoDAO.updateDisplayFlags(foundDto);
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return res;
+  }
+
+  /**
+   * Finds the favourite photo for a specific furniture id.
+   *
+   * @param furnitureId : furniture id
+   * @return favourite photo as PhotoDTO
+   */
+  @Override
+  public PhotoDTO getFavourite(int furnitureId) {
+    PhotoDTO res;
+    try {
+      dalServices.startTransaction();
+      FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
+      if (furnitureDTO.getFavouritePhotoId() == null) {
+        throw new NotFoundException(
+            "Error : no favourite photo for furniture " + furnitureDTO.getFurnitureId());
+      }
+      res = photoDAO.findById(furnitureDTO.getFavouritePhotoId());
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return res;
+  }
+
+  /**
+   * Finds all photos for a specific furniture id.
+   *
+   * @param furnitureId : furniture id
+   * @return list of PhotoDTO
+   */
+  @Override
+  public List<PhotoDTO> getAllForFurniture(int furnitureId) {
+    List<PhotoDTO> res;
+    try {
+      dalServices.startTransaction();
+      furnitureDAO.findById(furnitureId); //check for not found
+      res = photoDAO.findAllByFurnitureId(furnitureId);
+      dalServices.commitTransaction();
+    } catch (Throwable e) {
+      dalServices.rollbackTransaction();
+      throw e;
+    }
+    return res;
+  }
+
+  /**
+   * Finds all request photos for a specific furniture id. (verifies if the current user is the
+   * owner of the request)
+   *
+   * @param currentUserDTO : dto containing current user information.
+   * @param furnitureId    : furniture id.
+   * @return PhotoDTO list
+   */
+  @Override
+  public List<PhotoDTO> getRequestPhotos(UserDTO currentUserDTO, int furnitureId) {
+    List<PhotoDTO> res;
+    try {
+      dalServices.startTransaction();
+      FurnitureDTO furnitureDTO = furnitureDAO.findById(furnitureId);
+      RequestForVisitDTO requestDTO = requestDAO.findById(furnitureDTO.getRequestId());
+      int ownerId = requestDTO.getUserId();
+      int currentUserId = currentUserDTO.getId();
+      if (currentUserId != ownerId) {
+        throw new UnauthorizedException("Error : you are not the owner of this request for visit");
+      }
+      res = photoDAO.findAllRequestPhotosByFurnitureId(furnitureId);
       dalServices.commitTransaction();
     } catch (Throwable e) {
       dalServices.rollbackTransaction();

@@ -363,17 +363,11 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       UserDTO u = userDAO.findById(dto.getSellerId());
       dto.setSeller(u);
     }
-    if (dto.getFavouritePhotoId() != null) {
-      PhotoDTO favPhoto = photoDAO.findById(dto.getFavouritePhotoId());
-      dto.setFavouritePhoto(favPhoto);
-    }
     if (dto.getStatus().equals(FurnitureStatus.UNDER_OPTION)) {
       OptionDTO opt = optionDAO.findByFurnitureId(dto.getFurnitureId());
       opt.setUser(userDAO.findById(opt.getUserId()));
       dto.setOption(opt);
     }
-    List<PhotoDTO> photos = photoDAO.findAllByFurnitureId(dto.getFurnitureId());
-    dto.setPhotos(photos);
     String type = furnitureTypeDAO.findById(dto.getTypeId()).getTypeName();
     dto.setType(type);
     if (dto.getRequestId() != null) {

@@ -1,6 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {getUserSessionData} from "../utils/session";
-import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr} from "../utils/utils";
+import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr, displayImgs} from "../utils/utils";
 
 let page = document.querySelector("#page");
 let currentUser;
@@ -91,8 +91,9 @@ const onRequestTableRowClick = (e) => {
     while (!element.className.includes("requestTableRow"))
         element = element.parentElement;
     element.className += " bg-secondary text-light";
-	
-    await displayRequestCardById(element.attributes["requestId"].value);
+    let requestId = element.attributes["requestId"].value;
+    await displayRequestCardById(requestId);
+    getAllRequestPhotos(parseInt(requestId));
   }
 
 
@@ -107,6 +108,13 @@ const displayRequestCardById = async (requestId) => {
     requestCardDiv.innerHTML = generateRequestCard(mapRequests.get(parseInt(requestId)));
 }
 
+const updateThumbnail = (furniture, thumbnail) => {
+  let furnitureId = furniture.furnitureId;
+  let query = `img[furniture-id='${furnitureId}']`;
+  document.querySelectorAll(query).forEach((img) => {
+    img.src=thumbnail;
+  });
+}
 
 /********************  HTML generation  **********************/
 
@@ -236,10 +244,11 @@ const generatePhotoList = (request) => {
     let photoList = "";
     request.furnitureList.forEach(furniture => {
         let photoTag;
-        if (!furniture.favouritePhoto)
-          photoTag = `<img class="img-fluid" src="` + notFoundPhoto + `" alt="photoNotFound"/>`;
+        let furnitureId = furniture.furnitureId;
+        if (!furniture.thumbnail)
+          photoTag = `<img class="img-fluid" src="none" furniture-id="${furnitureId}" alt="photoNotFound"/>`;
         else
-        photoTag = `<img class="img-fluid" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
+          photoTag = `<img class="img-fluid" src="` + furniture.thumbnail + `" furniture-id="${furnitureId}" alt="photo"/>`;
         
         photoList += `
         <div class="p-1 w-50 container photo-list-container"">
@@ -349,6 +358,39 @@ const getUserRequestsForVisit = async () => {
         displayErrorMessage(err);
     }
     return response.json();
+}
+
+const getAllRequestPhotos = async (requestId) => {
+  let request = mapRequests.get(requestId);
+  let furniture;
+  for(furniture of request.furnitureList) {
+    await getFurnitureRequestPhotos(furniture);
+  }
+}
+
+const getFurnitureRequestPhotos = async (furniture) => {
+  if(!furniture.hasFetchedPhotos) {
+    furniture.hasFetchedPhotos = true;
+    let path = "/photos/byFurniture/request/"+furniture.furnitureId;
+    let response = await fetch(path, {
+      method: "GET",
+      headers: {
+        Authorization: currentUser.token,
+      }
+    });
+    if(response.ok) {
+      let photoArray = await response.json()
+      let thumbnail = notFoundPhoto;
+      if(photoArray.length >= 1) {
+        thumbnail = photoArray[0].source;
+      }
+      furniture.thumbnail = thumbnail;
+      updateThumbnail(furniture, thumbnail);
+      console.log("fetch photo success")
+    }else {
+      console.log("fetch photo fail")
+    }
+  }
 }
 
 export default VisitRequest;
