@@ -161,10 +161,22 @@ const findFavImgSrc = (furniture, images) => {
   return furniture.favouritePhoto.source;
 }
 
-export {
-  escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
-  displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename,
-  findFavImgSrc, acceptCookies, getGDPR,gdpr
-};
+/**
+ * Finds all <img/> tags with the matching photo-id attribute and updates their src
+ *
+ * @param {Array<photo>} photosLst
+ */
+export const displayImgs = (photosLst) => {
+    photosLst.forEach((photo) => {
+        document.querySelectorAll(`img[photo-id='${photo.photoId}']`)
+        .forEach((img) => {
+            img.src = photo.source;
+        });
+    });
+}
+
+export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
+     displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, 
+     findFavImgSrc, acceptCookies, getGDPR,gdpr};
 
 

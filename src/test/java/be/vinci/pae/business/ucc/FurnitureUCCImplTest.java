@@ -249,9 +249,6 @@ class FurnitureUCCImplTest {
       + "(containing seller + buyer + favourite photo + 2 photos + type)")
   @Test
   public void test_getOne_givenValidId_shouldReturnFurnitureDTO() {
-    List<PhotoDTO> photos = Arrays.asList(mockPhotoDTO1, mockPhotoDTO2);
-
-    Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId1)).thenReturn(photos);
 
     FurnitureDTO actual = furnitureUCC.getOne(defaultFurnitureId1);
     FurnitureDTO expected = mockFurnitureDTO1;
@@ -267,15 +264,10 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockUserDAO).findById(defaultBuyerId1);
     Mockito.verify(mockUserDAO).findById(defaultSellerId1);
 
-    Mockito.verify(mockPhotoDAO).findById(defaultFavouritePhotoId1);
-    Mockito.verify(mockPhotoDAO).findAllByFurnitureId(defaultFurnitureId1);
-
     Mockito.verify(mockFurnitureTypeDAO).findById(defaultTypeId1);
 
     Mockito.verify(mockFurnitureDTO1).setBuyer(defaultBuyer1);
     Mockito.verify(mockFurnitureDTO1).setSeller(defaultSeller1);
-    Mockito.verify(mockFurnitureDTO1).setFavouritePhoto(defaultFavouritePhoto1);
-    Mockito.verify(mockFurnitureDTO1).setPhotos(photos);
     Mockito.verify(mockFurnitureDTO1).setType(defaultTypeName1);
   }
 
@@ -315,8 +307,6 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.getAll : should return list of dto")
   @Test
   public void test_getAll_shouldReturnListOfFurnitureDTOs() {
-    final List<PhotoDTO> photos1 = Arrays.asList(mockPhotoDTO1, mockPhotoDTO2);
-    final List<PhotoDTO> photos2 = Collections.singletonList(mockPhotoDTO3);
     final FurnitureStatus status2 = FurnitureStatus.UNDER_OPTION;
 
     final List<FurnitureDTO> expected = Arrays.asList(mockFurnitureDTO1, mockFurnitureDTO2);
@@ -324,9 +314,6 @@ class FurnitureUCCImplTest {
     Mockito.when(mockFurnitureDAO.findAll()).thenReturn(expected);
 
     Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId2)).thenReturn(mockOptionDTO);
-
-    Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId1)).thenReturn(photos1);
-    Mockito.when(mockPhotoDAO.findAllByFurnitureId(defaultFurnitureId2)).thenReturn(photos2);
 
     Mockito.when(mockFurnitureDTO2.getBuyerId()).thenReturn(null);
     Mockito.when(mockFurnitureDTO2.getSellerId()).thenReturn(null);
@@ -347,20 +334,13 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockUserDAO).findById(defaultBuyerId1);
     Mockito.verify(mockUserDAO).findById(defaultSellerId1);
 
-    Mockito.verify(mockPhotoDAO).findById(defaultFavouritePhotoId1);
-    Mockito.verify(mockPhotoDAO).findAllByFurnitureId(defaultFurnitureId1);
-    Mockito.verify(mockPhotoDAO).findAllByFurnitureId(defaultFurnitureId2);
-
     Mockito.verify(mockFurnitureTypeDAO).findById(defaultTypeId1);
     Mockito.verify(mockFurnitureTypeDAO).findById(defaultTypeId2);
 
     Mockito.verify(mockFurnitureDTO1).setBuyer(defaultBuyer1);
     Mockito.verify(mockFurnitureDTO1).setSeller(defaultSeller1);
-    Mockito.verify(mockFurnitureDTO1).setFavouritePhoto(defaultFavouritePhoto1);
-    Mockito.verify(mockFurnitureDTO1).setPhotos(photos1);
     Mockito.verify(mockFurnitureDTO1).setType(defaultTypeName1);
 
-    Mockito.verify(mockFurnitureDTO2).setPhotos(photos2);
     Mockito.verify(mockFurnitureDTO2).setType(defaultTypeName2);
     Mockito.verify(mockFurnitureDTO2).setOption(mockOptionDTO);
 
@@ -432,7 +412,6 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockFurnitureDAO).updateStatusOnly(mockFurnitureDTO1);
 
     Mockito.verify(mockFurnitureDTO2).setSeller(defaultSeller2);
-    Mockito.verify(mockFurnitureDTO2).setPhotos(emptyList);
   }
 
   @DisplayName("TEST FurnitureUCC.toRestoration : given invalid id (invalid status),"
@@ -521,7 +500,6 @@ class FurnitureUCCImplTest {
     Mockito.verify(mockFurnitureDAO).updateToAvailable(mockFurnitureDTO1);
 
     Mockito.verify(mockFurnitureDTO2).setSeller(defaultSeller2);
-    Mockito.verify(mockFurnitureDTO2).setPhotos(emptyList);
 
   }
 
@@ -606,7 +584,6 @@ class FurnitureUCCImplTest {
 
     Mockito.verify(mockFurnitureDTO1).setStatus(expectedEndingCondition);
     Mockito.verify(mockFurnitureDTO2).setSeller(defaultSeller2);
-    Mockito.verify(mockFurnitureDTO2).setPhotos(emptyList);
   }
 
   @DisplayName("TEST FurnitureUCC.withdraw : given invalid id (invalid status),"
