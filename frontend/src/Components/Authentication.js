@@ -1,8 +1,6 @@
 import {
-  acceptCookies,
   displayErrorMessage,
   gdpr,
-  getGDPR
 } from "../utils/utils.js"
 import {
   getUserSessionData,
