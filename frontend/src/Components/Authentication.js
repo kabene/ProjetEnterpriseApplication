@@ -123,8 +123,8 @@ const Authentication = () => {
 
   let registerButton = document.querySelector("#registerButton");
   registerButton.addEventListener("click", onSignUp);
-  gdpr(page);
   const user = getUserSessionData();
+  gdpr(page);
   if (user) {
     Navbar();
     RedirectUrl("/");

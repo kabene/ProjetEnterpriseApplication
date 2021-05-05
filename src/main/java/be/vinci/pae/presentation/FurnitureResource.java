@@ -80,7 +80,7 @@ public class FurnitureResource {
     List<FurnitureDTO> res = furnitureDTOs.parallelStream()
         .filter((dto) -> dto.getStatus().isPubliclyAvailable())
         .map((dto) ->
-          Json.filterPublicJsonView(dto, FurnitureDTO.class))
+            Json.filterPublicJsonView(dto, FurnitureDTO.class))
         .collect(Collectors.toList());
     return Response.ok(res).build();
   }
@@ -118,10 +118,17 @@ public class FurnitureResource {
   @Path("/accepted/{id}")
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
-  public Response toAccepted(@PathParam("id") int furnitureId) {
+  public Response toAccepted(@PathParam("id") int furnitureId, JsonNode reqNode) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
         .log(Level.INFO, "/furniture/accepted/" + furnitureId);
-    FurnitureDTO furnitureDTO = furnitureUCC.toAccepted(furnitureId);
+    if (reqNode.get("purchasePrice") == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    double purchasePrice = reqNode.get("purchasePrice").asDouble();
+    if (purchasePrice <= 0) {
+      throw new BadRequestException("Error: malformed request (negative price)");
+    }
+    FurnitureDTO furnitureDTO = furnitureUCC.toAccepted(furnitureId, purchasePrice);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 
