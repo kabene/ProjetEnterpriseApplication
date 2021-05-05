@@ -1,6 +1,11 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import noFurniturePhoto from "../img/noFurniture.png";
-import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils.js";
+import {
+  displayErrorMessage,
+  generateLoadingAnimation,
+  gdpr
+} from "../utils/utils.js";
+
 
 let page = document.querySelector("#page");
 
@@ -16,30 +21,27 @@ let filterType = "";
 let nbrPhotosInCarousel;
 
 const HomePage = async () => {
-	page.innerHTML = errorDiv + generateLoadingAnimation();
-	visiblePhotos = await getVisiblePhotos();
-	furnitureTypeList = await getFurnitureTypeList();
-	console.log(visiblePhotos);
-
-	page.innerHTML = errorDiv + getPageHTML();
-
-	addAllEventListeners();
+  page.innerHTML = errorDiv + generateLoadingAnimation();
+  visiblePhotos = await getVisiblePhotos();
+  furnitureTypeList = await getFurnitureTypeList();
+  console.log(visiblePhotos);
+  page.innerHTML = errorDiv + getPageHTML();
+  gdpr(page);
 }
 
-
 /********************  Business methods  **********************/
-
 
 /**
  * Called when clicking on the apply filter button.
  * Apply all filters chosen on the furniture and render them.
  */
- const onClickApplyFilter = (e) => {
+const onClickApplyFilter = (e) => {
   e.preventDefault();
   filterType = document.querySelector("#furnitureTypeFilter").value;
-	page.innerHTML = getPageHTML();
+  page.innerHTML = getPageHTML();
   addAllEventListeners();
-  document.querySelector("[value='" + filterType + "']").setAttribute('selected', 'true');
+  document.querySelector("[value='" + filterType + "']").setAttribute(
+      'selected', 'true');
 }
 
 /**
@@ -48,8 +50,9 @@ const HomePage = async () => {
  */
 const onClickClearFilter = (e) => {
   e.preventDefault();
-  if (filterType === "")
+  if (filterType === "") {
     return;
+  }
   filterType = "";
   page.innerHTML = getPageHTML();
   addAllEventListeners();
@@ -58,15 +61,17 @@ const onClickClearFilter = (e) => {
 /**
  * Add all the event listeners required in the document.
  */
- const addAllEventListeners = () => {
-  document.querySelector("#apply-filters-btn").addEventListener("click", onClickApplyFilter);
-  document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
+const addAllEventListeners = () => {
+  document.querySelector("#apply-filters-btn").addEventListener("click",
+      onClickApplyFilter);
+  document.querySelector("#clear-filters-btn").addEventListener("click",
+      onClickClearFilter);
 }
 
 /********************  HTML generation  **********************/
 
 const getPageHTML = () => {
-	return `
+  return `
 	<div class="col-5 mx-auto">
     <div id="errorDiv" class="d-none"></div>
   </div>
@@ -102,9 +107,10 @@ const generateOptionTypeTag = (type) => {
 }
 
 const getCarousel = () => {
-	let photos = getHTMLVisiblePhotos();
-	return `<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-						<ol class="carousel-indicators bg-secondary"> ` + getHTMLCarouselIndicators() + ` </ol>
+  let photos = getHTMLVisiblePhotos();
+  return `<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+						<ol class="carousel-indicators bg-secondary"> `
+      + getHTMLCarouselIndicators() + ` </ol>
 						<div class="carousel-inner">
 							` + photos + `
 						</div>
@@ -121,10 +127,12 @@ const getCarousel = () => {
 }
 
 const getHTMLCarouselIndicators = () => {
-	let ret = `<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
-	for (let i = 1; i < nbrPhotosInCarousel; i++) 
-		ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i + `"></li>`;
-	return ret;
+  let ret = `<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
+  for (let i = 1; i < nbrPhotosInCarousel; i++) {
+    ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i
+        + `"></li>`;
+  }
+  return ret;
 }
 
 /**
@@ -132,62 +140,65 @@ const getHTMLCarouselIndicators = () => {
  * @returns an html element containing all the modal item required with the current filter.
  */
 const getHTMLVisiblePhotos = () => {
-	let ret = "";
-	nbrPhotosInCarousel = 0;
+  let ret = "";
+  nbrPhotosInCarousel = 0;
 
-	visiblePhotos.forEach(photo => {
-		if (filterType === '' || filterType === photo.furniture.type) {
-			if (nbrPhotosInCarousel === 0) {
-				ret += `
+  visiblePhotos.forEach(photo => {
+    if (filterType === '' || filterType === photo.furniture.type) {
+      if (nbrPhotosInCarousel === 0) {
+        ret += `
 			<div class="carousel-item active">
-				<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+				<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source
+            + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
 			</div>`;
-			} else {
-				ret += `
+      } else {
+        ret += `
 				<div class="carousel-item">
-					<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+					<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source
+            + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
 				</div>`;
-			}
-			nbrPhotosInCarousel++;
-		}
-	});
-	if (nbrPhotosInCarousel === 0) {
-		return `
+      }
+      nbrPhotosInCarousel++;
+    }
+  });
+  if (nbrPhotosInCarousel === 0) {
+    return `
 		<div class="carousel-item active">
 			<img class="d-block img-fluid mx-auto mb-5" src="` + noFurniturePhoto + `" alt="Aucun meuble trouvé">
 		</div>`;
-	}
-	return ret;
+  }
+  return ret;
 }
-
 
 /********************  Backend fetch  **********************/
 
 const getVisiblePhotos = async () => {
-	let response = await fetch("/photos/homePage", {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-		},
-	});
-	if (!response.ok) {
-    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+  let response = await fetch("/photos/homePage", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : "
+        + response.statusText;
     console.error(err);
     displayErrorMessage("errorDiv", err);
   }
-	return response.json();
+  return response.json();
 }
 
 const getFurnitureTypeList = async () => {
-	let response = await fetch("/furnitureTypes/", {
-	  method: "GET",
-	});
-	if (!response.ok) {
-	  const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
-	  console.error(err);
-	  displayErrorMessage("errorDiv", err);
-	}
-	return response.json();
+  let response = await fetch("/furnitureTypes/", {
+    method: "GET",
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : "
+        + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
   }
+  return response.json();
+}
 
 export default HomePage;

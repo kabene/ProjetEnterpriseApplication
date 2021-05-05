@@ -1,6 +1,10 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {findCurrentUser} from "../utils/session";
-import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils";
+import {
+  displayErrorMessage,
+  gdpr,
+  generateLoadingAnimation
+} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
 
@@ -26,6 +30,7 @@ const Visits = async (id) => {
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
+  gdpr(page);
   await findVisitRequestList();
   if (!id) {
     isDisplayingLargeTable = true;

@@ -1,8 +1,13 @@
-import {displayErrorMessage} from "../utils/utils.js"
+import {
+  acceptCookies,
+  displayErrorMessage,
+  gdpr,
+  getGDPR
+} from "../utils/utils.js"
 import {
   getUserSessionData,
   setUserSessionData,
-  setUserLocalData
+  setUserLocalData,
 } from "../utils/session";
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
@@ -127,7 +132,7 @@ const Authentication = () => {
 
   let registerButton = document.querySelector("#registerButton");
   registerButton.addEventListener("click", onSignUp);
-
+  gdpr(page);
   const user = getUserSessionData();
   if (user) {
     Navbar();

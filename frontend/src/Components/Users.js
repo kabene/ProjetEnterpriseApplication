@@ -1,5 +1,10 @@
 import {findCurrentUser, setTakeoverSessionData} from "../utils/session";
-import {removeTimeouts, generateLoadingAnimation, displayErrorMessage} from "../utils/utils";
+import {
+  removeTimeouts,
+  generateLoadingAnimation,
+  displayErrorMessage,
+  gdpr
+} from "../utils/utils";
 import {Loader} from "@googlemaps/js-api-loader";
 import {RedirectUrl} from "./Router";
 import Navbar from "./Navbar";
@@ -35,6 +40,7 @@ const Users = async (id) => {
   confirmedUsersList = await getConfirmedUsersList();
 
   page.innerHTML = generateUsersPage();
+  gdpr(page);
 
   setDefaultLargeValues();
   setDefaultEventListener();

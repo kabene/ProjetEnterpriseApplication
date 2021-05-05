@@ -3,7 +3,7 @@ import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {findCurrentUser} from "../utils/session.js";
 import {
-  displayErrorMessage,
+  displayErrorMessage, gdpr,
   generateLoadingAnimation,
 } from "../utils/utils.js"
 
@@ -26,7 +26,7 @@ let activeFilters = {...emptyFilter};
 
 const FurnitureList = async (id) => {
   currentUser = findCurrentUser();
-
+  gdpr(page);
   let pageHTML = `
   <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
