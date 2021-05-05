@@ -305,6 +305,16 @@
         (sans exception)
     </td>
 </tr>
+<tr>
+    <td>photos/byFurniture/request/{furnitureId}</td>
+    <td>GET</td>
+    <td>JWT</td>
+    <td>Oui</td>
+    <td>
+        Renvoie toutes les ressources de type "photo" liées à une demande de visite et 
+        référencant une certaine furnitureId 
+    </td>
+</tr>
 </table>
 
 <table style="caption-side: top">
