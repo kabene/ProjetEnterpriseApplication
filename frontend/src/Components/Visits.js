@@ -1,11 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {findCurrentUser} from "../utils/session";
-import {
-  displayErrorMessage,
-  gdpr,
-  generateLoadingAnimation,
-  displayImgs
-} from "../utils/utils";
+import {displayErrorMessage, gdpr, generateLoadingAnimation, displayImgs} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
 
