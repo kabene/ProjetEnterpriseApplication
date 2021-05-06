@@ -1122,6 +1122,7 @@ const generateAllTransitionBtns = (furniture) => {
     case "IN_RESTORATION":
       res += generateTransitionModal("ToAvailable",
           "Indiquer disponible à la vente");
+      res += generateTransitionModal("ToSold", "Indiquer vendu");
       res += generateTransitionModal("Withdraw", "Retirer de la vente",
           "danger", "secondary");
       break;
@@ -1172,6 +1173,7 @@ const generateToSoldForm = () => {
   let res = "";
   switch (status) {
     case "AVAILABLE_FOR_SALE":
+    case "IN_RESTORATION":
       res = `
         <div class="form-group">
           <label for="buyerUsernameInput">Pseudo de l'acheteur: 
