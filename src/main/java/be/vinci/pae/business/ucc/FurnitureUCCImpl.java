@@ -251,8 +251,14 @@ public class FurnitureUCCImpl implements FurnitureUCC {
         throw new ConflictException(
             "Error: pieces of furniture under option cannot be sold with a special sale price");
       }
+      if (foundFurnitureDTO.getStatus().equals(FurnitureStatus.IN_RESTORATION)
+          && specialSalePrice == null) {
+        throw new ConflictException(
+            "Error: pieces of furniture in restoration cannot be sold without a special sale price");
+      }
       if (!foundFurnitureDTO.getStatus().equals(FurnitureStatus.AVAILABLE_FOR_SALE)
-          && !foundFurnitureDTO.getStatus().equals(FurnitureStatus.UNDER_OPTION)) {
+          && !foundFurnitureDTO.getStatus().equals(FurnitureStatus.UNDER_OPTION)
+          && !foundFurnitureDTO.getStatus().equals(FurnitureStatus.IN_RESTORATION)) {
         throw new ConflictException("Error: invalid furniture status");
       }
       if (foundFurnitureDTO.getStatus().equals(FurnitureStatus.UNDER_OPTION)) {
