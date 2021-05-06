@@ -240,7 +240,7 @@ const getHTMLEntireCarousel = (tabPhotoToRender, furniture) => {
   return `
   <div class="row mx-auto pt-5">
     <div id="carousel-${furniture.furnitureId}" class="carousel slide" data-ride="carousel">
-      <ol class="carousel-indicators bg-secondary">` + getHTMLCarouselIndicators(tabPhotoToRender.length) + `</ol>
+      <ol class="carousel-indicators bg-secondary">` + getHTMLCarouselIndicators(tabPhotoToRender.length, furniture) + `</ol>
       <div class="carousel-inner">
       ` + getHTMLCarouselPhotos(tabPhotoToRender) + `
       </div>
@@ -262,10 +262,10 @@ const getHTMLEntireCarousel = (tabPhotoToRender, furniture) => {
  * @param {*} nbrPhoto the number of photo in the carousel.
  * @returns a html element containing all the carouselIndicators needed for the carousel.
  */
-const getHTMLCarouselIndicators = (nbrPhoto) => {
-	let ret = `<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
+const getHTMLCarouselIndicators = (nbrPhoto, furniture) => {
+	let ret = `<li data-target="#carousel-${furniture.furnitureId}" data-slide-to="0" class="active"></li>`;
 	for (let i = 1; i < nbrPhoto; i++)
-		ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i + `"></li>`;
+		ret += `<li data-target="#carousel-${furniture.furnitureId}" data-slide-to="` + i + `"></li>`;
 	return ret;
 }
 
