@@ -881,7 +881,7 @@ class FurnitureUCCImplTest {
       + "should throw ConflictException")
   @ParameterizedTest
   @EnumSource(value = FurnitureStatus.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED",
-      "IN_RESTORATION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+      "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
   void test_toSold_invalidStatesWithSpecialSale_shouldReturnDTO(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
     Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
