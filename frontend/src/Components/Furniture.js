@@ -1,18 +1,16 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 
-
 import {findCurrentUser} from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {displayErrorMessage, importAllFurnitureImg, generateLoadingAnimation, displayImgs, gdpr} from "../utils/utils.js"
+import {displayErrorMessage, generateLoadingAnimation, displayImgs, gdpr} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 
 let currentUser;
 
-let images;
-let furnitureList;
-let furnitureTypeList;
-let myOptionList;
+let mapFurniture;
+let mapFurnitureType;
+let mapOption;
 
 const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"></div>  </div>`;
 
@@ -25,10 +23,15 @@ const Furniture = async () => {
   page.innerHTML =  errorDiv + generateLoadingAnimation();
   currentUser = findCurrentUser();
 
-  images = importAllFurnitureImg()
-  furnitureList = await getFurnitureList();
-  furnitureTypeList = await getFurnitureTypeList();
-  myOptionList = await getMyOptionList();
+  let furnitureList = await getFurnitureList();
+  mapFurniture = new Map(furnitureList.map(furniture => [furniture.furnitureId, furniture]));
+
+  let furnitureTypeList = await getFurnitureTypeList();
+  mapFurnitureType = new Map(furnitureTypeList.map(furnitureType => [furnitureType.typeId, furnitureType]));
+
+  let myOptionList = await getMyOptionList();
+  if (myOptionList)
+    mapOption = new Map(myOptionList.map(option => [option.furnitureId, option]));
 
   page.innerHTML = errorDiv + generateTable();
   getFavs().then(() => getPhotos());
@@ -40,25 +43,16 @@ const Furniture = async () => {
 
 
 const refresh = (data, status) => {
-  myOptionList.push(data);
+  mapOption.set(data.furnitureId, data);
   let furnitureId = data.furnitureId;
-  furnitureList.forEach(furniture => {
-    if (furniture.furnitureId == furnitureId) {
-      furniture.option = data;
-    }
-  });
-  updateFurnitureList(data.furnitureId, status)
+
+  mapFurniture.get(parseInt(furnitureId)).option = data;
+  mapFurniture.get(parseInt(furnitureId)).status = status;
+
   page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
 }
 
-const updateFurnitureList = (furnitureId, status) => {
-  furnitureList.forEach(furniture => {
-    if (furniture.furnitureId === furnitureId) {
-      furniture.status = status;
-    }
-  })
-}
 
 /**
  * Called when clicking on the apply filter button.
@@ -72,6 +66,7 @@ const onClickApplyFilter = (e) => {
   addAllEventListeners();
   document.querySelector("[value='" + filter.type + "']").setAttribute('selected', 'true');
 }
+
 
 /**
  * Called when clicking on the cancel filter button.
@@ -87,19 +82,35 @@ const onClickClearFilter = (e) => {
   addAllEventListeners();
 }
 
+
 /**
  * Add all the event listeners required in the document.
  */
 const addAllEventListeners = () => {
-  document.querySelectorAll(".btnCreateOption").forEach(element =>{
-    element.addEventListener("click", addOption );
-  });
-  document.querySelectorAll(".cancelOptButton").forEach(element=>{
-    element.addEventListener("click",cancelOption);
-  });
+  document.querySelectorAll(".btnCreateOption").forEach(element => element.addEventListener("click", addOption ));
+  document.querySelectorAll(".cancelOptButton").forEach(element => element.addEventListener("click", cancelOption));
   document.querySelector("#apply-filters-btn").addEventListener("click", onClickApplyFilter);
   document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
 }
+
+
+/**
+ * check if a furniture respect the current filter.
+ * @param {*} furniture the user to check if he is correct following the filter criterias.
+ * @returns true if the furniture is correct, else false.
+ */
+ const isFurnitureRespectingFilter = (furniture) => {
+  if (filter.description !== "") {
+    if (!furniture.description.toLowerCase().includes(filter.description.toLowerCase()))
+      return false;
+  }
+  if (filter.type !== "") {
+    if (filter.type !== furniture.type)
+      return false;
+  }
+  return true;
+ }
+ 
 
 /**
  * Updates the modal of a specific piece of furniture.
@@ -110,9 +121,8 @@ const addAllEventListeners = () => {
 const updateModal = (tabPhotoToRender, furniture) => {
   let query = `.modal-content[furniture-id='${furniture.furnitureId}']`;
   let div = document.querySelector(query);
-  if(div) {
-    div.innerHTML = getHTMLEntireCarousel(tabPhotoToRender);
-  }
+  if (div)
+    div.innerHTML = getHTMLEntireCarousel(tabPhotoToRender, furniture);
 }
 
 /**
@@ -154,6 +164,7 @@ const generateTable = () => {
     </div>`;
 }
 
+
 const generateFilterHTML = () => {
   return `
   <form class="form-inline">
@@ -169,52 +180,46 @@ const generateFilterHTML = () => {
 
 const generateSelectTypeTag = () => {
   let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
-  furnitureTypeList.forEach(type => ret += generateOptionTypeTag(type));
+  mapFurnitureType.forEach(type => ret += generateOptionTypeTag(type));
   ret += `</select>`;
   return ret;
 }
+
 
 const generateOptionTypeTag = (type) => {
   return `<option value="` + type.typeName + `">` + type.typeName + `</option>`;
 }
 
+
 const generateAllItemsAndModals = () => {
   let res = "";
-  furnitureList.forEach(furniture => res += generateItemAndModal(furniture));
+  mapFurniture.forEach(furniture => res += generateItemAndModal(furniture));
   return res;
 }
 
+
 const generateItemAndModal = (furniture) => {
-  //filter
-  if (filter.description !== "") {
-    if (!furniture.description.toLowerCase().includes(filter.description.toLowerCase()))
-      return "";
-  }
-  if (filter.type !== "") {
-    if (filter.type !== furniture.type)
-      return "";
-  }
+  if (!isFurnitureRespectingFilter(furniture))
+    return "";
+
   let src = "none";
-  if(furniture.favouritePhoto) {
+  if (furniture.favouritePhoto)
     src = furniture.favouritePhoto.source;
-  }else if (furniture.noFavFound) {
+  else if (furniture.noFavFound)
     src = notFoundPhoto;
-  }
+  
   let item = `
         <div>
           ` + getTag(furniture) + `
-          <img class="imageFurniturePage img-furniture" src="` + src + `" alt="thumbnail"  photo-id="${furniture.favouritePhotoId}" furniture-id="${furniture.furnitureId}" data-toggle="modal" data-target="#modal__`+ furniture.furnitureId + `"/>
+          <img class="imageFurniturePage img-furniture" src="` + src + `" alt="thumbnail"  photo-id="` + furniture.favouritePhotoId + `" furniture-id="` + furniture.furnitureId + `" data-toggle="modal" data-target="#modal__`+ furniture.furnitureId + `"/>
           <p class="text-center">` + furniture.description + `</p>`
           + getOptionButton(furniture) +
         `</div>`; //TODO: fixer la taille des images
-
-  let tabPhotoToRender = getTabPhotoToRender(furniture);
-
   let modal = `
         <div class="modal fade" id="modal__` + furniture.furnitureId + `">
           <div class="modal-dialog modal-xl">
-            <div class="modal-content" furniture-id="${furniture.furnitureId}">
-              ${getHTMLEntireCarousel(tabPhotoToRender)}
+            <div class="modal-content" furniture-id="` + furniture.furnitureId + `">
+            ` + getHTMLEntireCarousel(furniture.photos, furniture) + `
             </div>
           </div>                     
         </div>`;
@@ -222,27 +227,28 @@ const generateItemAndModal = (furniture) => {
   return item + modal;
 }
 
+
 /**
- * Generates the html for one carousel
- * @param {Array<photo>} tabPhotoToRender table of all the photos to render in the carousel
- * @returns html
+ * Create a carousel html for a piece of furniture
+ * @param {*} tabPhotoToRender table of all the photos to render in the carousel
+ * @param {*} furniture the furniture
+ * @returns 
  */
-const getHTMLEntireCarousel = (tabPhotoToRender) => {
-  if(tabPhotoToRender.length === 0) {
+const getHTMLEntireCarousel = (tabPhotoToRender, furniture) => {
+  if(tabPhotoToRender.length === 0)
     return generateLoadingAnimation();
-  }
   return `
   <div class="row mx-auto pt-5">
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-      <ol class="carousel-indicators bg-secondary">` + getHTMLCarouselIndicators(tabPhotoToRender.length) + `</ol>
+    <div id="carousel-${furniture.furnitureId}" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators bg-secondary">` + getHTMLCarouselIndicators(tabPhotoToRender.length, furniture) + `</ol>
       <div class="carousel-inner">
-        ${getHTMLCarouselPhotos(tabPhotoToRender)}
+      ` + getHTMLCarouselPhotos(tabPhotoToRender) + `
       </div>
-      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+      <a class="carousel-control-prev" href="#carousel-${furniture.furnitureId}" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>
         </a>
-      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+      <a class="carousel-control-next" href="#carousel-${furniture.furnitureId}" role="button" data-slide="next">
         <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
       </a>
@@ -250,17 +256,19 @@ const getHTMLEntireCarousel = (tabPhotoToRender) => {
   </div>`;
 }
 
+
 /**
  * create an html element containing all the carouselIndicators (small bars below the carousel).
  * @param {*} nbrPhoto the number of photo in the carousel.
  * @returns a html element containing all the carouselIndicators needed for the carousel.
  */
-const getHTMLCarouselIndicators = (nbrPhoto) => {
-	let ret = `<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
+const getHTMLCarouselIndicators = (nbrPhoto, furniture) => {
+	let ret = `<li data-target="#carousel-${furniture.furnitureId}" data-slide-to="0" class="active"></li>`;
 	for (let i = 1; i < nbrPhoto; i++)
-		ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i + `"></li>`;
+		ret += `<li data-target="#carousel-${furniture.furnitureId}" data-slide-to="` + i + `"></li>`;
 	return ret;
 }
+
 
 /**
  * create an html element containing all the photo to render in the carousel.
@@ -279,18 +287,19 @@ const getHTMLCarouselPhotos = (tabPhotoToRender) => {
   tabPhotoToRender.forEach(photo => {
     if (ret === "") {
       ret += `
-      <div class="carousel-item active text-center">
-        <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
-      </div>`;
+        <div class="carousel-item active text-center">
+          <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
+        </div>`;
     } else {
       ret += `
-      <div class="carousel-item text-center">
-        <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
-      </div>`;
+        <div class="carousel-item text-center">
+          <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
+        </div>`;
     }
   });
   return ret;
 }
+
 
 const getTag = (furniture) => {
   let ret = "";
@@ -311,33 +320,24 @@ const getTag = (furniture) => {
   return ret;
 }
 
+
 const getOptionButton = (furniture) => {
-  let alreadyUnderOption = false;
+  let isOnMyOption = false;
+
   if (currentUser) {
-    myOptionList.forEach(option => {
-      alreadyUnderOption = true;
-    })
+    if (mapOption.has(furniture.furnitureId))
+    isOnMyOption = true;
   }
-  ;
-  if (furniture.status === "AVAILABLE_FOR_SALE" && typeof currentUser
-      !== "undefined") { //place option
-
-    let sendBtn = generateCloseBtn("Confirmer", "btn" + furniture.furnitureId,
-        "btnCreateOption btn btn-primary mx-5");
-    return generateModalPlusTriggerBtn("modal_" + furniture.furnitureId,
-        "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>",
-        generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
-  } else if (furniture.status === "UNDER_OPTION" && alreadyUnderOption
-      && typeof currentUser !== "undefined") { //cancel option
-    return `<button type="button" id="cbtn${furniture.furnitureId}" class="btn btn-danger cancelOptButton">annuler l'option</button>`;
-  } else { // nothing
+  
+  if (furniture.status === "AVAILABLE_FOR_SALE" && currentUser) {
+    let sendBtn = generateCloseBtn("Confirmer", "btn" + furniture.furnitureId, "btnCreateOption btn btn-primary mx-5");
+    return generateModalPlusTriggerBtn("modal_" + furniture.furnitureId, "Mettre une option", "btn btn-primary", "<h4>Mettre une option</h4>", generateOptionForm(), sendBtn, "Annuler", "btn btn-danger");
+  } else if (isOnMyOption)
+    return `<button type="button" id="cbtn` + furniture.furnitureId + `" class="btn btn-danger cancelOptButton">Annuler l'option</button>`;
+  else
     return "";
-  }
 }
 
-const getTabPhotoToRender = (furniture) => {
-  return furniture.photos;
-}
 
 const generateOptionForm = () => {
   let res = `
@@ -354,26 +354,20 @@ const generateOptionForm = () => {
 
 /********************  Backend fetch  **********************/
 
+
 const getFurnitureList = async () => {
-  let ret = [];
-  await fetch("/furniture/", {
+  let response = await fetch("/furniture/", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(
-          "Error code : " + response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    ret = data;
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
-  return ret;
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  return response.json();
 }
 
 
@@ -381,49 +375,43 @@ const getFurnitureList = async () => {
  * fetch all favourite photos for main list thumbnails
  */
  const getFavs = async () => {
-  let furniture;
-  for(furniture of furnitureList) {
-    console.log({msg: "starting fetch (fav)", furnitureId: furniture.furnitureId});
+  mapFurniture.forEach(async (furniture, furnitureId) => {
     await fetchFav(furniture);
-  }
+  });
   let loadArea = document.querySelector("#loadArea");
   loadArea.className = "d-none";
 }
 
 const fetchFav = async (furniture) => {
-  if(!furniture.favouritePhoto){
-    let path = "/photos/favourite/"+furniture.furnitureId;
-    let response = await fetch(path, {
+  if (!furniture.favouritePhoto) {
+    
+    let response = await fetch("/photos/favourite/" + furniture.furnitureId, {
       method: "GET",
     });
-    if(response.ok) {
+    if (response.ok) {
       let fav = await response.json();
       displayImgs([fav]);
       updateCacheFav(furniture, fav);
-      console.log("fav fetched");
     }
   }
 }
 
-const getPhotos = async () => {
-  let furniture;
-  for(furniture of furnitureList) {
-    console.log({msg: "starting fetch (all)", furnitureId: furniture.furnitureId});
+const getPhotos = async () => {    
+  mapFurniture.forEach(async (furniture, furnitureId) => {
     await fetchAllPhotos(furniture);
-  }
+  });
 }
 
 const fetchAllPhotos = async (furniture) => {
-  if(!furniture.photos || furniture.photos.length === 0) { //no photos -> fetch
-    let path = "/photos/byFurniture/"+furniture.furnitureId;
-    let response = await fetch(path, {
+  if (!furniture.photos || furniture.photos.length === 0) {
+    
+    let response = await fetch("/photos/byFurniture/" + furniture.furnitureId, {
       method: "GET",
     });
-    if(response.ok) {
+    if (response.ok) {
       let photoArray = await response.json();
       updateModal(photoArray, furniture);
       updateCacheAllPhotos(furniture, photoArray);
-      console.log("photos fetched");
     }
   }
 }
@@ -442,95 +430,74 @@ const getFurnitureTypeList = async () => {
   return response.json();
 }
 
-const getMyOptionList = async () => {
-  if (currentUser) {
-    let ret = [];
 
-    await fetch("/options/me", {
-      method: "GET",
-      headers: {
-        "Authorization": currentUser.token,
-        //"Content-Type": "application/json",
-      },
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(
-            "Error code : " + response.status + " : " + response.statusText);
-      }
-      return response.json();
-    }).then((data) => {
-      ret = data;
-    }).catch((err) => {
-      console.log("Erreur de fetch !! :´<\n" + err);
-      displayErrorMessage("errorDiv", err);
-    });
-    return ret;
+const getMyOptionList = async () => {
+  if (!currentUser) 
+    return;
+  let response = await fetch("/options/me", {
+    method: "GET",
+    headers: {
+      "Authorization": currentUser.token,
+    },
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
   }
+  return response.json();
 }
 
-const cancelOption = (e) => {
+
+const cancelOption = async (e) => {
   e.preventDefault();
   let furnitureId = e.target.id.substring(4);
   let optionId;
-  myOptionList.forEach(option => {
-    if (option.furnitureId == furnitureId) {
-      if (!option.isCanceled) {
-        optionId = option.optionId;
-      }
-    }
-  });
+  
+  let option = mapOption.get(parseInt(furnitureId));
+  if (!option.isCanceled)
+    optionId = option.optionId;
 
-  fetch("/options/cancel/" + optionId, {
+  let response = await fetch("/options/cancel/" + optionId, {
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    refresh(data, "AVAILABLE_FOR_SALE");
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  let jsonResponse = await response.json();
+  refresh(jsonResponse, "AVAILABLE_FOR_SALE");
 }
 
-const addOption = (e) => {
+
+const addOption = async (e) => {
   e.preventDefault();
-  let furnitureId = e.target.id.substring(3);
-  let duration = e.target.parentElement.parentElement.querySelector(
-      "input").value;
 
   let bundle = {
-    furnitureId: furnitureId,
-    duration: duration,
+    furnitureId: e.target.id.substring(3),
+    duration: e.target.parentElement.parentElement.querySelector("input").value,
   }
-  console.log(bundle);
-  fetch("/options/", {
+  
+  let response = await fetch("/options/", {
     method: "POST",
     body: JSON.stringify(bundle),
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    refresh(data.option, "UNDER_OPTION");
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
-
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  let jsonResponse = await response.json();
+  refresh(jsonResponse.option, "UNDER_OPTION");
 }
-
-
 
 export default Furniture;

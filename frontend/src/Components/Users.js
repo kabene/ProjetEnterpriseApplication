@@ -37,7 +37,7 @@ const Users = async (id) => {
   page.innerHTML = generateUsersPage();
   gdpr(page);
 
-  setDefaultLargeValues();
+  setDefaultLargeValues(true);
   setDefaultEventListener();
 
   //display a user if we got an id
@@ -69,21 +69,17 @@ const setDefaultEventListener = () => {
 const setDefaultLargeValues = (displayNotNeeded) => {
   //hide the element only displayed when the user table is small
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "none");
-
   //remove the background on the selected row (if exists)
   removeActiveRow();
-
   //change the class of divs from small to large (if are small)
   let tableContainer = document.querySelector('#shortTableContainer');
-  if (tableContainer/* !== null*/)
+  if (tableContainer)
     tableContainer.id = "largeTableContainer";
   let table = document.querySelector('#shortTable');
   if (table)
     table.id = "largeTable";
-
   //set the info item to be displayed by default in the user card
   displayInfoItemInUserCard = true;
-
   //display the element not needed when the table is short if asked to
   if (displayNotNeeded)
     document.querySelectorAll('.notNeeded').forEach(element => element.style.display = "");
@@ -97,15 +93,12 @@ const setDefaultLargeValues = (displayNotNeeded) => {
 const setDefaultShortValues = (changeTableContainer) => {
   //display the short element only displayed when the user table is small
   document.querySelectorAll(".shortElement").forEach(element => element.style.display = "block");
-
   //hide the element only needed when the table is large
   document.querySelectorAll('.notNeeded').forEach(element => element.style.display = 'none');
-
   //change the class of table from large to small (if is large)
   let table = document.querySelector("#largeTable");
   if (table)
     table.id = "shortTable";
-
   //change the class of table container from large to short (if is large and is asked to) 
   if (changeTableContainer) {
     let tableContainer = document.querySelector('#largeTableContainer');
@@ -119,7 +112,7 @@ const setDefaultShortValues = (changeTableContainer) => {
  * display the short elements if the table is large, else just refresh the user card.
  */
 const onRowClick = (e) => {
-  if (document.querySelector('#shortTableContainer') == null)
+  if (!document.querySelector('#shortTableContainer'))
     displayShortElements();
   onUserClickHandler(e);
 }
@@ -149,6 +142,7 @@ const displayShortElements = () => {
 
 }
 
+
 /**
  * change the active row and display the user card needed.
  */
@@ -162,6 +156,7 @@ const onUserClickHandler = (e) => {
 	
   displayUserCardById(element.attributes["userId"].value);
 }
+
 
 /**
  * display the card of the corresponding user.
@@ -194,6 +189,7 @@ const displayUserCardById = async (userId) => {
     takeoverBtn.addEventListener("click", (e) => onTakeoverClick(e));
   }
 }
+
 
 /**
  * accept or refuse the user's request, display a small notification and update the card and the table
@@ -237,6 +233,7 @@ const onValidateClick = async (e) => {
     , 5000);
 }
 
+
 const removeFromArray = (id, array) => {
   for (let i = 0; i < array.length; i++) {
     if (array[i].id === id) {
@@ -245,6 +242,7 @@ const removeFromArray = (id, array) => {
     }
   }
 }
+
 
 /**
  * apply new filter and reset the table (keep the activeTr background if is still present).
@@ -255,6 +253,7 @@ const onApplyFilterClick = () => {
   setActiveRow(activeUserID);
 }
 
+
 /**
  * remove all the filter and reset the table (keep the activeTr background).
  */
@@ -263,6 +262,7 @@ const onClearFilterClick = () => {
   resetTable();
   setActiveRow(activeUserID);
 }
+
 
 /**
  * change the current filter with what's given in parameters.
@@ -274,6 +274,7 @@ const changeFilter = (info, role) => {
   filter.role = role;
 }
 
+
 /**
  * reset all the active filters and reset the filter form(searchbar and select tag). 
  */
@@ -282,6 +283,7 @@ const resetFilter = () => {
   document.querySelector("option[value='']").selected = "true";
   document.querySelector("#userSearchBar").value = "";
 }
+
 
 /**
  * reset the whole table div and set the default event listener and the default short values if the table is currently short.
@@ -294,6 +296,7 @@ const resetTable = () => {
     setDefaultShortValues(true)
 }
 
+
 /**
  * Set a row to active by changing his background to grey and his text to white.
  * @param {*} userID the id of the user needed for finding the new active row.
@@ -304,6 +307,7 @@ const setActiveRow = (userID) => {
     activeRow.className += " bg-secondary text-light";
   activeUserID = userID;
 }
+
 
 /**
  * set the active row to inactive and remove his background and text color.
@@ -316,6 +320,28 @@ const removeActiveRow = () => {
   }
   activeUserID = "";
 }
+
+
+/**
+ * check if a user respect the current filter.
+ * @param {*} user the user to check if he is correct following the filter criterias.
+ * @returns true if the user is correct, else false.
+ */
+ const isUserRespectingFilter = (user) => {
+  if (filter.role !== '') {
+    if (filter.role !== user.role)
+      return false;
+  }
+  if (filter.info !== '') {
+    let info = filter.info.toLowerCase();
+    let postcode = "" + user.address.postcode;
+    if (!user.firstName.toLowerCase().includes(info) && !user.lastName.toLowerCase().includes(info) 
+        && !(user.address.commune.toLowerCase() === info) && !(postcode === info))
+      return false;
+  }
+  return true;
+}
+
 
 /**
  * translate a english user's role into french.
@@ -374,6 +400,7 @@ const generateUsersPage = () => {
         <div id="snackbar"></div>`;
 }
 
+
 const generateTable = () => {
   let res = `
   <div id="tableDiv">
@@ -396,6 +423,7 @@ const generateTable = () => {
   </div>`;
   return res;
 }
+
 
 /**
  * generate all the rows needed and 2 messages informing the number of user waiting or accepted.
@@ -430,6 +458,7 @@ const getAllUsersRows = () => {
   return res;
 }
 
+
 /**
  * generate a tr element containing the information of a user.
  * if the filters doesn't correspond to the user info then returning a empty string.
@@ -437,30 +466,21 @@ const getAllUsersRows = () => {
  * @returns a tr element containing the information of the user if they correspond to the filters.
  */
 const generateRow = (user) => {
-  //filter
-  if (filter.role !== '') {
-    if (filter.role !== user.role)
-      return ``;
-  }
-  if (filter.info !== '') {
-    let info = filter.info.toLowerCase();
-    let postcode = "" + user.address.postcode;
-    if (!user.firstName.toLowerCase().includes(info) && !user.lastName.toLowerCase().includes(info) 
-        && !(user.address.commune.toLowerCase() === info) && !(postcode === info))
-      return ``;
-  }
+  if (!isUserRespectingFilter(user))
+    return "";
 
   return ` 
     <tr class="toBeClicked" userId="` + user.id + `">
-        <th><p>` + user.lastName + `</p></th>
-        <th><p>` + user.firstName + `</p></th>
-        <th class="notNeeded"><p>` + user.username + `</p></th>
-        <th class="notNeeded"><p>` + user.email + `</p></th>
-        <th class="notNeeded"><p>` + user.purchasedFurnitureNbr + `</p></th>
-        <th class="notNeeded"><p>` + user.soldFurnitureNbr + `</p></th>
-        <th class="notNeeded"><p>` + translateRoleToFrench(user.role) + `</p></th>
+      <th><p>` + user.lastName + `</p></th>
+      <th><p>` + user.firstName + `</p></th>
+      <th class="notNeeded"><p>` + user.username + `</p></th>
+      <th class="notNeeded"><p>` + user.email + `</p></th>
+      <th class="notNeeded"><p>` + user.purchasedFurnitureNbr + `</p></th>
+      <th class="notNeeded"><p>` + user.soldFurnitureNbr + `</p></th>
+      <th class="notNeeded"><p>` + translateRoleToFrench(user.role) + `</p></th>
    </tr>`;
 }
+
 
 const generateUserCard = (userDetail) => {
   let status;
@@ -613,116 +633,89 @@ const generateUserCard = (userDetail) => {
 /********************  Backend fetch  **********************/
 
 const clientDetail = async (id) => {
-  let userDetails;
-  await fetch(`/users/detail/${id}`, {
+  let response = await fetch(`/users/detail/${id}`, {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error( "Error code : " + response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    userDetails = data;
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
-  return userDetails;
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  return response.json();
 }
+
 
 const getWaitingUserList = async () => {
-  let ret = [];
-  await fetch("/users/detail/waiting", {
+  let response = await fetch("/users/detail/waiting", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error( "Error code : " + response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    ret = data.users;
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
   });
-  return ret;
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  let jsonResponse = await response.json();
+  return jsonResponse.users;
 }
 
+
 const getConfirmedUsersList = async () => {
-  let ret = [];
-  await fetch("/users/detail/confirmed", {
+  let response = await fetch("/users/detail/confirmed", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Error code : " + response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    ret = data.users;
-  }).catch((err) => {
-    console.error(err);
   });
-  return ret;
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  let jsonResponse = await response.json();
+  return jsonResponse.users;
 }
 
 
 const validation = async (e) => {
-  let value = e.target.id;
-  let val;
-  if (value === "refuse") {
-    val = {value: false,}
-  } else if (value=="accept") {
-    val = {value: true,}
-  }
-  let ret = [];
-  await fetch(`/users/validate/${userDetail.id}`, {
+  let val = e.target.id === "accept" ? {value: true} : {value: false};
+  let response = await fetch(`/users/validate/${userDetail.id}`, {
     method: "PATCH",
     body:JSON.stringify(val),
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Error code : " + response.status + " : " + response.statusText);
-    }
-    return response.json();
-  }).then((data) => {
-    ret = data;
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´<\n" + err);
-    displayErrorMessage("errorDiv", err);
-    return;
   });
-  return ret;
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage("errorDiv", err);
+  }
+  return response.json();
 }
 
 const onTakeoverClick = async (e) => {
   e.preventDefault();
-  let btn = e.target;
-  let userId = btn.getAttribute("user-id");
+  let userId = e.target.getAttribute("user-id");
   let response = await fetch(`/users/takeover/${userId}`,{
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
     },
   });
-  if(!response.ok) {
-    let err = new Error( "Error code : " + response.status + " : " + response.statusText);
+  if (!response.ok) {
+    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
     displayErrorMessage("errorDiv", err);
-    return;
   }
   let data = await response.json();
 

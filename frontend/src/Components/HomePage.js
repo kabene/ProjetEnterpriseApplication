@@ -20,7 +20,6 @@ const HomePage = async () => {
 	page.innerHTML = errorDiv + generateLoadingAnimation();
 	furnitureTypeList = await getFurnitureTypeList();
 	getVisiblePhotos();
-	console.log(visiblePhotos);
 
 	page.innerHTML = errorDiv + getPageHTML();
 	gdpr(page);
@@ -36,11 +35,11 @@ const HomePage = async () => {
 const onClickApplyFilter = (e) => {
   e.preventDefault();
   filterType = document.querySelector("#furnitureTypeFilter").value;
-  page.innerHTML = getPageHTML();
+	page.innerHTML = errorDiv + getPageHTML();
   addAllEventListeners();
-  document.querySelector("[value='" + filterType + "']").setAttribute(
-      'selected', 'true');
+  document.querySelector("[value='" + filterType + "']").setAttribute('selected', 'true');
 }
+
 
 /**
  * Called when clicking on the cancel filter button.
@@ -48,25 +47,24 @@ const onClickApplyFilter = (e) => {
  */
 const onClickClearFilter = (e) => {
   e.preventDefault();
-  if (filterType === "") {
+  if (filterType === "")
     return;
-  }
   filterType = "";
-  page.innerHTML = getPageHTML();
+  page.innerHTML = errorDiv + getPageHTML();
   addAllEventListeners();
 }
+
 
 /**
  * Add all the event listeners required in the document.
  */
 const addAllEventListeners = () => {
-  document.querySelector("#apply-filters-btn").addEventListener("click",
-      onClickApplyFilter);
-  document.querySelector("#clear-filters-btn").addEventListener("click",
-      onClickClearFilter);
+  document.querySelector("#apply-filters-btn").addEventListener("click", onClickApplyFilter);
+  document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
 }
 
 /********************  HTML generation  **********************/
+
 
 const getPageHTML = () => {
   return `
@@ -77,11 +75,12 @@ const getPageHTML = () => {
     ` + generateFilterHTML() + `
   </div>
   <div class="row mx-0 pt-5">
-    <div class="col-2 col-lg-4"></div>
+  	<div class="col-2 col-lg-4"></div>
     <div class="col-8 col-lg-4">` + getCarousel() + `</div>
     <div class="col-2 col-lg-4"></div>
   </div>`;
 }
+
 
 const generateFilterHTML = () => {
   return `
@@ -92,6 +91,7 @@ const generateFilterHTML = () => {
   </form>`;
 }
 
+
 const generateSelectTypeTag = () => {
   let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
   furnitureTypeList.forEach(type => ret += generateOptionTypeTag(type));
@@ -99,9 +99,11 @@ const generateSelectTypeTag = () => {
   return ret;
 }
 
+
 const generateOptionTypeTag = (type) => {
   return `<option value="` + type.typeName + `">` + type.typeName + `</option>`;
 }
+
 
 const getCarousel = () => {
 	if(visiblePhotos){
@@ -128,14 +130,14 @@ const getCarousel = () => {
 
 }
 
+
 const getHTMLCarouselIndicators = () => {
   let ret = `<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
-  for (let i = 1; i < nbrPhotosInCarousel; i++) {
-    ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i
-        + `"></li>`;
-  }
+  for (let i = 1; i < nbrPhotosInCarousel; i++)
+    ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i+ `"></li>`;
   return ret;
 }
+
 
 /**
  * create an html element containing all the modal item required with the current filter and update the number in photo in the carousel.
@@ -149,16 +151,14 @@ const getHTMLVisiblePhotos = () => {
     if (filterType === '' || filterType === photo.furniture.type) {
       if (nbrPhotosInCarousel === 0) {
         ret += `
-			<div class="carousel-item active">
-				<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source
-            + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
-			</div>`;
+          <div class="carousel-item active">
+            <img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+          </div>`;
       } else {
         ret += `
-				<div class="carousel-item">
-					<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source
-            + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
-				</div>`;
+          <div class="carousel-item">
+            <img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+          </div>`;
       }
       nbrPhotosInCarousel++;
     }
@@ -176,6 +176,8 @@ const getVisiblePhotos = async () => {
 	let data = await fetchVisiblePhotos();
 	visiblePhotos = data;
 	page.innerHTML = getPageHTML();
+	gdpr(page);
+	addAllEventListeners();
 }
 
 /********************  Backend fetch  **********************/
@@ -195,13 +197,13 @@ const fetchVisiblePhotos = async () => {
   return response.json();
 }
 
+
 const getFurnitureTypeList = async () => {
   let response = await fetch("/furnitureTypes/", {
     method: "GET",
   });
   if (!response.ok) {
-    const err = "Erreur de fetch\nError code : " + response.status + " : "
-        + response.statusText;
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
     console.error(err);
     displayErrorMessage("errorDiv", err);
   }

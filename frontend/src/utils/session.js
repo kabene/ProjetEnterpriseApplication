@@ -3,9 +3,8 @@ const TAKEOVER_STORE_NAME = "takeover";
 
 const findCurrentUser = () => {
   let res = getTakeoverSessionData();
-  if(!res) {
+  if(!res)
     res = getUserSessionData();
-  }
   return res;
 }
 
@@ -14,23 +13,33 @@ const findCurrentUser = () => {
 const getUserSessionData = () => {
   return getSessionStorageData(USER_STORE_NAME);
 };
+
+
 const setUserSessionData = (user) => {
   setSessionStorageData(user, USER_STORE_NAME);
 };
+
+
 const removeSessionData = () => {
   removeSessionStorageData(USER_STORE_NAME);
 };
+
 
 //takeover
 const getTakeoverSessionData = () => {
   return getSessionStorageData(TAKEOVER_STORE_NAME);
 };
+
+
 const setTakeoverSessionData = (bundle) => {
   setSessionStorageData(bundle, TAKEOVER_STORE_NAME);
 }
+
+
 const removeTakeoverSessionData = () => {
   removeSessionStorageData(TAKEOVER_STORE_NAME);
 }
+
 
 //general (not exported)
 const getSessionStorageData = (storeName) => {
@@ -39,16 +48,17 @@ const getSessionStorageData = (storeName) => {
   return JSON.parse(retrievedBundle);
 }
 
+
 const setSessionStorageData = (bundle, storeName) => {
   const storageValue = JSON.stringify(bundle);
   sessionStorage.setItem(storeName, storageValue);
 }
 
+
 const removeSessionStorageData = (storeName) => {
   sessionStorage.removeItem(storeName);
 }
 
-// localstorage
 
 //GDPR
 const getGDPRLocalData=()=>{
@@ -72,14 +82,18 @@ const getUserLocalData = () => {
   return JSON.parse(retrievedUser);
 };
 
+
 const setUserLocalData = (token) => {
   const storageValue = JSON.stringify(token);
   localStorage.setItem(USER_STORE_NAME, storageValue);
 };
 
+
 const removeLocalData = () => {
   localStorage.removeItem(USER_STORE_NAME);
 };
+
+
 
 export { 
   findCurrentUser,
