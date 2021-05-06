@@ -15,7 +15,7 @@ import {setLayout} from "../utils/render.js";
 const routes = {
   "/": HomePage,
   "/authentication": Authentication,
-  "/furniture": Furniture,
+  "/seeFurniture": Furniture,
   "/users": Users,
   "/visits": Visits,
   "/myVisits": ClientVisit,
