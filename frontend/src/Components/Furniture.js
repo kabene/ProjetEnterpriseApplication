@@ -215,12 +215,11 @@ const generateItemAndModal = (furniture) => {
           <p class="text-center">` + furniture.description + `</p>`
           + getOptionButton(furniture) +
         `</div>`; //TODO: fixer la taille des images
-
   let modal = `
         <div class="modal fade" id="modal__` + furniture.furnitureId + `">
           <div class="modal-dialog modal-xl">
             <div class="modal-content" furniture-id="` + furniture.furnitureId + `">
-            ` + getHTMLEntireCarousel(tabPhotoToRender) + `
+            ` + getHTMLEntireCarousel(furniture.photos) + `
             </div>
           </div>                     
         </div>`;
@@ -287,14 +286,14 @@ const getHTMLCarouselPhotos = (tabPhotoToRender) => {
   tabPhotoToRender.forEach(photo => {
     if (ret === "") {
       ret += `
-      <div class="carousel-item active text-center">
-        <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
-      </div>`;
+        <div class="carousel-item active text-center">
+          <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
+        </div>`;
     } else {
       ret += `
-      <div class="carousel-item text-center">
-        <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
-      </div>`;
+        <div class="carousel-item text-center">
+          <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
+        </div>`;
     }
   });
   return ret;
@@ -375,9 +374,9 @@ const getFurnitureList = async () => {
  * fetch all favourite photos for main list thumbnails
  */
  const getFavs = async () => {
-  let furniture;
-  for (furniture of furnitureList) 
+  mapFurniture.forEach(async (furniture, furnitureId) => {
     await fetchFav(furniture);
+  });
   let loadArea = document.querySelector("#loadArea");
   loadArea.className = "d-none";
 }
@@ -396,10 +395,10 @@ const fetchFav = async (furniture) => {
   }
 }
 
-const getPhotos = async () => {
-  let furniture;
-  for (furniture of furnitureList)
+const getPhotos = async () => {    
+  mapFurniture.forEach(async (furniture, furnitureId) => {
     await fetchAllPhotos(furniture);
+  });
 }
 
 const fetchAllPhotos = async (furniture) => {
