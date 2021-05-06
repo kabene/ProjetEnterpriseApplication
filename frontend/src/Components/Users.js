@@ -4,6 +4,8 @@ import {Loader} from "@googlemaps/js-api-loader";
 import {RedirectUrl} from "./Router";
 import Navbar from "./Navbar";
 
+const inStorePurchaseUsername = "in-store purchase";
+
 let page = document.querySelector("#page");
 
 let currentUser;
@@ -447,10 +449,12 @@ const getAllUsersRows = () => {
   //generate rows of confirmed users
   rows = ``;
   confirmedUsersList.forEach(user => {
-    let row = generateRow(user);
-    if (row !== ``) {
-      nbrCurrentUserAccepted++;
-      rows += row;
+    if(user.username != inStorePurchaseUsername) {
+      let row = generateRow(user);
+      if (row !== ``) {
+        nbrCurrentUserAccepted++;
+        rows += row;
+      }
     }
   });
   res += "<tr><th colspan = '7' class='msgTable' id='msgTableConfirmed'>" + nbrCurrentUserAccepted + " client(s) inscrit(s)</th></tr>" + rows;

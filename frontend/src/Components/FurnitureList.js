@@ -20,6 +20,9 @@ let currentFurnitureId; //to read only if largeTable === false
 let openTab = "infos";
 let favFetched = false;
 let photosFetchedMap = [];
+
+const inStorePurchaseUsername = "in-store purchase";
+
 const emptyFilter = {
   username: "",
   price: "-1",
@@ -273,6 +276,9 @@ const generateBuyerLink = (furniture) => {
 }
 
 const generateUserLink = (user) => {
+  if(user.username === inStorePurchaseUsername) {
+    return `Vente en magasin`;
+  }
   return `<a href="#" userId="${user.id}" class="userLink">${user.username}</a>`;
 }
 
@@ -1013,14 +1019,20 @@ const generateBuyingDateCardEntry = (furniture) => {
 }
 
 const generateUserCardEntry = (label, id, user) => {
+  let p;
+  if(user.username === inStorePurchaseUsername){
+    p = `<p id="${id}">${generateUserLink(user)}</p>`;
+  }else {
+    p = `<p id="${id}">${generateUserLink(user)} (${user.firstName} ${user.lastName})</p>`;
+  }
+  
   let res = `
   <div class="row text-left">
     <div class="col-md-6">
       <label class="mr-3">${label}</label>
     </div>
     <div class="col-md-6">
-      <p id="${id}">${generateUserLink(
-      user)} (${user.firstName} ${user.lastName})</p>
+      ${p}
     </div>
   </div>`;
   return res;
@@ -1174,14 +1186,19 @@ const generateToSoldForm = () => {
     case "AVAILABLE_FOR_SALE":
       res = `
         <div class="form-group">
-          <label for="buyerUsernameInput">Pseudo de l'acheteur: 
-            <input type="text" id="buyerUsernameInput" class="w-25 mx-3 my-1 form-control" name="buyerUsernameInput"/>
+          <input type="text" id="buyerUsernameInput" class="w-50 form-control" placeholder="Pseudo de l'acheteur" id="buyer-username-input" name="buyerUsernameInput"/>
+        </div>
+        <div class="form-check mb-3">
+          <label class="form-check-label">
+            <input type="checkbox" class="form-check-input" id="in-store-purch-check">Vendu en magasin
           </label>
         </div>
-        <div class="form-group">
-          <label for="specialSalePriceInput">Prix spécial: 
-            <input type="number" id="specialSalePriceInput" class="w-25 mx-3 my-1 form-control" name="specialSalePriceInput" min="0.01" step="0.01"/> €
-          </label>
+        <br/>
+        <div class="input-group mb-2 w-50"> 
+          <input type="number" id="specialSalePriceInput" class="form-control" placeholder="Prix spécial" name="specialSalePriceInput" min="0.01" step="0.01"/>
+          <div class="input-group-append">
+            <span class="input-group-text">€</span>
+          </div>
         </div>`;
       break;
     case "UNDER_OPTION":
@@ -1192,7 +1209,7 @@ const generateToSoldForm = () => {
       break;
     default:
   }
-  return `<div class="form-inline">${res}</div>`;
+  return `<div class="form">${res}</div>`;
 }
 
 const generateTransitionModal = (id, label, triggerColorClass = "primary",
@@ -1382,10 +1399,13 @@ const toSold = async (e, furniture) => {
   let buyerUsername;
   let bundle;
   if (furniture.status === "AVAILABLE_FOR_SALE") {
-    specialSalePrice = e.target.parentElement.parentElement.querySelector(
-        "#specialSalePriceInput").value;
-    buyerUsername = e.target.parentElement.parentElement.querySelector(
-        "#buyerUsernameInput").value;
+    specialSalePrice = e.target.parentElement.parentElement.querySelector("#specialSalePriceInput").value;
+    let buyerInput = e.target.parentElement.parentElement.querySelector("#buyerUsernameInput");
+    if(buyerInput.disabled) {
+      buyerUsername = inStorePurchaseUsername;
+    }else {
+      buyerUsername = buyerInput.value;
+    }
   } else if (furniture.status === "UNDER_OPTION") {
     buyerUsername = furniture.option.user.username;
   }
@@ -1440,6 +1460,17 @@ const loadCard = (furnitureId) => {
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
   placeFilterForm();
+  document.querySelectorAll("#in-store-purch-check").forEach((checkbox) => {
+    checkbox.addEventListener("change", (e) => {
+      let textInput = document.querySelector("#buyerUsernameInput");
+      let checkbox = e.target;
+      if(checkbox.checked){
+        textInput.disabled = true;
+      }else {
+        textInput.disabled = false;
+      }
+    })
+  });
 }
 
 /**
