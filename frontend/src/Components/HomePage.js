@@ -20,7 +20,6 @@ const HomePage = async () => {
 	page.innerHTML = errorDiv + generateLoadingAnimation();
 	furnitureTypeList = await getFurnitureTypeList();
 	getVisiblePhotos();
-	console.log(visiblePhotos);
 
 	page.innerHTML = errorDiv + getPageHTML();
 	gdpr(page);
@@ -38,8 +37,7 @@ const onClickApplyFilter = (e) => {
   filterType = document.querySelector("#furnitureTypeFilter").value;
 	page.innerHTML = errorDiv + getPageHTML();
   addAllEventListeners();
-  document.querySelector("[value='" + filterType + "']").setAttribute(
-      'selected', 'true');
+  document.querySelector("[value='" + filterType + "']").setAttribute('selected', 'true');
 }
 
 
@@ -49,9 +47,8 @@ const onClickApplyFilter = (e) => {
  */
 const onClickClearFilter = (e) => {
   e.preventDefault();
-  if (filterType === "") {
+  if (filterType === "")
     return;
-  }
   filterType = "";
   page.innerHTML = errorDiv + getPageHTML();
   addAllEventListeners();
@@ -62,10 +59,8 @@ const onClickClearFilter = (e) => {
  * Add all the event listeners required in the document.
  */
 const addAllEventListeners = () => {
-  document.querySelector("#apply-filters-btn").addEventListener("click",
-      onClickApplyFilter);
-  document.querySelector("#clear-filters-btn").addEventListener("click",
-      onClickClearFilter);
+  document.querySelector("#apply-filters-btn").addEventListener("click", onClickApplyFilter);
+  document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
 }
 
 /********************  HTML generation  **********************/
