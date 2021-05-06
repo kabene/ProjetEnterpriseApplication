@@ -73,7 +73,7 @@ const setDefaultLargeValues = (displayNotNeeded) => {
   removeActiveRow();
   //change the class of divs from small to large (if are small)
   let tableContainer = document.querySelector('#shortTableContainer');
-  if (tableContainer/* !== null*/)
+  if (tableContainer)
     tableContainer.id = "largeTableContainer";
   let table = document.querySelector('#shortTable');
   if (table)
@@ -112,7 +112,7 @@ const setDefaultShortValues = (changeTableContainer) => {
  * display the short elements if the table is large, else just refresh the user card.
  */
 const onRowClick = (e) => {
-  if (document.querySelector('#shortTableContainer') == null)
+  if (!document.querySelector('#shortTableContainer'))
     displayShortElements();
   onUserClickHandler(e);
 }
