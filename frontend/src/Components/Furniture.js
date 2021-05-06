@@ -122,7 +122,7 @@ const updateModal = (tabPhotoToRender, furniture) => {
   let query = `.modal-content[furniture-id='${furniture.furnitureId}']`;
   let div = document.querySelector(query);
   if (div)
-    div.innerHTML = getHTMLEntireCarousel(tabPhotoToRender);
+    div.innerHTML = getHTMLEntireCarousel(tabPhotoToRender, furniture);
 }
 
 /**
@@ -219,7 +219,7 @@ const generateItemAndModal = (furniture) => {
         <div class="modal fade" id="modal__` + furniture.furnitureId + `">
           <div class="modal-dialog modal-xl">
             <div class="modal-content" furniture-id="` + furniture.furnitureId + `">
-            ` + getHTMLEntireCarousel(furniture.photos) + `
+            ` + getHTMLEntireCarousel(furniture.photos, furniture) + `
             </div>
           </div>                     
         </div>`;
@@ -229,25 +229,26 @@ const generateItemAndModal = (furniture) => {
 
 
 /**
- * Generates the html for one carousel
- * @param {Array<photo>} tabPhotoToRender table of all the photos to render in the carousel
- * @returns html
+ * Create a carousel html for a piece of furniture
+ * @param {*} tabPhotoToRender table of all the photos to render in the carousel
+ * @param {*} furniture the furniture
+ * @returns 
  */
-const getHTMLEntireCarousel = (tabPhotoToRender) => {
+const getHTMLEntireCarousel = (tabPhotoToRender, furniture) => {
   if(tabPhotoToRender.length === 0)
     return generateLoadingAnimation();
   return `
   <div class="row mx-auto pt-5">
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <div id="carousel-${furniture.furnitureId}" class="carousel slide" data-ride="carousel">
       <ol class="carousel-indicators bg-secondary">` + getHTMLCarouselIndicators(tabPhotoToRender.length) + `</ol>
       <div class="carousel-inner">
       ` + getHTMLCarouselPhotos(tabPhotoToRender) + `
       </div>
-      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+      <a class="carousel-control-prev" href="#carousel-${furniture.furnitureId}" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>
         </a>
-      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+      <a class="carousel-control-next" href="#carousel-${furniture.furnitureId}" role="button" data-slide="next">
         <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
       </a>
