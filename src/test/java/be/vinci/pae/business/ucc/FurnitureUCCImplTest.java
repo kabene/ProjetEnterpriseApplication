@@ -777,7 +777,7 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.toSold : nominal scenario with special sale price, "
       + "should return FurnitureDTO")
   @ParameterizedTest
-  @EnumSource(value = FurnitureStatus.class, names = {"AVAILABLE_FOR_SALE"})
+  @EnumSource(value = FurnitureStatus.class, names = {"AVAILABLE_FOR_SALE", "IN_RESTORATION"})
   void test_toSold_nominalWithSpecialSale_shouldReturnDTO(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
     Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
@@ -817,6 +817,31 @@ class FurnitureUCCImplTest {
             furnitureUCC
                 .toSold(defaultFurnitureId1, defaultBuyerUsername1, defaultSpecialSalePrice),
         "A valid call of toSold() with specialSalePrice should "
+            + "return the corresponding dto");
+
+    InOrder inOrder = Mockito.inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockUserDAO).findByUsername(defaultBuyerUsername1);
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST FurnitureUCC.toSold : furniture in restoration without special sale price, "
+      + "should throw ConflictException")
+  @ParameterizedTest
+  @EnumSource(value = FurnitureStatus.class, names = {"IN_RESTORATION"})
+  void test_toSold_inRestorationWithoutSpecialSale_shouldThrowConflict(FurnitureStatus status) {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
+    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
+    Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
+    String role = "antique_dealer";
+    Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
+    assertThrows(ConflictException.class, () ->
+            furnitureUCC
+                .toSold(defaultFurnitureId1, defaultBuyerUsername1, null),
+        "A valid call of toSold() without specialSalePrice should "
             + "return the corresponding dto");
 
     InOrder inOrder = Mockito.inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1);
