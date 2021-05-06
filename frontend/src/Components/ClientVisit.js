@@ -518,17 +518,14 @@ const getFurnitureRequestPhotos = async (furniture) => {
         Authorization: currentUser.token,
       }
     });
-    if (!response.ok) {
-      const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
-      console.error(err);
-      displayErrorMessage(err, errorDiv);
+    if (response.ok) {
+      let photoArray = await response.json()
+      let thumbnail = notFoundPhoto;
+      if (photoArray.length >= 1)
+        thumbnail = photoArray[0].source;
+      furniture.thumbnail = thumbnail;
+      updateThumbnail(furniture, thumbnail);
     }
-    let photoArray = await response.json()
-    let thumbnail = notFoundPhoto;
-    if (photoArray.length >= 1)
-      thumbnail = photoArray[0].source;
-    furniture.thumbnail = thumbnail;
-    updateThumbnail(furniture, thumbnail);
   }
 }
 
