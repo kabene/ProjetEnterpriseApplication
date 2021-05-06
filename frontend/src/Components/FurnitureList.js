@@ -20,6 +20,9 @@ let currentFurnitureId; //to read only if largeTable === false
 let openTab = "infos";
 let favFetched = false;
 let photosFetchedMap = [];
+
+const inStorePurchaseUsername = "in-store purchase";
+
 const emptyFilter = {
   username: "",
   price: "-1",
@@ -273,6 +276,9 @@ const generateBuyerLink = (furniture) => {
 }
 
 const generateUserLink = (user) => {
+  if(user.username === inStorePurchaseUsername) {
+    return `Vente en magasin`;
+  }
   return `<a href="#" userId="${user.id}" class="userLink">${user.username}</a>`;
 }
 
@@ -1013,14 +1019,20 @@ const generateBuyingDateCardEntry = (furniture) => {
 }
 
 const generateUserCardEntry = (label, id, user) => {
+  let p;
+  if(user.username === inStorePurchaseUsername){
+    p = `<p id="${id}">${generateUserLink(user)}</p>`;
+  }else {
+    p = `<p id="${id}">${generateUserLink(user)} (${user.firstName} ${user.lastName})</p>`;
+  }
+  
   let res = `
   <div class="row text-left">
     <div class="col-md-6">
       <label class="mr-3">${label}</label>
     </div>
     <div class="col-md-6">
-      <p id="${id}">${generateUserLink(
-      user)} (${user.firstName} ${user.lastName})</p>
+      ${p}
     </div>
   </div>`;
   return res;
