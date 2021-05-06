@@ -5,11 +5,12 @@ import {findCurrentUser} from "../utils/session.js";
 import {
   displayErrorMessage,
   generateLoadingAnimation,
+  displayImgs,
+  gdpr,
 } from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 let mainPage;
-let furnitureList;
 let typeList;
 let furnitureMap = [];
 let timeouts = [];
@@ -17,6 +18,8 @@ let currentUser;
 let isDisplayingLargeTable; //state of display (true = large list, false = furniture card)
 let currentFurnitureId; //to read only if largeTable === false
 let openTab = "infos";
+let favFetched = false;
+let photosFetchedMap = [];
 const emptyFilter = {
   username: "",
   price: "-1",
@@ -26,7 +29,7 @@ let activeFilters = {...emptyFilter};
 
 const FurnitureList = async (id) => {
   currentUser = findCurrentUser();
-
+  gdpr(page);
   let pageHTML = `
   <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
@@ -47,7 +50,7 @@ const generateLargeTablePage = () => {
   isDisplayingLargeTable = true;
   let pageHTML = generatePageHtml();
   mainPage.innerHTML = pageHTML;
-
+  getFavs();
   placeFilterForm();
   document.querySelectorAll(".toBeClicked").forEach(
       element => element.addEventListener("click", displayShortElements));
@@ -73,7 +76,7 @@ const findFurnitureList = async () => {
     }
     return response.json();
   }).then((data) => {
-    furnitureList = data;
+    let furnitureList = data;
     furnitureList.forEach(furniture => {
       furnitureMap[furniture.furnitureId] = furniture;
     });
@@ -196,16 +199,10 @@ const generatePageHtml = (largeTable = true) => {
 
 const generateAllRows = (notNeededClassName) => {
   let res = "";
-  furnitureList.forEach(furniture => {
-    if (!furnitureMap[furniture.furnitureId]) {
-      furnitureMap[furniture.furnitureId] = furniture;
-    } else if (furniture !== furnitureMap[furniture.furnitureId]) {
-      furniture = furnitureMap[furniture.furnitureId];
-    }
+  furnitureMap.forEach(furniture => {
     if (respectsAllActiveFilters(furniture)) {
       res += generateRow(furniture, notNeededClassName);
     }
-    furnitureMap[furniture.furnitureId] = furniture;
   });
   return res;
 }
@@ -223,17 +220,14 @@ const generateRow = (furniture, notNeededClassName) => {
   }
   let res = `
     <tr class="toBeClicked" furnitureId="${furniture.furnitureId}">
-      <th><div id="thumbnail" class="${thumbnailClass}">${generateFavouritePhotoImgTag(
-      furniture)}<div></th>
+      <th><div id="thumbnail" class="${thumbnailClass}">${generateFavouritePhotoImgTag(furniture)}<div></th>
       <th class="align-middle"><p>${furniture.description}</p></th>
       <th class="${notNeededClassName}"><p>${furniture.type}</p></th>
       <th class="tableStatus text-center align-middle" status="${furniture.status}">${statusHtml}</th>
       <th class="${notNeededClassName}"><p>${generateSellerLink(furniture)}</p></th>
       <th class="${notNeededClassName}"><p>${generateBuyerLink(furniture)}</p></th>
-      <th class="${notNeededClassName}"><p>${generateSellingPriceTableElement(
-      furniture)}</p></th>
-      <th class="${notNeededClassName}"><p>${generateSpecialPriceTableElement(
-      furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateSellingPriceTableElement(furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateSpecialPriceTableElement(furniture)}</p></th>
     </tr>`;
   return res;
 }
@@ -245,9 +239,9 @@ const generateRow = (furniture, notNeededClassName) => {
  */
 const generateFavouritePhotoImgTag = (furniture) => {
   if (!furniture.favouritePhoto) {
-    return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
+    return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" photo-id=${furniture.favouritePhotoId} furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
   }
-  return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" furnitureId="${furniture.furnitureId}" id="list-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
+  return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" photo-id=${furniture.favouritePhotoId} furnitureId="${furniture.furnitureId}" id="list-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
 }
 
 /**
@@ -420,7 +414,7 @@ const displayShortElements = async (e) => {
   }
   if (furniture) {
     currentFurnitureId = id;
-    generateCard(furniture);
+    loadCard(currentFurnitureId);
     document.querySelectorAll(".userLink").forEach(
         (link) => link.addEventListener("click", onUserLinkClicked));
     isDisplayingLargeTable = false;
@@ -466,6 +460,7 @@ const generateCard = (furniture) => {
   let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
   let cardHTML = generateCardHTML(furniture);
   furnitureCardDiv.innerHTML = cardHTML;
+  fetchAllPhotos(furniture);
   addTransitionBtnListeners(furniture);
   document.querySelectorAll(".favRadio").forEach((element) => {
     element.addEventListener("click", onFavRadioSelected);
@@ -536,7 +531,10 @@ const verifyDifferentInfo = () => {
 }
 
 const changeContainerId = () => {
-  document.querySelector('#largeTableContainer').id = "shortTableContainer";
+  let tableContainer = document.querySelector('#largeTableContainer')
+  if(tableContainer){
+    tableContainer.id = "shortTableContainer";
+  }
 }
 
 const generateCardHTML = (furniture) => {
@@ -1430,6 +1428,7 @@ const loadCard = (furnitureId) => {
   currentFurnitureId = furnitureId;
   mainPage.innerHTML = generatePageHtml(false);
   generateCard(furnitureMap[furnitureId]);
+  getFavs().then(() => fetchAllPhotos(furnitureMap[furnitureId]));
   document.querySelectorAll(".toBeClicked").forEach(
       (element) => {
         let elementFurnId = element.getAttribute("furnitureid");
@@ -1617,6 +1616,70 @@ const displayNoResultMsg = () => {
   const noResultHTML = "";
   if (tbody.innerHTML === noResultHTML) {
     tbody.innerHTML = `<th colspan="8"><p>Aucun résultat</p></th>`;
+  }
+}
+
+/**
+ * fetch all favourite photos for main list thumbnails
+ */
+const getFavs = async () => {
+  if(!favFetched) {
+    let furniture;
+    for(furniture of furnitureMap){
+      if(furniture){
+        await fetchFav(furniture);
+      }
+    }
+    favFetched = true;
+  }
+}
+
+const fetchFav = async (furniture) => {
+  if(!furniture.favouritePhoto){
+    let path = "/photos/favourite/"+furniture.furnitureId;
+    let response = await fetch(path, {
+      method: "GET",
+    });
+    if(response.ok) {
+      let fav = await response.json();
+      updateCacheFav(furniture, fav);
+      displayImgs([fav]);
+      console.log("fav fetched");
+    }
+  }
+}
+
+const fetchAllPhotos = async (furniture) => {
+  if(!photosFetchedMap[furniture.furnitureId]){
+    photosFetchedMap[furniture.furnitureId] = true;
+    if(!furniture.photos || furniture.photos.length === 0) { //no photos -> fetch
+      let path = "/photos/byFurniture/all/"+furniture.furnitureId;
+      let response = await fetch(path, {
+        method: "GET",
+        headers: {
+          Authorization: currentUser.token,
+        }
+      });
+      if(response.ok) {
+        let photoArray = await response.json();
+        updateCachePhotos(furniture, photoArray);
+        refreshDisplay();
+        console.log("photos fetched");
+      }
+    }
+  }
+}
+
+const updateCacheFav = (furniture, photo) => {
+  furnitureMap[photo.furnitureId] = {...furniture, favouritePhoto: photo};
+}
+
+const updateCachePhotos = (furniture, photoArray) => {
+  let furnitureId = furniture.furnitureId;
+  if(!furniture.photos) {
+    furnitureMap[furnitureId] = {...furniture, photos: photoArray}
+  }else {
+    furniture.photos = photoArray
   }
 }
 

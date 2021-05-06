@@ -1,6 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {findCurrentUser} from "../utils/session";
-import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils";
+import {displayErrorMessage, gdpr, generateLoadingAnimation, displayImgs} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
 
@@ -26,6 +26,7 @@ const Visits = async (id) => {
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
+  gdpr(page);
   await findVisitRequestList();
   if (!id) {
     isDisplayingLargeTable = true;
@@ -59,6 +60,7 @@ const loadCard = (requestId) => {
         }
         element.addEventListener("click", displayShortElements)
       });
+  addEventListnerPriceInputDisplay();
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
   let choiceBtn = document.querySelector("#choose-furniture-btn"); //TODO
@@ -204,10 +206,15 @@ const findTransitionMethod = (btnId, request) => {
  * Then, adds all necessary event listeners.
  * @param {*} request
  */
-const generateCard = (request) => {
+const generateCard = async (request) => {
   let requestCardDiv = document.querySelector("#RequestCardDiv");
   let cardHTML = generateCardHTML(request);
   requestCardDiv.innerHTML = cardHTML;
+  for (const furniture of request.furnitureList) {
+    if (!furniture.favouritePhoto) {
+      await getImage(furniture);
+    }
+  }
   //event listeners
   addTransitionBtnListeners(request);
   document.querySelectorAll(".favRadio").forEach((element) => {
@@ -384,7 +391,7 @@ const generateCardHTML = (request) => {
             
             </div>       
             <div class="tab-pane fade ${furnitureTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-              ${generatePhotoList(request)}
+              ${generateFurnitureList(request)}
             </div>
             ${generateButtonRow(request)}
           </div>
@@ -396,37 +403,55 @@ const generateCardHTML = (request) => {
   return res;
 }
 
-const generatePhotoList = (request) => {
+const generateFurnitureList = (request) => {
   let photos = "";
-  request.furnitureList.forEach(furniture => {
-    let fav = furniture.favouritePhoto;
-    let favPhoto;
-    if (!fav) {
-      favPhoto = notFoundPhoto;
-    } else {
-      favPhoto = fav.source;
-    }
 
+  request.furnitureList.forEach(furniture => {
+    let photoId = furniture.favouritePhotoId;
+    let src = "none";
+    if (!furniture.favouritePhotoId) {
+      src = notFoundPhoto;
+    }
+    if (furniture.favouritePhoto) {
+      src = furniture.favouritePhoto.source;
+    }
     photos += `
-    <div class="p-1 w-50 container photo-list-container" request-id="${request.requestId}">
+    <div class="p-1 w-50 container photo-list-container mx-0 border-bottom" photoId=${photoId}>
       <div class="row px-0">
         <div class="col-6">
-          <img class="img-fluid" src="${favPhoto}" alt="photo id:${fav.photoId}"/>
+          <img class="img-fluid" src="${src}" photo-id="${photoId}" alt="photo id:${photoId}"/>
         </div>
         ${generateRadioBtns(request, furniture)}
       </div>
     </div>`;
   });
-
   let res = `
   <form>
     <input id="originalFav" type="hidden" request-id="${request.requestId}"/>
-    <div class="form-check d-flex flex-lg-fill flex-row">
+    <div class="form-check d-flex flex-lg-fill flex-column">
       ${photos}
     </div>
     ${generateChooseFurnitureBtn(request)}
   </form>`;
   return res;
+}
+
+const addEventListnerPriceInputDisplay = () => {
+ document.querySelectorAll('.form-check-input').forEach((radio) => {
+        radio.addEventListener('change', (e) => {
+          let radio = e.target;
+          let furnitureId = radio.getAttribute("furniture-id");
+          let query = `.inputPrice[furniture-id='${furnitureId}']`;
+          let priceInput = document.querySelector(query);
+          if (radio.id==="AcceptFurniture" && radio.checked) {
+            priceInput.className = "mx-3 inputPrice";
+            priceInput.required=true;
+          } else {
+            priceInput.className = "mx-3 inputPrice d-none";
+            priceInput.required=false;
+          }
+        });
+      });
 }
 
 const generateRadioBtns = (request, furniture) => {
@@ -435,16 +460,19 @@ const generateRadioBtns = (request, furniture) => {
       === "REQUESTED_FOR_VISIT") {
     res =
         `<div class="text-left col-6 furniture-choices">
-    <div class="form-check">
-      <label class="form-check-label">
-        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/>
-       <span class="text-success">Convient</span>
+    <div class="form-check mb-1">
+      <label class="form-check-label priceLabel ">
+      <div class="d-flex">
+        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/> 
+        <span class="text-success flex-grow-1">Convient</span>
+        <input type="number" class="mx-3 inputPrice d-none" placeholder="Prix d'achat"  furniture-id="${furniture.furnitureId}" step="0.1" min="0.1"/>
+         </div>
       </label>
     </div>
     <div class="form-check"> 
-      <label class="form-check-label">
+      <label class="form-check-label priceLabel">
         <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="RefuseFurniture"/>
-        <span class="text-danger">Ne convient pas</span>
+        <span class="text-danger flex-grow-1">Ne convient pas</span>
       </label>
     </div>
   </div>`
@@ -481,50 +509,6 @@ const onChooseFurnitureBtnClick = async (e) => {
   }
 }
 
-const acceptFurniture = async (furnitureId) => {
-  try {
-    let result = await fetch("/furniture/accepted/" + furnitureId, {
-      method: "PATCH",
-      headers: {
-        "Authorization": currentUser.token,
-      },
-    });
-    if (!result.ok) {
-      throw new Error(result.status + " : " + result.statusText);
-    } else {
-      let data = await result.json();
-      let index = requestMap[data.requestId].furnitureList.findIndex(
-          furniture => furniture.furnitureId === data.furnitureId);
-      requestMap[data.requestId].furnitureList[index] = data;
-      loadCard(data.requestId);
-    }
-  } catch (err) {
-    displayErrorMessage("errorDiv", err);
-  }
-}
-
-const refuseFurniture = async (furnitureId) => {
-  try {
-    let result = await fetch("/furniture/refused/" + furnitureId, {
-      method: "PATCH",
-      headers: {
-        "Authorization": currentUser.token,
-      },
-    });
-    if (!result.ok) {
-      throw new Error(result.status + " : " + result.statusText
-      );
-    } else {
-      let data = await result.json();
-      let index = requestMap[data.requestId].furnitureList.findIndex(
-          furniture => furniture.furnitureId === data.furnitureId);
-      requestMap[data.requestId].furnitureList[index] = data;
-      loadCard(data.requestId);
-    }
-  } catch (err) {
-    displayErrorMessage("errorDiv", err);
-  }
-}
 
 const verifyValidChoices = (e) => {
   let matchesDiv = document.querySelectorAll(".furniture-choices")
@@ -663,7 +647,10 @@ const generatePageHtml = (largeTable = true) => {
             <th class="align-middle">Client</th>
             <th class="${notNeededClassName}">Adresse</th>
             <th class="align-middle">Date de la demande</th>
-            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend("rouge","danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend("vert","success")}: La demande de visite est acceptée.</div></i></th>
+            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend(
+      "rouge",
+      "danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend(
+      "vert", "success")}: La demande de visite est acceptée.</div></i></th>
           </tr>
         </thead>
         <tbody>
@@ -932,6 +919,96 @@ async function findVisitRequestList() {
     console.log("Erreur de fetch !! :´\n" + err);
     displayErrorMessage("errorDiv", err);
   });
+}
+
+/**
+ *
+ * @returns {Promise<any>}
+ */
+async function getImage(furniture) {
+
+  return fetch("/photos/favourite/" + furniture.furnitureId, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      if (response.status === 404) {
+        return;
+      }
+      throw new Error(
+          response.status + " : " + response.statusText
+      );
+    }
+    return response.json();
+  }).then((data) => {
+    //cache
+    updateFavCache(data, furniture);
+    if (data) {
+      displayImgs([data]);
+    }
+  }).catch((err) => {
+    displayErrorMessage("errorDiv", err);
+  });
+}
+
+
+const acceptFurniture = async (furnitureId) => {
+  let query = `.inputPrice[furniture-id='${furnitureId}']`;
+  let priceInput=document.querySelector(query);
+  if(!priceInput && priceInput.value !==0)return;
+  let bundle={purchasePrice: priceInput.value}
+  try {
+    let result = await fetch("/furniture/accepted/" + furnitureId, {
+      method: "PATCH",
+      headers: {
+        "Authorization": currentUser.token,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(bundle)
+    });
+    if (!result.ok) {
+      throw new Error(result.status + " : " + result.statusText);
+    } else {
+      let data = await result.json();
+      let index = requestMap[data.requestId].furnitureList.findIndex(
+          furniture => furniture.furnitureId === data.furnitureId);
+      requestMap[data.requestId].furnitureList[index] = data;
+      loadCard(data.requestId);
+    }
+  } catch (err) {
+    displayErrorMessage("errorDiv", err);
+  }
+}
+
+const refuseFurniture = async (furnitureId) => {
+  try {
+    let result = await fetch("/furniture/refused/" + furnitureId, {
+      method: "PATCH",
+      headers: {
+        "Authorization": currentUser.token,
+      },
+    });
+    if (!result.ok) {
+      throw new Error(result.status + " : " + result.statusText
+      );
+    } else {
+      let data = await result.json();
+      let index = requestMap[data.requestId].furnitureList.findIndex(
+          furniture => furniture.furnitureId === data.furnitureId);
+      requestMap[data.requestId].furnitureList[index] = data;
+      loadCard(data.requestId);
+    }
+  } catch (err) {
+    displayErrorMessage("errorDiv", err);
+  }
+}
+
+const updateFavCache = (photo, furniture) => {
+  let furnitureList = requestMap[furniture.requestId].furnitureList;
+  let index = furnitureList.indexOf(furniture);
+  furnitureList[index] = {...furniture, favouritePhoto: photo};
 }
 
 export default Visits;

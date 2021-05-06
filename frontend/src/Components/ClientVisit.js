@@ -1,6 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {getUserSessionData} from "../utils/session";
-import {removeTimeouts, generateLoadingAnimation, displayErrorMessage} from "../utils/utils";
+import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr, displayImgs} from "../utils/utils";
 
 let page = document.querySelector("#page");
 let currentUser;
@@ -27,6 +27,7 @@ const VisitRequest = async () => {
 
     setDefaultLargeValues(true);
     setDefaultEventListener();
+    gdpr(page);
 }
 
 
@@ -132,17 +133,19 @@ const displayShortElements = () => {
 /**
  * change the active row and display the user card needed.
  */
-const onUserClickHandler = (e) => {
+const onUserClickHandler = async (e) => {
   removeActiveRow();
+  
   //get the tr element
   let element = e.target;
   while (!element.className.includes("requestTableRow"))
       element = element.parentElement;
   setActiveRow(element.getAttribute("requestId"));
 
-  displayRequestCardById(element.attributes["requestId"].value);
+  let requestId = element.attributes["requestId"].value;
+  await displayRequestCardById(requestId);
+  getAllRequestPhotos(parseInt(requestId));
 }
-
 
 
 /**
@@ -156,6 +159,13 @@ const displayRequestCardById = async (requestId) => {
     requestCardDiv.innerHTML = generateRequestCard(mapRequests.get(parseInt(requestId)));
 }
 
+const updateThumbnail = (furniture, thumbnail) => {
+  let furnitureId = furniture.furnitureId;
+  let query = `img[furniture-id='${furnitureId}']`;
+  document.querySelectorAll(query).forEach((img) => {
+    img.src=thumbnail;
+  });
+}
 
 /**
  * Set a row to active by changing his background to grey and his text to white.
@@ -320,7 +330,7 @@ const generateRequestFurnitureCard = (request) => {
  */
 const generatePhotoList = (request) => {
   let photoList = "";
-  request.furnitureList.forEach(furniture => photoList += generateSinglePhotoCaintainer(furniture));
+  request.furnitureList.forEach(furniture => photoList += generateSinglePhotoContainer(furniture));
   return photoList;
 }
 
@@ -330,7 +340,7 @@ const generatePhotoList = (request) => {
  * @param {*} furniture the furniture containing the favourite photo.
  * @returns a container having the favourite photo of the furniture and his status.
  */
-const generateSinglePhotoCaintainer = (furniture) => {
+const generateSinglePhotoContainer = (furniture) => {
   return `
   <div class="p-1 w-50 container photo-list-container"">
     <div class="row px-0">
@@ -466,6 +476,39 @@ const getUserRequestsForVisit = async () => {
     displayErrorMessage(err, errorDiv);
   }
   return response.json();
+}
+
+const getAllRequestPhotos = async (requestId) => {
+  let request = mapRequests.get(requestId);
+  let furniture;
+  for(furniture of request.furnitureList) {
+    await getFurnitureRequestPhotos(furniture);
+  }
+}
+
+const getFurnitureRequestPhotos = async (furniture) => {
+  if(!furniture.hasFetchedPhotos) {
+    furniture.hasFetchedPhotos = true;
+    let path = "/photos/byFurniture/request/"+furniture.furnitureId;
+    let response = await fetch(path, {
+      method: "GET",
+      headers: {
+        Authorization: currentUser.token,
+      }
+    });
+    if (response.ok) {
+      let photoArray = await response.json()
+      let thumbnail = notFoundPhoto;
+      if (photoArray.length >= 1) {
+        thumbnail = photoArray[0].source;
+      }
+      furniture.thumbnail = thumbnail;
+      updateThumbnail(furniture, thumbnail);
+      console.log("fetch photo success")
+    } else {
+      console.log("fetch photo fail")
+    }
+  }
 }
 
 export default VisitRequest;

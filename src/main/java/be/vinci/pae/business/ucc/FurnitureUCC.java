@@ -24,9 +24,10 @@ public interface FurnitureUCC {
    * Sets the status of the piece of furniture to ACCEPTED.
    *
    * @param furnitureId : the furniture id
+   * @param purchasePrice : the buying price
    * @return modified resource as a FurnitureDTO
    */
-  FurnitureDTO toAccepted(int furnitureId);
+  FurnitureDTO toAccepted(int furnitureId, double purchasePrice);
 
   /**
    * Sets the status of the piece of furniture to REFUSED.
