@@ -133,10 +133,8 @@ const getCarousel = () => {
 
 const getHTMLCarouselIndicators = () => {
   let ret = `<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>`;
-  for (let i = 1; i < nbrPhotosInCarousel; i++) {
-    ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i
-        + `"></li>`;
-  }
+  for (let i = 1; i < nbrPhotosInCarousel; i++)
+    ret += `<li data-target="#carouselExampleIndicators" data-slide-to="` + i+ `"></li>`;
   return ret;
 }
 
@@ -153,14 +151,14 @@ const getHTMLVisiblePhotos = () => {
     if (filterType === '' || filterType === photo.furniture.type) {
       if (nbrPhotosInCarousel === 0) {
         ret += `
-			<div class="carousel-item active">
-				<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
-			</div>`;
+          <div class="carousel-item active">
+            <img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+          </div>`;
       } else {
         ret += `
-				<div class="carousel-item">
-					<img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
-				</div>`;
+          <div class="carousel-item">
+            <img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+          </div>`;
       }
       nbrPhotosInCarousel++;
     }
@@ -178,6 +176,8 @@ const getVisiblePhotos = async () => {
 	let data = await fetchVisiblePhotos();
 	visiblePhotos = data;
 	page.innerHTML = getPageHTML();
+	gdpr(page);
+	addAllEventListeners();
 }
 
 /********************  Backend fetch  **********************/
