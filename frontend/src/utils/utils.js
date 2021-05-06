@@ -106,6 +106,7 @@ const findFurnitureImgSrcFromFilename = (filename, images) => {
   }
   return images[filename].default;
 }
+
 /**
  * show the GDPR span if the user haven't filled it before.
  * In the other case save the data into local storage
