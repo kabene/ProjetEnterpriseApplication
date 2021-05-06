@@ -123,16 +123,16 @@ const onSignUp = async (e) => {
  */
 const validateRegister = () => {
   if(document.querySelector("#usernameRegister").value === "") return false;
-  else if(document.querySelector("#lastnameRegister").value === "") return false;
-  else if(document.querySelector("#firstnameRegister").value === "") return false;
-  else if(document.querySelector("#emailRegister").value === "") return false;
-  else if(document.querySelector("#passwordRegister").value === "") return false;
-  else if(document.querySelector("#role").value === "") return false;
-  else if(document.querySelector("#streetRegister").value === "") return false;
-  else if(document.querySelector("#numRegister").value === "") return false;
-  else if(document.querySelector("#postalRegister").value === "") return false;
-  else if(document.querySelector("#communeRegister").value === "") return false;
-  else if(document.querySelector("#countryRegister").value === "") return false;
+  if(document.querySelector("#lastnameRegister").value === "") return false;
+  if(document.querySelector("#firstnameRegister").value === "") return false;
+  if(document.querySelector("#emailRegister").value === "") return false;
+  if(document.querySelector("#passwordRegister").value === "") return false;
+  if(document.querySelector("#role").value === "") return false;
+  if(document.querySelector("#streetRegister").value === "") return false;
+  if(document.querySelector("#numRegister").value === "") return false;
+  if(document.querySelector("#postalRegister").value === "") return false;
+  if(document.querySelector("#communeRegister").value === "") return false;
+  if(document.querySelector("#countryRegister").value === "") return false;
   return true;
 }
 

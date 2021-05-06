@@ -1,6 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {getUserSessionData} from "../utils/session";
-import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr, displayImgs} from "../utils/utils";
+import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr} from "../utils/utils";
 
 let page = document.querySelector("#page");
 let currentUser;
@@ -16,18 +16,18 @@ const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"
 
 
 const VisitRequest = async () => {
-    currentUser = getUserSessionData();
+  currentUser = getUserSessionData();
 
-    page.innerHTML = errorDiv + generateLoadingAnimation();
+  page.innerHTML = errorDiv + generateLoadingAnimation();
 
-    let listRequests = await getUserRequestsForVisit();
-    mapRequests = new Map(listRequests.map(request => [request.requestId, request]));
+  let listRequests = await getUserRequestsForVisit();
+  mapRequests = new Map(listRequests.map(request => [request.requestId, request]));
     
-    page.innerHTML = errorDiv + generateVisitPage();
+  page.innerHTML = errorDiv + generateVisitPage();
 
-    setDefaultLargeValues(true);
-    setDefaultEventListener();
-    gdpr(page);
+  setDefaultLargeValues(true);
+  setDefaultEventListener();
+  gdpr(page);
 }
 
 
@@ -153,10 +153,13 @@ const onUserClickHandler = async (e) => {
  * @param {*} requestId the request's id 
  */
 const displayRequestCardById = async (requestId) => {
-    let requestCardDiv = document.querySelector("#requestCardDiv");
-    requestCardDiv.innerHTML = generateLoadingAnimation();
-    //generate the user card
-    requestCardDiv.innerHTML = generateRequestCard(mapRequests.get(parseInt(requestId)));
+  let requestCardDiv = document.querySelector("#requestCardDiv");
+  requestCardDiv.innerHTML = generateLoadingAnimation();
+  //generate the user card
+  requestCardDiv.innerHTML = generateRequestCard(mapRequests.get(parseInt(requestId)));
+  //add event listeners for nav item
+  document.querySelector("#home-tab").addEventListener("click", () => displayInfoItemInRequestCard = true);
+  document.querySelector("#profile-tab").addEventListener("click", () => displayInfoItemInRequestCard = false);
 }
 
 const updateThumbnail = (furniture, thumbnail) => {
@@ -250,6 +253,26 @@ const generateRow = (request) => {
  * @returns the whole card for a given request.
  */
 const generateRequestCard = (request) => {
+  let navLinkInfo = {
+    status: "",
+    ariaSelected: "",
+    tabFade: ""
+  }
+  let navLinkFurniture = {
+    status: "",
+    ariaSelected: "",
+    tabFade: ""
+  }
+  if (displayInfoItemInRequestCard) {
+    navLinkInfo.status = "active";
+    navLinkInfo.ariaSelected = "true";
+    navLinkInfo.tabFade = "active show"
+  } else {
+    navLinkFurniture.status = "active";
+    navLinkFurniture.ariaSelected = "true";
+    navLinkFurniture.tabFade = "active show"
+  }
+
   return`
   <div class="container emp-profile">
 		<form>
@@ -267,10 +290,10 @@ const generateRequestCard = (request) => {
 						</div>
 						<ul class="nav nav-tabs" id="myTab" role="tablist">
 							<li class="nav-item">
-								<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Information</a>
+								<a class="nav-link ` + navLinkInfo.status + `" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="` + navLinkInfo.ariaSelected + `">Information</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Meubles acceptés/refusés</a>
+								<a class="nav-link ` + navLinkFurniture.status + `" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected=" ` + navLinkFurniture.ariaSelected + `">Meubles acceptés/refusés</a>
 							</li>
 						</ul>
 					</div>
@@ -280,8 +303,8 @@ const generateRequestCard = (request) => {
 			<div class="row">
 				<div class="col-md-8">
 					<div class="tab-content profile-tab" id="myTabContent">
-						<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">` + generateRequestInfoCard(request) + `</div>       
-						<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">` + generateRequestFurnitureCard(request) + `</div>
+						<div class="tab-pane fade ` + navLinkInfo.tabFade + `" id="home" role="tabpanel" aria-labelledby="home-tab">` + generateRequestInfoCard(request) + `</div>       
+						<div class="tab-pane fade ` + navLinkFurniture.tabFade + `" id="profile" role="tabpanel" aria-labelledby="profile-tab">` + generateRequestFurnitureCard(request) + `</div>
 					</div>	
 				</div>
 			</div>
@@ -481,33 +504,31 @@ const getUserRequestsForVisit = async () => {
 const getAllRequestPhotos = async (requestId) => {
   let request = mapRequests.get(requestId);
   let furniture;
-  for(furniture of request.furnitureList) {
+  for(furniture of request.furnitureList)
     await getFurnitureRequestPhotos(furniture);
-  }
 }
 
 const getFurnitureRequestPhotos = async (furniture) => {
-  if(!furniture.hasFetchedPhotos) {
+  if (!furniture.hasFetchedPhotos) {
     furniture.hasFetchedPhotos = true;
-    let path = "/photos/byFurniture/request/"+furniture.furnitureId;
-    let response = await fetch(path, {
+    
+    let response = await fetch("/photos/byFurniture/request/" + furniture.furnitureId, {
       method: "GET",
       headers: {
         Authorization: currentUser.token,
       }
     });
-    if (response.ok) {
-      let photoArray = await response.json()
-      let thumbnail = notFoundPhoto;
-      if (photoArray.length >= 1) {
-        thumbnail = photoArray[0].source;
-      }
-      furniture.thumbnail = thumbnail;
-      updateThumbnail(furniture, thumbnail);
-      console.log("fetch photo success")
-    } else {
-      console.log("fetch photo fail")
+    if (!response.ok) {
+      const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+      console.error(err);
+      displayErrorMessage(err, errorDiv);
     }
+    let photoArray = await response.json()
+    let thumbnail = notFoundPhoto;
+    if (photoArray.length >= 1)
+      thumbnail = photoArray[0].source;
+    furniture.thumbnail = thumbnail;
+    updateThumbnail(furniture, thumbnail);
   }
 }
 
