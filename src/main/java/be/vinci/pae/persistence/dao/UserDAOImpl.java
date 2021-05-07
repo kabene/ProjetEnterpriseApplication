@@ -249,6 +249,26 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
   }
 
   /**
+   * Update the number of purchased furniture from user.
+   *
+   * @param userDTO userDTO to update
+   */
+  @Override
+  public void updatePurchasedFurnitureNbr(UserDTO userDTO) {
+    String query = "UPDATE satchoFurniture.users u "
+        + "SET  purchased_furniture_nbr = ?"
+        + "WHERE u.user_id = ?";
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setInt(1, userDTO.getPurchasedFurnitureNbr());
+      ps.setInt(2, userDTO.getId());
+      ResultSet rs = ps.executeQuery();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+  }
+
+  /**
    * Creates and fills a UserDTO object using a ResultSet.
    *
    * @param rs : the ResultSet containing the information

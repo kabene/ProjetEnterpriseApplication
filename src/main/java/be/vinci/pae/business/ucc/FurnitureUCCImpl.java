@@ -270,6 +270,8 @@ public class FurnitureUCCImpl implements FurnitureUCC {
         foundFurnitureDTO.setSpecialSalePrice(specialSalePrice);
         furnitureDAO.updateToSoldWithSpecialSale(foundFurnitureDTO);
       }
+      buyer.setPurchasedFurnitureNbr(buyer.getPurchasedFurnitureNbr()+1);
+      userDAO.updatePurchasedFurnitureNbr(buyer);
       furnitureDTO = furnitureDAO.findById(foundFurnitureDTO.getFurnitureId());
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
