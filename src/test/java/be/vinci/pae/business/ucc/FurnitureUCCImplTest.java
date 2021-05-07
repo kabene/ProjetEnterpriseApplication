@@ -761,7 +761,8 @@ class FurnitureUCCImplTest {
         "A valid call of toSold() without specialSalePrice should "
             + "return the corresponding dto");
 
-    InOrder inOrder = Mockito.inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1, mockUserDAO);
+    InOrder inOrder = Mockito
+        .inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1, mockUserDAO);
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockUserDAO).findByUsername(defaultBuyerUsername1);
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
@@ -790,7 +791,8 @@ class FurnitureUCCImplTest {
         "A valid call of toSold() with specialSalePrice should "
             + "return the corresponding dto");
 
-    InOrder inOrder = Mockito.inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1, mockUserDAO);
+    InOrder inOrder = Mockito
+        .inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1, mockUserDAO);
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockUserDAO).findByUsername(defaultBuyerUsername1);
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
@@ -959,7 +961,8 @@ class FurnitureUCCImplTest {
         "A call to toSold() without specialSalePrice catching an InternalError should "
             + "throw it back");
 
-    InOrder inOrder = Mockito.inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1, mockUserDAO);
+    InOrder inOrder = Mockito
+        .inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1, mockUserDAO);
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockUserDAO).findByUsername(defaultBuyerUsername1);
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
@@ -986,7 +989,8 @@ class FurnitureUCCImplTest {
         "A call to toSold() catching an InternalError should "
             + "throw it back");
 
-    InOrder inOrder = Mockito.inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1, mockUserDAO);
+    InOrder inOrder = Mockito
+        .inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1, mockUserDAO);
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockUserDAO).findByUsername(defaultBuyerUsername1);
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
@@ -1036,7 +1040,8 @@ class FurnitureUCCImplTest {
         "A valid call of toAccepted() with specialSalePrice should "
             + "return the corresponding dto");
 
-    InOrder inOrder = Mockito.inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1, mockRequestDAO, mockUserDAO);
+    InOrder inOrder = Mockito
+        .inOrder(mockDal, mockFurnitureDAO, mockFurnitureDTO1, mockRequestDAO, mockUserDAO);
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
     inOrder.verify(mockRequestDAO).findById(defaultRequestId1);

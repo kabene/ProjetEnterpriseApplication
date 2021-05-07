@@ -103,7 +103,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       furnitureDTO.setStatus(FurnitureStatus.ACCEPTED);
       UserDTO seller = userDAO.findById(furnitureDTO.getSellerId());
-      seller.setSoldFurnitureNbr(seller.getSoldFurnitureNbr()+1);
+      seller.setSoldFurnitureNbr(seller.getSoldFurnitureNbr() + 1);
       userDAO.updateSoldFurnitureNbr(seller);
       furnitureDTO.setPurchasePrice(purchasePrice);
       res = furnitureDAO.updateToAccepted(furnitureDTO);
@@ -267,7 +267,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       foundFurnitureDTO.setBuyerId(buyer.getId());
       foundFurnitureDTO.setStatus(FurnitureStatus.SOLD);
-      buyer.setPurchasedFurnitureNbr(buyer.getPurchasedFurnitureNbr()+1);
+      buyer.setPurchasedFurnitureNbr(buyer.getPurchasedFurnitureNbr() + 1);
       userDAO.updatePurchasedFurnitureNbr(buyer);
       if (specialSalePrice == null) {
         furnitureDAO.updateToSold(foundFurnitureDTO);
