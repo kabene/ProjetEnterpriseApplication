@@ -244,6 +244,8 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockFurnitureType1.getTypeName()).thenReturn(defaultTypeName1);
     Mockito.when(mockFurnitureType2.getTypeName()).thenReturn(defaultTypeName2);
+
+    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
   }
 
   @DisplayName("TEST FurnitureUCC.getOne : given valid id, should return dto "
@@ -754,7 +756,6 @@ class FurnitureUCCImplTest {
   @EnumSource(value = FurnitureStatus.class, names = {"AVAILABLE_FOR_SALE", "UNDER_OPTION"})
   void test_toSold_nominalWithoutSpecialSale_shouldReturnDTO(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
     assertEquals(mockFurnitureDTO1,
         furnitureUCC.toSold(defaultFurnitureId1, defaultBuyerUsername1, null),
@@ -777,10 +778,9 @@ class FurnitureUCCImplTest {
   @DisplayName("TEST FurnitureUCC.toSold : nominal scenario with special sale price, "
       + "should return FurnitureDTO")
   @ParameterizedTest
-  @EnumSource(value = FurnitureStatus.class, names = {"AVAILABLE_FOR_SALE"})
+  @EnumSource(value = FurnitureStatus.class, names = {"AVAILABLE_FOR_SALE", "IN_RESTORATION"})
   void test_toSold_nominalWithSpecialSale_shouldReturnDTO(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
     String role = "antique_dealer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
@@ -809,7 +809,6 @@ class FurnitureUCCImplTest {
   @EnumSource(value = FurnitureStatus.class, names = {"UNDER_OPTION"})
   void test_toSold_underOptionWithSpecialSale_shouldThrowConflict(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
     String role = "antique_dealer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
@@ -828,6 +827,30 @@ class FurnitureUCCImplTest {
     inOrder.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
+  @DisplayName("TEST FurnitureUCC.toSold : furniture in restoration without special sale price, "
+      + "should throw ConflictException")
+  @ParameterizedTest
+  @EnumSource(value = FurnitureStatus.class, names = {"IN_RESTORATION"})
+  void test_toSold_inRestorationWithoutSpecialSale_shouldThrowConflict(FurnitureStatus status) {
+    Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
+    Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
+    String role = "antique_dealer";
+    Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
+    assertThrows(ConflictException.class, () ->
+            furnitureUCC
+                .toSold(defaultFurnitureId1, defaultBuyerUsername1, null),
+        "A valid call of toSold() without specialSalePrice should "
+            + "return the corresponding dto");
+
+    InOrder inOrder = Mockito.inOrder(mockDal, mockUserDAO, mockFurnitureDAO, mockFurnitureDTO1);
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockUserDAO).findByUsername(defaultBuyerUsername1);
+    inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
   @DisplayName("TEST FurnitureUCC.toSold : invalid status (without special sale price), "
       + "should throw ConflictException")
   @ParameterizedTest
@@ -835,7 +858,6 @@ class FurnitureUCCImplTest {
       "IN_RESTORATION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
   void test_toSold_invalidStatesWithoutSpecialSale_shouldReturnDTO(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
 
     assertThrows(ConflictException.class, () ->
@@ -856,10 +878,9 @@ class FurnitureUCCImplTest {
       + "should throw ConflictException")
   @ParameterizedTest
   @EnumSource(value = FurnitureStatus.class, names = {"REQUESTED_FOR_VISIT", "REFUSED", "ACCEPTED",
-      "IN_RESTORATION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
+      "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
   void test_toSold_invalidStatesWithSpecialSale_shouldReturnDTO(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
     String role = "antique_dealer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
@@ -1001,7 +1022,6 @@ class FurnitureUCCImplTest {
   @Test
   void test_toSold_underOptionInvalidBuyer_shouldThrowConflict() {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.UNDER_OPTION);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId2);
     String role = "antique_dealer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
