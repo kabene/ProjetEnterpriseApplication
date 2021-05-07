@@ -2,7 +2,13 @@ import notFoundPhoto from "../img/notFoundPhoto.png";
 
 import {findCurrentUser} from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {displayErrorMessage, generateLoadingAnimation, displayImgs, gdpr} from "../utils/utils.js"
+import {
+  displayErrorMessage,
+  generateLoadingAnimation,
+  displayImgs,
+  gdpr,
+  baseUrl
+} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 
@@ -356,7 +362,7 @@ const generateOptionForm = () => {
 
 
 const getFurnitureList = async () => {
-  let response = await fetch("/furniture/", {
+  let response = await fetch(baseUrl+"/furniture/", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -385,7 +391,7 @@ const getFurnitureList = async () => {
 const fetchFav = async (furniture) => {
   if (!furniture.favouritePhoto) {
     
-    let response = await fetch("/photos/favourite/" + furniture.furnitureId, {
+    let response = await fetch(baseUrl+"/photos/favourite/" + furniture.furnitureId, {
       method: "GET",
     });
     if (response.ok) {
@@ -405,7 +411,7 @@ const getPhotos = async () => {
 const fetchAllPhotos = async (furniture) => {
   if (!furniture.photos || furniture.photos.length === 0) {
     
-    let response = await fetch("/photos/byFurniture/" + furniture.furnitureId, {
+    let response = await fetch(baseUrl+"/photos/byFurniture/" + furniture.furnitureId, {
       method: "GET",
     });
     if (response.ok) {
@@ -419,7 +425,7 @@ const fetchAllPhotos = async (furniture) => {
 
 
 const getFurnitureTypeList = async () => {
-  let response = await fetch("/furnitureTypes/", {
+  let response = await fetch(baseUrl+"/furnitureTypes/", {
     method: "GET",
   });
   if (!response.ok) {
@@ -434,7 +440,7 @@ const getFurnitureTypeList = async () => {
 const getMyOptionList = async () => {
   if (!currentUser) 
     return;
-  let response = await fetch("/options/me", {
+  let response = await fetch(baseUrl+"/options/me", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -458,7 +464,7 @@ const cancelOption = async (e) => {
   if (!option.isCanceled)
     optionId = option.optionId;
 
-  let response = await fetch("/options/cancel/" + optionId, {
+  let response = await fetch(baseUrl+"/options/cancel/" + optionId, {
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -483,7 +489,7 @@ const addOption = async (e) => {
     duration: e.target.parentElement.parentElement.querySelector("input").value,
   }
   
-  let response = await fetch("/options/", {
+  let response = await fetch(baseUrl+"/options/", {
     method: "POST",
     body: JSON.stringify(bundle),
     headers: {

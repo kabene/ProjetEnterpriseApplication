@@ -1,4 +1,4 @@
-import {displayErrorMessage, gdpr} from "../utils/utils.js"
+import {baseUrl, displayErrorMessage, gdpr} from "../utils/utils.js"
 import {getUserSessionData, setUserSessionData, setUserLocalData,} from "../utils/session";
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
@@ -283,7 +283,7 @@ const generatePage = () => {
  * @returns the user in json form.
  */
 const login = async (user) => {
-  let response = await fetch("/users/login", {
+  let response = await fetch(baseUrl+"/users/login", {
     method: "POST",
     body: JSON.stringify(user),
     headers: {
@@ -308,7 +308,7 @@ const login = async (user) => {
  * @returns the user in json form
  */
 const signUp = async (user) => {
-  let response = await fetch("/users/register", {
+  let response = await fetch(baseUrl+"/users/register", {
     method: "POST",
     body: JSON.stringify(user),
     headers: {

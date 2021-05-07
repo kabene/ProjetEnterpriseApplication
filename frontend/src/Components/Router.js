@@ -8,7 +8,7 @@ import FurnitureList from "./FurnitureList.js";
 import ClientVisit from "./ClientVisit.js";
 import LogoutComponent from "./LogoutComponent.js";
 import ReleaseTakeoverComponent from "./ReleaseTakeoverComponent";
-import {fetchMe} from "../utils/utils.js";
+import {baseUrl, fetchMe} from "../utils/utils.js";
 import {getUserLocalData, getUserSessionData, setUserLocalData, setUserSessionData} from "../utils/session.js";
 import {setLayout} from "../utils/render.js";
 
@@ -92,7 +92,7 @@ const getRememberMe = async () => {
   if(!sessionData) {
     let token = getUserLocalData();
     if (token) {
-      let response = await fetch("/users/login", {
+      let response = await fetch(baseUrl+"/users/login", {
         method: "GET",
         headers: {
           Authorization: token

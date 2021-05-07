@@ -21,7 +21,7 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
   public Response toResponse(Throwable exception) {
     if (exception instanceof jakarta.ws.rs.NotFoundException) {
       // TODO: find good uri to redirect to
-      return Response.temporaryRedirect(URI.create("/")).build(); 
+    //  return Response.temporaryRedirect(URI.create("/")).build();
     }
     logThrowable(exception);
     return Response.status(getStatusCode(exception), getMessage(exception)).build();
