@@ -33,30 +33,15 @@ const HomePage = async () => {
 
 /********************  Business methods  **********************/
 
+
 /**
- * Called when clicking on the apply filter button.
- * Apply all filters chosen on the furniture and render them.
+ * Set the filter then reload the page and display the correct current filter.
  */
-const onClickApplyFilter = (e) => {
-  e.preventDefault();
+const onChangeSelectFilters = () => {
   filterType = document.querySelector("#furnitureTypeFilter").value;
-	page.innerHTML = errorDiv + getPageHTML();
-  addAllEventListeners();
-  document.querySelector("[value='" + filterType + "']").setAttribute('selected', 'true');
-}
-
-
-/**
- * Called when clicking on the cancel filter button.
- * Clear all filters chosen on the furniture and render all the furniture if there already was filters.
- */
-const onClickClearFilter = (e) => {
-  e.preventDefault();
-  if (filterType === "")
-    return;
-  filterType = "";
   page.innerHTML = errorDiv + getPageHTML();
   addAllEventListeners();
+  document.querySelector("[value='" + filterType + "']").setAttribute('selected', 'true');
 }
 
 
@@ -64,8 +49,7 @@ const onClickClearFilter = (e) => {
  * Add all the event listeners required in the document.
  */
 const addAllEventListeners = () => {
-  document.querySelector("#apply-filters-btn").addEventListener("click", onClickApplyFilter);
-  document.querySelector("#clear-filters-btn").addEventListener("click", onClickClearFilter);
+  document.querySelector("#furnitureTypeFilter").addEventListener('change', onChangeSelectFilters);
 }
 
 /********************  HTML generation  **********************/
@@ -76,7 +60,7 @@ const getPageHTML = () => {
 	<div class="col-5 mx-auto">
     <div id="errorDiv" class="d-none"></div>
   </div>
-	<div>
+	<div id="filterSelectHome">
     ` + generateFilterHTML() + `
   </div>
   <div class="row mx-0 pt-5">
@@ -89,10 +73,8 @@ const getPageHTML = () => {
 
 const generateFilterHTML = () => {
   return `
-  <form class="form-inline">
+  <form>
     <div class="form-group m-3">` + generateSelectTypeTag() + `</div>
-     <button type="submit" id="apply-filters-btn" class="btn btn-primary m-3">Appliquer</button>
-     <button type="submit" id="clear-filters-btn" class="btn btn-secondary m-3">Retirer les filtres</button>
   </form>`;
 }
 
