@@ -103,7 +103,7 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       furnitureDTO.setStatus(FurnitureStatus.ACCEPTED);
       UserDTO seller = userDAO.findById(furnitureDTO.getSellerId());
-      seller.setSoldFurnitureNbr(seller.getPurchasedFurnitureNbr()+1);
+      seller.setSoldFurnitureNbr(seller.getSoldFurnitureNbr()+1);
       userDAO.updateSoldFurnitureNbr(seller);
       furnitureDTO.setPurchasePrice(purchasePrice);
       res = furnitureDAO.updateToAccepted(furnitureDTO);
