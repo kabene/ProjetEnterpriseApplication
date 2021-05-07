@@ -1,5 +1,11 @@
 import {findCurrentUser, setTakeoverSessionData} from "../utils/session";
-import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr} from "../utils/utils";
+import {
+  removeTimeouts,
+  generateLoadingAnimation,
+  displayErrorMessage,
+  gdpr,
+  baseUrl
+} from "../utils/utils";
 import {Loader} from "@googlemaps/js-api-loader";
 import {RedirectUrl} from "./Router";
 import Navbar from "./Navbar";
@@ -637,7 +643,7 @@ const generateUserCard = (userDetail) => {
 /********************  Backend fetch  **********************/
 
 const clientDetail = async (id) => {
-  let response = await fetch(`/users/detail/${id}`, {
+  let response = await fetch(baseUrl+`/users/detail/${id}`, {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -654,7 +660,7 @@ const clientDetail = async (id) => {
 
 
 const getWaitingUserList = async () => {
-  let response = await fetch("/users/detail/waiting", {
+  let response = await fetch(baseUrl+"/users/detail/waiting", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -672,7 +678,7 @@ const getWaitingUserList = async () => {
 
 
 const getConfirmedUsersList = async () => {
-  let response = await fetch("/users/detail/confirmed", {
+  let response = await fetch(baseUrl+"/users/detail/confirmed", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -691,7 +697,7 @@ const getConfirmedUsersList = async () => {
 
 const validation = async (e) => {
   let val = e.target.id === "accept" ? {value: true} : {value: false};
-  let response = await fetch(`/users/validate/${userDetail.id}`, {
+  let response = await fetch(baseUrl+`/users/validate/${userDetail.id}`, {
     method: "PATCH",
     body:JSON.stringify(val),
     headers: {
@@ -710,7 +716,7 @@ const validation = async (e) => {
 const onTakeoverClick = async (e) => {
   e.preventDefault();
   let userId = e.target.getAttribute("user-id");
-  let response = await fetch(`/users/takeover/${userId}`,{
+  let response = await fetch(baseUrl+`/users/takeover/${userId}`,{
     method: "GET",
     headers: {
       "Authorization": currentUser.token,

@@ -1,6 +1,12 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {findCurrentUser} from "../utils/session";
-import {displayErrorMessage, gdpr, generateLoadingAnimation, displayImgs} from "../utils/utils";
+import {
+  displayErrorMessage,
+  gdpr,
+  generateLoadingAnimation,
+  displayImgs,
+  baseUrl
+} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
 
@@ -832,7 +838,7 @@ const toConfirmed = (e, request) => {
     let bundle = {
       visitDateTime: date,
     }
-    fetch("/requestForVisit/accept/" + request.requestId, {
+    fetch(baseUrl+"/requestForVisit/accept/" + request.requestId, {
       method: "PATCH",
       body: JSON.stringify(bundle),
       headers: {
@@ -869,7 +875,7 @@ const toCanceled = (e, request) => {
   let bundle = {
     explanatoryNote: explain,
   };
-  fetch("/requestForVisit/cancel/" + request.requestId, {
+  fetch(baseUrl+"/requestForVisit/cancel/" + request.requestId, {
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -897,7 +903,7 @@ const toCanceled = (e, request) => {
  * @returns {Promise} fetch promise
  */
 async function findVisitRequestList() {
-  return fetch("/requestForVisit/", {
+  return fetch(baseUrl+"/requestForVisit/", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -927,7 +933,7 @@ async function findVisitRequestList() {
  */
 async function getImage(furniture) {
 
-  return fetch("/photos/favourite/" + furniture.furnitureId, {
+  return fetch(baseUrl+"/photos/favourite/" + furniture.furnitureId, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -960,7 +966,7 @@ const acceptFurniture = async (furnitureId) => {
   if(!priceInput && priceInput.value !==0)return;
   let bundle={purchasePrice: priceInput.value}
   try {
-    let result = await fetch("/furniture/accepted/" + furnitureId, {
+    let result = await fetch(baseUrl+"/furniture/accepted/" + furnitureId, {
       method: "PATCH",
       headers: {
         "Authorization": currentUser.token,
@@ -984,7 +990,7 @@ const acceptFurniture = async (furnitureId) => {
 
 const refuseFurniture = async (furnitureId) => {
   try {
-    let result = await fetch("/furniture/refused/" + furnitureId, {
+    let result = await fetch(baseUrl+"/furniture/refused/" + furnitureId, {
       method: "PATCH",
       headers: {
         "Authorization": currentUser.token,
