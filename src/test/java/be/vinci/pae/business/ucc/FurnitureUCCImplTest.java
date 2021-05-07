@@ -244,6 +244,8 @@ class FurnitureUCCImplTest {
 
     Mockito.when(mockFurnitureType1.getTypeName()).thenReturn(defaultTypeName1);
     Mockito.when(mockFurnitureType2.getTypeName()).thenReturn(defaultTypeName2);
+
+    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
   }
 
   @DisplayName("TEST FurnitureUCC.getOne : given valid id, should return dto "
@@ -754,7 +756,6 @@ class FurnitureUCCImplTest {
   @EnumSource(value = FurnitureStatus.class, names = {"AVAILABLE_FOR_SALE", "UNDER_OPTION"})
   void test_toSold_nominalWithoutSpecialSale_shouldReturnDTO(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
     assertEquals(mockFurnitureDTO1,
         furnitureUCC.toSold(defaultFurnitureId1, defaultBuyerUsername1, null),
@@ -780,7 +781,6 @@ class FurnitureUCCImplTest {
   @EnumSource(value = FurnitureStatus.class, names = {"AVAILABLE_FOR_SALE", "IN_RESTORATION"})
   void test_toSold_nominalWithSpecialSale_shouldReturnDTO(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
     String role = "antique_dealer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
@@ -809,7 +809,6 @@ class FurnitureUCCImplTest {
   @EnumSource(value = FurnitureStatus.class, names = {"UNDER_OPTION"})
   void test_toSold_underOptionWithSpecialSale_shouldThrowConflict(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
     String role = "antique_dealer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
@@ -834,7 +833,6 @@ class FurnitureUCCImplTest {
   @EnumSource(value = FurnitureStatus.class, names = {"IN_RESTORATION"})
   void test_toSold_inRestorationWithoutSpecialSale_shouldThrowConflict(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
     String role = "antique_dealer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
@@ -860,7 +858,6 @@ class FurnitureUCCImplTest {
       "IN_RESTORATION", "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
   void test_toSold_invalidStatesWithoutSpecialSale_shouldReturnDTO(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
 
     assertThrows(ConflictException.class, () ->
@@ -884,7 +881,6 @@ class FurnitureUCCImplTest {
       "SOLD", "RESERVED", "DELIVERED", "COLLECTED", "WITHDRAWN"})
   void test_toSold_invalidStatesWithSpecialSale_shouldReturnDTO(FurnitureStatus status) {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(status);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId1);
     String role = "antique_dealer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
@@ -1026,7 +1022,6 @@ class FurnitureUCCImplTest {
   @Test
   void test_toSold_underOptionInvalidBuyer_shouldThrowConflict() {
     Mockito.when(mockFurnitureDTO1.getStatus()).thenReturn(FurnitureStatus.UNDER_OPTION);
-    Mockito.when(mockOptionDAO.findByFurnitureId(defaultFurnitureId1)).thenReturn(mockOptionDTO);
     Mockito.when(mockOptionDTO.getUserId()).thenReturn(defaultBuyerId2);
     String role = "antique_dealer";
     Mockito.when(defaultBuyer1.getRole()).thenReturn(role);
