@@ -767,7 +767,7 @@ class FurnitureUCCImplTest {
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
     inOrder.verify(mockFurnitureDTO1).setBuyerId(defaultBuyerId1);
     inOrder.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.SOLD);
-    inOrder.verify(mockUserDAO).updateSoldFurnitureNbr(defaultSeller1);
+    inOrder.verify(mockUserDAO).updatePurchasedFurnitureNbr(defaultBuyer1);
     inOrder.verify(mockFurnitureDAO).updateToSold(mockFurnitureDTO1);
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
     inOrder.verify(mockDal).commitTransaction();
@@ -796,7 +796,7 @@ class FurnitureUCCImplTest {
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
     inOrder.verify(mockFurnitureDTO1).setBuyerId(defaultBuyerId1);
     inOrder.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.SOLD);
-    inOrder.verify(mockUserDAO).updateSoldFurnitureNbr(defaultSeller1);
+    inOrder.verify(mockUserDAO).updatePurchasedFurnitureNbr(defaultBuyer1);
     inOrder.verify(mockFurnitureDTO1).setSpecialSalePrice(defaultSpecialSalePrice);
     inOrder.verify(mockFurnitureDAO).updateToSoldWithSpecialSale(mockFurnitureDTO1);
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
@@ -965,7 +965,7 @@ class FurnitureUCCImplTest {
     inOrder.verify(mockFurnitureDAO).findById(defaultFurnitureId1);
     inOrder.verify(mockFurnitureDTO1).setBuyerId(defaultBuyerId1);
     inOrder.verify(mockFurnitureDTO1).setStatus(FurnitureStatus.SOLD);
-    inOrder.verify(mockUserDAO).updateSoldFurnitureNbr(defaultSeller1);
+    inOrder.verify(mockUserDAO).updatePurchasedFurnitureNbr(defaultBuyer1);
     inOrder.verify(mockFurnitureDAO).updateToSold(mockFurnitureDTO1);
     inOrder.verify(mockDal).rollbackTransaction();
     inOrder.verifyNoMoreInteractions();
