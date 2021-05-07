@@ -87,5 +87,12 @@ public interface UserDAO {
    *
    * @param userDTO userDTO to update
    */
-  void updatePurchasedFurnitureNbr(UserDTO userDTO);
+  UserDTO updatePurchasedFurnitureNbr(UserDTO userDTO);
+
+  /**
+   * Update the number of sold furniture from user.
+   *
+   * @param userDTO userDTO to update
+   */
+  UserDTO updateSoldFurnitureNbr(UserDTO userDTO);
 }

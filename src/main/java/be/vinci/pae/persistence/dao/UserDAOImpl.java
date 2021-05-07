@@ -241,7 +241,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
 
     try {
       ps.setInt(1, id);
-      ps.executeUpdate();
+      ps.execute();
       ps.close();
     } catch (SQLException e) {
       throw new InternalError(e);
@@ -255,7 +255,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    * @param userDTO userDTO to update
    */
   @Override
-  public void updatePurchasedFurnitureNbr(UserDTO userDTO) {
+  public UserDTO updatePurchasedFurnitureNbr(UserDTO userDTO) {
     String query = "UPDATE satchoFurniture.users u "
         + "SET  purchased_furniture_nbr = ?"
         + "WHERE u.user_id = ?";
@@ -263,10 +263,32 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
       PreparedStatement ps = dalServices.makeStatement(query);
       ps.setInt(1, userDTO.getPurchasedFurnitureNbr());
       ps.setInt(2, userDTO.getId());
-      ResultSet rs = ps.executeQuery();
+      ps.execute();
     } catch (SQLException e) {
       throw new InternalError(e);
     }
+    return userDTO;
+  }
+
+  /**
+   * Update the number of sold furniture from user.
+   *
+   * @param userDTO userDTO to update
+   */
+  @Override
+  public UserDTO updateSoldFurnitureNbr(UserDTO userDTO) {
+    String query = "UPDATE satchoFurniture.users u "
+        + "SET  sold_furniture_nbr = ?"
+        + "WHERE u.user_id = ?";
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setInt(1, userDTO.getSoldFurnitureNbr());
+      ps.setInt(2, userDTO.getId());
+      ps.executeQuery();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return userDTO;
   }
 
   /**

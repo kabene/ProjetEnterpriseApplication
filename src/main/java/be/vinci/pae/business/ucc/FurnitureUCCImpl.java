@@ -102,6 +102,9 @@ public class FurnitureUCCImpl implements FurnitureUCC {
         throw new ConflictException("Error : invalid request status");
       }
       furnitureDTO.setStatus(FurnitureStatus.ACCEPTED);
+      UserDTO seller = userDAO.findById(furnitureDTO.getSellerId());
+      seller.setSoldFurnitureNbr(seller.getPurchasedFurnitureNbr()+1);
+      userDAO.updateSoldFurnitureNbr(seller);
       furnitureDTO.setPurchasePrice(purchasePrice);
       res = furnitureDAO.updateToAccepted(furnitureDTO);
       completeFurnitureDTO(res);
@@ -264,14 +267,14 @@ public class FurnitureUCCImpl implements FurnitureUCC {
       }
       foundFurnitureDTO.setBuyerId(buyer.getId());
       foundFurnitureDTO.setStatus(FurnitureStatus.SOLD);
+      buyer.setPurchasedFurnitureNbr(buyer.getPurchasedFurnitureNbr()+1);
+      userDAO.updatePurchasedFurnitureNbr(buyer);
       if (specialSalePrice == null) {
         furnitureDAO.updateToSold(foundFurnitureDTO);
       } else {
         foundFurnitureDTO.setSpecialSalePrice(specialSalePrice);
         furnitureDAO.updateToSoldWithSpecialSale(foundFurnitureDTO);
       }
-      buyer.setPurchasedFurnitureNbr(buyer.getPurchasedFurnitureNbr()+1);
-      userDAO.updatePurchasedFurnitureNbr(buyer);
       furnitureDTO = furnitureDAO.findById(foundFurnitureDTO.getFurnitureId());
       completeFurnitureDTO(furnitureDTO);
       dalServices.commitTransaction();
