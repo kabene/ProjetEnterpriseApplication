@@ -154,7 +154,6 @@ const generateTable = () => {
     <div class="wrapperFurniturePage">
         <div></div>
         <div>
-          <h3>Filtrer les meubles:</h3>
           ` + generateFilterHTML() + `
         </div>
         <div></div>
@@ -375,9 +374,9 @@ const getFurnitureList = async () => {
  * fetch all favourite photos for main list thumbnails
  */
  const getFavs = async () => {
-  mapFurniture.forEach(async (furniture, furnitureId) => {
+  for(let [furnitureId, furniture] of mapFurniture)
     await fetchFav(furniture);
-  });
+  
   let loadArea = document.querySelector("#loadArea");
   loadArea.className = "d-none";
 }
@@ -396,10 +395,9 @@ const fetchFav = async (furniture) => {
   }
 }
 
-const getPhotos = async () => {    
-  mapFurniture.forEach(async (furniture, furnitureId) => {
+const getPhotos = async () => {
+  for(let [furnitureId, furniture] of mapFurniture)
     await fetchAllPhotos(furniture);
-  });
 }
 
 const fetchAllPhotos = async (furniture) => {
