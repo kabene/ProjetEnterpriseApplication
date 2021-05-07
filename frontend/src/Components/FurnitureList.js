@@ -1127,7 +1127,7 @@ const generateAllTransitionBtns = (furniture) => {
           "danger", "secondary");
       break;
     case "UNDER_OPTION":
-      res += generateTransitionModal("ToSold", "Indiquer vendu");
+      res += generateTransitionModal("ToSold", "Indiquer vendu à un prix spécial");
       break;
     case "SOLD":
     case "WITHDRAWN":
