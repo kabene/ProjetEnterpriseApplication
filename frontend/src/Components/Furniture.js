@@ -51,6 +51,8 @@ const refresh = (data, status) => {
 
   page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
+  let loadArea = document.querySelector("#loadArea");
+  loadArea.className = "d-none"
 }
 
 
