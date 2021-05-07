@@ -222,13 +222,13 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
   }
 
   /**
-   * Set the role and  set wait.
+   * Update the role and set wait.
    *
    * @param id    userId.
    * @param value value if the user is confirmed.
    */
   @Override
-  public void setRole(int id, boolean value) {
+  public void updateRole(int id, boolean value) {
     String query;
     if (value) {
       query = "UPDATE  satchoFurniture.users u SET is_waiting = false WHERE  u.user_id = ?";
@@ -243,10 +243,11 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
       ps.setInt(1, id);
       ps.executeUpdate();
       ps.close();
-    } catch (SQLException throwables) {
-      System.out.println("waiting removed and role setted");
+    } catch (SQLException e) {
+      throw new InternalError(e);
     }
   }
+
 
   /**
    * Update the number of purchased furniture from user.

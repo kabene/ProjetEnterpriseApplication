@@ -75,12 +75,12 @@ public interface UserDAO {
   List<UserDTO> findBySearch(String userSearch);
 
   /**
-   * Set the role and set wait.
+   * Update the role and set wait.
    *
    * @param id    userId.
    * @param value value if the user is confirmed.
    */
-  void setRole(int id, boolean value);
+  void updateRole(int id, boolean value);
 
   /**
    * Update the number of purchased furniture from user.
