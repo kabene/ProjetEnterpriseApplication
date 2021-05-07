@@ -6,7 +6,7 @@ import {
   displayErrorMessage,
   generateLoadingAnimation,
   displayImgs,
-  gdpr,
+  gdpr, baseUrl,
 } from "../utils/utils.js"
 
 let page = document.querySelector("#page");
@@ -65,7 +65,7 @@ const generateLargeTablePage = () => {
  * Loads the furnitureList & furnitureMap from backend
  */
 const findFurnitureList = async () => {
-  return fetch("/furniture/detail", {
+  return fetch(baseUrl+"/furniture/detail", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -94,7 +94,7 @@ const findFurnitureList = async () => {
  */
 const findTypeList = async () => {
   try {
-    let response = await fetch("/furnitureTypes/", {
+    let response = await fetch(baseUrl+"/furnitureTypes/", {
       method: "GET",
     });
     if (!response.ok) {
@@ -668,7 +668,7 @@ const fetching = async (base64, furnitureId) => {
     source: base64,
     furnitureId: furnitureId
   }
-  let response = await fetch("/photos/", {
+  let response = await fetch(baseUrl+"/photos/", {
     method: "POST",
     body: JSON.stringify(toSend),
     headers: {
@@ -870,7 +870,7 @@ const patchNewFav = async (furnitureId, favPhotoId) => {
   let bundle = {
     photoId: favPhotoId,
   };
-  let response = await fetch("/furniture/favouritePhoto/" + furnitureId, {
+  let response = await fetch(baseUrl+"/furniture/favouritePhoto/" + furnitureId, {
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -899,7 +899,7 @@ const patchNewFav = async (furnitureId, favPhotoId) => {
  * @return new photo (fetch response)
  */
 const patchDisplayFlags = async (bundle) => {
-  let addr = "/photos/displayFlags/" + bundle.photoId;
+  let addr = baseUrl+"/photos/displayFlags/" + bundle.photoId;
   let response = await fetch(addr, {
     method: "PATCH",
     body: JSON.stringify(bundle),
@@ -1295,7 +1295,7 @@ const onSaveInfoBtnClicked = async (e) => {
   }
   if (bundle !== {}) {
     try {
-      let response = await fetch("furniture/infos/" + currentFurnitureId, {
+      let response = await fetch(baseUrl+"furniture/infos/" + currentFurnitureId, {
         method: "PATCH",
         body: JSON.stringify(bundle),
         headers: {
@@ -1324,7 +1324,7 @@ const toAvailable = (e, furniture) => {
   let bundle = {
     selling_price: sellingPrice,
   };
-  fetch("/furniture/available/" + furniture.furnitureId, {
+  fetch(baseUrl+"/furniture/available/" + furniture.furnitureId, {
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -1349,7 +1349,7 @@ const toAvailable = (e, furniture) => {
 
 const toRestoration = (e, furniture) => {
   e.preventDefault();
-  fetch("/furniture/restoration/" + furniture.furnitureId, {
+  fetch(baseUrl+"/furniture/restoration/" + furniture.furnitureId, {
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -1372,7 +1372,7 @@ const toRestoration = (e, furniture) => {
 
 const withdraw = (e, furniture) => {
   e.preventDefault();
-  fetch("/furniture/withdraw/" + furniture.furnitureId, {
+  fetch(baseUrl+"/furniture/withdraw/" + furniture.furnitureId, {
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -1419,7 +1419,7 @@ const toSold = async (e, furniture) => {
       buyerUsername: buyerUsername,
     }
   }
-  fetch("/furniture/sold/" + furniture.furnitureId, {
+  fetch(baseUrl+"/furniture/sold/" + furniture.furnitureId, {
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -1667,7 +1667,7 @@ const getFavs = async () => {
 
 const fetchFav = async (furniture) => {
   if(!furniture.favouritePhoto){
-    let path = "/photos/favourite/"+furniture.furnitureId;
+    let path = baseUrl+"/photos/favourite/"+furniture.furnitureId;
     let response = await fetch(path, {
       method: "GET",
     });
@@ -1684,7 +1684,7 @@ const fetchAllPhotos = async (furniture) => {
   if(!photosFetchedMap[furniture.furnitureId]){
     photosFetchedMap[furniture.furnitureId] = true;
     if(!furniture.photos || furniture.photos.length === 0) { //no photos -> fetch
-      let path = "/photos/byFurniture/all/"+furniture.furnitureId;
+      let path = baseUrl+"/photos/byFurniture/all/"+furniture.furnitureId;
       let response = await fetch(path, {
         method: "GET",
         headers: {

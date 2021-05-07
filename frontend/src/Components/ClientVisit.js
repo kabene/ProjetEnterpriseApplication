@@ -1,6 +1,12 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {getUserSessionData} from "../utils/session";
-import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr} from "../utils/utils";
+import {
+  removeTimeouts,
+  generateLoadingAnimation,
+  displayErrorMessage,
+  gdpr,
+  baseUrl
+} from "../utils/utils";
 
 let page = document.querySelector("#page");
 let currentUser;
@@ -486,7 +492,7 @@ const generateStatusInfos = (status) => {
  * @returns a promise of an array containing the result of the fetch.
  */
 const getUserRequestsForVisit = async () => {
-  let response = await fetch("/requestForVisit/me", {
+  let response = await fetch(baseUrl+"/requestForVisit/me", {
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -512,7 +518,7 @@ const getFurnitureRequestPhotos = async (furniture) => {
   if (!furniture.hasFetchedPhotos) {
     furniture.hasFetchedPhotos = true;
     
-    let response = await fetch("/photos/byFurniture/request/" + furniture.furnitureId, {
+    let response = await fetch(baseUrl+"/photos/byFurniture/request/" + furniture.furnitureId, {
       method: "GET",
       headers: {
         Authorization: currentUser.token,

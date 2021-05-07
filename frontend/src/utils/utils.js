@@ -6,6 +6,9 @@ import {
   setGDPRLocalData
 } from "./session";
 
+
+const baseUrl = "/api";
+
 /**
  * Escape the dangerous characters than can lead to an XSS attack or an SQL injection
  * @author Kip from https://stackoverflow.com/questions/1787322/htmlspecialchars-equivalent-in-javascript
@@ -30,7 +33,7 @@ function escapeHtml(text) {
 async function fetchMe (token) {
   if(!token) 
 		token = getUserSessionData().token;
-  let response = await fetch("/users/me", {
+  let response = await fetch(baseUrl+"/users/me", {
     method: "GET",
     headers: {
       "Authorization": token,
@@ -155,8 +158,9 @@ export const displayImgs = (photosLst) => {
     });
 }
 
+
 export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
         displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, 
-        acceptCookies, getGDPR,gdpr};
+        acceptCookies, getGDPR,gdpr,baseUrl};
 
 

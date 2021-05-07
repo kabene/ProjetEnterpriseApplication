@@ -1,6 +1,11 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import noFurniturePhoto from "../img/noFurniture.png";
-import {displayErrorMessage, generateLoadingAnimation, gdpr} from "../utils/utils.js";
+import {
+  displayErrorMessage,
+  generateLoadingAnimation,
+  gdpr,
+  baseUrl
+} from "../utils/utils.js";
 
 
 let page = document.querySelector("#page");
@@ -183,7 +188,7 @@ const getVisiblePhotos = async () => {
 /********************  Backend fetch  **********************/
 
 const fetchVisiblePhotos = async () => {
-	let response = await fetch("/photos/homePage", {
+	let response = await fetch(baseUrl+"/photos/homePage", {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -199,7 +204,7 @@ const fetchVisiblePhotos = async () => {
 
 
 const getFurnitureTypeList = async () => {
-  let response = await fetch("/furnitureTypes/", {
+  let response = await fetch(baseUrl+"/furnitureTypes/", {
     method: "GET",
   });
   if (!response.ok) {
