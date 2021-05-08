@@ -202,7 +202,7 @@ public abstract class AbstractDAO {
     if (queryParameters.length == 0) {
       throw new IllegalArgumentException("At least 1 QueryParameter should be provided");
     }
-    String query = "UPDATE " + schema + "." + tableName + " SET ";
+    String query = "UPDATE " + schema + "." + tableName;
     query += generateSet(queryParameters);
     query += generateWhere(false, id);
     try {
@@ -212,6 +212,7 @@ public abstract class AbstractDAO {
         ps.setObject(parameterIndex, qp.value);
         parameterIndex++;
       }
+      ps.setObject(parameterIndex, id.value);
       return ps.execute();
     } catch (SQLException e) {
       throw new InternalError(e);

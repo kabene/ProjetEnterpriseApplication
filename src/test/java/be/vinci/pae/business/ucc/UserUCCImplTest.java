@@ -422,55 +422,6 @@ public class UserUCCImplTest {
     Mockito.verify(mockDal, Mockito.never()).commitTransaction();
   }
 
-  @DisplayName("TEST UserUCC.getSearchResult : given an existing username,"
-      + " should return respective user")
-  @Test
-  public void test_getSearchResult_givenExistingUsername_shouldReturnUser() {
-    String pattern = "user";
-    List<UserDTO> allSearchResults = Arrays.asList(mockUser1, mockUser2);
-
-    Mockito.when(mockUserDAO.findBySearch(pattern)).thenReturn(allSearchResults);
-    assertEquals(allSearchResults, userUCC.getSearchResult(pattern),
-        "UserUCC.getSearchResult should return a List<UserDTO> with respective user");
-    Mockito.verify(mockUserDAO).findBySearch(pattern);
-    Mockito.verify(mockDal).startTransaction();
-    Mockito.verify(mockDal).commitTransaction();
-    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
-  }
-
-  @DisplayName("TEST UserUCC.getSearchResult : given a not existing username,"
-      + " should return empty list of Users")
-  @Test
-  public void test_getSearchResult_givenNotExistingUsername_shouldReturnEmptyListOfUsers() {
-    String pattern = "pattern";
-    List<UserDTO> emptyList = new ArrayList<>();
-
-    Mockito.when(mockUserDAO.findBySearch(pattern)).thenReturn(emptyList);
-    assertEquals(emptyList, userUCC.getSearchResult(pattern),
-        "UserUCC.getSearchResult should return a empty List<UserDTO> of all users");
-    Mockito.verify(mockUserDAO).findBySearch(pattern);
-    Mockito.verify(mockDal).startTransaction();
-    Mockito.verify(mockDal).commitTransaction();
-    Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
-  }
-
-  @DisplayName("TEST UserUCC.getSearchResult : DAO throws InternalError,"
-      + " Should rollback and throw InternalError")
-  @Test
-  public void test_getSearchResult_InternalErrorThrown_shouldThrowInternalErrorAndRollback() {
-    String pattern = "pattern";
-
-    Mockito.when(mockUserDAO.findBySearch(pattern)).thenThrow(new InternalError("some error"));
-
-    assertThrows(InternalError.class, () -> userUCC.getSearchResult(pattern),
-        "If the DAO throws an exception, it should be thrown back");
-
-    Mockito.verify(mockUserDAO).findBySearch(pattern);
-    Mockito.verify(mockDal).startTransaction();
-    Mockito.verify(mockDal).rollbackTransaction();
-    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
-  }
-
   /**
    * Unit Test.
    */
