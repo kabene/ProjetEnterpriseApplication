@@ -86,7 +86,6 @@ public abstract class AbstractDAO {
    * @return a List of DTOs (T)
    */
   protected <T> List<T> findByConditions(String tableName, QueryParameter... queryParameters) {
-    List<T> res;
     String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
     query += generateWhere(queryParameters);
     return executeSelectMultipleResultsWhere(queryParameters, query);
@@ -104,7 +103,6 @@ public abstract class AbstractDAO {
    */
   protected <T> List<T> findByConditions(String tableName, QueryParameter[] queryParameters,
       String... orderBy) {
-    List<T> res;
     String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
     query += generateWhere(queryParameters);
     query += generateOrderBy(orderBy);

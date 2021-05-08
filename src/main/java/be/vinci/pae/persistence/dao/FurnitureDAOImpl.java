@@ -4,7 +4,6 @@ import be.vinci.pae.business.dto.FurnitureDTO;
 import be.vinci.pae.business.factories.FurnitureFactory;
 import be.vinci.pae.business.pojos.FurnitureStatus;
 import jakarta.inject.Inject;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;

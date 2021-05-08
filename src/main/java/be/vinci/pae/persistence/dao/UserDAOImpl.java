@@ -1,6 +1,5 @@
 package be.vinci.pae.persistence.dao;
 
-import be.vinci.pae.exceptions.NotFoundException;
 import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
@@ -9,7 +8,6 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOImpl extends AbstractDAO implements UserDAO {
