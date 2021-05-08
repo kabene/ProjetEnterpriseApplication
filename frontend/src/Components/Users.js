@@ -1,11 +1,5 @@
 import {findCurrentUser, setTakeoverSessionData} from "../utils/session";
-import {
-  removeTimeouts,
-  generateLoadingAnimation,
-  displayErrorMessage,
-  gdpr,
-  baseUrl
-} from "../utils/utils";
+import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr, baseUrl, getSignal} from "../utils/utils";
 import {Loader} from "@googlemaps/js-api-loader";
 import {RedirectUrl} from "./Router";
 import Navbar from "./Navbar";
@@ -643,7 +637,10 @@ const generateUserCard = (userDetail) => {
 /********************  Backend fetch  **********************/
 
 const clientDetail = async (id) => {
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+`/users/detail/${id}`, {
+    signal,
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -660,7 +657,10 @@ const clientDetail = async (id) => {
 
 
 const getWaitingUserList = async () => {
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+"/users/detail/waiting", {
+    signal,
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -678,7 +678,10 @@ const getWaitingUserList = async () => {
 
 
 const getConfirmedUsersList = async () => {
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+"/users/detail/confirmed", {
+    signal,
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -697,7 +700,10 @@ const getConfirmedUsersList = async () => {
 
 const validation = async (e) => {
   let val = e.target.id === "accept" ? {value: true} : {value: false};
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+`/users/validate/${userDetail.id}`, {
+    signal,
     method: "PATCH",
     body:JSON.stringify(val),
     headers: {
@@ -716,7 +722,10 @@ const validation = async (e) => {
 const onTakeoverClick = async (e) => {
   e.preventDefault();
   let userId = e.target.getAttribute("user-id");
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+`/users/takeover/${userId}`,{
+    signal,
     method: "GET",
     headers: {
       "Authorization": currentUser.token,

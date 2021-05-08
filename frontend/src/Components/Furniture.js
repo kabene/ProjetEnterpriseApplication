@@ -2,13 +2,7 @@ import notFoundPhoto from "../img/notFoundPhoto.png";
 
 import {findCurrentUser} from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
-import {
-  displayErrorMessage,
-  generateLoadingAnimation,
-  displayImgs,
-  gdpr,
-  baseUrl
-} from "../utils/utils.js"
+import {displayErrorMessage, generateLoadingAnimation, displayImgs, gdpr, baseUrl, getSignal} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 
@@ -363,7 +357,10 @@ const generateOptionForm = () => {
 
 
 const getFurnitureList = async () => {
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+"/furniture/", {
+    signal,
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -391,8 +388,10 @@ const getFurnitureList = async () => {
 
 const fetchFav = async (furniture) => {
   if (!furniture.favouritePhoto) {
+    let signal = getSignal();
     
     let response = await fetch(baseUrl+"/photos/favourite/" + furniture.furnitureId, {
+      signal,
       method: "GET",
     });
     if (response.ok) {
@@ -410,8 +409,10 @@ const getPhotos = async () => {
 
 const fetchAllPhotos = async (furniture) => {
   if (!furniture.photos || furniture.photos.length === 0) {
+    let signal = getSignal();
     
     let response = await fetch(baseUrl+"/photos/byFurniture/" + furniture.furnitureId, {
+      signal,
       method: "GET",
     });
     if (response.ok) {
@@ -425,7 +426,10 @@ const fetchAllPhotos = async (furniture) => {
 
 
 const getFurnitureTypeList = async () => {
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+"/furnitureTypes/", {
+    signal,
     method: "GET",
   });
   if (!response.ok) {
@@ -440,7 +444,10 @@ const getFurnitureTypeList = async () => {
 const getMyOptionList = async () => {
   if (!currentUser) 
     return;
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+"/options/me", {
+    signal,
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
@@ -463,8 +470,10 @@ const cancelOption = async (e) => {
   let option = mapOption.get(parseInt(furnitureId));
   if (!option.isCanceled)
     optionId = option.optionId;
+  let signal = getSignal();
 
   let response = await fetch(baseUrl+"/options/cancel/" + optionId, {
+    signal,
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -488,8 +497,10 @@ const addOption = async (e) => {
     furnitureId: e.target.id.substring(3),
     duration: e.target.parentElement.parentElement.querySelector("input").value,
   }
+  let signal = getSignal();
   
   let response = await fetch(baseUrl+"/options/", {
+    signal,
     method: "POST",
     body: JSON.stringify(bundle),
     headers: {
