@@ -2,12 +2,7 @@ import notFoundPhoto from "../img/notFoundPhoto.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {findCurrentUser} from "../utils/session.js";
-import {
-  displayErrorMessage,
-  generateLoadingAnimation,
-  displayImgs,
-  gdpr, baseUrl,
-} from "../utils/utils.js"
+import {displayErrorMessage, generateLoadingAnimation, displayImgs, gdpr, baseUrl, getSignal} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -21,6 +16,8 @@ let openTab = "infos";
 let favFetched = false;
 let photosFetchedMap = [];
 
+const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"></div>  </div>`;
+
 const inStorePurchaseUsername = "in-store purchase";
 
 const emptyFilter = {
@@ -33,8 +30,7 @@ let activeFilters = {...emptyFilter};
 const FurnitureList = async (id) => {
   currentUser = findCurrentUser();
   gdpr(page);
-  let pageHTML = `
-  <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
+  let pageHTML = errorDiv + `
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
@@ -65,28 +61,26 @@ const generateLargeTablePage = () => {
  * Loads the furnitureList & furnitureMap from backend
  */
 const findFurnitureList = async () => {
-  return fetch(baseUrl+"/furniture/detail", {
+  let signal = getSignal();
+
+  let response = await fetch(baseUrl+"/furniture/detail", {
+    signal,
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(
-          response.status + " : " + response.statusText
-      );
-    }
-    return response.json();
-  }).then((data) => {
-    let furnitureList = data;
-    furnitureList.forEach(furniture => {
-      furnitureMap[furniture.furnitureId] = furniture;
-    });
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
-    displayErrorMessage("errorDiv", err);
+  })
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage(err, errorDiv);
+  }
+  let furnitureList = await response.json();
+  furnitureList.forEach(furniture => {
+    furnitureMap[furniture.furnitureId] = furniture;
   });
+
 }
 
 /**
@@ -94,7 +88,9 @@ const findFurnitureList = async () => {
  */
 const findTypeList = async () => {
   try {
+    let signal = getSignal();
     let response = await fetch(baseUrl+"/furnitureTypes/", {
+      signal,
       method: "GET",
     });
     if (!response.ok) {
@@ -433,7 +429,6 @@ const onUserLinkClicked = (e) => {
   e.preventDefault();
   let link = e.target;
   let userId = link.getAttribute("userid");
-  console.log(`Linking to user card (id: ${userId})`);
   RedirectUrl("/users", userId);
 }
 
@@ -668,7 +663,9 @@ const fetching = async (base64, furnitureId) => {
     source: base64,
     furnitureId: furnitureId
   }
+  let signal = getSignal();
   let response = await fetch(baseUrl+"/photos/", {
+    signal,
     method: "POST",
     body: JSON.stringify(toSend),
     headers: {
@@ -870,7 +867,10 @@ const patchNewFav = async (furnitureId, favPhotoId) => {
   let bundle = {
     photoId: favPhotoId,
   };
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+"/furniture/favouritePhoto/" + furnitureId, {
+    signal,
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -900,7 +900,10 @@ const patchNewFav = async (furnitureId, favPhotoId) => {
  */
 const patchDisplayFlags = async (bundle) => {
   let addr = baseUrl+"/photos/displayFlags/" + bundle.photoId;
+  let signal = getSignal();
+  
   let response = await fetch(addr, {
+    signal,
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -1297,7 +1300,10 @@ const onSaveInfoBtnClicked = async (e) => {
   }
   if (bundle !== {}) {
     try {
+      let signal = getSignal();
+
       let response = await fetch(baseUrl+"furniture/infos/" + currentFurnitureId, {
+        signal,
         method: "PATCH",
         body: JSON.stringify(bundle),
         headers: {
@@ -1326,7 +1332,10 @@ const toAvailable = (e, furniture) => {
   let bundle = {
     selling_price: sellingPrice,
   };
+  let signal = getSignal();
+
   fetch(baseUrl+"/furniture/available/" + furniture.furnitureId, {
+    signal,
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -1351,7 +1360,10 @@ const toAvailable = (e, furniture) => {
 
 const toRestoration = (e, furniture) => {
   e.preventDefault();
+  let signal = getSignal();
+
   fetch(baseUrl+"/furniture/restoration/" + furniture.furnitureId, {
+    signal,
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -1374,7 +1386,10 @@ const toRestoration = (e, furniture) => {
 
 const withdraw = (e, furniture) => {
   e.preventDefault();
+  let signal = getSignal();
+
   fetch(baseUrl+"/furniture/withdraw/" + furniture.furnitureId, {
+    signal,
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -1421,7 +1436,10 @@ const toSold = async (e, furniture) => {
       buyerUsername: buyerUsername,
     }
   }
+  let signal = getSignal();
+
   fetch(baseUrl+"/furniture/sold/" + furniture.furnitureId, {
+    signal,
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -1670,14 +1688,16 @@ const getFavs = async () => {
 const fetchFav = async (furniture) => {
   if(!furniture.favouritePhoto){
     let path = baseUrl+"/photos/favourite/"+furniture.furnitureId;
+    let signal = getSignal();
+
     let response = await fetch(path, {
+      signal,
       method: "GET",
     });
     if(response.ok) {
       let fav = await response.json();
       updateCacheFav(furniture, fav);
       displayImgs([fav]);
-      console.log("fav fetched");
     }
   }
 }
@@ -1687,7 +1707,10 @@ const fetchAllPhotos = async (furniture) => {
     photosFetchedMap[furniture.furnitureId] = true;
     if(!furniture.photos || furniture.photos.length === 0) { //no photos -> fetch
       let path = baseUrl+"/photos/byFurniture/all/"+furniture.furnitureId;
+      let signal = getSignal();
+
       let response = await fetch(path, {
+        signal,
         method: "GET",
         headers: {
           Authorization: currentUser.token,
@@ -1697,7 +1720,6 @@ const fetchAllPhotos = async (furniture) => {
         let photoArray = await response.json();
         updateCachePhotos(furniture, photoArray);
         refreshDisplay();
-        console.log("photos fetched");
       }
     }
   }

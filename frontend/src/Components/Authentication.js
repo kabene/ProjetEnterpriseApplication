@@ -2,7 +2,7 @@ import {baseUrl, displayErrorMessage, gdpr} from "../utils/utils.js"
 import {getUserSessionData, setUserSessionData, setUserLocalData,} from "../utils/session";
 import Navbar from "./Navbar";
 import {RedirectUrl} from "./Router";
-import {fetchMe} from "../utils/utils.js";
+import {fetchMe, getSignal} from "../utils/utils.js";
 
 let page = document.querySelector("#page");
 
@@ -283,7 +283,10 @@ const generatePage = () => {
  * @returns the user in json form.
  */
 const login = async (user) => {
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+"/users/login", {
+    signal,
     method: "POST",
     body: JSON.stringify(user),
     headers: {
@@ -308,7 +311,10 @@ const login = async (user) => {
  * @returns the user in json form
  */
 const signUp = async (user) => {
+  let signal = getSignal();
+
   let response = await fetch(baseUrl+"/users/register", {
+    signal,
     method: "POST",
     body: JSON.stringify(user),
     headers: {

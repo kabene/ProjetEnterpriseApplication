@@ -26,6 +26,7 @@ const routes = {
 
 let componentToRender;
 let navbar = document.querySelector("#navbar");
+let abortControllers = [];
 
 
 const Router = () => {
@@ -52,6 +53,7 @@ const onNavigateHandler = (e) => {
   let uri;
   uri = e.target.dataset.uri;
   removeModals();
+  killControllers();
   if (uri) {
     window.history.pushState({}, uri, window.location.origin + uri);
     componentToRender = routes[uri];
@@ -65,6 +67,7 @@ const onNavigateHandler = (e) => {
 
 const onHistoryHandler = () => {
   removeModals();
+  killControllers();
   componentToRender = routes[window.location.pathname];
   if (!componentToRender) {
     ErrorPage(window.location.pathname);
@@ -76,6 +79,7 @@ const onHistoryHandler = () => {
 const RedirectUrl = (uri, data) => {
   window.history.pushState({}, uri, window.location.origin + uri);
   removeModals();
+  killControllers();
   componentToRender = routes[uri];  
   if(!componentToRender){
     ErrorPage(uri);
@@ -128,4 +132,9 @@ const removeModals = () => {
   }
 }
 
-export {Router, RedirectUrl};
+const killControllers = () => {
+  while (abortControllers.length !== 0)
+    abortControllers.pop().abort();
+}
+
+export {Router, RedirectUrl, abortControllers};
