@@ -34,20 +34,7 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
    */
   @Override
   public List<RequestForVisitDTO> findByUserId(int userId) {
-    List<RequestForVisitDTO> requestList = new ArrayList<RequestForVisitDTO>();
-    String query = "SELECT * FROM satchoFurniture.requests_for_visit WHERE user_id=?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, userId);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        requestList.add(toDTO(rs));
-      }
-      rs.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return requestList;
+    return findByFK("requests_for_visit", "user_id", userId);
   }
 
   /**

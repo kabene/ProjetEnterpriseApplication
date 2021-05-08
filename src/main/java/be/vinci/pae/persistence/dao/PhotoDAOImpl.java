@@ -22,21 +22,7 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    */
   @Override
   public List<PhotoDTO> findAllByFurnitureId(int furnitureId) {
-    List<PhotoDTO> res = new ArrayList<>();
-    String query = "SELECT p.* FROM satchofurniture.photos p WHERE p.furniture_id = ?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, furnitureId);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        res.add(toDTO(rs));
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-    return res;
+    return findByFK("photos", "furniture_id", furnitureId);
   }
 
   /**
@@ -47,22 +33,9 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    */
   @Override
   public List<PhotoDTO> findAllRequestPhotosByFurnitureId(int furnitureId) {
-    List<PhotoDTO> res = new ArrayList<>();
-    String query = "SELECT p.* FROM satchofurniture.photos p WHERE p.furniture_id = ? "
-        + "AND p.is_from_request = true";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, furnitureId);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        res.add(toDTO(rs));
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-    return res;
+    return findByConditions("photos",
+        new QueryParameter("furniture_id", furnitureId),
+        new QueryParameter("is_from_request", true));
   }
 
   /**
@@ -92,20 +65,8 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    */
   @Override
   public List<PhotoDTO> getAllHomePageVisiblePhotos() {
-    List<PhotoDTO> res = new ArrayList<>();
-    String query = "SELECT p.* FROM satchofurniture.photos p WHERE p.is_on_home_page = true";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        res.add(toDTO(rs));
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-    return res;
+    return findByConditions("photos",
+        new QueryParameter("is_on_home_page", true));
   }
 
   /**

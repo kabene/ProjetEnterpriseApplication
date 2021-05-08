@@ -35,20 +35,7 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public List<FurnitureDTO> findByRequestId(int requestId) {
-    List<FurnitureDTO> lst = new ArrayList<>();
-    String query = "SELECT f.* FROM satchofurniture.furniture f WHERE f.request_id = ?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, requestId);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        lst.add(toDTO(rs));
-      }
-      rs.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return lst;
+    return findByFK("furniture", "request_id", requestId);
   }
 
   /**

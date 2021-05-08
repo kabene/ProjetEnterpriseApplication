@@ -97,24 +97,16 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
    */
   @Override
   public OptionDTO findByFurnitureId(int furnitureId) {
-    OptionDTO opt;
-    String query = "SELECT o.* FROM satchofurniture.options o "
-        + "WHERE o.furniture_id = ? AND o.is_canceled = 'false'";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setInt(1, furnitureId);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        opt = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: option not found");
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
+    List<OptionDTO> lst =  findByConditions("options",
+        new QueryParameter("furniture_id", furnitureId),
+        new QueryParameter("is_canceled", false));
+    if(lst.size() == 0) {
+      throw new NotFoundException();
     }
-    return opt;
+    if(lst.size() > 1) {
+      throw new InternalError();
+    }
+    return lst.get(0);
   }
 
   /**
@@ -125,22 +117,9 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
    */
   @Override
   public List<OptionDTO> findByUserId(int userId) {
-    List<OptionDTO> optionList = new ArrayList<>();
-    String query = "SELECT o.* FROM satchofurniture.options o "
-        + "WHERE o.user_id = ? AND o.is_canceled = 'false'";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setInt(1, userId);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        optionList.add(toDTO(rs));
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return optionList;
+    return findByConditions("options",
+        new QueryParameter("user_id", userId),
+        new QueryParameter("is_canceled", false));
   }
 
   /**
