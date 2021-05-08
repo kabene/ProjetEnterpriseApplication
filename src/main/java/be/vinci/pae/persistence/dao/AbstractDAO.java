@@ -175,6 +175,7 @@ public abstract class AbstractDAO {
   }
 
   // already exists:
+
   /**
    * Verifies if an entry that follows all given conditions already exists in the specified table.
    *
@@ -192,13 +193,13 @@ public abstract class AbstractDAO {
    * Updates one or multiple columns in an entry (given its table name and id).
    *
    * @param tableName       : The table name
-   * @param id              : Id & id column-name (as a QueryParameter)
-   * @param queryParameters : All columns to update, and their column names (as many
-   *                        QueryParameters)
+   * @param id              : id + id column-name (as a QueryParameter)
+   * @param queryParameters : All columns to update, and their column names (as QueryParameters)
    * @return boolean representing if the operation was a success or not.
    */
   protected boolean updateById(String tableName, QueryParameter id,
       QueryParameter... queryParameters) {
+    boolean res;
     if (queryParameters.length == 0) {
       throw new IllegalArgumentException("At least 1 QueryParameter should be provided");
     }
@@ -213,10 +214,12 @@ public abstract class AbstractDAO {
         parameterIndex++;
       }
       ps.setObject(parameterIndex, id.value);
-      return ps.execute();
+      res = ps.execute();
+      ps.close();
     } catch (SQLException e) {
       throw new InternalError(e);
     }
+    return res;
   }
 
   // -- Abstract Methods --
