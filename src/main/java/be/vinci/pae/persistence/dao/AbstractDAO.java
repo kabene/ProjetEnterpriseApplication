@@ -4,7 +4,6 @@ import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import jakarta.inject.Inject;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -78,24 +77,9 @@ public abstract class AbstractDAO {
    * @throws NotFoundException if no entry matches the given id.
    */
   protected <T> T findById(int id, String tableName, String idName) {
-    T res;
-    String query = "SELECT t.* FROM satchofurniture." + tableName + " t WHERE t." + idName + " = ?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, id);
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        res = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: piece of furniture not found");
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-    return res;
+    return findOneByConditions(tableName, new QueryParameter(idName, id));
   }
+
 
   /**
    * Finds all the entries in a table that shares the same FK.
@@ -111,6 +95,22 @@ public abstract class AbstractDAO {
   }
 
   /**
+   * Finds all the entries in a table that shares the same FK. The resulting List is ordered
+   * following the given ORDER BY column names.
+   *
+   * @param tableName : The table name
+   * @param fkName    : The column name of the FK
+   * @param fk        : The FK (int)
+   * @param orderBy   : All ORDER BY column names (in order)
+   * @param <T>       : The type of DTO to return.
+   * @return a List of DTOs (T)
+   */
+  protected <T> List<T> findByFK(String tableName, String fkName, int fk, String... orderBy) {
+    return findByConditions(tableName, new QueryParameter[]{new QueryParameter(fkName, fk)},
+        orderBy);
+  }
+
+  /**
    * Finds all the entries in a table that matches all the given conditions.
    *
    * @param tableName       : The table name
@@ -122,25 +122,58 @@ public abstract class AbstractDAO {
     List<T> res;
     String query = "SELECT t.* FROM satchofurniture." + tableName + " t";
     query += generateWhere(queryParameters);
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      int parameterIndex = 1;
-      for (QueryParameter qp : queryParameters) {
-        ps.setObject(parameterIndex, qp.value);
-        parameterIndex++;
-      }
-      res = executeSelectMultipleResults(ps);
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return res;
+    return executeSelectMultipleResultsWhere(queryParameters, query);
   }
 
-  protected boolean alreadyExists(String tableName, QueryParameter qp) {
+  /**
+   * Finds all the entries in a table that matches all the given conditions. The resulting List is
+   * ordered by the specified column names.
+   *
+   * @param tableName       : The table name
+   * @param queryParameters : Array of QueryParameter representing the WHERE conditions
+   * @param orderBy         : All ORDER BY column names in order of apparition
+   * @param <T>             : The type of DTO to return.
+   * @return a List of DTOs (T)
+   */
+  protected <T> List<T> findByConditions(String tableName, QueryParameter[] queryParameters,
+      String... orderBy) {
+    List<T> res;
+    String query = "SELECT t.* FROM satchofurniture." + tableName + " t";
+    query += generateWhere(queryParameters);
+    query += generateOrderBy(orderBy);
+    return executeSelectMultipleResultsWhere(queryParameters, query);
+  }
+
+  /**
+   * Finds one specific entry in a table based on specified conditions. If multiple entries are
+   * found, only the first one will be returned.
+   *
+   * @param tableName       : The table name
+   * @param queryParameters : All conditions as QueryParameter (columnName + value)
+   * @param <T>             : The type of DTO to return.
+   * @return a single DTO (T) containing the found entry.
+   * @throws NotFoundException if no entry matches the given conditions.
+   */
+  protected <T> T findOneByConditions(String tableName, QueryParameter... queryParameters) {
+    List<T> lst = findByConditions(tableName, queryParameters);
+    if (lst.isEmpty()) {
+      throw new NotFoundException("Error: Resource not found");
+    }
+    return lst.get(0);
+  }
+
+  /**
+   * Verifies if an entry that follows all given conditions already exists in the specified table.
+   *
+   * @param tableName : The table name.
+   * @param queryParameters : All the conditions.
+   * @return a boolean representing if such an entry exists or not.
+   */
+  protected boolean alreadyExists(String tableName, QueryParameter... queryParameters) {
     return true; //TODO
   }
 
-  protected void update(String tableName, QueryParameter id, QueryParameter... queryParameters) {
+  protected void updateById(String tableName, QueryParameter id, QueryParameter... queryParameters) {
     //TODO
   }
 
@@ -174,6 +207,33 @@ public abstract class AbstractDAO {
     }
     rs.close();
     return dtoList;
+  }
+
+  /**
+   * Executes a "SELECT" PreparedStatement after setting its WHERE parameters and converts its
+   * result set into a List of DTO.
+   *
+   * @param queryParameters : Array of QueryParameters representing the ordered WHERE parameters
+   * @param query           : Query to execute
+   * @param <T>             The type of DTO to return
+   * @return A list containing all results of the SELECT query as DTOs
+   * @throws InternalError if a problem occurs while accessing the db.
+   */
+  private <T> List<T> executeSelectMultipleResultsWhere(QueryParameter[] queryParameters,
+      String query) {
+    List<T> res;
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      int parameterIndex = 1;
+      for (QueryParameter qp : queryParameters) {
+        ps.setObject(parameterIndex, qp.value);
+        parameterIndex++;
+      }
+      res = executeSelectMultipleResults(ps);
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return res;
   }
 
   /**
