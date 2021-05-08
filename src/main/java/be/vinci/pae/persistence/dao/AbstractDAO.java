@@ -17,8 +17,11 @@ public abstract class AbstractDAO {
 
   // -- QueryParameter --
 
+  /**
+   * Class representing a "column name / value" pair in the database.
+   * Used for queries with unknown parameter types, and/or multiple parameters.
+   */
   protected class QueryParameter {
-
     private String columnName;
     private Object value;
 
@@ -28,8 +31,10 @@ public abstract class AbstractDAO {
     }
   }
 
-  // -- Protected Methods --
+  // -- Protected (Available in DAOs) Methods --
 
+
+  // find all:
   /**
    * Finds all entries in a specific table. This method is inherited by all classes extending
    * AbstractDAO and is intended to be used to implement findAll() methods.
@@ -52,7 +57,7 @@ public abstract class AbstractDAO {
    * Finds all entries in a specific table.
    *
    * @param tableName : table name.
-   * @param orderBy   : all column names for order-by (in order)
+   * @param orderBy   : all column names for order-by (in order of importance)
    * @param <T>       : The class of DTO to use in the result List
    * @return a List of 'Dto' containing all found entries
    */
@@ -66,50 +71,7 @@ public abstract class AbstractDAO {
     }
   }
 
-  /**
-   * Finds a specific entry in a table based on its id.
-   *
-   * @param id        : The id
-   * @param tableName : The table name
-   * @param idName    : The id column name
-   * @param <T>       : The class of DTO to use in the result List
-   * @return a DTO (T) containing the found entry.
-   * @throws NotFoundException if no entry matches the given id.
-   */
-  protected <T> T findById(int id, String tableName, String idName) {
-    return findOneByConditions(tableName, new QueryParameter(idName, id));
-  }
-
-
-  /**
-   * Finds all the entries in a table that shares the same FK.
-   *
-   * @param tableName : The table name
-   * @param fkName    : The column name of the FK
-   * @param fk        : The FK (int)
-   * @param <T>       : The type of DTO to return.
-   * @return a List of DTOs (T)
-   */
-  protected <T> List<T> findByFK(String tableName, String fkName, int fk) {
-    return findByConditions(tableName, new QueryParameter(fkName, fk));
-  }
-
-  /**
-   * Finds all the entries in a table that shares the same FK. The resulting List is ordered
-   * following the given ORDER BY column names.
-   *
-   * @param tableName : The table name
-   * @param fkName    : The column name of the FK
-   * @param fk        : The FK (int)
-   * @param orderBy   : All ORDER BY column names (in order)
-   * @param <T>       : The type of DTO to return.
-   * @return a List of DTOs (T)
-   */
-  protected <T> List<T> findByFK(String tableName, String fkName, int fk, String... orderBy) {
-    return findByConditions(tableName, new QueryParameter[]{new QueryParameter(fkName, fk)},
-        orderBy);
-  }
-
+  // find all by conditions:
   /**
    * Finds all the entries in a table that matches all the given conditions.
    *
@@ -145,6 +107,36 @@ public abstract class AbstractDAO {
   }
 
   /**
+   * Finds all the entries in a table that shares the same FK.
+   *
+   * @param tableName : The table name
+   * @param fkName    : The column name of the FK
+   * @param fk        : The FK (int)
+   * @param <T>       : The type of DTO to return.
+   * @return a List of DTOs (T)
+   */
+  protected <T> List<T> findByFK(String tableName, String fkName, int fk) {
+    return findByConditions(tableName, new QueryParameter(fkName, fk));
+  }
+
+  /**
+   * Finds all the entries in a table that shares the same FK. The resulting List is ordered
+   * following the given ORDER BY column names.
+   *
+   * @param tableName : The table name
+   * @param fkName    : The column name of the FK
+   * @param fk        : The FK (int)
+   * @param orderBy   : All ORDER BY column names (in order)
+   * @param <T>       : The type of DTO to return.
+   * @return a List of DTOs (T)
+   */
+  protected <T> List<T> findByFK(String tableName, String fkName, int fk, String... orderBy) {
+    return findByConditions(tableName, new QueryParameter[]{new QueryParameter(fkName, fk)},
+        orderBy);
+  }
+
+  // find one by conditions:
+  /**
    * Finds one specific entry in a table based on specified conditions. If multiple entries are
    * found, only the first one will be returned.
    *
@@ -163,6 +155,21 @@ public abstract class AbstractDAO {
   }
 
   /**
+   * Finds a specific entry in a table based on its id.
+   *
+   * @param id        : The id
+   * @param tableName : The table name
+   * @param idName    : The id column name
+   * @param <T>       : The class of DTO to use in the result List
+   * @return a DTO (T) containing the found entry.
+   * @throws NotFoundException if no entry matches the given id.
+   */
+  protected <T> T findById(int id, String tableName, String idName) {
+    return findOneByConditions(tableName, new QueryParameter(idName, id));
+  }
+
+  // already exists:
+  /**
    * Verifies if an entry that follows all given conditions already exists in the specified table.
    *
    * @param tableName : The table name.
@@ -173,6 +180,11 @@ public abstract class AbstractDAO {
     return true; //TODO
   }
 
+  protected boolean alreadyExistingId(String tableName, String idName, int id) {
+    return true; //TODO
+  }
+
+  // update:
   protected void updateById(String tableName, QueryParameter id, QueryParameter... queryParameters) {
     //TODO
   }
@@ -181,6 +193,7 @@ public abstract class AbstractDAO {
 
   /**
    * Instantiates and fills a DTO object using an entry from a ResultSet.
+   * Has to be implemented in each DAO class.
    *
    * @param rs  A ResultSet.
    * @param <T> The type of DTO to return.
@@ -237,7 +250,7 @@ public abstract class AbstractDAO {
   }
 
   /**
-   * Dynamically generates the ORDER BY part of a query.
+   * Generates the ORDER BY part of a query.
    *
    * @param orderBy all table names for order by, in order.
    * @return ORDER BY part of a SELECT query (as String).
@@ -259,7 +272,7 @@ public abstract class AbstractDAO {
   }
 
   /**
-   * Generates the WHERE part of a query based on query parameters (in order).
+   * Generates the WHERE part of a query based on QueryParameter(s) (in order).
    *
    * @param queryParameters : all query parameters
    * @return WHERE part of a query (as String).
