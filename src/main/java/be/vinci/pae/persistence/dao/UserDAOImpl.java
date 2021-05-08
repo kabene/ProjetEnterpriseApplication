@@ -25,23 +25,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public UserDTO findByUsername(String username) {
-    String query = "SELECT u.* FROM satchofurniture.users u WHERE u.username = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    UserDTO userFound;
-    try {
-      ps.setString(1, StringEscapeUtils.escapeHtml4(username));
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        userFound = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: user not found");
-      }
-      rs.close();
-      ps.close();
-      return userFound;
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    return findOneByConditions("users",
+        new QueryParameter("username", username));
   }
 
   /**
@@ -92,21 +77,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public boolean emailAlreadyTaken(String email) {
-    String query = "SELECT * FROM satchoFurniture.users WHERE email = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    boolean res = false;
-    try {
-      ps.setString(1, StringEscapeUtils.escapeHtml4(email));
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        res = true;
-      }
-      rs.close();
-      ps.close();
-      return res;
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    return alreadyExists("users",
+        new QueryParameter("email", email));
   }
 
   /**
@@ -117,21 +89,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public boolean usernameAlreadyTaken(String username) {
-    String query = "SELECT * FROM satchoFurniture.users WHERE username = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    boolean res = false;
-    try {
-      ps.setString(1, StringEscapeUtils.escapeHtml4(username));
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        res = true;
-      }
-      rs.close();
-      ps.close();
-      return res;
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    return alreadyExists("users",
+        new QueryParameter("username", username));
   }
 
   /**
@@ -151,19 +110,10 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public List<UserDTO> getAllWaitingUsers() {
-    List<UserDTO> users = new ArrayList<>();
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.is_waiting = true"
-          + " ORDER BY u.last_name, u.first_name";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        users.add(toDTO(rs));
-      }
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return users;
+    return findByConditions("users",
+        new QueryParameter[]{new QueryParameter("is_waiting", true)}, //WHERE
+        "last_name", "first_name"); //ORDER BY
+
   }
 
   /**
@@ -173,52 +123,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public List<UserDTO> getAllConfirmedUsers() {
-    List<UserDTO> users = new ArrayList<>();
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u "
-          + "WHERE u.is_waiting = false"
-          + " ORDER BY u.last_name, u.first_name";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        users.add(toDTO(rs));
-      }
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return users;
-  }
-
-  /**
-   * find the users that correspond with the string.
-   *
-   * @param userSearch reg of the search.
-   * @return list containing the users researched.
-   */
-  @Override
-  public List<UserDTO> findBySearch(String userSearch) {
-    List<UserDTO> users = new ArrayList<>();
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u "
-          + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
-          + "WHERE lower(a.commune) LIKE lower(?) "
-          + "OR lower(u.first_name) LIKE lower(?) "
-          + "OR lower(u.last_name) LIKE lower(?) "
-          + "OR lower(a.postcode) LIKE lower(?) "
-          + " ORDER BY u.last_name, u.first_name";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setString(1, "%" + userSearch + "%");
-      ps.setString(2, "%" + userSearch + "%");
-      ps.setString(3, "%" + userSearch + "%");
-      ps.setString(4, "%" + userSearch + "%");
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        users.add(toDTO(rs));
-      }
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return users;
+    return findByConditions("users",
+        new QueryParameter[]{new QueryParameter("is_waiting", false)}, //WHERE
+        "last_name", "first_name"); //ORDER BY
   }
 
   /**
@@ -229,22 +136,16 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public void updateRole(int id, boolean value) {
-    String query;
     if (value) {
-      query = "UPDATE  satchoFurniture.users u SET is_waiting = false WHERE  u.user_id = ?";
+      updateById("users",
+          new QueryParameter("user_id", id),
+          new QueryParameter("is_waiting", false));
+      //query = "UPDATE  satchoFurniture.users u SET is_waiting = false WHERE  u.user_id = ?";
     } else {
-      query = "UPDATE satchoFurniture.users u "
-          + "SET  role = 'customer', is_waiting = false "
-          + "WHERE u.user_id = ?";
-    }
-    PreparedStatement ps = dalServices.makeStatement(query);
-
-    try {
-      ps.setInt(1, id);
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
+      updateById("users",
+          new QueryParameter("user_id", id),
+          new QueryParameter("is_waiting", false),
+          new QueryParameter("role", "customer"));
     }
   }
 
@@ -256,17 +157,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public UserDTO updatePurchasedFurnitureNbr(UserDTO userDTO) {
-    String query = "UPDATE satchoFurniture.users u "
-        + "SET  purchased_furniture_nbr = ?"
-        + "WHERE u.user_id = ?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, userDTO.getPurchasedFurnitureNbr());
-      ps.setInt(2, userDTO.getId());
-      ps.execute();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("users",
+        new QueryParameter("user_id", userDTO.getId()),
+        new QueryParameter("purchased_furniture_nbr", userDTO.getPurchasedFurnitureNbr()));
     return userDTO;
   }
 
@@ -277,17 +170,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public UserDTO updateSoldFurnitureNbr(UserDTO userDTO) {
-    String query = "UPDATE satchoFurniture.users u "
-        + "SET  sold_furniture_nbr = ?"
-        + "WHERE u.user_id = ?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, userDTO.getSoldFurnitureNbr());
-      ps.setInt(2, userDTO.getId());
-      ps.executeQuery();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("users",
+        new QueryParameter("user_id", userDTO.getId()), //WHERE
+        new QueryParameter("sold_furniture_nbr", userDTO.getSoldFurnitureNbr())); //SET
     return userDTO;
   }
 

@@ -2,6 +2,7 @@ package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
+import be.vinci.pae.utils.Configurate;
 import jakarta.inject.Inject;
 
 import java.sql.PreparedStatement;
@@ -12,16 +13,19 @@ import java.util.List;
 
 public abstract class AbstractDAO {
 
+  private static final String schema = Configurate.getConfiguration("schema");
+
   @Inject
   protected ConnectionBackendDalServices dalServices;
 
   // -- QueryParameter --
 
   /**
-   * Class representing a "column name / value" pair in the database.
-   * Used for queries with unknown parameter types, and/or multiple parameters.
+   * Class representing a "column name / value" pair in the database. Used for queries with unknown
+   * parameter types, and/or multiple parameters.
    */
   protected class QueryParameter {
+
     private String columnName;
     private Object value;
 
@@ -33,8 +37,8 @@ public abstract class AbstractDAO {
 
   // -- Protected (Available in DAOs) Methods --
 
-
   // find all:
+
   /**
    * Finds all entries in a specific table. This method is inherited by all classes extending
    * AbstractDAO and is intended to be used to implement findAll() methods.
@@ -44,7 +48,7 @@ public abstract class AbstractDAO {
    * @return a List of 'Dto' containing all found entries
    */
   protected <T> List<T> findAll(String tableName) {
-    String query = "SELECT t.* FROM satchoFurniture." + tableName + " t";
+    String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       return executeSelectMultipleResults(ps);
@@ -62,7 +66,7 @@ public abstract class AbstractDAO {
    * @return a List of 'Dto' containing all found entries
    */
   protected <T> List<T> findAll(String tableName, String... orderBy) {
-    String query = "SELECT t.* FROM satchoFurniture." + tableName + " t" + generateOrderBy(orderBy);
+    String query = "SELECT t.* FROM " + schema + "." + tableName + " t" + generateOrderBy(orderBy);
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       return executeSelectMultipleResults(ps);
@@ -72,6 +76,7 @@ public abstract class AbstractDAO {
   }
 
   // find all by conditions:
+
   /**
    * Finds all the entries in a table that matches all the given conditions.
    *
@@ -82,7 +87,7 @@ public abstract class AbstractDAO {
    */
   protected <T> List<T> findByConditions(String tableName, QueryParameter... queryParameters) {
     List<T> res;
-    String query = "SELECT t.* FROM satchofurniture." + tableName + " t";
+    String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
     query += generateWhere(queryParameters);
     return executeSelectMultipleResultsWhere(queryParameters, query);
   }
@@ -100,7 +105,7 @@ public abstract class AbstractDAO {
   protected <T> List<T> findByConditions(String tableName, QueryParameter[] queryParameters,
       String... orderBy) {
     List<T> res;
-    String query = "SELECT t.* FROM satchofurniture." + tableName + " t";
+    String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
     query += generateWhere(queryParameters);
     query += generateOrderBy(orderBy);
     return executeSelectMultipleResultsWhere(queryParameters, query);
@@ -136,6 +141,7 @@ public abstract class AbstractDAO {
   }
 
   // find one by conditions:
+
   /**
    * Finds one specific entry in a table based on specified conditions. If multiple entries are
    * found, only the first one will be returned.
@@ -172,28 +178,51 @@ public abstract class AbstractDAO {
   /**
    * Verifies if an entry that follows all given conditions already exists in the specified table.
    *
-   * @param tableName : The table name.
+   * @param tableName       : The table name.
    * @param queryParameters : All the conditions.
    * @return a boolean representing if such an entry exists or not.
    */
   protected boolean alreadyExists(String tableName, QueryParameter... queryParameters) {
-    return true; //TODO
-  }
-
-  protected boolean alreadyExistingId(String tableName, String idName, int id) {
-    return true; //TODO
+    return !findByConditions(tableName, queryParameters).isEmpty();
   }
 
   // update:
-  protected void updateById(String tableName, QueryParameter id, QueryParameter... queryParameters) {
-    //TODO
+
+  /**
+   * Updates one or multiple columns in an entry (given its table name and id).
+   *
+   * @param tableName       : The table name
+   * @param id              : Id & id column-name (as a QueryParameter)
+   * @param queryParameters : All columns to update, and their column names (as many
+   *                        QueryParameters)
+   * @return boolean representing if the operation was a success or not.
+   */
+  protected boolean updateById(String tableName, QueryParameter id,
+      QueryParameter... queryParameters) {
+    if (queryParameters.length == 0) {
+      throw new IllegalArgumentException("At least 1 QueryParameter should be provided");
+    }
+    String query = "UPDATE " + schema + "." + tableName + " SET ";
+    query += generateSet(queryParameters);
+    query += generateWhere(false, id);
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      int parameterIndex = 1;
+      for (QueryParameter qp : queryParameters) {
+        ps.setObject(parameterIndex, qp.value);
+        parameterIndex++;
+      }
+      return ps.execute();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
   }
 
   // -- Abstract Methods --
 
   /**
-   * Instantiates and fills a DTO object using an entry from a ResultSet.
-   * Has to be implemented in each DAO class.
+   * Instantiates and fills a DTO object using an entry from a ResultSet. Has to be implemented in
+   * each DAO class.
    *
    * @param rs  A ResultSet.
    * @param <T> The type of DTO to return.
@@ -205,7 +234,8 @@ public abstract class AbstractDAO {
   // -- Private methods --
 
   /**
-   * Executes a "SELECT" PreparedStatement and converts its result set into a List of DTO.
+   * Executes a "SELECT" PreparedStatement and converts its result set into a List of DTO. Then,
+   * closes both the ResultSet, and the provided PreparedStatement.
    *
    * @param ps  a PreparedStatement ready to be executed
    * @param <T> The type of DTO to return
@@ -219,6 +249,7 @@ public abstract class AbstractDAO {
       dtoList.add(toDTO(rs));
     }
     rs.close();
+    ps.close();
     return dtoList;
   }
 
@@ -272,22 +303,60 @@ public abstract class AbstractDAO {
   }
 
   /**
-   * Generates the WHERE part of a query based on QueryParameter(s) (in order).
+   * Generates the WHERE part of a query based on QueryParameter(s) (in order). The generated String
+   * (query) contains the t alias.
    *
-   * @param queryParameters : all query parameters
+   * @param queryParameters : All query parameters
    * @return WHERE part of a query (as String).
    */
   private String generateWhere(QueryParameter... queryParameters) {
+    return generateWhere(true, queryParameters);
+  }
+
+  /**
+   * Generates the WHERE part of a query based on QueryParameter(s) (in order). Can be used in
+   * SELECT and UPDATE statements.
+   *
+   * @param hasAlias        : If the result should use the "t" alias or not.
+   * @param queryParameters : All query parameters
+   * @return WHERE part of a query (as String).
+   */
+  private String generateWhere(boolean hasAlias, QueryParameter... queryParameters) {
     String res = "";
     if (queryParameters.length != 0) {
       res += " WHERE ";
       int i = 0;
       for (QueryParameter qp : queryParameters) {
-        res += "t." + qp.columnName + " = ?";
+        if (hasAlias) {
+          res += "t.";
+        }
+        res += qp.columnName + " = ?";
         i++;
         if (i < queryParameters.length) {
           res += " AND ";
         }
+      }
+    }
+    return res;
+  }
+
+  /**
+   * Generates the SET part of an UPDATE query.
+   *
+   * @param queryParameters : All QueryParameters to update.
+   * @return SET part of the query.
+   */
+  private String generateSet(QueryParameter... queryParameters) {
+    String res = " SET ";
+    if (queryParameters.length == 0) {
+      throw new IllegalArgumentException("At least 1 QueryParameter should be provided");
+    }
+    int i = 0;
+    for (QueryParameter qp : queryParameters) {
+      res += qp.columnName + " = ?";
+      i++;
+      if (i < queryParameters.length) {
+        res += ", ";
       }
     }
     return res;

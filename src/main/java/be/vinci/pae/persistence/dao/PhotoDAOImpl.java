@@ -108,20 +108,10 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    */
   @Override
   public PhotoDTO updateDisplayFlags(PhotoDTO photoDTO) {
-    String query = "UPDATE satchofurniture.photos "
-        + "SET is_visible = ?, "
-        + "is_on_home_page = ? "
-        + "WHERE photo_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setBoolean(1, photoDTO.isVisible());
-      ps.setBoolean(2, photoDTO.isOnHomePage());
-      ps.setInt(3, photoDTO.getPhotoId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("photos",
+        new QueryParameter("photo_id", photoDTO.getPhotoId()),  //WHERE
+        new QueryParameter("is_visible", photoDTO.isVisible()), //SET
+        new QueryParameter("is_on_home_page", photoDTO.isOnHomePage()));
     return photoDTO;
   }
 

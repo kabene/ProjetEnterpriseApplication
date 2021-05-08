@@ -57,15 +57,9 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
    */
   @Override
   public void cancelOption(int idOption) {
-    String query = "UPDATE  satchoFurniture.options o SET is_canceled=true WHERE option_id=?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setInt(1, idOption);
-      ps.executeUpdate();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("options",
+        new QueryParameter("option_id", idOption),
+        new QueryParameter("is_canceled", true));
   }
 
   /**
@@ -97,16 +91,9 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
    */
   @Override
   public OptionDTO findByFurnitureId(int furnitureId) {
-    List<OptionDTO> lst =  findByConditions("options",
+    return findOneByConditions("options",
         new QueryParameter("furniture_id", furnitureId),
         new QueryParameter("is_canceled", false));
-    if(lst.size() == 0) {
-      throw new NotFoundException();
-    }
-    if(lst.size() > 1) {
-      throw new InternalError();
-    }
-    return lst.get(0);
   }
 
   /**

@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
@@ -56,18 +55,9 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO updateStatusOnly(FurnitureDTO furnitureDTO) {
-    String query = "UPDATE satchofurniture.furniture "
-        + "SET status = ? "
-        + "WHERE furniture_id = ? ";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setString(1, furnitureDTO.getStatus().getValue());
-      ps.setInt(2, furnitureDTO.getFurnitureId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("furniture",
+        new QueryParameter("furniture_id", furnitureDTO.getFurnitureId()),  //WHERE
+        new QueryParameter("status", furnitureDTO.getStatus().getValue())); //SET
     return furnitureDTO;
   }
 
@@ -79,20 +69,10 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO updateToAccepted(FurnitureDTO furnitureDTO) {
-    String query = "UPDATE satchofurniture.furniture "
-        + "SET status = ?, "
-        + "purchase_price = ? "
-        + "WHERE furniture_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setString(1, furnitureDTO.getStatus().getValue());
-      ps.setDouble(2, furnitureDTO.getPurchasePrice());
-      ps.setInt(3, furnitureDTO.getFurnitureId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("furniture",
+        new QueryParameter("furniture_id", furnitureDTO.getFurnitureId()),  //WHERE
+        new QueryParameter("status", furnitureDTO.getStatus().getValue()), //SET
+        new QueryParameter("purchase_price", furnitureDTO.getPurchasePrice()));
     return furnitureDTO;
   }
 
@@ -105,20 +85,10 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO updateToAvailable(FurnitureDTO furnitureDTO) {
-    String query = "UPDATE satchofurniture.furniture "
-        + "SET status = ?, "
-        + "selling_price = ? "
-        + "WHERE furniture_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setString(1, furnitureDTO.getStatus().getValue());
-      ps.setDouble(2, furnitureDTO.getSellingPrice());
-      ps.setInt(3, furnitureDTO.getFurnitureId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("furniture",
+        new QueryParameter("furniture_id", furnitureDTO.getFurnitureId()),  //WHERE
+        new QueryParameter("status", furnitureDTO.getStatus().getValue()), //SET
+        new QueryParameter("selling_price", furnitureDTO.getSellingPrice()));
     return furnitureDTO;
   }
 
@@ -131,22 +101,11 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO updateToWithdrawn(FurnitureDTO furnitureDTO) {
-    String query = "UPDATE satchofurniture.furniture "
-        + "SET status = ?, "
-        + "sale_withdrawal_date = ? "
-        + "WHERE furniture_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    Date saleWithdrawalDate = new Date(new java.util.Date().getTime()); //now
-    try {
-      ps.setString(1, furnitureDTO.getStatus().getValue());
-      ps.setDate(2, saleWithdrawalDate);
-      ps.setInt(3, furnitureDTO.getFurnitureId());
-      ps.execute();
-      ps.close();
-      furnitureDTO.setSaleWithdrawalDate(saleWithdrawalDate.toString());
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    Date saleWithdrawalDate = new Date(new java.util.Date().getTime()); // now
+    updateById("furniture",
+        new QueryParameter("furniture_id", furnitureDTO.getFurnitureId()),  //WHERE
+        new QueryParameter("status", furnitureDTO.getStatus().getValue()),//SET
+        new QueryParameter("sale_withdrawal_date", saleWithdrawalDate));
     return furnitureDTO;
   }
 
@@ -158,20 +117,10 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO updateToSold(FurnitureDTO furnitureDTO) {
-    String query = "UPDATE satchofurniture.furniture "
-        + "SET status = ?, "
-        + "buyer_id = ? "
-        + "WHERE furniture_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setString(1, furnitureDTO.getStatus().getValue());
-      ps.setInt(2, furnitureDTO.getBuyerId());
-      ps.setInt(3, furnitureDTO.getFurnitureId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("furniture",
+        new QueryParameter("furniture_id", furnitureDTO.getFurnitureId()),  //WHERE
+        new QueryParameter("status", furnitureDTO.getStatus().getValue()), //SET
+        new QueryParameter("buyer_id", furnitureDTO.getBuyerId()));
     return furnitureDTO;
   }
 
@@ -183,22 +132,11 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO updateToSoldWithSpecialSale(FurnitureDTO furnitureDTO) {
-    String query = "UPDATE satchofurniture.furniture "
-        + "SET status = ?, "
-        + "buyer_id = ?, "
-        + "special_sale_price = ? "
-        + "WHERE furniture_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setString(1, furnitureDTO.getStatus().getValue());
-      ps.setInt(2, furnitureDTO.getBuyerId());
-      ps.setDouble(3, furnitureDTO.getSpecialSalePrice());
-      ps.setInt(4, furnitureDTO.getFurnitureId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("furniture",
+        new QueryParameter("furniture_id", furnitureDTO.getFurnitureId()),  //WHERE
+        new QueryParameter("status", furnitureDTO.getStatus().getValue()), //SET
+        new QueryParameter("buyer_id", furnitureDTO.getBuyerId()),
+        new QueryParameter("special_sale_price", furnitureDTO.getSpecialSalePrice()));
     return furnitureDTO;
   }
 
@@ -210,18 +148,9 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO updateFavouritePhoto(FurnitureDTO furnitureDTO) {
-    String query = "UPDATE satchofurniture.furniture "
-        + "SET favourite_photo_id = ? "
-        + "WHERE furniture_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setInt(1, furnitureDTO.getFavouritePhotoId());
-      ps.setInt(2, furnitureDTO.getFurnitureId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("furniture",
+        new QueryParameter("furniture_id", furnitureDTO.getFurnitureId()),  //WHERE
+        new QueryParameter("favourite_photo_id", furnitureDTO.getFavouritePhotoId())); //SET
     return furnitureDTO;
   }
 
@@ -233,18 +162,9 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO updateDescription(FurnitureDTO furnitureDTO) {
-    String query = "UPDATE satchofurniture.furniture "
-        + "SET description = ? "
-        + "WHERE furniture_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setString(1, furnitureDTO.getDescription());
-      ps.setInt(2, furnitureDTO.getFurnitureId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("furniture",
+        new QueryParameter("furniture_id", furnitureDTO.getFurnitureId()),  //WHERE
+        new QueryParameter("description", furnitureDTO.getDescription())); //SET
     return furnitureDTO;
   }
 
@@ -256,18 +176,9 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO updateTypeId(FurnitureDTO furnitureDTO) {
-    String query = "UPDATE satchofurniture.furniture "
-        + "SET type_id = ? "
-        + "WHERE furniture_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setInt(1, furnitureDTO.getTypeId());
-      ps.setInt(2, furnitureDTO.getFurnitureId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("furniture",
+        new QueryParameter("furniture_id", furnitureDTO.getFurnitureId()),  //WHERE
+        new QueryParameter("type_id", furnitureDTO.getTypeId())); //SET
     return furnitureDTO;
   }
 
@@ -279,18 +190,9 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO updateSellingPrice(FurnitureDTO furnitureDTO) {
-    String query = "UPDATE satchofurniture.furniture "
-        + "SET selling_price = ? "
-        + "WHERE furniture_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setDouble(1, furnitureDTO.getSellingPrice());
-      ps.setInt(2, furnitureDTO.getFurnitureId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("furniture",
+        new QueryParameter("furniture_id", furnitureDTO.getFurnitureId()),  //WHERE
+        new QueryParameter("selling_price", furnitureDTO.getSellingPrice())); //SET
     return furnitureDTO;
   }
 

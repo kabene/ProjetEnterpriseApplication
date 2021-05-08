@@ -67,14 +67,6 @@ public interface UserDAO {
   List<UserDTO> getAllConfirmedUsers();
 
   /**
-   * find the users that correspond with the string.
-   *
-   * @param userSearch reg of the search.
-   * @return list containing the users researched.
-   */
-  List<UserDTO> findBySearch(String userSearch);
-
-  /**
    * Update the role and set wait.
    *
    * @param id    userId.
