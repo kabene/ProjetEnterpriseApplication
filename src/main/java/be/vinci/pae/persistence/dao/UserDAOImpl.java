@@ -222,13 +222,13 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
   }
 
   /**
-   * Set the role and  set wait.
+   * Update the role and set wait.
    *
    * @param id    userId.
    * @param value value if the user is confirmed.
    */
   @Override
-  public void setRole(int id, boolean value) {
+  public void updateRole(int id, boolean value) {
     String query;
     if (value) {
       query = "UPDATE  satchoFurniture.users u SET is_waiting = false WHERE  u.user_id = ?";
@@ -241,11 +241,54 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
 
     try {
       ps.setInt(1, id);
-      ps.executeUpdate();
+      ps.execute();
       ps.close();
-    } catch (SQLException throwables) {
-      System.out.println("waiting removed and role setted");
+    } catch (SQLException e) {
+      throw new InternalError(e);
     }
+  }
+
+
+  /**
+   * Update the number of purchased furniture from user.
+   *
+   * @param userDTO userDTO to update
+   */
+  @Override
+  public UserDTO updatePurchasedFurnitureNbr(UserDTO userDTO) {
+    String query = "UPDATE satchoFurniture.users u "
+        + "SET  purchased_furniture_nbr = ?"
+        + "WHERE u.user_id = ?";
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setInt(1, userDTO.getPurchasedFurnitureNbr());
+      ps.setInt(2, userDTO.getId());
+      ps.execute();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return userDTO;
+  }
+
+  /**
+   * Update the number of sold furniture from user.
+   *
+   * @param userDTO userDTO to update
+   */
+  @Override
+  public UserDTO updateSoldFurnitureNbr(UserDTO userDTO) {
+    String query = "UPDATE satchoFurniture.users u "
+        + "SET  sold_furniture_nbr = ?"
+        + "WHERE u.user_id = ?";
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ps.setInt(1, userDTO.getSoldFurnitureNbr());
+      ps.setInt(2, userDTO.getId());
+      ps.executeQuery();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return userDTO;
   }
 
   /**
