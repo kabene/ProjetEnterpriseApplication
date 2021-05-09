@@ -35,7 +35,6 @@ const FurnitureList = async (id) => {
   mainPage = document.querySelector("#mainPage");
   await findFurnitureList();
   await findTypeList();
-
   if (!id) {
     generateLargeTablePage();
   } else {
