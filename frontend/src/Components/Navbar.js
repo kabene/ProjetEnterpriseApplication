@@ -63,9 +63,9 @@ const generateNavBarButtons = (user) => {
       <button type="button" class="btn btn-secondary navbarButton p-0" href="#" data-uri="/myVisits">Mes demandes de visite</button>
       <button type="button" class="btn btn-secondary navbarButton" href="#" data-uri="/visitRequest">Demander une visite</button>
       <button type="button" class="btn btn-primary navbarButton" href="#" data-uri="/seeFurniture">Voir les meubles</button>
-      <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/logout">Deconnexion</button>
+      <button type="button" class="btn btn-secondary navbarButton pl-2" href="#" data-uri="/releaseTakeover">Abandonner le contrôle</button>
     </li>
-    <li class="my-auto font-weight-bold">` + userPrintable + `</li>`;
+    <li class="my-auto font-weight-bold">` + userPrintable + ` <span class="badge badge-warning">C</span></li>`;
   }
   return `
   <li class="nav-item">
