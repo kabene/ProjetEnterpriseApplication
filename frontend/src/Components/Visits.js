@@ -491,6 +491,7 @@ const generateChooseFurnitureBtn = (request) => {
   return res;
 }
 
+
 const onChooseFurnitureBtnClick = async (e) => {
   e.preventDefault()
   if (verifyValidChoices() === true) {
