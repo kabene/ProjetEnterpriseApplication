@@ -22,6 +22,7 @@ const inStorePurchaseUsername = "in-store purchase";
 
 const emptyFilter = {
   username: "",
+  inStore: false,
   price: "-1",
   status: "",
 }
@@ -134,6 +135,11 @@ const generatePageHtml = (largeTable = true) => {
     <form class="form-inline">
       <div class="form-group mx-3">
         <input type="text" class="form-control" id="username-filter" placeholder="Filtrer par pseudo"/>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label">
+          <input type="checkbox" class="form-check-input" value="" id="in-store-filter">Ventes en magasin seulement
+        </label>
       </div>
       <div class="form-group mx-3">
         <select class="form-control" id="price-filter">
@@ -1513,6 +1519,7 @@ const loadCard = (furnitureId) => {
 const respectsAllActiveFilters = (furniture) => {
   let res = true;
   res = res && respectsUserFilter(furniture);
+  res = res && respectsInStoreFilter(furniture);
   res = res && respectsPriceFilters(furniture);
   res = res && respectsStatusFilter(furniture);
   return res;
@@ -1546,6 +1553,24 @@ const respectsUserFilter = (furniture) => {
     }
   }
   return false;
+}
+
+/**
+ * Verifies if the "in-store purchase" filter is respected.
+ * @param {*} furniture 
+ * @returns {boolean}
+ */
+const respectsInStoreFilter = (furniture) => {
+  if (activeFilters.inStore) {
+    let buyer = furniture.buyer
+    if(!buyer) {
+      return false; // no buyer -> not in-store sale
+    }
+    if(buyer.username !== inStorePurchaseUsername) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -1624,10 +1649,12 @@ const applyFilters = (e) => {
   e.preventDefault();
 
   let usernameInput = document.querySelector("#username-filter");
+  let inStoreCheckbox = document.querySelector("#in-store-filter");
   let priceInput = document.querySelector("#price-filter");
   let statusInput = document.querySelector("#status-filter");
 
   activeFilters.username = usernameInput.value;
+  activeFilters.inStore = inStoreCheckbox.checked;
   activeFilters.price = priceInput.value;
   activeFilters.status = statusInput.value;
 
@@ -1641,10 +1668,16 @@ const applyFilters = (e) => {
 const placeFilterForm = () => {
 
   let usernameInput = document.querySelector("#username-filter");
+  let inStoreCheckbox = document.querySelector("#in-store-filter");
   let priceInput = document.querySelector("#price-filter");
   let statusInput = document.querySelector("#status-filter");
 
   usernameInput.value = activeFilters.username;
+  if(activeFilters.inStore) {
+    inStoreCheckbox.checked = true;
+  }else {
+    inStoreCheckbox.checked = false;
+  }
   priceInput.value = activeFilters.price;
   statusInput.value = activeFilters.status;
 
