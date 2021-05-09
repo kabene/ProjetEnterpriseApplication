@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractDAO {
@@ -18,7 +19,7 @@ public abstract class AbstractDAO {
   @Inject
   protected ConnectionBackendDalServices dalServices;
 
-  // -- QueryParameter --
+  // -- Internal Classes --
 
   /**
    * Class representing a (columnName, value) pair in the database. Used for queries with unknown
@@ -32,6 +33,38 @@ public abstract class AbstractDAO {
     public QueryParameter(String columnName, Object value) {
       this.columnName = columnName;
       this.value = value;
+    }
+  }
+
+  /**
+   * Enum representing the two possible ORDER BY directions (ASC, and DESC).
+   */
+  protected enum OrderByDirection {
+    ASC("ASC"),
+    DESC("DESC");
+
+    public final String value;
+
+    OrderByDirection(String value) {
+      this.value = value;
+    }
+
+    public String getValue() {
+      return this.value;
+    }
+  }
+
+  /**
+   * Class representing an ORDER BY column and its direction.
+   */
+  protected class OrderBy {
+
+    private String columnName;
+    private OrderByDirection direction;
+
+    public OrderBy(String columnName, OrderByDirection direction) {
+      this.columnName = columnName;
+      this.direction = direction;
     }
   }
 
@@ -66,6 +99,13 @@ public abstract class AbstractDAO {
    * @return a List of 'Dto' containing all found entries.
    */
   protected <T> List<T> findAll(String tableName, String... orderBy) {
+    OrderBy[] obArray = (OrderBy[]) Arrays.stream(orderBy)
+        .map((s) -> new OrderBy(s, OrderByDirection.ASC))
+        .toArray();
+    return findAll(tableName, obArray);
+  }
+
+  protected <T> List<T> findAll(String tableName, OrderBy... orderBy) {
     String query = "SELECT t.* FROM " + schema + "." + tableName + " t" + generateOrderBy(orderBy);
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
@@ -103,6 +143,14 @@ public abstract class AbstractDAO {
    */
   protected <T> List<T> findByConditions(String tableName, QueryParameter[] queryParameters,
       String... orderBy) {
+    OrderBy[] obArray = (OrderBy[]) Arrays.stream(orderBy)
+        .map((s) -> new OrderBy(s, OrderByDirection.ASC))
+        .toArray();
+    return findByConditions(tableName, queryParameters, obArray);
+  }
+
+  protected <T> List<T> findByConditions(String tableName, QueryParameter[] queryParameters,
+      OrderBy... orderBy) {
     String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
     query += generateWhere(queryParameters);
     query += generateOrderBy(orderBy);
@@ -134,6 +182,13 @@ public abstract class AbstractDAO {
    * @return a List of DTOs (T)
    */
   protected <T> List<T> findByFK(String tableName, String fkName, int fk, String... orderBy) {
+    OrderBy[] obArray = (OrderBy[]) Arrays.stream(orderBy)
+        .map((s) -> new OrderBy(s, OrderByDirection.ASC))
+        .toArray();
+    return findByFK(tableName, fkName, fk, obArray);
+  }
+
+  protected <T> List<T> findByFK(String tableName, String fkName, int fk, OrderBy... orderBy) {
     return findByConditions(tableName, new QueryParameter[]{new QueryParameter(fkName, fk)},
         orderBy);
   }
@@ -285,19 +340,19 @@ public abstract class AbstractDAO {
   /**
    * Generates the ORDER BY part of a query.
    *
-   * @param orderBy all table names for order by, in order.
+   * @param orderBIES all table names for order by, in order.
    * @return ORDER BY part of a SELECT query (as String).
    */
-  private String generateOrderBy(String... orderBy) {
-    if (orderBy.length == 0) {
+  private String generateOrderBy(OrderBy... orderBIES) {
+    if (orderBIES.length == 0) {
       return "";
     }
     String res = " ORDER BY ";
     int i = 0;
-    for (String column : orderBy) {
-      res += column;
+    for (OrderBy orderBy : orderBIES) {
+      res += orderBy.columnName + " " + orderBy.direction.getValue();
       i++;
-      if (i < orderBy.length) {
+      if (i < orderBIES.length) {
         res += ", ";
       }
     }
