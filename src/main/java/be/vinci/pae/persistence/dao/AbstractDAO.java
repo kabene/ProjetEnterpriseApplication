@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractDAO {
 
@@ -100,9 +101,7 @@ public abstract class AbstractDAO {
    * @return a List of 'Dto' containing all found entries.
    */
   protected <T> List<T> findAll(String tableName, String... orderBy) {
-    OrderBy[] obArray = (OrderBy[]) Arrays.stream(orderBy)
-        .map((s) -> new OrderBy(s, OrderByDirection.ASC))
-        .toArray();
+    OrderBy[] obArray = stringArrayToOrderByArray(orderBy);
     return findAll(tableName, obArray);
   }
 
@@ -153,9 +152,7 @@ public abstract class AbstractDAO {
    */
   protected <T> List<T> findByConditions(String tableName, QueryParameter[] queryParameters,
       String... orderBy) {
-    OrderBy[] obArray = (OrderBy[]) Arrays.stream(orderBy)
-        .map((s) -> new OrderBy(s, OrderByDirection.ASC))
-        .toArray();
+    OrderBy[] obArray = stringArrayToOrderByArray(orderBy);
     return findByConditions(tableName, queryParameters, obArray);
   }
 
@@ -202,9 +199,7 @@ public abstract class AbstractDAO {
    * @return a List of DTOs (T)
    */
   protected <T> List<T> findByFK(String tableName, String fkName, int fk, String... orderBy) {
-    OrderBy[] obArray = (OrderBy[]) Arrays.stream(orderBy)
-        .map((s) -> new OrderBy(s, OrderByDirection.ASC))
-        .toArray();
+    OrderBy[] obArray = stringArrayToOrderByArray(orderBy);
     return findByFK(tableName, fkName, fk, obArray);
   }
 
@@ -368,6 +363,21 @@ public abstract class AbstractDAO {
     return res;
   }
 
+  /**
+   * Converts an Array of column names (String) to an Array of ASC OrderBy objects.
+   *
+   * @param columnNames : All ORDER BY column names.
+   * @return Array of OrderBy (ASC) objects.
+   */
+  private OrderBy[] stringArrayToOrderByArray(String... columnNames) {
+    OrderBy[] obArray = Arrays.stream(columnNames)
+        .map((s) -> new OrderBy(s, OrderByDirection.ASC))
+        .collect(Collectors.toList())
+        .toArray(new OrderBy[columnNames.length]);
+    return obArray;
+  }
+
+  //Query generation
   /**
    * Generates the ORDER BY part of a query.
    *
