@@ -21,7 +21,7 @@ public abstract class AbstractDAO {
   // -- QueryParameter --
 
   /**
-   * Class representing a "column name / value" pair in the database. Used for queries with unknown
+   * Class representing a (columnName, value) pair in the database. Used for queries with unknown
    * parameter types, and/or multiple parameters.
    */
   protected class QueryParameter {
@@ -61,9 +61,9 @@ public abstract class AbstractDAO {
    * Finds all entries in a specific table.
    *
    * @param tableName : table name.
-   * @param orderBy   : all column names for order-by (in order of importance)
-   * @param <T>       : The class of DTO to use in the result List
-   * @return a List of 'Dto' containing all found entries
+   * @param orderBy   : all column names for order-by (in order of importance), they are all ASC.
+   * @param <T>       : The class of DTO to use in the result List.
+   * @return a List of 'Dto' containing all found entries.
    */
   protected <T> List<T> findAll(String tableName, String... orderBy) {
     String query = "SELECT t.* FROM " + schema + "." + tableName + " t" + generateOrderBy(orderBy);
@@ -224,7 +224,7 @@ public abstract class AbstractDAO {
 
   /**
    * Instantiates and fills a DTO object using an entry from a ResultSet. Has to be implemented in
-   * each DAO class.
+   * each class extending AbstractDAO.
    *
    * @param rs  A ResultSet.
    * @param <T> The type of DTO to return.
@@ -305,8 +305,8 @@ public abstract class AbstractDAO {
   }
 
   /**
-   * Generates the WHERE part of a query based on QueryParameter(s) (in order). The generated String
-   * (query) contains the t alias.
+   * Generates the WHERE part of a query based on QueryParameter(s) (in the order of the
+   * parameters). The generated String (query part) contains the t alias for the table.
    *
    * @param queryParameters : All query parameters
    * @return WHERE part of a query (as String).
@@ -316,8 +316,9 @@ public abstract class AbstractDAO {
   }
 
   /**
-   * Generates the WHERE part of a query based on QueryParameter(s) (in order). Can be used in
-   * SELECT and UPDATE statements.
+   * Generates the WHERE part of a query based on QueryParameter(s) (in the order of the
+   * parameters). Can be used in SELECT and UPDATE statements. (for UPDATE statements, hasAlias =
+   * false)
    *
    * @param hasAlias        : If the result should use the "t" alias or not.
    * @param queryParameters : All query parameters
@@ -343,7 +344,7 @@ public abstract class AbstractDAO {
   }
 
   /**
-   * Generates the SET part of an UPDATE query.
+   * Generates the SET part of an UPDATE statement.
    *
    * @param queryParameters : All QueryParameters to update.
    * @return SET part of the query.
