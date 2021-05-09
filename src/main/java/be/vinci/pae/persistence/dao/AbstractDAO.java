@@ -91,7 +91,8 @@ public abstract class AbstractDAO {
   }
 
   /**
-   * Finds all entries in a specific table.
+   * Finds all entries in a specific table. The resulting List is ordered following the given ORDER
+   * BY column names.
    *
    * @param tableName : table name.
    * @param orderBy   : all column names for order-by (in order of importance), they are all ASC.
@@ -105,6 +106,15 @@ public abstract class AbstractDAO {
     return findAll(tableName, obArray);
   }
 
+  /**
+   * Finds all entries in a specific table. The resulting List is ordered following the given ORDER
+   * BY column names and directions.
+   *
+   * @param tableName : table name.
+   * @param orderBy   : all OrderBy objects (in order of importance), they can be ASC or DESC.
+   * @param <T>       : The class of DTO to use in the result List.
+   * @return a List of 'Dto' containing all found entries.
+   */
   protected <T> List<T> findAll(String tableName, OrderBy... orderBy) {
     String query = "SELECT t.* FROM " + schema + "." + tableName + " t" + generateOrderBy(orderBy);
     try {
@@ -149,6 +159,16 @@ public abstract class AbstractDAO {
     return findByConditions(tableName, queryParameters, obArray);
   }
 
+  /**
+   * Finds all the entries in a table that matches all the given conditions. The resulting List is
+   * ordered by the specified column names and directions (ASC/DESC).
+   *
+   * @param tableName       : The table name
+   * @param queryParameters : Array of QueryParameter representing the WHERE conditions
+   * @param orderBy         : All OrderBy objects, each representing a column name and direction.
+   * @param <T>             : The type of DTO to return.
+   * @return a List of DTOs (T)
+   */
   protected <T> List<T> findByConditions(String tableName, QueryParameter[] queryParameters,
       OrderBy... orderBy) {
     String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
@@ -188,6 +208,17 @@ public abstract class AbstractDAO {
     return findByFK(tableName, fkName, fk, obArray);
   }
 
+  /**
+   * Finds all the entries in a table that shares the same FK. The resulting List is ordered by the
+   * specified column names and directions (ASC/DESC).
+   *
+   * @param tableName : The table name
+   * @param fkName    : The column name of the FK
+   * @param fk        : The FK (int)
+   * @param orderBy   : All OrderBy objects, each representing a column name and direction.
+   * @param <T>       : The type of DTO to return.
+   * @return a List of DTOs (T)
+   */
   protected <T> List<T> findByFK(String tableName, String fkName, int fk, OrderBy... orderBy) {
     return findByConditions(tableName, new QueryParameter[]{new QueryParameter(fkName, fk)},
         orderBy);
