@@ -482,11 +482,15 @@ const generateRadioBtns = (request, furniture) => {
 
 const generateChooseFurnitureBtn = (request) => {
   let res = "";
+  let everyFurnitureAccepted=request.furnitureList.every(e=>e.status !== "REQUESTED_FOR_VISIT");
   if (request.requestStatus === "CONFIRMED") {
-    res = `<button id="choose-furniture-btn" class="btn btn-primary choose-furniture-btn my-5 float-right">Enregistrer le choix</button>`
+    if (!everyFurnitureAccepted) {
+      res = `<button id="choose-furniture-btn" class="btn btn-primary choose-furniture-btn my-5 float-right">Enregistrer le choix</button>`
+    }
   }
   return res;
 }
+
 
 const onChooseFurnitureBtnClick = async (e) => {
   e.preventDefault()

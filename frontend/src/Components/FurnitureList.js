@@ -2,7 +2,7 @@ import notFoundPhoto from "../img/notFoundPhoto.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {findCurrentUser} from "../utils/session.js";
-import {displayErrorMessage, generateLoadingAnimation, displayImgs, gdpr, baseUrl, getSignal} from "../utils/utils.js"
+import {displayErrorMessage, generateLoadingAnimation, displayImgs, gdpr, baseUrl,getSignal} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 let mainPage;
@@ -438,6 +438,14 @@ const onUserLinkClicked = (e) => {
   RedirectUrl("/users", userId);
 }
 
+const onRequestLinkClicked = (e) => {
+  e.preventDefault();
+  let link = e.target;
+  let requestId = link.getAttribute("request-id");
+  console.log(`Linking to request card (id: ${requestId})`);
+  RedirectUrl("/visits", requestId);
+}
+
 const displayLargeTable = () => {
   isDisplayingLargeTable = true;
   openTab = "infos";
@@ -605,6 +613,7 @@ const generateCardHTML = (furniture) => {
               ${generateBuyerCardEntry(furniture)}
               ${generateOptionCardEntry(furniture)}
               ${generateSaleWithdrawalDateCardEntry(furniture)}
+              ${generateCardLabelKeyEntryHtml("", `<a href="#" class="mb-2" request-id="${furniture.requestId}" id="request-link">Demande de visite</a>`)}
               ${generateSaveInfoBtn()}
               ${generateButtonRow(furniture)}
             </div>       
@@ -907,7 +916,7 @@ const patchNewFav = async (furnitureId, favPhotoId) => {
 const patchDisplayFlags = async (bundle) => {
   let addr = baseUrl+"/photos/displayFlags/" + bundle.photoId;
   let signal = getSignal();
-  
+
   let response = await fetch(addr, {
     signal,
     method: "PATCH",
@@ -1474,6 +1483,8 @@ const loadCard = (furnitureId) => {
   currentFurnitureId = furnitureId;
   mainPage.innerHTML = generatePageHtml(false);
   generateCard(furnitureMap[furnitureId]);
+  let requestLink = document.querySelector("#request-link");
+  requestLink.addEventListener("click", onRequestLinkClicked);
   getFavs().then(() => fetchAllPhotos(furnitureMap[furnitureId]));
   document.querySelectorAll(".toBeClicked").forEach(
       (element) => {
