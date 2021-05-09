@@ -213,7 +213,7 @@ public class UserUCCImpl implements UserUCC {
     UserDTO res;
     try {
       dalServices.startTransaction();
-      userDAO.setRole(userId, value);
+      userDAO.updateRole(userId, value);
       res = userDAO.findById(userId);
       completeUserDTO(res);
       dalServices.commitTransaction();

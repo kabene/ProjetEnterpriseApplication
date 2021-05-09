@@ -531,7 +531,7 @@ public class UserUCCImplTest {
     assertEquals(mockUser1, userUCC.validateUser(defaultUserId1, value),
         "A valid call should return the corresponding DTO");
 
-    Mockito.verify(mockUserDAO).setRole(defaultUserId1, value);
+    Mockito.verify(mockUserDAO).updateRole(defaultUserId1, value);
     Mockito.verify(mockDal).startTransaction();
     Mockito.verify(mockDal, Mockito.never()).rollbackTransaction();
     Mockito.verify(mockDal).commitTransaction();
@@ -578,7 +578,7 @@ public class UserUCCImplTest {
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
   public void test_validateUser_catchesInternalError2_shouldThrowNotFound(boolean value) {
-    Mockito.doThrow(new InternalError()).when(mockUserDAO).setRole(defaultUserId1, value);
+    Mockito.doThrow(new InternalError()).when(mockUserDAO).updateRole(defaultUserId1, value);
 
     assertThrows(InternalError.class, () -> userUCC.validateUser(defaultUserId1, value),
         "an invalid id should throw NotFoundException");

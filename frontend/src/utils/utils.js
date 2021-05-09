@@ -1,10 +1,7 @@
 "use strict";
 import imageNotFound from "../img/notFoundPhoto.png";
-import {
-  getUserSessionData,
-  getGDPRLocalData,
-  setGDPRLocalData
-} from "./session";
+import {getUserSessionData, getGDPRLocalData, setGDPRLocalData} from "./session";
+import {abortControllers} from "../Components/Router.js"
 
 
 const baseUrl = "/api";
@@ -59,6 +56,7 @@ const generateLoadingAnimation = () => {
 }
 
 function displayErrorMessage(alertDivId, error) {
+  if (typeof error === DOMException || typeof error === DOMError) return;
   let message = error.message;
   let div = document.querySelector(`#${alertDivId}`);
   div.className = "mx-1";
@@ -158,9 +156,19 @@ export const displayImgs = (photosLst) => {
     });
 }
 
+/**
+ * create a controller and push it in the stack of controllers and return a signal.
+ * @returns a signal.
+ */
+const getSignal = () => {
+  let controller = new AbortController();
+  abortControllers.push(controller);
+  return controller.signal;
+}
+
 
 export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
         displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, 
-        acceptCookies, getGDPR,gdpr,baseUrl};
+        acceptCookies, getGDPR, gdpr, baseUrl, getSignal};
 
 

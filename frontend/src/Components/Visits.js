@@ -1,12 +1,6 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
 import {findCurrentUser} from "../utils/session";
-import {
-  displayErrorMessage,
-  gdpr,
-  generateLoadingAnimation,
-  displayImgs,
-  baseUrl
-} from "../utils/utils";
+import {displayErrorMessage, gdpr, generateLoadingAnimation, displayImgs, baseUrl, getSignal} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
 
@@ -841,7 +835,10 @@ const toConfirmed = (e, request) => {
     let bundle = {
       visitDateTime: date,
     }
+    let signal = getSignal();
+
     fetch(baseUrl+"/requestForVisit/accept/" + request.requestId, {
+      signal,
       method: "PATCH",
       body: JSON.stringify(bundle),
       headers: {
@@ -878,7 +875,10 @@ const toCanceled = (e, request) => {
   let bundle = {
     explanatoryNote: explain,
   };
+  let signal = getSignal();
+
   fetch(baseUrl+"/requestForVisit/cancel/" + request.requestId, {
+    signal,
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -906,27 +906,24 @@ const toCanceled = (e, request) => {
  * @returns {Promise} fetch promise
  */
 async function findVisitRequestList() {
-  return fetch(baseUrl+"/requestForVisit/", {
+  let signal = getSignal();
+
+  let response = await fetch(baseUrl+"/requestForVisit/", {
+    signal,
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(
-          response.status + " : " + response.statusText
-      );
     }
-    return response.json();
-  }).then((data) => {
-    requestList = data;
-    requestList.forEach(request => {
-      requestMap[request.requestId] = request;
-    });
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
-    displayErrorMessage("errorDiv", err);
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage(err, errorDiv);
+  }
+  requestList = await response.json();
+  requestList.forEach(request => {
+    requestMap[request.requestId] = request;
   });
 }
 
@@ -935,8 +932,10 @@ async function findVisitRequestList() {
  * @returns {Promise<any>}
  */
 async function getImage(furniture) {
+  let signal = getSignal();
 
   return fetch(baseUrl+"/photos/favourite/" + furniture.furnitureId, {
+    signal,
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -969,7 +968,10 @@ const acceptFurniture = async (furnitureId) => {
   if(!priceInput && priceInput.value !==0)return;
   let bundle={purchasePrice: priceInput.value}
   try {
+    let signal = getSignal();
+
     let result = await fetch(baseUrl+"/furniture/accepted/" + furnitureId, {
+      signal,
       method: "PATCH",
       headers: {
         "Authorization": currentUser.token,
@@ -993,7 +995,10 @@ const acceptFurniture = async (furnitureId) => {
 
 const refuseFurniture = async (furnitureId) => {
   try {
+    let signal = getSignal();
+
     let result = await fetch(baseUrl+"/furniture/refused/" + furnitureId, {
+      signal,
       method: "PATCH",
       headers: {
         "Authorization": currentUser.token,
