@@ -238,7 +238,7 @@ VALUES (5, '22-04-21', 'tous les matins 16h à 19h',4,'26-04-21 18:00:00', NULL,
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (DEFAULT, 5, 'accepted', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2,null,null,2);
+VALUES (DEFAULT, 5, 'accepted', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2,null,null,1);
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
