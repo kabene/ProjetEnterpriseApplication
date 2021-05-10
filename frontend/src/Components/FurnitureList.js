@@ -802,7 +802,7 @@ const onSaveModifPhotos = async (e) => {
   let selectedFavId = findSelectedFav();
   if (originalFavPhotoId != selectedFavId) {
     let newFurniture = await patchNewFav(furnitureId, selectedFavId);
-    furnitureMap[furnitureId] = newFurniture;
+    updateCacheFav(newFurniture,newFurniture.favouritePhoto);
   }
   //display flags
   let modifiedPhotoArray = findAllPhotosForFlagUpdate();
@@ -1770,7 +1770,7 @@ const fetchAllPhotos = async (furniture) => {
 }
 
 const updateCacheFav = (furniture, photo) => {
-  furnitureMap[photo.furnitureId] = {...furniture, favouritePhoto: photo};
+  furnitureMap[photo.furnitureId].favouritePhoto=photo;
 }
 
 const updateCachePhotos = (furniture, photoArray) => {
