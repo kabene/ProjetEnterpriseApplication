@@ -231,47 +231,47 @@ VALUES (5, '22-04-21', 'tous les matins 16h à 19h',3,'26-04-21 18:00:00', NULL,
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (1, 4, 'accepted', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2,1,null,1);
+VALUES (1, 4, 'accepted', 'Bahut profond d’une largeur de 112 cm et d’une hauteur de 147 cm.', 2,NULL,null,1);
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (2, 4, 'available_for_sale', 'Large bureau 1m87 cm, deux colonnes de tiroirs', 6,3,299.00,1);
+VALUES (2, 4, 'available_for_sale', 'Large bureau 1m87 cm, deux colonnes de tiroirs', 6,NULL,299.00,1);
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (3, 4, 'refused', 'Table jardin en bois brut', 21,4,null,2);
+VALUES (3, 4, 'refused', 'Table jardin en bois brut', 21,NULL,null,2);
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (4, 5, 'withdrawn', 'Table en chêne, pieds en fer forgé', 21,5,459.00,3);
+VALUES (4, 5, 'withdrawn', 'Table en chêne, pieds en fer forgé', 21,NULL,459.00,3);
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (5, 5, 'accepted', 'Secrétaire en acajou, marqueterie', 20,6,null,3);
+VALUES (5, 5, 'accepted', 'Secrétaire en acajou, marqueterie', 20,NULL,null,3);
+
+INSERT
+INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
+VALUES (6,5, 'under_option', 'Lit à baldaquin en acajou', 18,NULL,null,4);
 
 INSERT INTO satchoFurniture.options(option_id, duration, date_option, user_id, furniture_id, is_canceled)
 VALUES (DEFAULT,2500,NOW(),3,6,false);
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (6,5, 'under_option', 'Lit à baldaquin en acajou', 18,7,null,4);
+VALUES (7,4, 'in_restoration', 'Bureau en bois ciré',6,NULL,null,5);
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (7,4, 'in_restoration', 'Bureau en bois ciré',6,8,null,5);
+VALUES (8,5, 'available_for_sale', 'Bureau en chêne massif, sous-main intégré',6,NULL,378.00,5);
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (8,5, 'available_for_sale', 'Bureau en chêne massif, sous-main intégré',6,11,378.00,5);
+VALUES (9,5, 'available_for_sale', 'Magnifique bureau en acajou',6,NULL,239.00,5);
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (9,5, 'available_for_sale', 'Magnifique bureau en acajou',6,13,239.00,5);
+VALUES (10,5, 'available_for_sale', 'Splendide coiffeuse aux reliefs travaillés',10,NULL,199.00,5);
 
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (10,5, 'available_for_sale', 'Splendide coiffeuse aux reliefs travaillés',10,15,199.00,5);
-
-INSERT
-INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
-VALUES (11,5, 'available_for_sale', 'Splendide coiffeuse aux reliefs travaillés',10,17,199.00,5);
+VALUES (11,5, 'available_for_sale', 'Splendide coiffeuse aux reliefs travaillés',10,NULL,199.00,5);

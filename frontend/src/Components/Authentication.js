@@ -82,6 +82,7 @@ const getUserFromLoginForm = () => {
  * @param {*} rememberMe, if the user wants to stay connected or not.
  */
 const onUserLogin = async (data, rememberMe) => {
+  if (!data) return;
   let user = await fetchMe(data.token);
   const bundle = {...data, isAutenticated: true, isAdmin: user.role === "admin"};
   setUserSessionData(bundle);
@@ -167,6 +168,7 @@ const validateRegister = () => {
  * @param {*} userData the data of the user.
  */
 const onUserRegistration = (userData) => {
+  if (!userData) return;
   const user = {...userData, isAutenticated: true};
   setUserSessionData(user);
   Navbar();
@@ -300,7 +302,8 @@ const login = async (user) => {
     else
       err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
     console.error(err);
-    displayErrorMessage(err, errorDiv);
+    displayErrorMessage("errorDiv", new Error(err));
+    return;
   }
   return response.json();
 }
@@ -324,7 +327,8 @@ const signUp = async (user) => {
   if (!response.ok) {
     const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
     console.error(err); 
-    displayErrorMessage(err, errorDiv);
+    displayErrorMessage("errorDiv", new Error(err));
+    return;
   }
   return response.json();
 }

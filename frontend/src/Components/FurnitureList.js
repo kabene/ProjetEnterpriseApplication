@@ -1152,12 +1152,12 @@ const generateAllTransitionBtns = (furniture) => {
     case "IN_RESTORATION":
       res += generateTransitionModal("ToAvailable",
           "Indiquer disponible à la vente");
-      res += generateTransitionModal("ToSold", "Indiquer vendu");
+      res += generateTransitionModal("ToSold", "Indiquer vendu à un prix spécial");
       res += generateTransitionModal("Withdraw", "Retirer de la vente",
           "danger", "secondary");
       break;
     case "UNDER_OPTION":
-      res += generateTransitionModal("ToSold", "Indiquer vendu à un prix spécial");
+      res += generateTransitionModal("ToSold", "Indiquer vendu");
       break;
     case "SOLD":
     case "WITHDRAWN":
