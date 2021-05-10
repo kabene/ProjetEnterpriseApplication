@@ -368,8 +368,9 @@ const generateSinglePhotoContainer = (furniture) => {
   <div class="p-1 w-50 container photo-list-container"">
     <div class="row px-0">
       <div class="col-6">
+         <p>` + furniture.description +`</p> 
         ` + generateFavouritePhotoImgTag(furniture) + `
-        <p>` + generateStatusInfos(furniture.status).status + `</p>
+        <p>` + generateColoredFurnitureStatus(furniture)+ `</p>
       </div>
     </div>
   </div>`;
@@ -383,9 +384,9 @@ const generateSinglePhotoContainer = (furniture) => {
  */
 const generateFavouritePhotoImgTag = (furniture) => {
   if (!furniture.favouritePhoto)
-    return `<img class="img-fluid" src="` + notFoundPhoto + `" alt="photoNotFound"/>`;
+    return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + notFoundPhoto + `" alt="photoNotFound"/>`;
   else
-    return `<img class="img-fluid" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
+    return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
 }
 
 
@@ -433,6 +434,16 @@ const generateColoredStatus = (requestStatus) => {
   return `<p class="text-` + infos.classname + `"> ` + infos.status + `</p>`;
 }
 
+/**
+ * Generate status entry for request list as colored <p> html tag (used in large tables)
+ * @param {*} request : furniture  object
+ * @returns an html <p> tag
+ */
+const generateColoredFurnitureStatus = (furniture) => {
+  let infos = generateStatusInfos(furniture.status);
+  return `<p class="text-${infos.classname}">${infos.status}</p>`;
+}
+
 
 /**
  * create a dot of a certain color in function of the given class name given.
@@ -458,6 +469,38 @@ const generateStatusInfos = (status) => {
     status: "",
   }
   switch (status) {
+    case "AVAILABLE_FOR_SALE":
+      res.classname = "success";
+      res.status = "Disponible à la vente";
+      break;
+    case "ACCEPTED":
+      res.classname = "warning";
+      res.status = "Accepté";
+      break;
+    case "IN_RESTORATION":
+      res.classname = "warning";
+      res.status = "En restauration";
+      break;
+    case "UNDER_OPTION":
+      res.classname = "danger";
+      res.status = "Sous option";
+      break;
+    case "SOLD":
+      res.classname = "secondary";
+      res.status = "Vendu";
+      break;
+    case "WITHDRAWN":
+      res.classname = "secondary";
+      res.status = "Retiré de la vente";
+      break;
+    case "REFUSED":
+      res.classname = "secondary";
+      res.status = "Refusé";
+      break;
+    case "REQUESTED_FOR_VISIT":
+      res.classname = "info";
+      res.status = "En attente de visite";
+      break;
     case "CONFIRMED":
       res.classname = "success";
       res.status = "Accepté";
@@ -475,7 +518,8 @@ const generateStatusInfos = (status) => {
       res.status = status;
   }
   return res;
-}  
+}
+
 
 
 /********************  Backend fetch  **********************/
