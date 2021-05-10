@@ -129,9 +129,7 @@ public abstract class AbstractDAO {
         query += ", ";
       }
     }
-
     query += generateWhere(false, idQueryParameter);
-
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       int parameterIndex = 1;
