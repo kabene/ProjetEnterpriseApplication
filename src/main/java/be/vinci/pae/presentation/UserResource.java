@@ -194,29 +194,6 @@ public class UserResource {
   }
 
   /**
-   * POST users/detail/search - Get all users with a userSearch.
-   *
-   * @param jsonNode : containing the userSearch
-   * @return the list of users
-   * @throws WebApplicationException to send a fail status
-   */
-  @POST
-  @Path("/detail/search")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Admin
-  public Response getUsers(JsonNode jsonNode) {
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.INFO, "POST /users/detail/search");
-    JsonNode node = jsonNode.get("userSearch");
-    if (node == null) {
-      throw new BadRequestException("Error: malformed request");
-    }
-    String userSearch = node.asText();
-    List<UserDTO> users = userUCC.getSearchResult(userSearch);
-    return createNodeFromUserList(users);
-  }
-
-  /**
    * GET users/detail/waiting - Get all waiting users.
    *
    * @return the list of users

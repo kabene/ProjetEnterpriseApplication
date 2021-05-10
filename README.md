@@ -57,18 +57,6 @@
     </td>
 </tr>
 <tr>
-    <td>users/detail/search</td>
-    <td>POST</td>
-    <td>Admin</td>
-    <td>Non</td>
-    <td>
-    Renvoie une liste des informations reservees aux admins des ressources de type "user" en fonction de la recherche passée
-    à la requête.
-    La recherche s'applique sur le nom des users, leurs prénoms, leurs communes ainsi que sur les numéros de leur boites
-    postale.
-    </td>
-</tr>
-<tr>
     <td>users/detail/waiting</td>
     <td>GET</td>
     <td>Admin</td>

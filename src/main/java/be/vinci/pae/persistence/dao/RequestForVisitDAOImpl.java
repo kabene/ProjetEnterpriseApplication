@@ -8,7 +8,6 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVisitDAO {
@@ -34,20 +33,8 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
    */
   @Override
   public List<RequestForVisitDTO> findByUserId(int userId) {
-    List<RequestForVisitDTO> requestList = new ArrayList<RequestForVisitDTO>();
-    String query = "SELECT * FROM satchoFurniture.requests_for_visit WHERE user_id=?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, userId);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        requestList.add(toDTO(rs));
-      }
-      rs.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return requestList;
+    return findByConditions("requests_for_visit",
+        new QueryParameter("user_id", userId));
   }
 
   /**
@@ -58,7 +45,8 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
    */
   @Override
   public RequestForVisitDTO findById(int idRequest) {
-    return findById(idRequest, "requests_for_visit", "request_id");
+    return findOneByConditions("requests_for_visit",
+        new QueryParameter("request_id", idRequest));
   }
 
   /**

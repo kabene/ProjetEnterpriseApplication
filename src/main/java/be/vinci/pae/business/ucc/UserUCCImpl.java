@@ -158,29 +158,6 @@ public class UserUCCImpl implements UserUCC {
   }
 
   /**
-   * get the users that correspond with the string.
-   *
-   * @param userSearch reg of the search.
-   * @return list contains the users researched.
-   */
-  @Override
-  public List<UserDTO> getSearchResult(String userSearch) {
-    List<UserDTO> list;
-    try {
-      dalServices.startTransaction();
-      list = userDAO.findBySearch(userSearch);
-      for (UserDTO user : list) {
-        completeUserDTO(user);
-      }
-      dalServices.commitTransaction();
-    } catch (Throwable e) {
-      dalServices.rollbackTransaction();
-      throw e;
-    }
-    return list;
-  }
-
-  /**
    * get the user searched by his id.
    *
    * @param userId the id of the user.
