@@ -109,20 +109,29 @@ public abstract class AbstractDAO {
   /**
    * Updates one or multiple columns in an entry (given its table name and id).
    *
-   * @param tableName       : The table name
-   * @param id              : id + id column-name (as a QueryParameter)
-   * @param queryParameters : All columns to update, and their column names (as QueryParameters)
+   * @param tableName        : The table name
+   * @param idQueryParameter : id + id column-name (as a QueryParameter)
+   * @param queryParameters  : All columns to update, and their column names (as QueryParameters)
    * @return boolean representing if the operation was a success or not.
    */
-  protected boolean updateById(String tableName, QueryParameter id,
+  protected void updateById(String tableName, QueryParameter idQueryParameter,
       QueryParameter... queryParameters) {
-    boolean res;
     if (queryParameters.length == 0) {
       throw new IllegalArgumentException("At least 1 QueryParameter should be provided");
     }
-    String query = "UPDATE " + schema + "." + tableName;
-    query += generateSet(queryParameters);
-    query += generateWhere(false, id);
+    String query = "UPDATE " + schema + "." + tableName + " SET ";
+
+    int i = 0;
+    for (QueryParameter qp : queryParameters) {
+      query += qp.columnName + " = ?";
+      i++;
+      if (i < queryParameters.length) {
+        query += ", ";
+      }
+    }
+
+    query += generateWhere(false, idQueryParameter);
+
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       int parameterIndex = 1;
@@ -130,13 +139,12 @@ public abstract class AbstractDAO {
         ps.setObject(parameterIndex, qp.value);
         parameterIndex++;
       }
-      ps.setObject(parameterIndex, id.value);
-      res = ps.execute();
+      ps.setObject(parameterIndex, idQueryParameter.value);
+      ps.execute();
       ps.close();
     } catch (SQLException e) {
       throw new InternalError(e);
     }
-    return res;
   }
 
   // -- Abstract Methods --
@@ -177,28 +185,6 @@ public abstract class AbstractDAO {
         if (i < queryParameters.length) {
           res += " AND ";
         }
-      }
-    }
-    return res;
-  }
-
-  /**
-   * Generates the SET part of an UPDATE statement.
-   *
-   * @param queryParameters : All QueryParameters to update.
-   * @return SET part of the query.
-   */
-  private String generateSet(QueryParameter... queryParameters) {
-    String res = " SET ";
-    if (queryParameters.length == 0) {
-      throw new IllegalArgumentException("At least 1 QueryParameter should be provided");
-    }
-    int i = 0;
-    for (QueryParameter qp : queryParameters) {
-      res += qp.columnName + " = ?";
-      i++;
-      if (i < queryParameters.length) {
-        res += ", ";
       }
     }
     return res;
