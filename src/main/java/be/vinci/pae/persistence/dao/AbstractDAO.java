@@ -120,13 +120,13 @@ public abstract class AbstractDAO {
       throw new IllegalArgumentException("At least 1 QueryParameter should be provided");
     }
     String query = "UPDATE " + schema + "." + tableName + " SET ";
-
+    //Generate SET
     int i = 0;
     for (QueryParameter qp : queryParameters) {
       query += qp.columnName + " = ?";
       i++;
       if (i < queryParameters.length) {
-        query += ", ";
+        query += ", "; // ',' between 2 values
       }
     }
     query += generateWhere(false, idQueryParameter);
@@ -176,12 +176,12 @@ public abstract class AbstractDAO {
       int i = 0;
       for (QueryParameter qp : queryParameters) {
         if (hasAlias) {
-          res += "t.";
+          res += "t."; // no aliases in UPDATE (hasAlias = false)
         }
         res += qp.columnName + " = ?";
         i++;
         if (i < queryParameters.length) {
-          res += " AND ";
+          res += " AND "; // AND between 2 conditions
         }
       }
     }
