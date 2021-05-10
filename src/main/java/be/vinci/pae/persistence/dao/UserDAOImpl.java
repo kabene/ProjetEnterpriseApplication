@@ -1,5 +1,6 @@
 package be.vinci.pae.persistence.dao;
 
+import java.util.ArrayList;
 import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
@@ -35,7 +36,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public UserDTO findById(int userId) {
-    return findById(userId, "users", "user_id");
+    return findOneByConditions("users",
+        new QueryParameter("user_id", userId));
   }
 
   /**
@@ -75,8 +77,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public boolean emailAlreadyTaken(String email) {
-    return alreadyExists("users",
-        new QueryParameter("email", email));
+    return !findByConditions("users",
+        new QueryParameter("email", email)).isEmpty();
   }
 
   /**
@@ -87,8 +89,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public boolean usernameAlreadyTaken(String username) {
-    return alreadyExists("users",
-        new QueryParameter("username", username));
+    return !findByConditions("users",
+        new QueryParameter("username", username)).isEmpty();
   }
 
   /**
@@ -108,10 +110,19 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public List<UserDTO> getAllWaitingUsers() {
-    return findByConditions("users",
-        new QueryParameter[]{new QueryParameter("is_waiting", true)}, //WHERE
-        "last_name", "first_name"); //ORDER BY
-
+    List<UserDTO> users = new ArrayList<>();
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u WHERE u.is_waiting = true"
+          + " ORDER BY u.last_name, u.first_name";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        users.add(toDTO(rs));
+      }
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return users;
   }
 
   /**
@@ -121,9 +132,20 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public List<UserDTO> getAllConfirmedUsers() {
-    return findByConditions("users",
-        new QueryParameter[]{new QueryParameter("is_waiting", false)}, //WHERE
-        "last_name", "first_name"); //ORDER BY
+    List<UserDTO> users = new ArrayList<>();
+    try {
+      String query = "SELECT u.* FROM satchofurniture.users u "
+          + "WHERE u.is_waiting = false"
+          + " ORDER BY u.last_name, u.first_name";
+      PreparedStatement ps = dalServices.makeStatement(query);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        users.add(toDTO(rs));
+      }
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return users;
   }
 
   /**
@@ -138,7 +160,6 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
       updateById("users",
           new QueryParameter("user_id", id),
           new QueryParameter("is_waiting", false));
-      //query = "UPDATE  satchoFurniture.users u SET is_waiting = false WHERE  u.user_id = ?";
     } else {
       updateById("users",
           new QueryParameter("user_id", id),

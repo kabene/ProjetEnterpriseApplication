@@ -22,7 +22,8 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public FurnitureDTO findById(int id) {
-    return findById(id, "furniture", "furniture_id");
+    return findOneByConditions("furniture",
+        new QueryParameter("furniture_id", id));
   }
 
   /**
@@ -33,7 +34,8 @@ public class FurnitureDAOImpl extends AbstractDAO implements FurnitureDAO {
    */
   @Override
   public List<FurnitureDTO> findByRequestId(int requestId) {
-    return findByFK("furniture", "request_id", requestId);
+    return findByConditions("furniture",
+        new QueryParameter("request_id", requestId));
   }
 
   /**

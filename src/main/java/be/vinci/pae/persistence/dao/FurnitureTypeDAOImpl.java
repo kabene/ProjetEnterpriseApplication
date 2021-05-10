@@ -19,7 +19,8 @@ public class FurnitureTypeDAOImpl extends AbstractDAO implements FurnitureTypeDA
    */
   @Override
   public FurnitureTypeDTO findById(int id) {
-    return findById(id, "furniture_types", "type_id");
+    return findOneByConditions("furniture_types",
+        new QueryParameter("type_id", id));
   }
 
   /**

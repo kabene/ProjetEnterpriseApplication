@@ -21,7 +21,8 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    */
   @Override
   public List<PhotoDTO> findAllByFurnitureId(int furnitureId) {
-    return findByFK("photos", "furniture_id", furnitureId);
+    return findByConditions("photos",
+        new QueryParameter("furniture_id", furnitureId));
   }
 
   /**
@@ -45,7 +46,8 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    */
   @Override
   public PhotoDTO findById(int photoId) {
-    return findById(photoId, "photos", "photo_id");
+    return findOneByConditions("photos",
+        new QueryParameter("photo_id", photoId));
   }
 
   /**

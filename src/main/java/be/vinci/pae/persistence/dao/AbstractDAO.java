@@ -37,38 +37,6 @@ public abstract class AbstractDAO {
     }
   }
 
-  /**
-   * Enum representing the two possible ORDER BY directions (ASC, and DESC).
-   */
-  protected enum OrderByDirection {
-    ASC("ASC"),
-    DESC("DESC");
-
-    public final String value;
-
-    OrderByDirection(String value) {
-      this.value = value;
-    }
-
-    public String getValue() {
-      return this.value;
-    }
-  }
-
-  /**
-   * Class representing an ORDER BY column and its direction.
-   */
-  protected class OrderBy {
-
-    private String columnName;
-    private OrderByDirection direction;
-
-    public OrderBy(String columnName, OrderByDirection direction) {
-      this.columnName = columnName;
-      this.direction = direction;
-    }
-  }
-
   // -- Protected (Available in DAOs) Methods --
 
   // find all:
@@ -82,46 +50,7 @@ public abstract class AbstractDAO {
    * @return a List of 'Dto' containing all found entries
    */
   protected <T> List<T> findAll(String tableName) {
-    String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      return executeSelectMultipleResults(ps);
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-  }
-
-  /**
-   * Finds all entries in a specific table. The resulting List is ordered following the given ORDER
-   * BY column names.
-   *
-   * @param tableName : table name.
-   * @param orderBy   : all column names for order-by (in order of importance), they are all ASC.
-   * @param <T>       : The class of DTO to use in the result List.
-   * @return a List of 'Dto' containing all found entries.
-   */
-  protected <T> List<T> findAll(String tableName, String... orderBy) {
-    OrderBy[] obArray = stringArrayToOrderByArray(orderBy);
-    return findAll(tableName, obArray);
-  }
-
-  /**
-   * Finds all entries in a specific table. The resulting List is ordered following the given ORDER
-   * BY column names and directions.
-   *
-   * @param tableName : table name.
-   * @param orderBy   : all OrderBy objects (in order of importance), they can be ASC or DESC.
-   * @param <T>       : The class of DTO to use in the result List.
-   * @return a List of 'Dto' containing all found entries.
-   */
-  protected <T> List<T> findAll(String tableName, OrderBy... orderBy) {
-    String query = "SELECT t.* FROM " + schema + "." + tableName + " t" + generateOrderBy(orderBy);
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      return executeSelectMultipleResults(ps);
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    return findByConditions(tableName);
   }
 
   // find all by conditions:
@@ -136,87 +65,25 @@ public abstract class AbstractDAO {
    */
   protected <T> List<T> findByConditions(String tableName, QueryParameter... queryParameters) {
     String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
-    query += generateWhere(queryParameters);
-    return executeSelectMultipleResultsWhere(queryParameters, query);
-  }
-
-  /**
-   * Finds all the entries in a table that matches all the given conditions. The resulting List is
-   * ordered by the specified column names.
-   *
-   * @param tableName       : The table name
-   * @param queryParameters : Array of QueryParameter representing the WHERE conditions
-   * @param orderBy         : All ORDER BY column names in order of apparition
-   * @param <T>             : The type of DTO to return.
-   * @return a List of DTOs (T)
-   */
-  protected <T> List<T> findByConditions(String tableName, QueryParameter[] queryParameters,
-      String... orderBy) {
-    OrderBy[] obArray = stringArrayToOrderByArray(orderBy);
-    return findByConditions(tableName, queryParameters, obArray);
-  }
-
-  /**
-   * Finds all the entries in a table that matches all the given conditions. The resulting List is
-   * ordered by the specified column names and directions (ASC/DESC).
-   *
-   * @param tableName       : The table name
-   * @param queryParameters : Array of QueryParameter representing the WHERE conditions
-   * @param orderBy         : All OrderBy objects, each representing a column name and direction.
-   * @param <T>             : The type of DTO to return.
-   * @return a List of DTOs (T)
-   */
-  protected <T> List<T> findByConditions(String tableName, QueryParameter[] queryParameters,
-      OrderBy... orderBy) {
-    String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
-    query += generateWhere(queryParameters);
-    query += generateOrderBy(orderBy);
-    return executeSelectMultipleResultsWhere(queryParameters, query);
-  }
-
-  /**
-   * Finds all the entries in a table that shares the same FK.
-   *
-   * @param tableName : The table name
-   * @param fkName    : The column name of the FK
-   * @param fk        : The FK (int)
-   * @param <T>       : The type of DTO to return.
-   * @return a List of DTOs (T)
-   */
-  protected <T> List<T> findByFK(String tableName, String fkName, int fk) {
-    return findByConditions(tableName, new QueryParameter(fkName, fk));
-  }
-
-  /**
-   * Finds all the entries in a table that shares the same FK. The resulting List is ordered
-   * following the given ORDER BY column names.
-   *
-   * @param tableName : The table name
-   * @param fkName    : The column name of the FK
-   * @param fk        : The FK (int)
-   * @param orderBy   : All ORDER BY column names (in order)
-   * @param <T>       : The type of DTO to return.
-   * @return a List of DTOs (T)
-   */
-  protected <T> List<T> findByFK(String tableName, String fkName, int fk, String... orderBy) {
-    OrderBy[] obArray = stringArrayToOrderByArray(orderBy);
-    return findByFK(tableName, fkName, fk, obArray);
-  }
-
-  /**
-   * Finds all the entries in a table that shares the same FK. The resulting List is ordered by the
-   * specified column names and directions (ASC/DESC).
-   *
-   * @param tableName : The table name
-   * @param fkName    : The column name of the FK
-   * @param fk        : The FK (int)
-   * @param orderBy   : All OrderBy objects, each representing a column name and direction.
-   * @param <T>       : The type of DTO to return.
-   * @return a List of DTOs (T)
-   */
-  protected <T> List<T> findByFK(String tableName, String fkName, int fk, OrderBy... orderBy) {
-    return findByConditions(tableName, new QueryParameter[]{new QueryParameter(fkName, fk)},
-        orderBy);
+    query += generateWhere(true, queryParameters);
+    List<T> res = new ArrayList<>();
+    try {
+      PreparedStatement ps = dalServices.makeStatement(query);
+      int parameterIndex = 1;
+      for (QueryParameter qp : queryParameters) {
+        ps.setObject(parameterIndex, qp.value);
+        parameterIndex++;
+      }
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        res.add(toDTO(rs));
+      }
+      rs.close();
+      ps.close();
+    } catch (SQLException e) {
+      throw new InternalError(e);
+    }
+    return res;
   }
 
   // find one by conditions:
@@ -237,33 +104,6 @@ public abstract class AbstractDAO {
       throw new NotFoundException("Error: Resource not found");
     }
     return lst.get(0);
-  }
-
-  /**
-   * Finds a specific entry in a table based on its id.
-   *
-   * @param id        : The id
-   * @param tableName : The table name
-   * @param idName    : The id column name
-   * @param <T>       : The class of DTO to use in the result List
-   * @return a DTO (T) containing the found entry.
-   * @throws NotFoundException if no entry matches the given id.
-   */
-  protected <T> T findById(int id, String tableName, String idName) {
-    return findOneByConditions(tableName, new QueryParameter(idName, id));
-  }
-
-  // already exists:
-
-  /**
-   * Verifies if an entry that follows all given conditions already exists in the specified table.
-   *
-   * @param tableName       : The table name.
-   * @param queryParameters : All the conditions.
-   * @return a boolean representing if such an entry exists or not.
-   */
-  protected boolean alreadyExists(String tableName, QueryParameter... queryParameters) {
-    return !findByConditions(tableName, queryParameters).isEmpty();
   }
 
   // update:
@@ -315,101 +155,6 @@ public abstract class AbstractDAO {
   protected abstract <T> T toDTO(ResultSet rs) throws SQLException;
 
   // -- Private methods --
-
-  /**
-   * Executes a "SELECT" PreparedStatement and converts its result set into a List of DTO. Then,
-   * closes both the ResultSet, and the provided PreparedStatement.
-   *
-   * @param ps  a PreparedStatement ready to be executed
-   * @param <T> The type of DTO to return
-   * @return A list containing all results of the SELECT query as DTOs
-   * @throws SQLException if a problem occurs while executing ps or filling the List of DTOs.
-   */
-  private <T> List<T> executeSelectMultipleResults(PreparedStatement ps) throws SQLException {
-    List<T> dtoList = new ArrayList<>();
-    ResultSet rs = ps.executeQuery();
-    while (rs.next()) {
-      dtoList.add(toDTO(rs));
-    }
-    rs.close();
-    ps.close();
-    return dtoList;
-  }
-
-  /**
-   * Executes a "SELECT" PreparedStatement after setting its WHERE parameters and converts its
-   * result set into a List of DTO.
-   *
-   * @param queryParameters : Array of QueryParameters representing the ordered WHERE parameters
-   * @param query           : Query to execute
-   * @param <T>             The type of DTO to return
-   * @return A list containing all results of the SELECT query as DTOs
-   * @throws InternalError if a problem occurs while accessing the db.
-   */
-  private <T> List<T> executeSelectMultipleResultsWhere(QueryParameter[] queryParameters,
-      String query) {
-    List<T> res;
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      int parameterIndex = 1;
-      for (QueryParameter qp : queryParameters) {
-        ps.setObject(parameterIndex, qp.value);
-        parameterIndex++;
-      }
-      res = executeSelectMultipleResults(ps);
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return res;
-  }
-
-  /**
-   * Converts an Array of column names (String) to an Array of ASC OrderBy objects.
-   *
-   * @param columnNames : All ORDER BY column names.
-   * @return Array of OrderBy (ASC) objects.
-   */
-  private OrderBy[] stringArrayToOrderByArray(String... columnNames) {
-    OrderBy[] obArray = Arrays.stream(columnNames)
-        .map((s) -> new OrderBy(s, OrderByDirection.ASC))
-        .collect(Collectors.toList())
-        .toArray(new OrderBy[columnNames.length]);
-    return obArray;
-  }
-
-  //Query generation
-  /**
-   * Generates the ORDER BY part of a query.
-   *
-   * @param orderBIES all table names for order by, in order.
-   * @return ORDER BY part of a SELECT query (as String).
-   */
-  private String generateOrderBy(OrderBy... orderBIES) {
-    if (orderBIES.length == 0) {
-      return "";
-    }
-    String res = " ORDER BY ";
-    int i = 0;
-    for (OrderBy orderBy : orderBIES) {
-      res += orderBy.columnName + " " + orderBy.direction.getValue();
-      i++;
-      if (i < orderBIES.length) {
-        res += ", ";
-      }
-    }
-    return res;
-  }
-
-  /**
-   * Generates the WHERE part of a query based on QueryParameter(s) (in the order of the
-   * parameters). The generated String (query part) contains the t alias for the table.
-   *
-   * @param queryParameters : All query parameters
-   * @return WHERE part of a query (as String).
-   */
-  private String generateWhere(QueryParameter... queryParameters) {
-    return generateWhere(true, queryParameters);
-  }
 
   /**
    * Generates the WHERE part of a query based on QueryParameter(s) (in the order of the

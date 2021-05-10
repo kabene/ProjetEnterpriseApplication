@@ -79,7 +79,8 @@ public class AddressDAOImpl extends AbstractDAO implements AddressDAO {
    */
   @Override
   public AddressDTO findById(int addressId) {
-    return findById(addressId, "addresses", "address_id");
+    return findOneByConditions("addresses",
+        new QueryParameter("address_id", addressId));
   }
 
   /**

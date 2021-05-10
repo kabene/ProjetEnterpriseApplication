@@ -33,7 +33,8 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
    */
   @Override
   public List<RequestForVisitDTO> findByUserId(int userId) {
-    return findByFK("requests_for_visit", "user_id", userId);
+    return findByConditions("requests_for_visit",
+        new QueryParameter("user_id", userId));
   }
 
   /**
@@ -44,7 +45,8 @@ public class RequestForVisitDAOImpl extends AbstractDAO implements RequestForVis
    */
   @Override
   public RequestForVisitDTO findById(int idRequest) {
-    return findById(idRequest, "requests_for_visit", "request_id");
+    return findOneByConditions("requests_for_visit",
+        new QueryParameter("request_id", idRequest));
   }
 
   /**

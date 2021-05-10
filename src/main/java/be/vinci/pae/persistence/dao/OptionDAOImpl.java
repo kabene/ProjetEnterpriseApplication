@@ -69,7 +69,8 @@ public class OptionDAOImpl extends AbstractDAO implements OptionDAO {
    */
   @Override
   public OptionDTO findById(int id) {
-    return findById(id, "options", "option_id");
+    return findOneByConditions("options",
+        new QueryParameter("option_id", id));
   }
 
   /**
