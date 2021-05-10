@@ -55,6 +55,7 @@ public abstract class AbstractDAO {
 
   /**
    * Finds all the entries in a table that matches all the given conditions.
+   * All conditions are separated by AND.
    *
    * @param tableName       : The table name
    * @param queryParameters : All conditions as QueryParameter (columnName + value)
@@ -123,7 +124,7 @@ public abstract class AbstractDAO {
     //Generate SET
     int i = 0;
     for (QueryParameter qp : queryParameters) {
-      query += qp.columnName + " = ?";
+      query += qp.columnName + " = ?"; // add parameters to update
       i++;
       if (i < queryParameters.length) {
         query += ", "; // ',' between 2 values
