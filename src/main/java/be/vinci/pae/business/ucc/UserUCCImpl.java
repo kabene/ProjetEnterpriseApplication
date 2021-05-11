@@ -208,8 +208,6 @@ public class UserUCCImpl implements UserUCC {
    * @param dto : the UserDTO to complete
    */
   private void completeUserDTO(UserDTO dto) {
-    if (dto.getAddressId() != null) {
-      dto.setAddress(addressDAO.findById(dto.getAddressId()));
-    }
+    dto.setAddress(addressDAO.findById(dto.getAddressId()));
   }
 }
