@@ -6,6 +6,7 @@ let page = document.querySelector("#page");
 let currentUser;
 
 let mapRequests;
+let mapPhoto;
 
 let activeRequestID = "";
 let displayInfoItemInRequestCard = true;
@@ -400,10 +401,10 @@ const generateSinglePhotoContainer = (furniture) => {
  * @returns an <img/> tag containing the favourite photo of the furniture.
  */
 const generateFavouritePhotoImgTag = (furniture) => {
-  if (!furniture.favouritePhoto)
+  if (!furniture.thumbnail)
     return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + notFoundPhoto + `" alt="photoNotFound"/>`;
   else
-    return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
+    return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + furniture.thumbnail + `" alt="photo"/>`;
 }
 
 
@@ -593,6 +594,7 @@ const getFurnitureRequestPhotos = async (furniture) => {
       updateThumbnail(furniture, thumbnail);
     }
   }
+
 }
 
 export default VisitRequest;
