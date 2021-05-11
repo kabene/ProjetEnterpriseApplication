@@ -158,7 +158,7 @@ VALUES (DEFAULT, 'a', 'a', NULL , '23', 'a', 'a');
 INSERT
 INTO satchoFurniture.users (user_id, last_name, first_name, username, email, address_id, registration_date, role,
                             password, purchased_furniture_nbr, sold_furniture_nbr, is_waiting)
-VALUES (DEFAULT, 'non', 'non', 'in-store purchase', 'non', 1, now(), 'customer',
+VALUES (DEFAULT, 'none', 'none', 'in-store purchase', 'none', 1, now(), 'customer',
         'none', 0, 0, 'false');
 
 
