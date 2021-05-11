@@ -398,6 +398,12 @@ const fetchFav = async (furniture) => {
       let fav = await response.json();
       displayImgs([fav]);
       updateCacheFav(furniture, fav);
+    } else {
+      let fav = {
+        furnitureId: furniture.furnitureId,
+        source: notFoundPhoto,
+      }
+      displayImgs([fav]);
     }
   }
 }
