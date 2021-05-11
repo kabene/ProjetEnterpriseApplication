@@ -419,7 +419,9 @@ const generateFurnitureList = (request) => {
     <div class="p-1 w-50 container photo-list-container mx-0 border-bottom" photoId=${photoId}>
       <div class="row px-0">
         <div class="col-6">
+          <p>` + furniture.description +`</p> 
           <img class="img-fluid" src="${src}" photo-id="${photoId}" alt="photo id:${photoId}"/>
+          <p>` + generateColoredFurnitureStatus(furniture)+ `</p>
         </div>
         ${generateRadioBtns(request, furniture)}
       </div>
@@ -434,6 +436,16 @@ const generateFurnitureList = (request) => {
     ${generateChooseFurnitureBtn(request)}
   </form>`;
   return res;
+}
+
+/**
+ * Generate status entry for request list as colored <p> html tag (used in large tables)
+ * @param {*} request : furniture  object
+ * @returns an html <p> tag
+ */
+ const generateColoredFurnitureStatus = (furniture) => {
+  let infos = generateStatusInfos(furniture.status);
+  return `<p class="text-${infos.classname}">${infos.status}</p>`;
 }
 
 const addEventListnerPriceInputDisplay = () => {
@@ -776,28 +788,59 @@ const generateDot = (colorClassName) => {
  * find status label & color classname (primary / danger / etc...) for a given status
  * @param {String} status
  * @returns {
- *  classname: bootstrap color suffix,
- *  status: status label,
- * } object
+ * classname: bootstrap color suffix,
+ * status: status label,
+ * }
  */
 const generateStatusInfos = (status) => {
   let res = {
     classname: "",
     status: "",
   }
-
   switch (status) {
+    case "AVAILABLE_FOR_SALE":
+      res.classname = "success";
+      res.status = "Disponible à la vente";
+      break;
+    case "ACCEPTED":
+      res.classname = "warning";
+      res.status = "Accepté";
+      break;
+    case "IN_RESTORATION":
+      res.classname = "warning";
+      res.status = "En restauration";
+      break;
+    case "UNDER_OPTION":
+      res.classname = "danger";
+      res.status = "Sous option";
+      break;
+    case "SOLD":
+      res.classname = "secondary";
+      res.status = "Vendu";
+      break;
+    case "WITHDRAWN":
+      res.classname = "secondary";
+      res.status = "Retiré de la vente";
+      break;
+    case "REFUSED":
+      res.classname = "secondary";
+      res.status = "Refusé";
+      break;
+    case "REQUESTED_FOR_VISIT":
+      res.classname = "info";
+      res.status = "En attente de visite";
+      break;
     case "CONFIRMED":
       res.classname = "success";
-      res.status = "Confirmée";
+      res.status = "Accepté";
       break;
     case "WAITING":
       res.classname = "warning";
-      res.status = "En attente";
+      res.status = "en attente";
       break;
     case "CANCELED":
       res.classname = "danger";
-      res.status = "Annulée";
+      res.status = "Annulé";
       break;
     default:
       res.classname = "";
