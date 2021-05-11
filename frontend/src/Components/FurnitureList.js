@@ -57,6 +57,9 @@ const generateLargeTablePage = () => {
       element => element.addEventListener("click", displayShortElements));
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 /**
@@ -438,7 +441,9 @@ const displayShortElements = async (e) => {
     currentFurnitureId = id;
     loadCard(currentFurnitureId);
     document.querySelectorAll(".userLink").forEach(
-        (link) => link.addEventListener("click", onUserLinkClicked));
+      (link) => {
+        link.addEventListener("click", onUserLinkClicked)
+    });  
     isDisplayingLargeTable = false;
   } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
@@ -714,56 +719,70 @@ const fetching = async (base64, furnitureId) => {
 const generatePhotoList = (furniture) => {
   let photos = "";
   furniture.photos.forEach(photo => {
-    let favRadioName = `radioFav${photo.photoId}`;
-    let visibleCheckName = `checkboxVisible${photo.photoId}`;
-    let homePageCheckName = `checkboxHomepage${photo.photoId}`;
+    if(photo.fromRequest === false) {
+      let favRadioName = `radioFav${photo.photoId}`;
+      let visibleCheckName = `checkboxVisible${photo.photoId}`;
+      let homePageCheckName = `checkboxHomepage${photo.photoId}`;
 
-    let favChecked = ``;
-    if (furniture.favouritePhoto && photo.photoId
-        === furniture.favouritePhoto.photoId) {
-      favChecked = `checked`;
-    }
-
-    let visibleCheckedOriginaly = false;
-    let homePageCheckedOriginaly = false;
-    let visibileChecked = ``;
-    let homePageChecked = ``;
-    if (photo.isVisible) {
-      visibileChecked = `checked`;
-      visibleCheckedOriginaly = true;
-
-      if (photo.onHomePage && photo.isVisible) {
-        homePageChecked = `checked`;
-        homePageCheckedOriginaly = true;
+      let favChecked = ``;
+      if (furniture.favouritePhoto && photo.photoId
+          === furniture.favouritePhoto.photoId) {
+        favChecked = `checked`;
       }
-    } else {
-      homePageChecked = `disabled`;
-    }
 
-    photos += `
-    <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
-      <div class="row px-0">
-        <div class="col-6">
-          <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+      let visibleCheckedOriginaly = false;
+      let homePageCheckedOriginaly = false;
+      let visibileChecked = ``;
+      let homePageChecked = ``;
+      if (photo.isVisible) {
+        visibileChecked = `checked`;
+        visibleCheckedOriginaly = true;
+
+        if (photo.onHomePage && photo.isVisible) {
+          homePageChecked = `checked`;
+          homePageCheckedOriginaly = true;
+        }
+      } else {
+        homePageChecked = `disabled`;
+      }
+      
+      photos += `
+      <div class="p-1 w-50 container photo-list-container" from-request="false" photoId=${photo.photoId}>
+        <div class="row px-0">
+          <div class="col-6">
+            <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+          </div>
+          <div class="text-left col-6">
+            <label class="form-check-label" for="${favRadioName}">
+              <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId="${photo.photoId}" furnitureid="${photo.furnitureId}" ${favChecked}>
+              Photo favorite
+            </label>
+            <br/>
+            <label class="form-check-label" for="${visibleCheckName}">
+              <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
+              Visible
+            </label>
+            <br/>
+            <label class="form-check-label" for="${homePageCheckName}">
+              <input id="${homePageCheckName}" type="checkbox" class="form-check-input homepageCheckbox" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
+              Affiché sur la page d'accueil
+            </label>
+          </div>
         </div>
-        <div class="text-left col-6">
-          <label class="form-check-label" for="${favRadioName}">
-            <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId="${photo.photoId}" furnitureid="${photo.furnitureId}" ${favChecked}>
-            Photo favorite
-          </label>
-          <br/>
-          <label class="form-check-label" for="${visibleCheckName}">
-            <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
-            Visible
-          </label>
-          <br/>
-          <label class="form-check-label" for="${homePageCheckName}">
-            <input id="${homePageCheckName}" type="checkbox" class="form-check-input homepageCheckbox" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
-            Affiché sur la page d'accueil
-          </label>
+      </div>`;
+    } else {
+      //photo from request -> no input
+      photos += `
+      <div class="p-1 w-50 container photo-list-container" from-request="true" photoId=${photo.photoId}>
+        <div class="row px-0">
+          <div class="col-6">
+            <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+            <span class="mt-1 badge badge-secondary">Photo de demande<br/>de visite</span>
+          </div>
         </div>
-      </div>
-    </div>`;
+      </div>`;
+    }
+    
   });
   let pId
   if (!furniture.favouritePhoto) {
@@ -852,34 +871,37 @@ const findSelectedFav = () => {
 const findAllPhotosForFlagUpdate = () => {
   let arrayFound = new Array();
   document.querySelectorAll(".photo-list-container").forEach((container) => {
-    let visibleCheckbox = container.querySelector(".visibleCheckbox");
-    let homepageCheckbox = container.querySelector(".homepageCheckbox");
-    let photoId = container.getAttribute("photoid");
-    let isModified = false;
+    let fromRequest = container.getAttribute("from-request");
+    if(fromRequest==="false"){
+      let visibleCheckbox = container.querySelector(".visibleCheckbox");
+      let homepageCheckbox = container.querySelector(".homepageCheckbox");
+      let photoId = container.getAttribute("photoid");
+      let isModified = false;
 
-    let visibleChecked = "false";
-    let homepageChecked = "false";
-    if (visibleCheckbox.checked) {
-      visibleChecked = "true";
-    }
-    if (!homepageCheckbox.disabled && homepageCheckbox.checked) {
-      homepageChecked = "true";
-    }
-
-    if (visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
-      isModified = true;
-    } else if (homepageCheckbox.getAttribute("checked_originaly")
-        != homepageChecked) {
-      isModified = true;
-    }
-
-    if (isModified) {
-      let bundle = {
-        photoId: photoId,
-        isVisible: visibleCheckbox.checked,
-        isOnHomePage: homepageCheckbox.checked,
+      let visibleChecked = "false";
+      let homepageChecked = "false";
+      if (visibleCheckbox.checked) {
+        visibleChecked = "true";
       }
-      arrayFound.push(bundle);
+      if (!homepageCheckbox.disabled && homepageCheckbox.checked) {
+        homepageChecked = "true";
+      }
+
+      if (visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
+        isModified = true;
+      } else if (homepageCheckbox.getAttribute("checked_originaly")
+          != homepageChecked) {
+        isModified = true;
+      }
+
+      if (isModified) {
+        let bundle = {
+          photoId: photoId,
+          isVisible: visibleCheckbox.checked,
+          isOnHomePage: homepageCheckbox.checked,
+        }
+        arrayFound.push(bundle);
+      }
     }
   });
   return arrayFound;
@@ -1166,12 +1188,12 @@ const generateAllTransitionBtns = (furniture) => {
     case "IN_RESTORATION":
       res += generateTransitionModal("ToAvailable",
           "Indiquer disponible à la vente");
-      res += generateTransitionModal("ToSold", "Indiquer vendu");
+      res += generateTransitionModal("ToSold", "Indiquer vendu à un prix spécial");
       res += generateTransitionModal("Withdraw", "Retirer de la vente",
           "danger", "secondary");
       break;
     case "UNDER_OPTION":
-      res += generateTransitionModal("ToSold", "Indiquer vendu à un prix spécial");
+      res += generateTransitionModal("ToSold", "Indiquer vendu");
       break;
     case "SOLD":
     case "WITHDRAWN":

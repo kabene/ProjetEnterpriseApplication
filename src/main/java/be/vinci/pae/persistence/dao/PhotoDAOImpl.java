@@ -130,6 +130,7 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
     photoFound.setFurnitureId(rs.getInt("furniture_id"));
     photoFound.setOnHomePage(rs.getBoolean("is_on_home_page"));
     photoFound.setVisible(rs.getBoolean("is_visible"));
+    photoFound.setFromRequest(rs.getBoolean("is_from_request"));
     photoFound.setSource(rs.getString("source"));
     return photoFound;
   }

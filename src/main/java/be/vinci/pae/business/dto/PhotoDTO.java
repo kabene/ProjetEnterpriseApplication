@@ -26,6 +26,10 @@ public interface PhotoDTO {
 
   void setVisible(Boolean isVisible);
 
+  Boolean isFromRequest();
+
+  void setFromRequest(Boolean isFromRequest);
+
   String getSource();
 
   void setSource(String source);
