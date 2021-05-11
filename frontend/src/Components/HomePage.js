@@ -59,9 +59,9 @@ const getPageHTML = () => {
     ` + generateFilterHTML() + `
   </div>
   <div class="row mx-0 pt-5">
-  	<div class="col-2 col-lg-4"></div>
-    <div class="col-8 col-lg-4">` + getCarousel() + `</div>
-    <div class="col-2 col-lg-4"></div>
+  	<div class="col-1 col-lg-2"></div>
+    <div class="col-10 col-lg-8">` + getCarousel() + `</div>
+    <div class="col-1 col-lg-2"></div>
   </div>`;
 }
 
@@ -134,12 +134,12 @@ const getHTMLVisiblePhotos = () => {
       if (nbrPhotosInCarousel === 0) {
         ret += `
           <div class="carousel-item active">
-            <img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+            <img class="d-block img-fluid mx-auto mb-5 carouselPhoto" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
           </div>`;
       } else {
         ret += `
           <div class="carousel-item">
-            <img class="d-block img-fluid mx-auto mb-5" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
+            <img class="d-block img-fluid mx-auto mb-5 carouselPhoto" src="` + photo.source + `" alt="Photo meuble" onError="this.src='` + notFoundPhoto + `'">
           </div>`;
       }
       nbrPhotosInCarousel++;
@@ -148,7 +148,7 @@ const getHTMLVisiblePhotos = () => {
   if (nbrPhotosInCarousel === 0) {
     return `
 		<div class="carousel-item active">
-			<img class="d-block img-fluid mx-auto mb-5" src="` + noFurniturePhoto + `" alt="Aucun meuble trouvé">
+			<img class="d-block img-fluid mx-auto mb-5 carouselPhoto" src="` + noFurniturePhoto + `" alt="Aucun meuble trouvé">
 		</div>`;
   }
   return ret;

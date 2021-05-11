@@ -117,6 +117,13 @@ const reloadPage = async () => {
   mainPage.innerHTML = generateLoadingAnimation();
   await findFurnitureList();
   mainPage = generatePageHtml();
+  document.querySelectorAll(".toBeClicked").forEach(
+    element => element.addEventListener("click", displayShortElements));
+  document.querySelector("#buttonReturn").addEventListener("click",
+      displayLargeTable);
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 const removeTimeouts = () => {
@@ -136,7 +143,6 @@ const generatePageHtml = (largeTable = true) => {
   }
   let res = `
   <div class="container-fluid px-5 py-3 border border-top-0 border-right-0 border-left-0">
-    <h3>Filtrer les meubles:</h3>
     <form class="form-inline">
       <div class="form-group mx-3">
         <input type="text" class="form-control" id="username-filter" placeholder="Filtrer par pseudo"/>
@@ -185,13 +191,14 @@ const generatePageHtml = (largeTable = true) => {
             <th class="${notNeededClassName}">Type</th>
             <th class="align-middle">État 
               <i class="hover material-icons">&#xe88e; 
-              <div class="tooltip"> 
-                ${generateBadgeLegend("rouge","danger")}: Le meuble est sous option.<br/>
-                ${generateBadgeLegend("vert","success")}: Le meuble est disponible à la vente.<br/>
-                ${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état de transition.<br/>
-                ${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite.<br/>
-                ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ce meuble. 
-              </div></i>  
+                <div class="tooltip"> 
+                  ${generateBadgeLegend("rouge","danger")}: Le meuble est sous option.<br/>
+                  ${generateBadgeLegend("vert","success")}: Le meuble est disponible à la vente.<br/>
+                  ${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état de transition.<br/>
+                  ${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite.<br/>
+                  ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ce meuble. 
+                </div>
+              </i>  
             </th>
             <th class="${notNeededClassName}">Vendeur</th>
             <th class="${notNeededClassName}">Acheteur</th>
@@ -399,6 +406,8 @@ const generateBadgeLegend = (name, status) => {
 
 const displayShortElements = async (e) => {
   removeTimeouts();
+  if (e.target.nodeName == "A")
+    return;
   //hide large table
   let largeTable = document.querySelector('#largeTable');
   if (largeTable !== null) {
@@ -441,14 +450,13 @@ const displayShortElements = async (e) => {
   if (furniture) {
     currentFurnitureId = id;
     loadCard(currentFurnitureId);
-    document.querySelectorAll(".userLink").forEach(
-      (link) => {
-        link.addEventListener("click", onUserLinkClicked)
-    });
     isDisplayingLargeTable = false;
   } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
   }
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 const onUserLinkClicked = (e) => {
@@ -1582,14 +1590,14 @@ const respectsUserFilter = (furniture) => {
   } // active filter + no user -> FALSE
 
   if (furniture.seller !== undefined) {
-    if (furniture.seller.username.includes(activeFilters.username)) {
+    if (furniture.seller.username.toLowerCase().includes(activeFilters.username.toLowerCase())) {
       return true;
     }
   }
   if (!furniture.buyer) {
     return false;
   } else {
-    if (furniture.buyer.username.includes(activeFilters.username)) {
+    if (furniture.buyer.username.toLowerCase().includes(activeFilters.username.toLowerCase())) {
       return true;
     }
   }
@@ -1607,7 +1615,7 @@ const respectsInStoreFilter = (furniture) => {
     if(!buyer) {
       return false; // no buyer -> not in-store sale
     }
-    if(buyer.username !== inStorePurchaseUsername) {
+    if(buyer.username.toLowerCase() !== inStorePurchaseUsername.toLowerCase()) {
       return false;
     }
   }
@@ -1749,6 +1757,9 @@ const refreshDisplay = () => {
   }
   placeFilterForm();
   displayNoResultMsg();
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 /**

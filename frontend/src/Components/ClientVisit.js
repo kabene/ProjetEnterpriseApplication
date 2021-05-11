@@ -7,6 +7,7 @@ let page = document.querySelector("#page");
 let currentUser;
 
 let mapRequests;
+let mapPhoto;
 
 let activeRequestID = "";
 let displayInfoItemInRequestCard = true;
@@ -48,9 +49,9 @@ const setDefaultEventListener = () => {
  * display the short elements if the table is large, else just refresh the user card.
  */
 const onRequestTableRowClick = (e) => {
+  onUserClickHandler(e);
   if (!document.querySelector('#shortTableContainer'))
     displayShortElements();
-  onUserClickHandler(e);
 }
 
 
@@ -136,13 +137,11 @@ const displayShortElements = () => {
  */
 const onUserClickHandler = async (e) => {
   removeActiveRow();
-  
   //get the tr element
   let element = e.target;
-  while (!element.className.includes("requestTableRow"))
+  while (!element?.className?.includes("requestTableRow"))
       element = element.parentElement;
   setActiveRow(element.getAttribute("requestId"));
-
   let requestId = element.attributes["requestId"].value;
   await displayRequestCardById(requestId);
   getAllRequestPhotos(parseInt(requestId));
@@ -221,7 +220,15 @@ const generateTable = () => {
               <tr>
                 <th>Date de la demande</th>
                 <th>Adresse</th>
-                <th>Etat</th>
+                <th>Etat
+                  <i class="hover material-icons">&#xe88e; 
+                    <div class="tooltip"> 
+                      ${generateBadgeLegend("rouge", "danger")}: La demande de visite est refusée.<br/>
+                      ${generateBadgeLegend("vert", "success")}: La demande de visite est acceptée.<br/>
+                      ${generateBadgeLegend("jaune", "warning")}: La demande de visite est en attente.<br/>
+                    </div>
+                  </i>
+                </th>
               </tr>
           </thead>
           <tbody>`
@@ -230,6 +237,17 @@ const generateTable = () => {
       </table>`;
     return res;
 }
+
+/**
+ *  generate the badges for the legend tooltip
+ * @param name
+ * @param status
+ * @returns {string}
+ */
+ const generateBadgeLegend = (name, status) => {
+  let res = `<span class="badge badge-pill badge-${status} text-light">${name}</span>`;
+  return res;
+ }
 
 
 const getAllRequestsRows = () => {
@@ -384,10 +402,10 @@ const generateSinglePhotoContainer = (furniture) => {
  * @returns an <img/> tag containing the favourite photo of the furniture.
  */
 const generateFavouritePhotoImgTag = (furniture) => {
-  if (!furniture.favouritePhoto)
+  if (!furniture.thumbnail)
     return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + loadingPhoto + `" alt="photoNotFound"/>`;
   else
-    return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
+    return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + furniture.thumbnail + `" alt="photo"/>`;
 }
 
 
@@ -577,6 +595,7 @@ const getFurnitureRequestPhotos = async (furniture) => {
       updateThumbnail(furniture, thumbnail);
     }
   }
+
 }
 
 export default VisitRequest;
