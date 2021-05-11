@@ -1,4 +1,5 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
+import loadingPhoto from "../img/loadingImg.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {findCurrentUser} from "../utils/session.js";
@@ -261,7 +262,7 @@ const generateRow = (furniture, notNeededClassName) => {
  */
 const generateFavouritePhotoImgTag = (furniture) => {
   if (!furniture.favouritePhoto) {
-    return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" photo-id=${furniture.favouritePhotoId} furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
+    return `<img class="img-fluid" src="${loadingPhoto}" alt="not found photo" photo-id=${furniture.favouritePhotoId} furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
   }
   return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" photo-id=${furniture.favouritePhotoId} furnitureId="${furniture.furnitureId}" id="list-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
 }
@@ -1789,6 +1790,10 @@ const fetchFav = async (furniture) => {
       let fav = await response.json();
       updateCacheFav(furniture, fav);
       displayImgs([fav]);
+    } else {
+      let notFound = {source: notFoundPhoto, furnitureId: furniture.furnitureId};
+      updateCacheFav(furniture, notFound);
+      displayImgs([notFound]);
     }
   }
 }
