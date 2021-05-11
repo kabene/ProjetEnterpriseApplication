@@ -589,17 +589,14 @@ body, .search-bar {
 .tooltip {
   background-color:#e6e9ee ;
   border-radius: 2%;
-  /* hide and position tooltip */
-  -webkit-transition: opacity 0.5s;
-  -moz-transition: opacity 0.5s;
-  -ms-transition: opacity 0.5s;
-  -o-transition: opacity 0.5s;
-  transition: opacity 0.5s;
+  display: none;
+  padding: 10px;
 }
 
 .hover:hover .tooltip {
   /* display tooltip on hover */
-  padding: 10px;
+  transition: all 0.3s ease-in;
+  display: block;
   opacity: 1;
 }
 
