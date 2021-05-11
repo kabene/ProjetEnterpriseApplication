@@ -648,9 +648,10 @@ const clientDetail = async (id) => {
     },
   });
   if (!response.ok) {
-    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    const err = "Error code : " + response.status + " : " + response.statusText;
     console.error(err);
-    displayErrorMessage("errorDiv", err);
+    displayErrorMessage("errorDiv", new Error(err));
+    return;
   }
   return response.json();
 }
@@ -668,9 +669,10 @@ const getWaitingUserList = async () => {
     },
   });
   if (!response.ok) {
-    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    const err = "Error code : " + response.status + " : " + response.statusText;
     console.error(err);
-    displayErrorMessage("errorDiv", err);
+    displayErrorMessage("errorDiv", new Error(err));
+    return;
   }
   let jsonResponse = await response.json();
   return jsonResponse.users;
@@ -691,7 +693,8 @@ const getConfirmedUsersList = async () => {
   if (!response.ok) {
     const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
     console.error(err);
-    displayErrorMessage("errorDiv", err);
+    displayErrorMessage("errorDiv", new Error(err));
+    return;
   }
   let jsonResponse = await response.json();
   return jsonResponse.users;
@@ -714,7 +717,8 @@ const validation = async (e) => {
   if (!response.ok) {
     const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
     console.error(err);
-    displayErrorMessage("errorDiv", err);
+    displayErrorMessage("errorDiv", new Error(err));
+    return;
   }
   return response.json();
 }
@@ -735,6 +739,7 @@ const onTakeoverClick = async (e) => {
     const err = "Error code : " + response.status + " : " + response.statusText;
     console.error(err);
     displayErrorMessage("errorDiv", new Error(err));
+    return;
   }
   let data = await response.json();
 
