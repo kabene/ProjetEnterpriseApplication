@@ -47,9 +47,9 @@ const setDefaultEventListener = () => {
  * display the short elements if the table is large, else just refresh the user card.
  */
 const onRequestTableRowClick = (e) => {
+  onUserClickHandler(e);
   if (!document.querySelector('#shortTableContainer'))
     displayShortElements();
-  onUserClickHandler(e);
 }
 
 
@@ -135,13 +135,11 @@ const displayShortElements = () => {
  */
 const onUserClickHandler = async (e) => {
   removeActiveRow();
-  
   //get the tr element
   let element = e.target;
-  while (!element.className.includes("requestTableRow"))
+  while (!element?.className?.includes("requestTableRow")) 
       element = element.parentElement;
   setActiveRow(element.getAttribute("requestId"));
-
   let requestId = element.attributes["requestId"].value;
   await displayRequestCardById(requestId);
   getAllRequestPhotos(parseInt(requestId));
@@ -220,7 +218,17 @@ const generateTable = () => {
               <tr>
                 <th>Date de la demande</th>
                 <th>Adresse</th>
-                <th>Etat</th>
+                <th>Etat
+                  <i class="hover material-icons">&#xe88e; 
+                    <div class="tooltip"> 
+                      ${generateBadgeLegend("rouge","danger")}: Le meuble est sous option.<br/>
+                      ${generateBadgeLegend("vert","success")}: Le meuble est disponible à la vente.<br/>
+                      ${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état de transition.<br/>
+                      ${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite.<br/>
+                      ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ce meuble. 
+                    </div>
+                  </i>  
+                </th>
               </tr>
           </thead>
           <tbody>`
@@ -229,6 +237,17 @@ const generateTable = () => {
       </table>`;
     return res;
 }
+
+/**
+ *  generate the badges for the legend tooltip
+ * @param name
+ * @param status
+ * @returns {string}
+ */
+ const generateBadgeLegend = (name, status) => {
+  let res = `<span class="badge badge-pill badge-${status} text-light">${name}</span>`;
+  return res;
+ }
 
 
 const getAllRequestsRows = () => {
