@@ -67,6 +67,8 @@ const onClickApplyFilter = (e) => {
   page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
   document.querySelector("[value='" + filter.type + "']").setAttribute('selected', 'true');
+  let loadArea = document.querySelector("#loadArea");
+  loadArea.className = "d-none"
 }
 
 
