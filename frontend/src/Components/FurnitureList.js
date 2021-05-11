@@ -25,6 +25,7 @@ const emptyFilter = {
   inStore: false,
   price: "-1",
   status: "",
+  type: ""
 }
 let activeFilters = {...emptyFilter};
 
@@ -163,6 +164,7 @@ const generatePageHtml = (largeTable = true) => {
           <option value="WITHDRAWN">Retiré de la vente</option>
           <option value="REFUSED">Refusé</option>
         </select>
+        <div class="form-group m-3">` + generateSelectTypeTag() + `</div>
       </div>
       <button type="submit" id="apply-filters-btn" class="btn btn-primary mx-2">Appliquer</button>
       <button type="submit" id="clear-filters-btn" class="btn btn-secondary mx-2">Retirer les filtres</button>
@@ -200,6 +202,18 @@ const generatePageHtml = (largeTable = true) => {
   </div>
   </div>`;
   return res;
+}
+
+const generateSelectTypeTag = () => {
+  let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
+  typeList.forEach(type => ret += generateOptionTypeTag(type));
+  ret += `</select>`;
+  return ret;
+}
+
+
+const generateOptionTypeTag = (type) => {
+  return `<option value="` + type.typeName + `">` + type.typeName + `</option>`;
 }
 
 const generateAllRows = (notNeededClassName) => {
@@ -1525,6 +1539,7 @@ const respectsAllActiveFilters = (furniture) => {
   res = res && respectsInStoreFilter(furniture);
   res = res && respectsPriceFilters(furniture);
   res = res && respectsStatusFilter(furniture);
+  res = res && respectTypeFilter(furniture);
   return res;
 }
 
@@ -1639,6 +1654,10 @@ const respectsStatusFilter = (furniture) => {
   return furniture.status === activeFilters.status;
 }
 
+const respectTypeFilter = (furniture) => {
+  return activeFilters.type === "" || activeFilters.type === furniture.type
+}
+
 /**
  * remove all applied filter, then refresh display
  */
@@ -1655,11 +1674,13 @@ const applyFilters = (e) => {
   let inStoreCheckbox = document.querySelector("#in-store-filter");
   let priceInput = document.querySelector("#price-filter");
   let statusInput = document.querySelector("#status-filter");
+  let type = document.querySelector("#furnitureTypeFilter");
 
   activeFilters.username = usernameInput.value;
   activeFilters.inStore = inStoreCheckbox.checked;
   activeFilters.price = priceInput.value;
   activeFilters.status = statusInput.value;
+  activeFilters.type = type.value;
 
   refreshDisplay();
 }
@@ -1674,6 +1695,7 @@ const placeFilterForm = () => {
   let inStoreCheckbox = document.querySelector("#in-store-filter");
   let priceInput = document.querySelector("#price-filter");
   let statusInput = document.querySelector("#status-filter");
+  document.querySelector("[value='" + activeFilters.type + "']").setAttribute('selected', 'true');
 
   usernameInput.value = activeFilters.username;
   if(activeFilters.inStore) {
