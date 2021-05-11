@@ -261,9 +261,6 @@ INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
 VALUES (DEFAULT,7, 'requested_for_visit', 'Lit à baldaquin en acajou', 18,null,null,4);
 
-INSERT INTO satchoFurniture.options(option_id, duration, date_option, user_id, furniture_id, is_canceled)
-VALUES (DEFAULT,5,NOW(),3,6,false);
-
 INSERT
 INTO satchoFurniture.furniture (furniture_id, seller_id, status, description, type_id,favourite_photo_id,selling_price,request_id)
 VALUES (DEFAULT,4, 'in_restoration', 'Bureau en bois ciré',6,null,null,5);
