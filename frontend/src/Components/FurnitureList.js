@@ -116,6 +116,13 @@ const reloadPage = async () => {
   mainPage.innerHTML = generateLoadingAnimation();
   await findFurnitureList();
   mainPage = generatePageHtml();
+  document.querySelectorAll(".toBeClicked").forEach(
+    element => element.addEventListener("click", displayShortElements));
+  document.querySelector("#buttonReturn").addEventListener("click",
+      displayLargeTable);
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 const removeTimeouts = () => {
@@ -184,13 +191,14 @@ const generatePageHtml = (largeTable = true) => {
             <th class="${notNeededClassName}">Type</th>
             <th class="align-middle">État 
               <i class="hover material-icons">&#xe88e; 
-              <div class="tooltip"> 
-                ${generateBadgeLegend("rouge","danger")}: Le meuble est sous option.<br/>
-                ${generateBadgeLegend("vert","success")}: Le meuble est disponible à la vente.<br/>
-                ${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état de transition.<br/>
-                ${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite.<br/>
-                ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ce meuble. 
-              </div></i>  
+                <div class="tooltip"> 
+                  ${generateBadgeLegend("rouge","danger")}: Le meuble est sous option.<br/>
+                  ${generateBadgeLegend("vert","success")}: Le meuble est disponible à la vente.<br/>
+                  ${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état de transition.<br/>
+                  ${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite.<br/>
+                  ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ce meuble. 
+                </div>
+              </i>  
             </th>
             <th class="${notNeededClassName}">Vendeur</th>
             <th class="${notNeededClassName}">Acheteur</th>
@@ -398,6 +406,8 @@ const generateBadgeLegend = (name, status) => {
 
 const displayShortElements = async (e) => {
   removeTimeouts();
+  if (e.target.nodeName == "A")
+    return;
   //hide large table
   let largeTable = document.querySelector('#largeTable');
   if (largeTable !== null) {
@@ -440,14 +450,13 @@ const displayShortElements = async (e) => {
   if (furniture) {
     currentFurnitureId = id;
     loadCard(currentFurnitureId);
-    document.querySelectorAll(".userLink").forEach(
-      (link) => {
-        link.addEventListener("click", onUserLinkClicked)
-    });
     isDisplayingLargeTable = false;
   } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
   }
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 const onUserLinkClicked = (e) => {
@@ -1747,6 +1756,9 @@ const refreshDisplay = () => {
   }
   placeFilterForm();
   displayNoResultMsg();
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 /**
