@@ -1,7 +1,6 @@
 package be.vinci.pae.persistence.dao;
 
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.main.Main;
 import be.vinci.pae.persistence.dal.ConnectionBackendDalServices;
 import be.vinci.pae.utils.Configurate;
 import jakarta.inject.Inject;
@@ -11,8 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class AbstractDAO {
 
@@ -65,7 +62,6 @@ public abstract class AbstractDAO {
   protected <T> List<T> findByConditions(String tableName, QueryParameter... queryParameters) {
     String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
     query += generateWhere(true, queryParameters);
-    //Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.FINE, query);
     List<T> res = new ArrayList<>();
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
@@ -129,7 +125,6 @@ public abstract class AbstractDAO {
       }
     }
     query += generateWhere(false, idQueryParameter);
-    //Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.FINE, query);
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       int parameterIndex = 1;
