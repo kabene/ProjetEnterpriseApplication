@@ -764,12 +764,14 @@ const AddressToGeo = async (address) => {
       },  (result) => {
        if(result.items[0] != null)
          map(result.items[0].position.lat, result.items[0].position.lng);
-      },
-     await map(null, null));
+       else 
+          map(null, null);
+      });
 }
 
 
 const map = async (latitude, lngitude) => {
+  console.log(latitude, lngitude);
   if (latitude != null && lngitude != null) {
     let map;
     const additionalOptions = {};
