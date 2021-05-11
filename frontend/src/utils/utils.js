@@ -68,38 +68,6 @@ function displayErrorMessage(alertDivId, error) {
 }
 
 /**
- * Loads all images (.png / .jpg / jpeg / .svg) from the src/img/furniture folder
- *
- * @author Webpack documentation: https://webpack.js.org/guides/dependency-management/#require-context
- *
- * key = filename
- * use the entries' default attribute in <img/> tags
- *
- * @returns an array containing all images
- */
-const importAllFurnitureImg = () => {
-  let r = require.context('../img/furniture', true, /\.(png|jpe?g|svg)$/);
-  let images = {};
-  r.keys().map((item, index) => {
-    images[item.replace('./', '')] = r(item);
-  });
-  return images;
-}
-
-/**
- * finds furniture image src from loaded images array and filename ( -> return value from importAllFurnitureImg() )
- *
- * @param {string} filename
- * @param {Array} images
- * @returns <img/> src
- */
-const findFurnitureImgSrcFromFilename = (filename, images) => {
-  if (!images[filename])
-    return imageNotFound;
-  return images[filename].default;
-}
-
-/**
  * show the GDPR span if the user haven't filled it before.
  * In the other case save the data into local storage
  * @returns {string} html
@@ -168,7 +136,6 @@ const getSignal = () => {
 
 
 export {escapeHtml, removeTimeouts, generateLoadingAnimation, fetchMe,
-        displayErrorMessage, importAllFurnitureImg, findFurnitureImgSrcFromFilename, 
-        acceptCookies, getGDPR, gdpr, baseUrl, getSignal};
+        displayErrorMessage, acceptCookies, getGDPR, gdpr, baseUrl, getSignal};
 
 
