@@ -335,7 +335,7 @@ class PhotoUCCImplTest {
   void test_patchDisplayFlags_requestPhoto_shouldThrowConflict(boolean isVisible,
       boolean isOnHomePage) {
     Mockito.when(mockPhotoDTO1.isFromRequest()).thenReturn(true);
-    assertThrows(ConflictException.class, ()->
+    assertThrows(ConflictException.class, () ->
         photoUCC.patchDisplayFlags(defaultPhotoId1, isVisible, isOnHomePage));
 
     InOrder inOrder = Mockito
