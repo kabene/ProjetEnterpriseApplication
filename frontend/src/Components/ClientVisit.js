@@ -1,4 +1,5 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
+import loadingPhoto from "../img/loadingImg.png";
 import {findCurrentUser} from "../utils/session";
 import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr, baseUrl, getSignal} from "../utils/utils";
 
@@ -384,7 +385,7 @@ const generateSinglePhotoContainer = (furniture) => {
  */
 const generateFavouritePhotoImgTag = (furniture) => {
   if (!furniture.favouritePhoto)
-    return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + notFoundPhoto + `" alt="photoNotFound"/>`;
+    return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + loadingPhoto + `" alt="photoNotFound"/>`;
   else
     return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + furniture.favouritePhoto.source + `" alt="photo"/>`;
 }

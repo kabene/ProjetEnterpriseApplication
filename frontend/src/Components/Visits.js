@@ -1,4 +1,5 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
+import loadingPhoto from "../img/loadingImg.png";
 import {findCurrentUser} from "../utils/session";
 import {displayErrorMessage, gdpr, generateLoadingAnimation, displayImgs, baseUrl, getSignal} from "../utils/utils";
 import {RedirectUrl} from "./Router";
@@ -408,7 +409,7 @@ const generateFurnitureList = (request) => {
 
   request.furnitureList.forEach(furniture => {
     let photoId = furniture.favouritePhotoId;
-    let src = "none";
+    let src = loadingPhoto;
     if (!furniture.favouritePhotoId) {
       src = notFoundPhoto;
     }
