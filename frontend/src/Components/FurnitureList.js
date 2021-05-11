@@ -27,7 +27,7 @@ const emptyFilter = {
   status: "",
   type: ""
 }
-let activeFilters = {...emptyFilter};
+let activeFilters = {...emptyFilter}; // deep copy
 
 const FurnitureList = async (id) => {
   currentUser = findCurrentUser();
@@ -1489,31 +1489,32 @@ const toSold = async (e, furniture) => {
     }
   }
   let signal = getSignal();
-
-  fetch(baseUrl+"/furniture/sold/" + furniture.furnitureId, {
-    signal,
-    method: "PATCH",
-    body: JSON.stringify(bundle),
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
+  try {
+    let response = await fetch(baseUrl+"/furniture/sold/" + furniture.furnitureId, {
+      signal,
+      method: "PATCH",
+      body: JSON.stringify(bundle),
+      headers: {
+        "Authorization": currentUser.token,
+        "Content-Type": "application/json",
+      },
+    })
     if (!response.ok) {
       if (response.status == 404)
         throw new Error("Le meuble ou le client n'existe pas");
       else
         throw new Error("Error code : " + response.status + " : " + response.statusText);
     }
-    return response.json();
-  }).then((data) => {
-    furnitureMap[data.furnitureId] = data;
+    let data = await response.json();
+    let photos = furnitureMap[data.furnitureId].photos;
+    let favouritePhoto = furnitureMap[data.furnitureId].favouritePhoto;
+
+    furnitureMap[data.furnitureId] = {...data, favouritePhoto: favouritePhoto, photos: photos};
     loadCard(data.furnitureId);
-  }).catch((err) => {
+  }catch(err) {
     console.error("Erreur de fetch !! :´<\n" + err);
     displayErrorMessage("errorDiv", err);
-  });
-
+  }
 }
 
 const loadCard = (furnitureId) => {
