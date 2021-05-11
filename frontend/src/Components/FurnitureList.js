@@ -1152,12 +1152,12 @@ const generateAllTransitionBtns = (furniture) => {
     case "IN_RESTORATION":
       res += generateTransitionModal("ToAvailable",
           "Indiquer disponible à la vente");
-      res += generateTransitionModal("ToSold", "Indiquer vendu");
+      res += generateTransitionModal("ToSold", "Indiquer vendu à un prix spécial");
       res += generateTransitionModal("Withdraw", "Retirer de la vente",
           "danger", "secondary");
       break;
     case "UNDER_OPTION":
-      res += generateTransitionModal("ToSold", "Indiquer vendu à un prix spécial");
+      res += generateTransitionModal("ToSold", "Indiquer vendu");
       break;
     case "SOLD":
     case "WITHDRAWN":
@@ -1430,7 +1430,7 @@ const toSold = async (e, furniture) => {
   let specialSalePrice = "";
   let buyerUsername;
   let bundle;
-  if (furniture.status === "AVAILABLE_FOR_SALE") {
+  if (furniture.status === "AVAILABLE_FOR_SALE" || furniture.status === "IN_RESTORATION") {
     specialSalePrice = e.target.parentElement.parentElement.querySelector("#specialSalePriceInput").value;
     let buyerInput = e.target.parentElement.parentElement.querySelector("#buyerUsernameInput");
     if(buyerInput.disabled) {
