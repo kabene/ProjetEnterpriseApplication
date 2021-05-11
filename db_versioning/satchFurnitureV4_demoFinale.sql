@@ -204,7 +204,7 @@ VALUES (DEFAULT, 'Ile', 'Théophile', 'Theo', 'theo.phile@proximus.be', 5 , now(
 INSERT INTO satchoFurniture.addresses
 VALUES (DEFAULT, 'Rue des Minières', '45', 'Ter' , '4800', 'Verviers', 'Belgique');
 INSERT INTO satchoFurniture.users
-VALUES (DEFAULT, 'Line', 'Charles', 'Charline', 'charline@proximus.be', 7 , now(), 'customer',
+VALUES (DEFAULT, 'Line', 'Charles', 'charline', 'charline@proximus.be', 7 , now(), 'customer',
         '$2a$04$Jiu02H9pbvg6a83RNVVBXezBnxI2qtPRYzm4ZANRtZXywH0guqo9.', 0, 0, 'false');
 
 
