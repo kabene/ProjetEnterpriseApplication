@@ -309,7 +309,7 @@ const generateRequestCard = (request) => {
 						</div>
 						<ul class="nav nav-tabs" id="myTab" role="tablist">
 							<li class="nav-item">
-								<a class="nav-link ` + navLinkInfo.status + `" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="` + navLinkInfo.ariaSelected + `">Information</a>
+								<a class="nav-link ` + navLinkInfo.status + `" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="` + navLinkInfo.ariaSelected + `">Informations</a>
 							</li>
 							<li class="nav-item">
 								<a class="nav-link ` + navLinkFurniture.status + `" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected=" ` + navLinkFurniture.ariaSelected + `">Meubles acceptés/refusés</a>
