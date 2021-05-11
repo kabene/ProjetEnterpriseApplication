@@ -425,6 +425,9 @@ const fetchAllPhotos = async (furniture) => {
       let photoArray = await response.json();
       updateModal(photoArray, furniture);
       updateCacheAllPhotos(furniture, photoArray);
+    }else {
+      let photoArray = [notFoundPhoto];
+      updateModal(furniture, photoArray);
     }
   }
 }
