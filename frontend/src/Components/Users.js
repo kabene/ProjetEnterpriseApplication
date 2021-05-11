@@ -534,10 +534,10 @@ const generateUserCard = (userDetail) => {
             </p>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item">
-                <a class="nav-link ` + navLinkInfo.status + `" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="` + navLinkInfo.ariaSelected + `">informations personnelles</a>
+                <a class="nav-link ` + navLinkInfo.status + `" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="` + navLinkInfo.ariaSelected + `">Informations personnelles</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link ` + navLinkAddress.status + `" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="` + navLinkAddress.ariaSelected + `">adresses et plan</a>
+                <a class="nav-link ` + navLinkAddress.status + `" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="` + navLinkAddress.ariaSelected + `">Adresse et plan</a>
               </li>
             </ul>
           </div>
