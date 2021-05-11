@@ -56,6 +56,9 @@ const generateLargeTablePage = () => {
       element => element.addEventListener("click", displayShortElements));
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 /**
@@ -424,7 +427,9 @@ const displayShortElements = async (e) => {
     currentFurnitureId = id;
     loadCard(currentFurnitureId);
     document.querySelectorAll(".userLink").forEach(
-        (link) => link.addEventListener("click", onUserLinkClicked));
+      (link) => {
+        link.addEventListener("click", onUserLinkClicked)
+    });  
     isDisplayingLargeTable = false;
   } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
