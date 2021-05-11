@@ -56,7 +56,7 @@ const generateLoadingAnimation = () => {
 }
 
 function displayErrorMessage(alertDivId, error) {
-  if (typeof error === DOMException || typeof error === DOMError) return;
+  if (typeof error === DOMException) return;
   let message = error.message;
   let div = document.querySelector(`#${alertDivId}`);
   div.className = "mx-1";
