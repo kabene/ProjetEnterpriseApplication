@@ -663,10 +663,15 @@ const generatePageHtml = (largeTable = true) => {
             <th class="align-middle">Client</th>
             <th class="${notNeededClassName}">Adresse</th>
             <th class="align-middle">Date de la demande</th>
-            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend(
-      "rouge",
-      "danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend(
-      "vert", "success")}: La demande de visite est acceptée.</div></i></th>
+            <th class="align-middle">États
+              <i class="hover material-icons">&#xe88e; 
+                <div class="tooltip"> 
+                  ${generateBadgeLegend("rouge", "danger")}: La demande de visite est refusée.<br/>
+                  ${generateBadgeLegend("vert", "success")}: La demande de visite est acceptée.<br/>
+                  ${generateBadgeLegend("jaune", "warning")}: La demande de visite est en attente.<br/>
+                </div>
+              </i>
+            </th>
           </tr>
         </thead>
         <tbody>

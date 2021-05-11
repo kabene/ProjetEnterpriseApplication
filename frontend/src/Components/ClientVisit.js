@@ -221,13 +221,11 @@ const generateTable = () => {
                 <th>Etat
                   <i class="hover material-icons">&#xe88e; 
                     <div class="tooltip"> 
-                      ${generateBadgeLegend("rouge","danger")}: Le meuble est sous option.<br/>
-                      ${generateBadgeLegend("vert","success")}: Le meuble est disponible à la vente.<br/>
-                      ${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état de transition.<br/>
-                      ${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite.<br/>
-                      ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ce meuble. 
+                      ${generateBadgeLegend("rouge", "danger")}: La demande de visite est refusée.<br/>
+                      ${generateBadgeLegend("vert", "success")}: La demande de visite est acceptée.<br/>
+                      ${generateBadgeLegend("jaune", "warning")}: La demande de visite est en attente.<br/>
                     </div>
-                  </i>  
+                  </i>
                 </th>
               </tr>
           </thead>
