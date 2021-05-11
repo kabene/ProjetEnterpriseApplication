@@ -158,7 +158,7 @@ VALUES (DEFAULT, 'a', 'a', NULL , '23', 'a', 'a');
 INSERT
 INTO satchoFurniture.users (user_id, last_name, first_name, username, email, address_id, registration_date, role,
                             password, purchased_furniture_nbr, sold_furniture_nbr, is_waiting)
-VALUES (DEFAULT, 'non', 'non', 'in_store_purchase', 'non', 1, now(), 'customer',
+VALUES (DEFAULT, 'non', 'non', 'in-store purchase', 'non', 1, now(), 'customer',
         'none', 0, 0, 'false');
 
 
@@ -183,19 +183,19 @@ INSERT INTO satchoFurniture.addresses
 VALUES (DEFAULT, 'Rue de l’Eglise', '11', 'B1' , '4987', 'Stoumont', 'Belgique');
 INSERT INTO satchoFurniture.users
 VALUES (DEFAULT, 'Line', 'Caroline', 'Caro', 'caro.line@hotmail.com', 3, now(), 'antique_dealer',
-        '$2a$04$rvF3zWgvRyeKz2qSBeud5uXfAcHDkMeJWsOez01YPomtSBBqPTmmO', 0, 0, 'false');
+        '$2a$04$rvF3zWgvRyeKz2qSBeud5uXfAcHDkMeJWsOez01YPomtSBBqPTmmO', 0, 5, 'false');
 
 INSERT INTO satchoFurniture.addresses
 VALUES (DEFAULT, 'Rue de Renkin', '7', NULL , '4800', 'Vervier', 'Belgique');
 INSERT INTO satchoFurniture.users
 VALUES (DEFAULT, 'Ile', 'Achille', 'achil', 'ach.ile@gmail.com', 4, now(), 'customer',
-        '$2a$04$rvF3zWgvRyeKz2qSBeud5uXfAcHDkMeJWsOez01YPomtSBBqPTmmO', 0, 0, 'false');
+        '$2a$04$rvF3zWgvRyeKz2qSBeud5uXfAcHDkMeJWsOez01YPomtSBBqPTmmO', 0, 2, 'false');
 
 INSERT INTO satchoFurniture.addresses
 VALUES (DEFAULT, 'Lammerskreuzstrasse', '6', NULL , '52159', 'Roetgen', 'Allemagne');
 INSERT INTO satchoFurniture.users
 VALUES (DEFAULT, 'Ile', 'Basile', 'bazz', 'bas.ile@gmail.be', 5, now(), 'customer',
-        '$2a$04$rvF3zWgvRyeKz2qSBeud5uXfAcHDkMeJWsOez01YPomtSBBqPTmmO', 0, 0, 'false');
+        '$2a$04$rvF3zWgvRyeKz2qSBeud5uXfAcHDkMeJWsOez01YPomtSBBqPTmmO', 0, 3, 'false');
 
 INSERT INTO satchoFurniture.users
 VALUES (DEFAULT, 'Ile', 'Théophile', 'Theo', 'theo.phile@proximus.be', 4 , now(), 'antique_dealer',
