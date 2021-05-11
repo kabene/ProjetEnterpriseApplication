@@ -158,29 +158,6 @@ public class UserUCCImpl implements UserUCC {
   }
 
   /**
-   * get the users that correspond with the string.
-   *
-   * @param userSearch reg of the search.
-   * @return list contains the users researched.
-   */
-  @Override
-  public List<UserDTO> getSearchResult(String userSearch) {
-    List<UserDTO> list;
-    try {
-      dalServices.startTransaction();
-      list = userDAO.findBySearch(userSearch);
-      for (UserDTO user : list) {
-        completeUserDTO(user);
-      }
-      dalServices.commitTransaction();
-    } catch (Throwable e) {
-      dalServices.rollbackTransaction();
-      throw e;
-    }
-    return list;
-  }
-
-  /**
    * get the user searched by his id.
    *
    * @param userId the id of the user.
@@ -213,7 +190,7 @@ public class UserUCCImpl implements UserUCC {
     UserDTO res;
     try {
       dalServices.startTransaction();
-      userDAO.setRole(userId, value);
+      userDAO.updateRole(userId, value);
       res = userDAO.findById(userId);
       completeUserDTO(res);
       dalServices.commitTransaction();
@@ -231,8 +208,6 @@ public class UserUCCImpl implements UserUCC {
    * @param dto : the UserDTO to complete
    */
   private void completeUserDTO(UserDTO dto) {
-    if (dto.getAddressId() != null) {
-      dto.setAddress(addressDAO.findById(dto.getAddressId()));
-    }
+    dto.setAddress(addressDAO.findById(dto.getAddressId()));
   }
 }

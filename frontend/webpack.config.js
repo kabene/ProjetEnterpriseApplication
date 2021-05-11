@@ -7,6 +7,7 @@ module.exports = {
   output: {
     path: __dirname + "/dist",
     filename: "bundle.js",
+    publicPath:"/",
   },
   devtool: "cheap-module-eval-source-map",
   devServer: {
@@ -17,9 +18,9 @@ module.exports = {
     open: true, // open the default browser
     historyApiFallback: true, // serve index.html instead of routes leading to no specific ressource
     proxy: {
-      "/": {
+      "/api": {
         target: "http://localhost:8888",
-        //pathRewrite: {'^/api' : ''}
+        pathRewrite: {'^/api' : ''}
       },
     },
   },

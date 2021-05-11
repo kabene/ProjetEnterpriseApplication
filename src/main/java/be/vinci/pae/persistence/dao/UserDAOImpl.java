@@ -1,6 +1,6 @@
 package be.vinci.pae.persistence.dao;
 
-import be.vinci.pae.exceptions.NotFoundException;
+import java.util.ArrayList;
 import org.apache.commons.text.StringEscapeUtils;
 import be.vinci.pae.business.dto.UserDTO;
 import be.vinci.pae.business.factories.UserFactory;
@@ -9,7 +9,6 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOImpl extends AbstractDAO implements UserDAO {
@@ -25,23 +24,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public UserDTO findByUsername(String username) {
-    String query = "SELECT u.* FROM satchofurniture.users u WHERE u.username = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    UserDTO userFound;
-    try {
-      ps.setString(1, StringEscapeUtils.escapeHtml4(username));
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        userFound = toDTO(rs);
-      } else {
-        throw new NotFoundException("Error: user not found");
-      }
-      rs.close();
-      ps.close();
-      return userFound;
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    return findOneByConditions("users",
+        new QueryParameter("username", username));
   }
 
   /**
@@ -52,7 +36,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public UserDTO findById(int userId) {
-    return findById(userId, "users", "user_id");
+    return findOneByConditions("users",
+        new QueryParameter("user_id", userId));
   }
 
   /**
@@ -92,21 +77,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public boolean emailAlreadyTaken(String email) {
-    String query = "SELECT * FROM satchoFurniture.users WHERE email = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    boolean res = false;
-    try {
-      ps.setString(1, StringEscapeUtils.escapeHtml4(email));
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        res = true;
-      }
-      rs.close();
-      ps.close();
-      return res;
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    return !findByConditions("users",
+        new QueryParameter("email", email)).isEmpty();
   }
 
   /**
@@ -117,21 +89,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
    */
   @Override
   public boolean usernameAlreadyTaken(String username) {
-    String query = "SELECT * FROM satchoFurniture.users WHERE username = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    boolean res = false;
-    try {
-      ps.setString(1, StringEscapeUtils.escapeHtml4(username));
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        res = true;
-      }
-      rs.close();
-      ps.close();
-      return res;
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    return !findByConditions("users",
+        new QueryParameter("username", username)).isEmpty();
   }
 
   /**
@@ -190,62 +149,50 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
   }
 
   /**
-   * find the users that correspond with the string.
-   *
-   * @param userSearch reg of the search.
-   * @return list containing the users researched.
-   */
-  @Override
-  public List<UserDTO> findBySearch(String userSearch) {
-    List<UserDTO> users = new ArrayList<>();
-    try {
-      String query = "SELECT u.* FROM satchofurniture.users u "
-          + "INNER JOIN satchofurniture.addresses a ON u.address_id=a.address_id "
-          + "WHERE lower(a.commune) LIKE lower(?) "
-          + "OR lower(u.first_name) LIKE lower(?) "
-          + "OR lower(u.last_name) LIKE lower(?) "
-          + "OR lower(a.postcode) LIKE lower(?) "
-          + " ORDER BY u.last_name, u.first_name";
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setString(1, "%" + userSearch + "%");
-      ps.setString(2, "%" + userSearch + "%");
-      ps.setString(3, "%" + userSearch + "%");
-      ps.setString(4, "%" + userSearch + "%");
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        users.add(toDTO(rs));
-      }
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
-    return users;
-  }
-
-  /**
-   * Set the role and  set wait.
+   * Update the role and set wait.
    *
    * @param id    userId.
    * @param value value if the user is confirmed.
    */
   @Override
-  public void setRole(int id, boolean value) {
-    String query;
+  public void updateRole(int id, boolean value) {
     if (value) {
-      query = "UPDATE  satchoFurniture.users u SET is_waiting = false WHERE  u.user_id = ?";
+      updateById("users",
+          new QueryParameter("user_id", id),
+          new QueryParameter("is_waiting", false));
     } else {
-      query = "UPDATE satchoFurniture.users u "
-          + "SET  role = 'customer', is_waiting = false "
-          + "WHERE u.user_id = ?";
+      updateById("users",
+          new QueryParameter("user_id", id),
+          new QueryParameter("is_waiting", false),
+          new QueryParameter("role", "customer"));
     }
-    PreparedStatement ps = dalServices.makeStatement(query);
+  }
 
-    try {
-      ps.setInt(1, id);
-      ps.executeUpdate();
-      ps.close();
-    } catch (SQLException throwables) {
-      System.out.println("waiting removed and role setted");
-    }
+
+  /**
+   * Update the number of purchased furniture from user.
+   *
+   * @param userDTO userDTO to update
+   */
+  @Override
+  public UserDTO updatePurchasedFurnitureNbr(UserDTO userDTO) {
+    updateById("users",
+        new QueryParameter("user_id", userDTO.getId()),
+        new QueryParameter("purchased_furniture_nbr", userDTO.getPurchasedFurnitureNbr()));
+    return userDTO;
+  }
+
+  /**
+   * Update the number of sold furniture from user.
+   *
+   * @param userDTO userDTO to update
+   */
+  @Override
+  public UserDTO updateSoldFurnitureNbr(UserDTO userDTO) {
+    updateById("users",
+        new QueryParameter("user_id", userDTO.getId()), //WHERE
+        new QueryParameter("sold_furniture_nbr", userDTO.getSoldFurnitureNbr())); //SET
+    return userDTO;
   }
 
   /**

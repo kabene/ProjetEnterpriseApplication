@@ -12,30 +12,29 @@
  * @returns {string} The generated html code
  */
 const generateModal = (id, htmlHeader, htmlBody, htmlFooter, closeBtnLabel, closeBtnClassname) => {
-    let closeBtn = "";
-    if(closeBtnLabel) {
-        closeBtn = generateCloseBtn(closeBtnLabel, id, closeBtnClassname);
-    }
-    let res = `
-        <div class="modal fade" id="${id}">
-        <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                ${htmlHeader}
-            </div>
+  let closeBtn = "";
+  if(closeBtnLabel)
+    closeBtn = generateCloseBtn(closeBtnLabel, id, closeBtnClassname);
+
+  let res = `
+    <div class="modal fade" id="${id}">
+  	  <div class="modal-dialog">
+      	<div class="modal-content">
+        	<div class="modal-header">
+            ${htmlHeader}
+          </div>
             
-            <div class="modal-body">
-                ${htmlBody}
-            </div>
+          <div class="modal-body">
+            ${htmlBody}
+           </div>
             
-            <div class="modal-footer">
-                ${htmlFooter}
-                ${closeBtn}
-            </div>
-            </div>
+          <div class="modal-footer">
+            ${htmlFooter}
+            ${closeBtn}
+          </div>
         </div>
-    </div>
-    `;
+      </div>
+    </div>`;
     return res;
 }
 
@@ -48,12 +47,11 @@ const generateModal = (id, htmlHeader, htmlBody, htmlFooter, closeBtnLabel, clos
  * @returns {string} : The generated html code
  */
 const generateTriggerBtn = (modalId, label, classname) => {
-    let res = `
-    <button type="button" class="mx-1 py-2 ${classname}" data-toggle="modal" data-target="#${modalId}">
-        ${label}
-    </button>
-    `;
-    return res;
+  let res = `
+  <button type="button" class="mx-1 py-2 ${classname}" data-toggle="modal" data-target="#${modalId}">
+    ${label}
+  </button>`;
+  return res;
 }
 
 /**
@@ -66,7 +64,9 @@ const generateTriggerBtn = (modalId, label, classname) => {
  * @returns {string} : the generated html code
  */
 const generateCloseBtn = (label, buttonId, classname) => {
-    return `<button id="${buttonId}" type="button" class="${classname}" data-dismiss="modal">${label}</button>`;
+  return `<button id="${buttonId}" type="button" class="${classname}" data-dismiss="modal">
+		${label}
+	</button>`;
 }
 
 /**
@@ -84,10 +84,10 @@ const generateCloseBtn = (label, buttonId, classname) => {
  * @returns {string} : The generated html in the following order: triggerButton -> modal 
  */
 const generateModalPlusTriggerBtn = (modalId, triggerBtnLabel, triggerBtnClassname, modalHtmlHeader, modalHtmlBody, modalHtmlFooter, closeBtnLabel, closeBtnClassname) => {
-    let res = `
-    ${generateTriggerBtn(modalId, triggerBtnLabel, triggerBtnClassname)}
-    ${generateModal(modalId, modalHtmlHeader, modalHtmlBody, modalHtmlFooter, closeBtnLabel, closeBtnClassname)}`;
-    return res;
+  let res = `
+  ${generateTriggerBtn(modalId, triggerBtnLabel, triggerBtnClassname)}
+  ${generateModal(modalId, modalHtmlHeader, modalHtmlBody, modalHtmlFooter, closeBtnLabel, closeBtnClassname)}`;
+  return res;
 }
 
 export { generateModal, generateTriggerBtn, generateCloseBtn, generateModalPlusTriggerBtn }

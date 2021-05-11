@@ -57,18 +57,6 @@
     </td>
 </tr>
 <tr>
-    <td>users/detail/search</td>
-    <td>POST</td>
-    <td>Admin</td>
-    <td>Non</td>
-    <td>
-    Renvoie une liste des informations reservees aux admins des ressources de type "user" en fonction de la recherche passée
-    à la requête.
-    La recherche s'applique sur le nom des users, leurs prénoms, leurs communes ainsi que sur les numéros de leur boites
-    postale.
-    </td>
-</tr>
-<tr>
     <td>users/detail/waiting</td>
     <td>GET</td>
     <td>Admin</td>
@@ -274,6 +262,45 @@
     <td>
         Modifie les flags 'isVisible' et 'isOnHomePage' d'une ressource de type "photo" 
         (Renvoie la ressource modifiée au format json)
+    </td>
+</tr>
+<tr>
+    <td>photos/favourite/{furnitureId}</td>
+    <td>GET</td>
+    <td>Aucun</td>
+    <td>Non</td>
+    <td>
+        Renvoie la ressource de type "photo" référencée comme photo préférée pour un meuble particulier
+    </td>
+</tr>
+<tr>
+    <td>photos/byFurniture/{furnitureId}</td>
+    <td>GET</td>
+    <td>Aucun</td>
+    <td>Non</td>
+    <td>
+        Renvoie toutes les ressources de type "photo" référencant une certaine furnitureId
+        (ne renvoie que les photos visibles)
+    </td>
+</tr>
+<tr>
+    <td>photos/byFurniture/all/{furnitureId}</td>
+    <td>GET</td>
+    <td>Admin</td>
+    <td>Non</td>
+    <td>
+        Renvoie toutes les ressources de type "photo" référencant une certaine furnitureId
+        (sans exception)
+    </td>
+</tr>
+<tr>
+    <td>photos/byFurniture/request/{furnitureId}</td>
+    <td>GET</td>
+    <td>JWT</td>
+    <td>Oui</td>
+    <td>
+        Renvoie toutes les ressources de type "photo" liées à une demande de visite et 
+        référencant une certaine furnitureId 
     </td>
 </tr>
 </table>

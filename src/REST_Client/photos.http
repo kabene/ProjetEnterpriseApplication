@@ -11,3 +11,12 @@ Content-Type: application/json
   "source": "source"
 }
 ###
+
+GET {{baseUrl}}/photos/favourite/1
+###
+
+GET {{baseUrl}}/photos/byFurniture/6
+###
+
+GET {{baseUrl}}/photos/byFurniture/all/1
+###

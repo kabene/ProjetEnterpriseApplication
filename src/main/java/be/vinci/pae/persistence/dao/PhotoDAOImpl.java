@@ -6,7 +6,6 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
@@ -22,21 +21,21 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    */
   @Override
   public List<PhotoDTO> findAllByFurnitureId(int furnitureId) {
-    List<PhotoDTO> res = new ArrayList<>();
-    String query = "SELECT p.* FROM satchofurniture.photos p WHERE p.furniture_id = ?";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ps.setInt(1, furnitureId);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        res.add(toDTO(rs));
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-    return res;
+    return findByConditions("photos",
+        new QueryParameter("furniture_id", furnitureId));
+  }
+
+  /**
+   * finds all photos from request by furniture id.
+   *
+   * @param furnitureId : furniture id.
+   * @return list of photoDTO.
+   */
+  @Override
+  public List<PhotoDTO> findAllRequestPhotosByFurnitureId(int furnitureId) {
+    return findByConditions("photos",
+        new QueryParameter("furniture_id", furnitureId),
+        new QueryParameter("is_from_request", true));
   }
 
   /**
@@ -47,7 +46,8 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    */
   @Override
   public PhotoDTO findById(int photoId) {
-    return findById(photoId, "photos", "photo_id");
+    return findOneByConditions("photos",
+        new QueryParameter("photo_id", photoId));
   }
 
   /**
@@ -66,20 +66,8 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    */
   @Override
   public List<PhotoDTO> getAllHomePageVisiblePhotos() {
-    List<PhotoDTO> res = new ArrayList<>();
-    String query = "SELECT p.* FROM satchofurniture.photos p WHERE p.is_on_home_page = true";
-    try {
-      PreparedStatement ps = dalServices.makeStatement(query);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        res.add(toDTO(rs));
-      }
-      rs.close();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e.getMessage());
-    }
-    return res;
+    return findByConditions("photos",
+        new QueryParameter("is_on_home_page", true));
   }
 
   /**
@@ -121,20 +109,10 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
    */
   @Override
   public PhotoDTO updateDisplayFlags(PhotoDTO photoDTO) {
-    String query = "UPDATE satchofurniture.photos "
-        + "SET is_visible = ?, "
-        + "is_on_home_page = ? "
-        + "WHERE photo_id = ?";
-    PreparedStatement ps = dalServices.makeStatement(query);
-    try {
-      ps.setBoolean(1, photoDTO.isVisible());
-      ps.setBoolean(2, photoDTO.isOnHomePage());
-      ps.setInt(3, photoDTO.getPhotoId());
-      ps.execute();
-      ps.close();
-    } catch (SQLException e) {
-      throw new InternalError(e);
-    }
+    updateById("photos",
+        new QueryParameter("photo_id", photoDTO.getPhotoId()),  //WHERE
+        new QueryParameter("is_visible", photoDTO.isVisible()), //SET
+        new QueryParameter("is_on_home_page", photoDTO.isOnHomePage()));
     return photoDTO;
   }
 
@@ -152,6 +130,7 @@ public class PhotoDAOImpl extends AbstractDAO implements PhotoDAO {
     photoFound.setFurnitureId(rs.getInt("furniture_id"));
     photoFound.setOnHomePage(rs.getBoolean("is_on_home_page"));
     photoFound.setVisible(rs.getBoolean("is_visible"));
+    photoFound.setFromRequest(rs.getBoolean("is_from_request"));
     photoFound.setSource(rs.getString("source"));
     return photoFound;
   }

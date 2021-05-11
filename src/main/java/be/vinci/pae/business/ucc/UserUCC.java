@@ -45,14 +45,6 @@ public interface UserUCC {
   List<UserDTO> getAllConfirmed();
 
   /**
-   * get the users that correspond with the string.
-   *
-   * @param userSearch reg of the search.
-   * @return list contains the users researched.
-   */
-  List<UserDTO> getSearchResult(String userSearch);
-
-  /**
    * get the user searched by his id.
    *
    * @param userId the id of the user.

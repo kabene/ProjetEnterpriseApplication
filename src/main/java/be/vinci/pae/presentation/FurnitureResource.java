@@ -1,7 +1,6 @@
 package be.vinci.pae.presentation;
 
 import be.vinci.pae.business.dto.FurnitureDTO;
-import be.vinci.pae.business.pojos.Furniture;
 import be.vinci.pae.business.ucc.FurnitureUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.ConflictException;
@@ -47,8 +46,6 @@ public class FurnitureResource {
     if (!furnitureDTO.getStatus().isPubliclyAvailable()) {
       throw new ConflictException("Unavailable resource (inaccessible status)");
     }
-    Furniture f = (Furniture) furnitureDTO;
-    f.removeInvisiblePhotos();
     furnitureDTO = Json.filterPublicJsonView(furnitureDTO, FurnitureDTO.class);
     return Response.ok(furnitureDTO).build();
   }
@@ -82,11 +79,9 @@ public class FurnitureResource {
     List<FurnitureDTO> furnitureDTOs = furnitureUCC.getAll();
     List<FurnitureDTO> res = furnitureDTOs.parallelStream()
         .filter((dto) -> dto.getStatus().isPubliclyAvailable())
-        .map((dto) -> {
-          Furniture f = (Furniture) dto;
-          f.removeInvisiblePhotos();
-          return Json.filterPublicJsonView(dto, FurnitureDTO.class);
-        }).collect(Collectors.toList());
+        .map((dto) ->
+            Json.filterPublicJsonView(dto, FurnitureDTO.class))
+        .collect(Collectors.toList());
     return Response.ok(res).build();
   }
 
@@ -123,10 +118,17 @@ public class FurnitureResource {
   @Path("/accepted/{id}")
   @Admin
   @Produces(MediaType.APPLICATION_JSON)
-  public Response toAccepted(@PathParam("id") int furnitureId) {
+  public Response toAccepted(@PathParam("id") int furnitureId, JsonNode reqNode) {
     Logger.getLogger(Main.CONSOLE_LOGGER_NAME)
         .log(Level.INFO, "/furniture/accepted/" + furnitureId);
-    FurnitureDTO furnitureDTO = furnitureUCC.toAccepted(furnitureId);
+    if (reqNode.get("purchasePrice") == null) {
+      throw new BadRequestException("Error: malformed request");
+    }
+    double purchasePrice = reqNode.get("purchasePrice").asDouble();
+    if (purchasePrice <= 0) {
+      throw new BadRequestException("Error: malformed request (negative price)");
+    }
+    FurnitureDTO furnitureDTO = furnitureUCC.toAccepted(furnitureId, purchasePrice);
     return Response.ok(Json.filterAdminOnlyJsonView(furnitureDTO, FurnitureDTO.class)).build();
   }
 

@@ -1,6 +1,7 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
+import loadingPhoto from "../img/loadingImg.png";
 import {findCurrentUser} from "../utils/session";
-import {displayErrorMessage, generateLoadingAnimation} from "../utils/utils";
+import {displayErrorMessage, gdpr, generateLoadingAnimation, displayImgs, baseUrl, getSignal} from "../utils/utils";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals";
 
@@ -26,6 +27,7 @@ const Visits = async (id) => {
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
+  gdpr(page);
   await findVisitRequestList();
   if (!id) {
     isDisplayingLargeTable = true;
@@ -59,6 +61,7 @@ const loadCard = (requestId) => {
         }
         element.addEventListener("click", displayShortElements)
       });
+  addEventListnerPriceInputDisplay();
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
   let choiceBtn = document.querySelector("#choose-furniture-btn"); //TODO
@@ -204,10 +207,15 @@ const findTransitionMethod = (btnId, request) => {
  * Then, adds all necessary event listeners.
  * @param {*} request
  */
-const generateCard = (request) => {
+const generateCard = async (request) => {
   let requestCardDiv = document.querySelector("#RequestCardDiv");
   let cardHTML = generateCardHTML(request);
   requestCardDiv.innerHTML = cardHTML;
+  for (const furniture of request.furnitureList) {
+    if (!furniture.favouritePhoto) {
+      await getImage(furniture);
+    }
+  }
   //event listeners
   addTransitionBtnListeners(request);
   document.querySelectorAll(".favRadio").forEach((element) => {
@@ -360,7 +368,7 @@ const generateCardHTML = (request) => {
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item">
-                <a class="nav-link ${infoTab.aClassname}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${infoTab.ariaSelected}">Information</a>
+                <a class="nav-link ${infoTab.aClassname}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${infoTab.ariaSelected}">Informations</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link ${furnitureTab.aClassname}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${furnitureTab.ariaSelected}">Meubles</a>
@@ -384,7 +392,7 @@ const generateCardHTML = (request) => {
             
             </div>       
             <div class="tab-pane fade ${furnitureTab.tabClassname}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-              ${generatePhotoList(request)}
+              ${generateFurnitureList(request)}
             </div>
             ${generateButtonRow(request)}
           </div>
@@ -396,37 +404,67 @@ const generateCardHTML = (request) => {
   return res;
 }
 
-const generatePhotoList = (request) => {
+const generateFurnitureList = (request) => {
   let photos = "";
-  request.furnitureList.forEach(furniture => {
-    let fav = furniture.favouritePhoto;
-    let favPhoto;
-    if (!fav) {
-      favPhoto = notFoundPhoto;
-    } else {
-      favPhoto = fav.source;
-    }
 
+  request.furnitureList.forEach(furniture => {
+    let photoId = furniture.favouritePhotoId;
+    let src = loadingPhoto;
+    if (!furniture.favouritePhotoId) {
+      src = notFoundPhoto;
+    }
+    if (furniture.favouritePhoto) {
+      src = furniture.favouritePhoto.source;
+    }
     photos += `
-    <div class="p-1 w-50 container photo-list-container" request-id="${request.requestId}">
+    <div class="p-1 w-50 container photo-list-container mx-0 border-bottom" photoId=${photoId}>
       <div class="row px-0">
         <div class="col-6">
-          <img class="img-fluid" src="${favPhoto}" alt="photo id:${fav.photoId}"/>
+          <p>` + furniture.description +`</p> 
+          <img class="img-fluid" src="${src}" photo-id="${photoId}" alt="photo id:${photoId}"/>
+          <p>` + generateColoredFurnitureStatus(furniture)+ `</p>
         </div>
         ${generateRadioBtns(request, furniture)}
       </div>
     </div>`;
   });
-
   let res = `
   <form>
     <input id="originalFav" type="hidden" request-id="${request.requestId}"/>
-    <div class="form-check d-flex flex-lg-fill flex-row">
+    <div class="form-check d-flex flex-lg-fill flex-column">
       ${photos}
     </div>
     ${generateChooseFurnitureBtn(request)}
   </form>`;
   return res;
+}
+
+/**
+ * Generate status entry for request list as colored <p> html tag (used in large tables)
+ * @param {*} request : furniture  object
+ * @returns an html <p> tag
+ */
+ const generateColoredFurnitureStatus = (furniture) => {
+  let infos = generateStatusInfos(furniture.status);
+  return `<p class="text-${infos.classname}">${infos.status}</p>`;
+}
+
+const addEventListnerPriceInputDisplay = () => {
+ document.querySelectorAll('.form-check-input').forEach((radio) => {
+        radio.addEventListener('change', (e) => {
+          let radio = e.target;
+          let furnitureId = radio.getAttribute("furniture-id");
+          let query = `.inputPrice[furniture-id='${furnitureId}']`;
+          let priceInput = document.querySelector(query);
+          if (radio.id==="AcceptFurniture" && radio.checked) {
+            priceInput.className = "mx-3 inputPrice";
+            priceInput.required=true;
+          } else {
+            priceInput.className = "mx-3 inputPrice d-none";
+            priceInput.required=false;
+          }
+        });
+      });
 }
 
 const generateRadioBtns = (request, furniture) => {
@@ -435,16 +473,19 @@ const generateRadioBtns = (request, furniture) => {
       === "REQUESTED_FOR_VISIT") {
     res =
         `<div class="text-left col-6 furniture-choices">
-    <div class="form-check">
-      <label class="form-check-label">
-        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/>
-       <span class="text-success">Convient</span>
+    <div class="form-check mb-1">
+      <label class="form-check-label priceLabel ">
+      <div class="d-flex">
+        <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="AcceptFurniture"/> 
+        <span class="text-success flex-grow-1">Convient</span>
+        <input type="number" class="mx-3 inputPrice d-none" placeholder="Prix d'achat"  furniture-id="${furniture.furnitureId}" step="0.1" min="0.1"/>
+         </div>
       </label>
     </div>
     <div class="form-check"> 
-      <label class="form-check-label">
+      <label class="form-check-label priceLabel">
         <input type="radio" class="form-check-input" name="furniture-validation-${furniture.furnitureId}" furniture-id="${furniture.furnitureId}" id="RefuseFurniture"/>
-        <span class="text-danger">Ne convient pas</span>
+        <span class="text-danger flex-grow-1">Ne convient pas</span>
       </label>
     </div>
   </div>`
@@ -454,77 +495,49 @@ const generateRadioBtns = (request, furniture) => {
 
 const generateChooseFurnitureBtn = (request) => {
   let res = "";
+  let everyFurnitureAccepted=request.furnitureList.every(e=>e.status !== "REQUESTED_FOR_VISIT");
   if (request.requestStatus === "CONFIRMED") {
-    res = `<button id="choose-furniture-btn" class="btn btn-primary choose-furniture-btn my-5 float-right">Enregistrer le choix</button>`
+    if (!everyFurnitureAccepted) {
+      res = `<button id="choose-furniture-btn" class="btn btn-primary choose-furniture-btn my-5 float-right">Enregistrer le choix</button>`
+    }
   }
   return res;
 }
+
 
 const onChooseFurnitureBtnClick = async (e) => {
   e.preventDefault()
   if (verifyValidChoices() === true) {
     const matches = document.querySelectorAll(".form-check-input:checked");
-    for (const i in matches) {
-      let radio = matches[i];
-      if (radio.tagName === "INPUT") {
-        let furnitureId = radio.getAttribute("furniture-id");
-        switch (radio.id) {
-          case "AcceptFurniture":
-            await acceptFurniture(furnitureId);
-            break;
-          case "RefuseFurniture":
-            await refuseFurniture(furnitureId);
-            break;
-        }
+    let entries = [];
+    for(let radio of matches) {
+      let furnitureId = radio.getAttribute("furniture-id");
+      let value;
+      if(radio.id === "AcceptFurniture") {
+        let query = `.inputPrice[furniture-id='${furnitureId}']`;
+        let priceInput = document.querySelector(query);
+        if(priceInput) value = priceInput.value;
+      }
+      entries.push({
+        furnitureId: furnitureId,
+        value: value,
+        id: radio.id,
+      });
+    }
+
+    for (let entry of entries) {
+      switch (entry.id) {
+        case "AcceptFurniture":
+          await acceptFurniture(entry.furnitureId, entry.value);
+          break;
+        case "RefuseFurniture":
+          await refuseFurniture(entry.furnitureId);
+          break;
       }
     }
   }
 }
 
-const acceptFurniture = async (furnitureId) => {
-  try {
-    let result = await fetch("/furniture/accepted/" + furnitureId, {
-      method: "PATCH",
-      headers: {
-        "Authorization": currentUser.token,
-      },
-    });
-    if (!result.ok) {
-      throw new Error(result.status + " : " + result.statusText);
-    } else {
-      let data = await result.json();
-      let index = requestMap[data.requestId].furnitureList.findIndex(
-          furniture => furniture.furnitureId === data.furnitureId);
-      requestMap[data.requestId].furnitureList[index] = data;
-      loadCard(data.requestId);
-    }
-  } catch (err) {
-    displayErrorMessage("errorDiv", err);
-  }
-}
-
-const refuseFurniture = async (furnitureId) => {
-  try {
-    let result = await fetch("/furniture/refused/" + furnitureId, {
-      method: "PATCH",
-      headers: {
-        "Authorization": currentUser.token,
-      },
-    });
-    if (!result.ok) {
-      throw new Error(result.status + " : " + result.statusText
-      );
-    } else {
-      let data = await result.json();
-      let index = requestMap[data.requestId].furnitureList.findIndex(
-          furniture => furniture.furnitureId === data.furnitureId);
-      requestMap[data.requestId].furnitureList[index] = data;
-      loadCard(data.requestId);
-    }
-  } catch (err) {
-    displayErrorMessage("errorDiv", err);
-  }
-}
 
 const verifyValidChoices = (e) => {
   let matchesDiv = document.querySelectorAll(".furniture-choices")
@@ -663,7 +676,15 @@ const generatePageHtml = (largeTable = true) => {
             <th class="align-middle">Client</th>
             <th class="${notNeededClassName}">Adresse</th>
             <th class="align-middle">Date de la demande</th>
-            <th class="align-middle">États<i class="hover material-icons">&#xe88e; <div class="tooltip"> ${generateBadgeLegend("rouge","danger")}: La demande de visite est refusée.<br/> ${generateBadgeLegend("vert","success")}: La demande de visite est acceptée.</div></i></th>
+            <th class="align-middle">États
+              <i class="hover material-icons">&#xe88e; 
+                <div class="tooltip"> 
+                  ${generateBadgeLegend("rouge", "danger")}: La demande de visite est refusée.<br/>
+                  ${generateBadgeLegend("vert", "success")}: La demande de visite est acceptée.<br/>
+                  ${generateBadgeLegend("jaune", "warning")}: La demande de visite est en attente.<br/>
+                </div>
+              </i>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -785,28 +806,59 @@ const generateDot = (colorClassName) => {
  * find status label & color classname (primary / danger / etc...) for a given status
  * @param {String} status
  * @returns {
- *  classname: bootstrap color suffix,
- *  status: status label,
- * } object
+ * classname: bootstrap color suffix,
+ * status: status label,
+ * }
  */
 const generateStatusInfos = (status) => {
   let res = {
     classname: "",
     status: "",
   }
-
   switch (status) {
+    case "AVAILABLE_FOR_SALE":
+      res.classname = "success";
+      res.status = "Disponible à la vente";
+      break;
+    case "ACCEPTED":
+      res.classname = "warning";
+      res.status = "Accepté";
+      break;
+    case "IN_RESTORATION":
+      res.classname = "warning";
+      res.status = "En restauration";
+      break;
+    case "UNDER_OPTION":
+      res.classname = "danger";
+      res.status = "Sous option";
+      break;
+    case "SOLD":
+      res.classname = "secondary";
+      res.status = "Vendu";
+      break;
+    case "WITHDRAWN":
+      res.classname = "secondary";
+      res.status = "Retiré de la vente";
+      break;
+    case "REFUSED":
+      res.classname = "secondary";
+      res.status = "Refusé";
+      break;
+    case "REQUESTED_FOR_VISIT":
+      res.classname = "info";
+      res.status = "En attente de visite";
+      break;
     case "CONFIRMED":
       res.classname = "success";
-      res.status = "Confirmée";
+      res.status = "Accepté";
       break;
     case "WAITING":
       res.classname = "warning";
-      res.status = "En attente";
+      res.status = "en attente";
       break;
     case "CANCELED":
       res.classname = "danger";
-      res.status = "Annulée";
+      res.status = "Annulé";
       break;
     default:
       res.classname = "";
@@ -845,7 +897,10 @@ const toConfirmed = (e, request) => {
     let bundle = {
       visitDateTime: date,
     }
-    fetch("/requestForVisit/accept/" + request.requestId, {
+    let signal = getSignal();
+
+    fetch(baseUrl+"/requestForVisit/accept/" + request.requestId, {
+      signal,
       method: "PATCH",
       body: JSON.stringify(bundle),
       headers: {
@@ -882,7 +937,10 @@ const toCanceled = (e, request) => {
   let bundle = {
     explanatoryNote: explain,
   };
-  fetch("/requestForVisit/cancel/" + request.requestId, {
+  let signal = getSignal();
+
+  fetch(baseUrl+"/requestForVisit/cancel/" + request.requestId, {
+    signal,
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -910,28 +968,124 @@ const toCanceled = (e, request) => {
  * @returns {Promise} fetch promise
  */
 async function findVisitRequestList() {
-  return fetch("/requestForVisit/", {
+  let signal = getSignal();
+
+  let response = await fetch(baseUrl+"/requestForVisit/", {
+    signal,
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
+    }
+  });
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage(err, errorDiv);
+  }
+  requestList = await response.json();
+  requestList.forEach(request => {
+    requestMap[request.requestId] = request;
+  });
+}
+
+/**
+ *
+ * @returns {Promise<any>}
+ */
+async function getImage(furniture) {
+  let signal = getSignal();
+
+  return fetch(baseUrl+"/photos/favourite/" + furniture.furnitureId, {
+    signal,
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
     },
   }).then((response) => {
     if (!response.ok) {
+      if (response.status === 404) {
+        return;
+      }
       throw new Error(
           response.status + " : " + response.statusText
       );
     }
     return response.json();
   }).then((data) => {
-    requestList = data;
-    requestList.forEach(request => {
-      requestMap[request.requestId] = request;
-    });
+    //cache
+    updateFavCache(data, furniture);
+    if (data) {
+      displayImgs([data]);
+    }
   }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
     displayErrorMessage("errorDiv", err);
   });
+}
+
+
+const acceptFurniture = async (furnitureId, value) => {
+  if(!furnitureId || !value) {
+    return console.error("invalid fetch body");
+  }
+
+  let bundle={purchasePrice: value};
+  try {
+    let signal = getSignal();
+
+    let result = await fetch(baseUrl+"/furniture/accepted/" + furnitureId, {
+      signal,
+      method: "PATCH",
+      headers: {
+        "Authorization": currentUser.token,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(bundle)
+    });
+    if (!result.ok) {
+      throw new Error(result.status + " : " + result.statusText);
+    } else {
+      let data = await result.json();
+      let index = requestMap[data.requestId].furnitureList.findIndex(
+          furniture => furniture.furnitureId === data.furnitureId);
+      requestMap[data.requestId].furnitureList[index] = data;
+      loadCard(data.requestId);
+    }
+  } catch (err) {
+    displayErrorMessage("errorDiv", err);
+  }
+}
+
+const refuseFurniture = async (furnitureId) => {
+  try {
+    let signal = getSignal();
+
+    let result = await fetch(baseUrl+"/furniture/refused/" + furnitureId, {
+      signal,
+      method: "PATCH",
+      headers: {
+        "Authorization": currentUser.token,
+      },
+    });
+    if (!result.ok) {
+      throw new Error(result.status + " : " + result.statusText
+      );
+    } else {
+      let data = await result.json();
+      let index = requestMap[data.requestId].furnitureList.findIndex(
+          furniture => furniture.furnitureId === data.furnitureId);
+      requestMap[data.requestId].furnitureList[index] = data;
+      loadCard(data.requestId);
+    }
+  } catch (err) {
+    displayErrorMessage("errorDiv", err);
+  }
+}
+
+const updateFavCache = (photo, furniture) => {
+  let furnitureList = requestMap[furniture.requestId].furnitureList;
+  let index = furnitureList.indexOf(furniture);
+  furnitureList[index] = {...furniture, favouritePhoto: photo};
 }
 
 export default Visits;

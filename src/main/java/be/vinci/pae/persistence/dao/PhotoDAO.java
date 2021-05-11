@@ -14,6 +14,14 @@ public interface PhotoDAO {
   List<PhotoDTO> findAllByFurnitureId(int furnitureId);
 
   /**
+   * finds all photos from request by furniture id.
+   *
+   * @param furnitureId : furniture id.
+   * @return list of photoDTO.
+   */
+  List<PhotoDTO> findAllRequestPhotosByFurnitureId(int furnitureId);
+
+  /**
    * Finds one photo by id.
    *
    * @param photoId : the researched photoId.
@@ -52,5 +60,4 @@ public interface PhotoDAO {
    * @return dto containing modified entry
    */
   PhotoDTO updateDisplayFlags(PhotoDTO dto);
-
 }

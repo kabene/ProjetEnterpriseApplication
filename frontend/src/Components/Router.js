@@ -8,133 +8,133 @@ import FurnitureList from "./FurnitureList.js";
 import ClientVisit from "./ClientVisit.js";
 import LogoutComponent from "./LogoutComponent.js";
 import ReleaseTakeoverComponent from "./ReleaseTakeoverComponent";
-import {fetchMe} from "../utils/utils.js";
-import { getUserLocalData, getUserSessionData, setUserLocalData, setUserSessionData } from "../utils/session.js";
-import { setLayout } from "../utils/render.js";
+import {baseUrl, fetchMe} from "../utils/utils.js";
+import {getUserLocalData, getUserSessionData, setUserLocalData, setUserSessionData} from "../utils/session.js";
+import {setLayout} from "../utils/render.js";
 
 const routes = {
-    "/": HomePage,
-    "/authentication": Authentication,
-    "/furniture": Furniture,
-    "/users": Users,
-    "/visits": Visits,
-    "/myVisits": ClientVisit,
-    "/furnitureList": FurnitureList,
-    "/logout": LogoutComponent,
-    "/releaseTakeover": ReleaseTakeoverComponent,
+  "/": HomePage,
+  "/authentication": Authentication,
+  "/seeFurniture": Furniture,
+  "/users": Users,
+  "/visits": Visits,
+  "/myVisits": ClientVisit,
+  "/furnitureList": FurnitureList,
+  "/logout": LogoutComponent,
+  "/releaseTakeover": ReleaseTakeoverComponent,
 };
 
 let componentToRender;
 let navbar = document.querySelector("#navbar");
+let abortControllers = [];
+
 
 const Router = () => {
-    window.addEventListener("load", onLoadHandler);
-    navbar.addEventListener("click", onNavigateHandler);
-    window.addEventListener("popstate", onHistoryHandler);
+  window.addEventListener("load", onLoadHandler);
+  navbar.addEventListener("click", onNavigateHandler);
+  window.addEventListener("popstate", onHistoryHandler);
 }
 
-//onLoadHandler
+
 const onLoadHandler = async () => {
-    let url = window.location.pathname;
-    console.log("onLoad : ", url);
-    await getRememberMe(); // logs in if remember me
-    componentToRender = routes[url];
-    if(!componentToRender){
-        ErrorPage(url)
-        return;
+  let url = window.location.pathname;-
+  await getRememberMe();
+  componentToRender = routes[url];
+  if (!componentToRender) {
+    ErrorPage(url)
+    return;
+  }
+  componentToRender();
+}
+
+
+const onNavigateHandler = (e) => {
+	e.preventDefault();
+  let uri;
+  uri = e.target.dataset.uri;
+  removeModals();
+  killControllers();
+  if (uri) {
+    window.history.pushState({}, uri, window.location.origin + uri);
+    componentToRender = routes[uri];
+    if (!componentToRender) {
+      ErrorPage(uri);
+      return;
     }
     componentToRender();
-}
-
-//onNavigateHandler
-const onNavigateHandler = (e) => {
-    let uri;
-    e.preventDefault();
-    uri = e.target.dataset.uri;
-    removeModals();
-    if(uri) {
-        console.log("onNavigate : ", uri);
-        window.history.pushState({}, uri, window.location.origin + uri);
-        componentToRender = routes[uri];
-        if(!componentToRender) {
-            ErrorPage(uri);
-            return;
-        }
-        componentToRender();
-    }
+  }
 };
 
-//onHistoryHandler (arrows <- -> )
 const onHistoryHandler = () => {
-    console.log("onHistory : ", window.location.pathname);
-    removeModals();
-    componentToRender = routes[window.location.pathname];
-    if(!componentToRender){
-        ErrorPage(window.location.pathname);
-        return;
-    }
-    componentToRender();
+  removeModals();
+  killControllers();
+  componentToRender = routes[window.location.pathname];
+  if (!componentToRender) {
+    ErrorPage(window.location.pathname);
+    return;
+  }
+  componentToRender();
 };
 
 const RedirectUrl = (uri, data) => {
-    window.history.pushState({}, uri, window.location.origin + uri); 
-    console.log(window.location.pathname);
-    removeModals();
-    componentToRender = routes[uri];  
-    if(!componentToRender){
-        ErrorPage(uri);
-        return;
-    }
-    if(!data)
-        componentToRender();
-    else 
-        componentToRender(data);
+  window.history.pushState({}, uri, window.location.origin + uri);
+  removeModals();
+  killControllers();
+  componentToRender = routes[uri];  
+  if(!componentToRender){
+    ErrorPage(uri);
+    return;
+  }
+  if(!data)
+    componentToRender();
+  else 
+    componentToRender(data);
 };
 
 const getRememberMe = async () => {
-    let sessionData = getUserSessionData();
-    if(!sessionData) {
-        let token = getUserLocalData();
-        if(token) {
-            console.log("GET /users/login");
-            await fetch("/users/login", {
-                method: "GET",
-                headers: {
-                    Authorization: token
-                }
-            }).then((response) => {
-                if (!response.ok) throw new Error("Error code : " + response.status + " : " + response.statusText);
-                return response.json();
-            })
-            .then((data) => onUserLogin(data))
-            .catch((err) => {
-                console.log("remember me token expired : ", err);
-            });
-        }else {
-            console.log("Not logged in -> no remember me token stored");
+  let sessionData = getUserSessionData();
+  if(!sessionData) {
+    let token = getUserLocalData();
+    if (token) {
+      let response = await fetch(baseUrl+"/users/login", {
+        method: "GET",
+        headers: {
+          Authorization: token
         }
-    }else {
-        console.log("Already logged in -> existing session data");
+      });
+			if (!response.ok) {
+				const err = "Error code : " + response.status + " : " + response.statusText;
+				console.error(err);
+			}
+			let data = await response.json();
+			try {
+				onUserLogin(data)
+			} catch (err) {
+				console.log("remember me token expired : ", err);
+			}
     }
+	}
 }
 
 const onUserLogin = async (data) => {
-    console.log("Logged in via remember me token : ", data)
-    
-    let user = await fetchMe(data.token);
-    const bundle = {...data, isAutenticated: true, isAdmin: user.role === "admin"};
-
-    setUserSessionData(bundle);
-    setUserLocalData(data.token);
-    setLayout();
+  let user = await fetchMe(data.token);
+  const bundle = {...data, isAutenticated: true, isAdmin: user.role === "admin"};
+  setUserSessionData(bundle);
+  setUserLocalData(data.token);
+  setLayout();
 }
 
 const removeModals = () => {
-    let modalArray = document.querySelectorAll(".modal-backdrop");
-    for (let i = 0; i < modalArray.length; i++) {
-        let m = modalArray[i];
-        m.parentNode.removeChild(m);
-    }
+  let modalArray = document.querySelectorAll(".modal-backdrop");
+  for (let i = 0; i < modalArray.length; i++) {
+    let m = modalArray[i];
+    m.parentNode.removeChild(m);
+  }
 }
 
-export {Router, RedirectUrl};
+const killControllers = () => {
+  while (abortControllers.length !== 0)
+    abortControllers.pop().abort();
+}
+
+export {Router, RedirectUrl, abortControllers};

@@ -1,15 +1,12 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
+import loadingPhoto from "../img/loadingImg.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {findCurrentUser} from "../utils/session.js";
-import {
-  displayErrorMessage,
-  generateLoadingAnimation,
-} from "../utils/utils.js"
+import {displayErrorMessage, generateLoadingAnimation, displayImgs, gdpr, baseUrl,getSignal} from "../utils/utils.js"
 
 let page = document.querySelector("#page");
 let mainPage;
-let furnitureList;
 let typeList;
 let furnitureMap = [];
 let timeouts = [];
@@ -17,18 +14,26 @@ let currentUser;
 let isDisplayingLargeTable; //state of display (true = large list, false = furniture card)
 let currentFurnitureId; //to read only if largeTable === false
 let openTab = "infos";
+let favFetched = false;
+let photosFetchedMap = [];
+
+const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"></div>  </div>`;
+
+const inStorePurchaseUsername = "in-store purchase";
+
 const emptyFilter = {
   username: "",
+  inStore: false,
   price: "-1",
   status: "",
+  type: ""
 }
-let activeFilters = {...emptyFilter};
+let activeFilters = {...emptyFilter}; // deep copy
 
 const FurnitureList = async (id) => {
   currentUser = findCurrentUser();
-
-  let pageHTML = `
-  <div class="col-5 mx-auto"><div id="errorDiv" class="d-none"></div></div>
+  gdpr(page);
+  let pageHTML = errorDiv + `
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
   page.innerHTML = pageHTML;
   mainPage = document.querySelector("#mainPage");
@@ -47,40 +52,41 @@ const generateLargeTablePage = () => {
   isDisplayingLargeTable = true;
   let pageHTML = generatePageHtml();
   mainPage.innerHTML = pageHTML;
-
+  getFavs();
   placeFilterForm();
   document.querySelectorAll(".toBeClicked").forEach(
       element => element.addEventListener("click", displayShortElements));
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 /**
  * Loads the furnitureList & furnitureMap from backend
  */
 const findFurnitureList = async () => {
-  return fetch("/furniture/detail", {
+  let signal = getSignal();
+
+  let response = await fetch(baseUrl+"/furniture/detail", {
+    signal,
     method: "GET",
     headers: {
       "Authorization": currentUser.token,
       "Content-Type": "application/json",
     },
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error(
-          response.status + " : " + response.statusText
-      );
-    }
-    return response.json();
-  }).then((data) => {
-    furnitureList = data;
-    furnitureList.forEach(furniture => {
-      furnitureMap[furniture.furnitureId] = furniture;
-    });
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
-    displayErrorMessage("errorDiv", err);
+  })
+  if (!response.ok) {
+    const err = "Erreur de fetch\nError code : " + response.status + " : " + response.statusText;
+    console.error(err);
+    displayErrorMessage(err, errorDiv);
+  }
+  let furnitureList = await response.json();
+  furnitureList.forEach(furniture => {
+    furnitureMap[furniture.furnitureId] = furniture;
   });
+
 }
 
 /**
@@ -88,7 +94,9 @@ const findFurnitureList = async () => {
  */
 const findTypeList = async () => {
   try {
-    let response = await fetch("/furnitureTypes/", {
+    let signal = getSignal();
+    let response = await fetch(baseUrl+"/furnitureTypes/", {
+      signal,
       method: "GET",
     });
     if (!response.ok) {
@@ -109,6 +117,13 @@ const reloadPage = async () => {
   mainPage.innerHTML = generateLoadingAnimation();
   await findFurnitureList();
   mainPage = generatePageHtml();
+  document.querySelectorAll(".toBeClicked").forEach(
+    element => element.addEventListener("click", displayShortElements));
+  document.querySelector("#buttonReturn").addEventListener("click",
+      displayLargeTable);
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 const removeTimeouts = () => {
@@ -128,10 +143,14 @@ const generatePageHtml = (largeTable = true) => {
   }
   let res = `
   <div class="container-fluid px-5 py-3 border border-top-0 border-right-0 border-left-0">
-    <h3>Filtrer les meubles:</h3>
     <form class="form-inline">
       <div class="form-group mx-3">
         <input type="text" class="form-control" id="username-filter" placeholder="Filtrer par pseudo"/>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label">
+          <input type="checkbox" class="form-check-input" value="" id="in-store-filter">Ventes en magasin seulement
+        </label>
       </div>
       <div class="form-group mx-3">
         <select class="form-control" id="price-filter">
@@ -155,6 +174,7 @@ const generatePageHtml = (largeTable = true) => {
           <option value="WITHDRAWN">Retiré de la vente</option>
           <option value="REFUSED">Refusé</option>
         </select>
+        <div class="form-group m-3">` + generateSelectTypeTag() + `</div>
       </div>
       <button type="submit" id="apply-filters-btn" class="btn btn-primary mx-2">Appliquer</button>
       <button type="submit" id="clear-filters-btn" class="btn btn-secondary mx-2">Retirer les filtres</button>
@@ -171,13 +191,14 @@ const generatePageHtml = (largeTable = true) => {
             <th class="${notNeededClassName}">Type</th>
             <th class="align-middle">État 
               <i class="hover material-icons">&#xe88e; 
-              <div class="tooltip"> 
-                ${generateBadgeLegend("rouge","danger")}: Le meuble est sous option.<br/>
-                ${generateBadgeLegend("vert","success")}: Le meuble est disponible à la vente.<br/>
-                ${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état de transition.<br/>
-                ${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite.<br/>
-                ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ce meuble. 
-              </div></i>  
+                <div class="tooltip"> 
+                  ${generateBadgeLegend("rouge","danger")}: Le meuble est sous option.<br/>
+                  ${generateBadgeLegend("vert","success")}: Le meuble est disponible à la vente.<br/>
+                  ${generateBadgeLegend("jaune","warning")}: Le meuble est dans un état de transition.<br/>
+                  ${generateBadgeLegend("bleu","info")}: Le meuble est en attente de visite.<br/>
+                  ${generateBadgeLegend("gris","secondary")}: Pas de modifications réalisable sur ce meuble. 
+                </div>
+              </i>  
             </th>
             <th class="${notNeededClassName}">Vendeur</th>
             <th class="${notNeededClassName}">Acheteur</th>
@@ -194,18 +215,24 @@ const generatePageHtml = (largeTable = true) => {
   return res;
 }
 
+const generateSelectTypeTag = () => {
+  let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
+  typeList.forEach(type => ret += generateOptionTypeTag(type));
+  ret += `</select>`;
+  return ret;
+}
+
+
+const generateOptionTypeTag = (type) => {
+  return `<option value="` + type.typeName + `">` + type.typeName + `</option>`;
+}
+
 const generateAllRows = (notNeededClassName) => {
   let res = "";
-  furnitureList.forEach(furniture => {
-    if (!furnitureMap[furniture.furnitureId]) {
-      furnitureMap[furniture.furnitureId] = furniture;
-    } else if (furniture !== furnitureMap[furniture.furnitureId]) {
-      furniture = furnitureMap[furniture.furnitureId];
-    }
+  furnitureMap.forEach(furniture => {
     if (respectsAllActiveFilters(furniture)) {
       res += generateRow(furniture, notNeededClassName);
     }
-    furnitureMap[furniture.furnitureId] = furniture;
   });
   return res;
 }
@@ -223,17 +250,14 @@ const generateRow = (furniture, notNeededClassName) => {
   }
   let res = `
     <tr class="toBeClicked" furnitureId="${furniture.furnitureId}">
-      <th><div id="thumbnail" class="${thumbnailClass}">${generateFavouritePhotoImgTag(
-      furniture)}<div></th>
+      <th><div id="thumbnail" class="${thumbnailClass}">${generateFavouritePhotoImgTag(furniture)}<div></th>
       <th class="align-middle"><p>${furniture.description}</p></th>
       <th class="${notNeededClassName}"><p>${furniture.type}</p></th>
       <th class="tableStatus text-center align-middle" status="${furniture.status}">${statusHtml}</th>
       <th class="${notNeededClassName}"><p>${generateSellerLink(furniture)}</p></th>
       <th class="${notNeededClassName}"><p>${generateBuyerLink(furniture)}</p></th>
-      <th class="${notNeededClassName}"><p>${generateSellingPriceTableElement(
-      furniture)}</p></th>
-      <th class="${notNeededClassName}"><p>${generateSpecialPriceTableElement(
-      furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateSellingPriceTableElement(furniture)}</p></th>
+      <th class="${notNeededClassName}"><p>${generateSpecialPriceTableElement(furniture)}</p></th>
     </tr>`;
   return res;
 }
@@ -245,9 +269,9 @@ const generateRow = (furniture, notNeededClassName) => {
  */
 const generateFavouritePhotoImgTag = (furniture) => {
   if (!furniture.favouritePhoto) {
-    return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
+    return `<img class="img-fluid" src="${loadingPhoto}" alt="not found photo" photo-id=${furniture.favouritePhotoId} furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
   }
-  return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" furnitureId="${furniture.furnitureId}" id="list-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
+  return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" photo-id=${furniture.favouritePhotoId} furnitureId="${furniture.furnitureId}" id="list-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
 }
 
 /**
@@ -279,6 +303,9 @@ const generateBuyerLink = (furniture) => {
 }
 
 const generateUserLink = (user) => {
+  if(user.username === inStorePurchaseUsername) {
+    return `Vente en magasin`;
+  }
   return `<a href="#" userId="${user.id}" class="userLink">${user.username}</a>`;
 }
 
@@ -379,6 +406,8 @@ const generateBadgeLegend = (name, status) => {
 
 const displayShortElements = async (e) => {
   removeTimeouts();
+  if (e.target.nodeName == "A")
+    return;
   //hide large table
   let largeTable = document.querySelector('#largeTable');
   if (largeTable !== null) {
@@ -420,21 +449,29 @@ const displayShortElements = async (e) => {
   }
   if (furniture) {
     currentFurnitureId = id;
-    generateCard(furniture);
-    document.querySelectorAll(".userLink").forEach(
-        (link) => link.addEventListener("click", onUserLinkClicked));
+    loadCard(currentFurnitureId);
     isDisplayingLargeTable = false;
   } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
   }
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 const onUserLinkClicked = (e) => {
   e.preventDefault();
   let link = e.target;
   let userId = link.getAttribute("userid");
-  console.log(`Linking to user card (id: ${userId})`);
   RedirectUrl("/users", userId);
+}
+
+const onRequestLinkClicked = (e) => {
+  e.preventDefault();
+  let link = e.target;
+  let requestId = link.getAttribute("request-id");
+  console.log(`Linking to request card (id: ${requestId})`);
+  RedirectUrl("/visits", requestId);
 }
 
 const displayLargeTable = () => {
@@ -466,6 +503,7 @@ const generateCard = (furniture) => {
   let furnitureCardDiv = document.querySelector("#furnitureCardDiv");
   let cardHTML = generateCardHTML(furniture);
   furnitureCardDiv.innerHTML = cardHTML;
+  fetchAllPhotos(furniture);
   addTransitionBtnListeners(furniture);
   document.querySelectorAll(".favRadio").forEach((element) => {
     element.addEventListener("click", onFavRadioSelected);
@@ -536,7 +574,10 @@ const verifyDifferentInfo = () => {
 }
 
 const changeContainerId = () => {
-  document.querySelector('#largeTableContainer').id = "shortTableContainer";
+  let tableContainer = document.querySelector('#largeTableContainer')
+  if(tableContainer){
+    tableContainer.id = "shortTableContainer";
+  }
 }
 
 const generateCardHTML = (furniture) => {
@@ -577,7 +618,7 @@ const generateCardHTML = (furniture) => {
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item">
-                <a class="nav-link ${infoTab.aClassname}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${infoTab.ariaSelected}">Information</a>
+                <a class="nav-link ${infoTab.aClassname}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${infoTab.ariaSelected}">Informations</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link ${photoTab.aClassname}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${photoTab.ariaSelected}">Photos</a>
@@ -600,6 +641,7 @@ const generateCardHTML = (furniture) => {
               ${generateBuyerCardEntry(furniture)}
               ${generateOptionCardEntry(furniture)}
               ${generateSaleWithdrawalDateCardEntry(furniture)}
+              ${generateCardLabelKeyEntryHtml("", `<a href="#" class="mb-2" request-id="${furniture.requestId}" id="request-link">Demande de visite</a>`)}
               ${generateSaveInfoBtn()}
               ${generateButtonRow(furniture)}
             </div>       
@@ -664,7 +706,9 @@ const fetching = async (base64, furnitureId) => {
     source: base64,
     furnitureId: furnitureId
   }
-  let response = await fetch("/photos/", {
+  let signal = getSignal();
+  let response = await fetch(baseUrl+"/photos/", {
+    signal,
     method: "POST",
     body: JSON.stringify(toSend),
     headers: {
@@ -684,56 +728,70 @@ const fetching = async (base64, furnitureId) => {
 const generatePhotoList = (furniture) => {
   let photos = "";
   furniture.photos.forEach(photo => {
-    let favRadioName = `radioFav${photo.photoId}`;
-    let visibleCheckName = `checkboxVisible${photo.photoId}`;
-    let homePageCheckName = `checkboxHomepage${photo.photoId}`;
+    if(photo.fromRequest === false) {
+      let favRadioName = `radioFav${photo.photoId}`;
+      let visibleCheckName = `checkboxVisible${photo.photoId}`;
+      let homePageCheckName = `checkboxHomepage${photo.photoId}`;
 
-    let favChecked = ``;
-    if (furniture.favouritePhoto && photo.photoId
-        === furniture.favouritePhoto.photoId) {
-      favChecked = `checked`;
-    }
-
-    let visibleCheckedOriginaly = false;
-    let homePageCheckedOriginaly = false;
-    let visibileChecked = ``;
-    let homePageChecked = ``;
-    if (photo.isVisible) {
-      visibileChecked = `checked`;
-      visibleCheckedOriginaly = true;
-
-      if (photo.onHomePage && photo.isVisible) {
-        homePageChecked = `checked`;
-        homePageCheckedOriginaly = true;
+      let favChecked = ``;
+      if (furniture.favouritePhoto && photo.photoId
+          === furniture.favouritePhoto.photoId) {
+        favChecked = `checked`;
       }
+
+      let visibleCheckedOriginaly = false;
+      let homePageCheckedOriginaly = false;
+      let visibileChecked = ``;
+      let homePageChecked = ``;
+      if (photo.isVisible) {
+        visibileChecked = `checked`;
+        visibleCheckedOriginaly = true;
+
+        if (photo.onHomePage && photo.isVisible) {
+          homePageChecked = `checked`;
+          homePageCheckedOriginaly = true;
+        }
+      } else {
+        homePageChecked = `disabled`;
+      }
+
+      photos += `
+      <div class="p-1 w-50 container photo-list-container" from-request="false" photoId=${photo.photoId}>
+        <div class="row px-0">
+          <div class="col-6">
+            <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+          </div>
+          <div class="text-left col-6">
+            <label class="form-check-label" for="${favRadioName}">
+              <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId="${photo.photoId}" furnitureid="${photo.furnitureId}" ${favChecked}>
+              Photo favorite
+            </label>
+            <br/>
+            <label class="form-check-label" for="${visibleCheckName}">
+              <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
+              Visible
+            </label>
+            <br/>
+            <label class="form-check-label" for="${homePageCheckName}">
+              <input id="${homePageCheckName}" type="checkbox" class="form-check-input homepageCheckbox" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
+              Affiché sur la page d'accueil
+            </label>
+          </div>
+        </div>
+      </div>`;
     } else {
-      homePageChecked = `disabled`;
+      //photo from request -> no input
+      photos += `
+      <div class="p-1 w-50 container photo-list-container" from-request="true" photoId=${photo.photoId}>
+        <div class="row px-0">
+          <div class="col-6">
+            <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+            <span class="mt-1 badge badge-secondary">Photo de demande<br/>de visite</span>
+          </div>
+        </div>
+      </div>`;
     }
 
-    photos += `
-    <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
-      <div class="row px-0">
-        <div class="col-6">
-          <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
-        </div>
-        <div class="text-left col-6">
-          <label class="form-check-label" for="${favRadioName}">
-            <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId="${photo.photoId}" furnitureid="${photo.furnitureId}" ${favChecked}>
-            Photo favorite
-          </label>
-          <br/>
-          <label class="form-check-label" for="${visibleCheckName}">
-            <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
-            Visible
-          </label>
-          <br/>
-          <label class="form-check-label" for="${homePageCheckName}">
-            <input id="${homePageCheckName}" type="checkbox" class="form-check-input homepageCheckbox" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
-            Affiché sur la page d'accueil
-          </label>
-        </div>
-      </div>
-    </div>`;
   });
   let pId
   if (!furniture.favouritePhoto) {
@@ -786,7 +844,7 @@ const onSaveModifPhotos = async (e) => {
   let selectedFavId = findSelectedFav();
   if (originalFavPhotoId != selectedFavId) {
     let newFurniture = await patchNewFav(furnitureId, selectedFavId);
-    furnitureMap[furnitureId] = newFurniture;
+    updateCacheFav(newFurniture,newFurniture.favouritePhoto);
   }
   //display flags
   let modifiedPhotoArray = findAllPhotosForFlagUpdate();
@@ -822,34 +880,37 @@ const findSelectedFav = () => {
 const findAllPhotosForFlagUpdate = () => {
   let arrayFound = new Array();
   document.querySelectorAll(".photo-list-container").forEach((container) => {
-    let visibleCheckbox = container.querySelector(".visibleCheckbox");
-    let homepageCheckbox = container.querySelector(".homepageCheckbox");
-    let photoId = container.getAttribute("photoid");
-    let isModified = false;
+    let fromRequest = container.getAttribute("from-request");
+    if(fromRequest==="false"){
+      let visibleCheckbox = container.querySelector(".visibleCheckbox");
+      let homepageCheckbox = container.querySelector(".homepageCheckbox");
+      let photoId = container.getAttribute("photoid");
+      let isModified = false;
 
-    let visibleChecked = "false";
-    let homepageChecked = "false";
-    if (visibleCheckbox.checked) {
-      visibleChecked = "true";
-    }
-    if (!homepageCheckbox.disabled && homepageCheckbox.checked) {
-      homepageChecked = "true";
-    }
-
-    if (visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
-      isModified = true;
-    } else if (homepageCheckbox.getAttribute("checked_originaly")
-        != homepageChecked) {
-      isModified = true;
-    }
-
-    if (isModified) {
-      let bundle = {
-        photoId: photoId,
-        isVisible: visibleCheckbox.checked,
-        isOnHomePage: homepageCheckbox.checked,
+      let visibleChecked = "false";
+      let homepageChecked = "false";
+      if (visibleCheckbox.checked) {
+        visibleChecked = "true";
       }
-      arrayFound.push(bundle);
+      if (!homepageCheckbox.disabled && homepageCheckbox.checked) {
+        homepageChecked = "true";
+      }
+
+      if (visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
+        isModified = true;
+      } else if (homepageCheckbox.getAttribute("checked_originaly")
+          != homepageChecked) {
+        isModified = true;
+      }
+
+      if (isModified) {
+        let bundle = {
+          photoId: photoId,
+          isVisible: visibleCheckbox.checked,
+          isOnHomePage: homepageCheckbox.checked,
+        }
+        arrayFound.push(bundle);
+      }
     }
   });
   return arrayFound;
@@ -866,7 +927,10 @@ const patchNewFav = async (furnitureId, favPhotoId) => {
   let bundle = {
     photoId: favPhotoId,
   };
-  let response = await fetch("/furniture/favouritePhoto/" + furnitureId, {
+  let signal = getSignal();
+
+  let response = await fetch(baseUrl+"/furniture/favouritePhoto/" + furnitureId, {
+    signal,
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -895,8 +959,11 @@ const patchNewFav = async (furnitureId, favPhotoId) => {
  * @return new photo (fetch response)
  */
 const patchDisplayFlags = async (bundle) => {
-  let addr = "/photos/displayFlags/" + bundle.photoId;
+  let addr = baseUrl+"/photos/displayFlags/" + bundle.photoId;
+  let signal = getSignal();
+
   let response = await fetch(addr, {
+    signal,
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -1015,14 +1082,20 @@ const generateBuyingDateCardEntry = (furniture) => {
 }
 
 const generateUserCardEntry = (label, id, user) => {
+  let p;
+  if(user.username === inStorePurchaseUsername){
+    p = `<p id="${id}">${generateUserLink(user)}</p>`;
+  }else {
+    p = `<p id="${id}">${generateUserLink(user)} (${user.firstName} ${user.lastName})</p>`;
+  }
+  
   let res = `
   <div class="row text-left">
     <div class="col-md-6">
       <label class="mr-3">${label}</label>
     </div>
     <div class="col-md-6">
-      <p id="${id}">${generateUserLink(
-      user)} (${user.firstName} ${user.lastName})</p>
+      ${p}
     </div>
   </div>`;
   return res;
@@ -1124,6 +1197,7 @@ const generateAllTransitionBtns = (furniture) => {
     case "IN_RESTORATION":
       res += generateTransitionModal("ToAvailable",
           "Indiquer disponible à la vente");
+      res += generateTransitionModal("ToSold", "Indiquer vendu à un prix spécial");
       res += generateTransitionModal("Withdraw", "Retirer de la vente",
           "danger", "secondary");
       break;
@@ -1174,16 +1248,22 @@ const generateToSoldForm = () => {
   let res = "";
   switch (status) {
     case "AVAILABLE_FOR_SALE":
+    case "IN_RESTORATION":
       res = `
         <div class="form-group">
-          <label for="buyerUsernameInput">Pseudo de l'acheteur: 
-            <input type="text" id="buyerUsernameInput" class="w-25 mx-3 my-1 form-control" name="buyerUsernameInput"/>
+          <input type="text" id="buyerUsernameInput" class="w-50 form-control" placeholder="Pseudo de l'acheteur" id="buyer-username-input" name="buyerUsernameInput"/>
+        </div>
+        <div class="form-check mb-3">
+          <label class="form-check-label">
+            <input type="checkbox" class="form-check-input" id="in-store-purch-check">Vendu en magasin
           </label>
         </div>
-        <div class="form-group">
-          <label for="specialSalePriceInput">Prix spécial: 
-            <input type="number" id="specialSalePriceInput" class="w-25 mx-3 my-1 form-control" name="specialSalePriceInput" min="0.01" step="0.01"/> €
-          </label>
+        <br/>
+        <div class="input-group mb-2 w-50"> 
+          <input type="number" id="specialSalePriceInput" class="form-control" placeholder="Prix spécial" name="specialSalePriceInput" min="0.01" step="0.01"/>
+          <div class="input-group-append">
+            <span class="input-group-text">€</span>
+          </div>
         </div>`;
       break;
     case "UNDER_OPTION":
@@ -1194,7 +1274,7 @@ const generateToSoldForm = () => {
       break;
     default:
   }
-  return `<div class="form-inline">${res}</div>`;
+  return `<div class="form">${res}</div>`;
 }
 
 const generateTransitionModal = (id, label, triggerColorClass = "primary",
@@ -1280,7 +1360,10 @@ const onSaveInfoBtnClicked = async (e) => {
   }
   if (bundle !== {}) {
     try {
-      let response = await fetch("furniture/infos/" + currentFurnitureId, {
+      let signal = getSignal();
+
+      let response = await fetch(baseUrl+"furniture/infos/" + currentFurnitureId, {
+        signal,
         method: "PATCH",
         body: JSON.stringify(bundle),
         headers: {
@@ -1309,7 +1392,10 @@ const toAvailable = (e, furniture) => {
   let bundle = {
     selling_price: sellingPrice,
   };
-  fetch("/furniture/available/" + furniture.furnitureId, {
+  let signal = getSignal();
+
+  fetch(baseUrl+"/furniture/available/" + furniture.furnitureId, {
+    signal,
     method: "PATCH",
     body: JSON.stringify(bundle),
     headers: {
@@ -1334,7 +1420,10 @@ const toAvailable = (e, furniture) => {
 
 const toRestoration = (e, furniture) => {
   e.preventDefault();
-  fetch("/furniture/restoration/" + furniture.furnitureId, {
+  let signal = getSignal();
+
+  fetch(baseUrl+"/furniture/restoration/" + furniture.furnitureId, {
+    signal,
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -1357,7 +1446,10 @@ const toRestoration = (e, furniture) => {
 
 const withdraw = (e, furniture) => {
   e.preventDefault();
-  fetch("/furniture/withdraw/" + furniture.furnitureId, {
+  let signal = getSignal();
+
+  fetch(baseUrl+"/furniture/withdraw/" + furniture.furnitureId, {
+    signal,
     method: "PATCH",
     headers: {
       "Authorization": currentUser.token,
@@ -1380,17 +1472,21 @@ const withdraw = (e, furniture) => {
 
 const toSold = async (e, furniture) => {
   e.preventDefault();
-  let specialSalePrice = "";
+
+  let specialSalePrice;
   let buyerUsername;
+
   let bundle;
-  if (furniture.status === "AVAILABLE_FOR_SALE") {
-    specialSalePrice = e.target.parentElement.parentElement.querySelector(
-        "#specialSalePriceInput").value;
-    buyerUsername = e.target.parentElement.parentElement.querySelector(
-        "#buyerUsernameInput").value;
-  } else if (furniture.status === "UNDER_OPTION") {
+  if (furniture.status === "AVAILABLE_FOR_SALE" || furniture.status === "IN_RESTORATION") {
+    specialSalePrice = e.target.parentElement.parentElement.querySelector("#specialSalePriceInput").value;
+    let buyerInput = e.target.parentElement.parentElement.querySelector("#buyerUsernameInput");
+    if (buyerInput.disabled)
+      buyerUsername = inStorePurchaseUsername;
+    else
+      buyerUsername = buyerInput.value;
+  } else if (furniture.status === "UNDER_OPTION")
     buyerUsername = furniture.option.user.username;
-  }
+
   if (specialSalePrice !== "") {
     bundle = {
       buyerUsername: buyerUsername,
@@ -1401,28 +1497,33 @@ const toSold = async (e, furniture) => {
       buyerUsername: buyerUsername,
     }
   }
-  fetch("/furniture/sold/" + furniture.furnitureId, {
-    method: "PATCH",
-    body: JSON.stringify(bundle),
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
+  let signal = getSignal();
+  try {
+    let response = await fetch(baseUrl+"/furniture/sold/" + furniture.furnitureId, {
+      signal,
+      method: "PATCH",
+      body: JSON.stringify(bundle),
+      headers: {
+        "Authorization": currentUser.token,
+        "Content-Type": "application/json",
+      },
+    })
     if (!response.ok) {
-      throw new Error(
-          response.status + " : " + response.statusText
-      );
+      if (response.status == 404)
+        throw new Error("Le meuble ou le client n'existe pas");
+      else
+        throw new Error("Error code : " + response.status + " : " + response.statusText);
     }
-    return response.json();
-  }).then((data) => {
-    furnitureMap[data.furnitureId] = data;
-    loadCard(data.furnitureId);
-  }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
-    displayErrorMessage("errorDiv", err);
-  });
+    let data = await response.json();
+    let photos = furnitureMap[data.furnitureId].photos;
+    let favouritePhoto = furnitureMap[data.furnitureId].favouritePhoto;
 
+    furnitureMap[data.furnitureId] = {...data, favouritePhoto: favouritePhoto, photos: photos};
+    loadCard(data.furnitureId);
+  }catch(err) {
+    console.error("Erreur de fetch !! :´<\n" + err);
+    displayErrorMessage("errorDiv", err);
+  }
 }
 
 const loadCard = (furnitureId) => {
@@ -1430,6 +1531,9 @@ const loadCard = (furnitureId) => {
   currentFurnitureId = furnitureId;
   mainPage.innerHTML = generatePageHtml(false);
   generateCard(furnitureMap[furnitureId]);
+  let requestLink = document.querySelector("#request-link");
+  requestLink.addEventListener("click", onRequestLinkClicked);
+  getFavs().then(() => fetchAllPhotos(furnitureMap[furnitureId]));
   document.querySelectorAll(".toBeClicked").forEach(
       (element) => {
         let elementFurnId = element.getAttribute("furnitureid");
@@ -1441,6 +1545,17 @@ const loadCard = (furnitureId) => {
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
   placeFilterForm();
+  document.querySelectorAll("#in-store-purch-check").forEach((checkbox) => {
+    checkbox.addEventListener("change", (e) => {
+      let textInput = document.querySelector("#buyerUsernameInput");
+      let checkbox = e.target;
+      if(checkbox.checked){
+        textInput.disabled = true;
+      }else {
+        textInput.disabled = false;
+      }
+    })
+  });
 }
 
 /**
@@ -1452,8 +1567,10 @@ const loadCard = (furnitureId) => {
 const respectsAllActiveFilters = (furniture) => {
   let res = true;
   res = res && respectsUserFilter(furniture);
+  res = res && respectsInStoreFilter(furniture);
   res = res && respectsPriceFilters(furniture);
   res = res && respectsStatusFilter(furniture);
+  res = res && respectTypeFilter(furniture);
   return res;
 }
 
@@ -1473,18 +1590,36 @@ const respectsUserFilter = (furniture) => {
   } // active filter + no user -> FALSE
 
   if (furniture.seller !== undefined) {
-    if (furniture.seller.username.includes(activeFilters.username)) {
+    if (furniture.seller.username.toLowerCase().includes(activeFilters.username.toLowerCase())) {
       return true;
     }
   }
   if (!furniture.buyer) {
     return false;
   } else {
-    if (furniture.buyer.username.includes(activeFilters.username)) {
+    if (furniture.buyer.username.toLowerCase().includes(activeFilters.username.toLowerCase())) {
       return true;
     }
   }
   return false;
+}
+
+/**
+ * Verifies if the "in-store purchase" filter is respected.
+ * @param {*} furniture 
+ * @returns {boolean}
+ */
+const respectsInStoreFilter = (furniture) => {
+  if (activeFilters.inStore) {
+    let buyer = furniture.buyer
+    if(!buyer) {
+      return false; // no buyer -> not in-store sale
+    }
+    if(buyer.username.toLowerCase() !== inStorePurchaseUsername.toLowerCase()) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -1550,6 +1685,10 @@ const respectsStatusFilter = (furniture) => {
   return furniture.status === activeFilters.status;
 }
 
+const respectTypeFilter = (furniture) => {
+  return activeFilters.type === "" || activeFilters.type === furniture.type
+}
+
 /**
  * remove all applied filter, then refresh display
  */
@@ -1563,12 +1702,16 @@ const applyFilters = (e) => {
   e.preventDefault();
 
   let usernameInput = document.querySelector("#username-filter");
+  let inStoreCheckbox = document.querySelector("#in-store-filter");
   let priceInput = document.querySelector("#price-filter");
   let statusInput = document.querySelector("#status-filter");
+  let type = document.querySelector("#furnitureTypeFilter");
 
   activeFilters.username = usernameInput.value;
+  activeFilters.inStore = inStoreCheckbox.checked;
   activeFilters.price = priceInput.value;
   activeFilters.status = statusInput.value;
+  activeFilters.type = type.value;
 
   refreshDisplay();
 }
@@ -1580,10 +1723,17 @@ const applyFilters = (e) => {
 const placeFilterForm = () => {
 
   let usernameInput = document.querySelector("#username-filter");
+  let inStoreCheckbox = document.querySelector("#in-store-filter");
   let priceInput = document.querySelector("#price-filter");
   let statusInput = document.querySelector("#status-filter");
+  document.querySelector("[value='" + activeFilters.type + "']").setAttribute('selected', 'true');
 
   usernameInput.value = activeFilters.username;
+  if(activeFilters.inStore) {
+    inStoreCheckbox.checked = true;
+  }else {
+    inStoreCheckbox.checked = false;
+  }
   priceInput.value = activeFilters.price;
   statusInput.value = activeFilters.status;
 
@@ -1607,6 +1757,9 @@ const refreshDisplay = () => {
   }
   placeFilterForm();
   displayNoResultMsg();
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 /**
@@ -1617,6 +1770,78 @@ const displayNoResultMsg = () => {
   const noResultHTML = "";
   if (tbody.innerHTML === noResultHTML) {
     tbody.innerHTML = `<th colspan="8"><p>Aucun résultat</p></th>`;
+  }
+}
+
+/**
+ * fetch all favourite photos for main list thumbnails
+ */
+const getFavs = async () => {
+  if(!favFetched) {
+    let furniture;
+    for(furniture of furnitureMap){
+      if(furniture){
+        await fetchFav(furniture);
+      }
+    }
+    favFetched = true;
+  }
+}
+
+const fetchFav = async (furniture) => {
+  if(!furniture.favouritePhoto){
+    let path = baseUrl+"/photos/favourite/"+furniture.furnitureId;
+    let signal = getSignal();
+
+    let response = await fetch(path, {
+      signal,
+      method: "GET",
+    });
+    if(response.ok) {
+      let fav = await response.json();
+      updateCacheFav(furniture, fav);
+      displayImgs([fav]);
+    } else {
+      let notFound = {source: notFoundPhoto, furnitureId: furniture.furnitureId};
+      updateCacheFav(furniture, notFound);
+      displayImgs([notFound]);
+    }
+  }
+}
+
+const fetchAllPhotos = async (furniture) => {
+  if(!photosFetchedMap[furniture.furnitureId]){
+    photosFetchedMap[furniture.furnitureId] = true;
+    if(!furniture.photos || furniture.photos.length === 0) { //no photos -> fetch
+      let path = baseUrl+"/photos/byFurniture/all/"+furniture.furnitureId;
+      let signal = getSignal();
+
+      let response = await fetch(path, {
+        signal,
+        method: "GET",
+        headers: {
+          Authorization: currentUser.token,
+        }
+      });
+      if(response.ok) {
+        let photoArray = await response.json();
+        updateCachePhotos(furniture, photoArray);
+        refreshDisplay();
+      }
+    }
+  }
+}
+
+const updateCacheFav = (furniture, photo) => {
+  furnitureMap[photo.furnitureId].favouritePhoto=photo;
+}
+
+const updateCachePhotos = (furniture, photoArray) => {
+  let furnitureId = furniture.furnitureId;
+  if(!furniture.photos) {
+    furnitureMap[furnitureId] = {...furniture, photos: photoArray}
+  }else {
+    furniture.photos = photoArray
   }
 }
 

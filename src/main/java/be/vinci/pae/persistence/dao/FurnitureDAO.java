@@ -37,6 +37,14 @@ public interface FurnitureDAO {
   FurnitureDTO updateStatusOnly(FurnitureDTO furnitureDTO);
 
   /**
+   * Updates the status (to ACCEPTED) and purchasePrice of a piece of furniture.
+   *
+   * @param furnitureDTO : furniture id.
+   * @return modified dto.
+   */
+  FurnitureDTO updateToAccepted(FurnitureDTO furnitureDTO);
+
+  /**
    * updates the status of the piece of furniture to AVAILABLE_FOR_SALE and sets the selling price
    * into the database.
    *
