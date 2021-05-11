@@ -1427,20 +1427,22 @@ const withdraw = (e, furniture) => {
 
 const toSold = async (e, furniture) => {
   e.preventDefault();
-  let specialSalePrice = "";
+
+  let specialSalePrice;
   let buyerUsername;
+
   let bundle;
+
   if (furniture.status === "AVAILABLE_FOR_SALE") {
     specialSalePrice = e.target.parentElement.parentElement.querySelector("#specialSalePriceInput").value;
     let buyerInput = e.target.parentElement.parentElement.querySelector("#buyerUsernameInput");
-    if(buyerInput.disabled) {
+    if (buyerInput.disabled)
       buyerUsername = inStorePurchaseUsername;
-    }else {
+    else
       buyerUsername = buyerInput.value;
-    }
-  } else if (furniture.status === "UNDER_OPTION") {
+  } else if (furniture.status === "UNDER_OPTION")
     buyerUsername = furniture.option.user.username;
-  }
+
   if (specialSalePrice !== "") {
     bundle = {
       buyerUsername: buyerUsername,
@@ -1463,16 +1465,17 @@ const toSold = async (e, furniture) => {
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(
-          response.status + " : " + response.statusText
-      );
+      if (response.status == 404)
+        throw new Error("Le meuble ou le client n'existe pas");
+      else
+        throw new Error("Error code : " + response.status + " : " + response.statusText);
     }
     return response.json();
   }).then((data) => {
     furnitureMap[data.furnitureId] = data;
     loadCard(data.furnitureId);
   }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
+    console.error("Erreur de fetch !! :´<\n" + err);
     displayErrorMessage("errorDiv", err);
   });
 
