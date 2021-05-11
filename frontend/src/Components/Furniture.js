@@ -1,5 +1,5 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
-
+import loadingPhoto from "../img/loadingImg.png";
 import {findCurrentUser} from "../utils/session";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js";
 import {displayErrorMessage, generateLoadingAnimation, displayImgs, gdpr, baseUrl, getSignal} from "../utils/utils.js"
@@ -203,7 +203,7 @@ const generateItemAndModal = (furniture) => {
   if (!isFurnitureRespectingFilter(furniture))
     return "";
 
-  let src = "none";
+  let src = loadingPhoto;
   if (furniture.favouritePhoto)
     src = furniture.favouritePhoto.source;
   else if (furniture.noFavFound)
@@ -398,6 +398,12 @@ const fetchFav = async (furniture) => {
       let fav = await response.json();
       displayImgs([fav]);
       updateCacheFav(furniture, fav);
+    } else {
+      let fav = {
+        furnitureId: furniture.furnitureId,
+        source: notFoundPhoto,
+      }
+      displayImgs([fav]);
     }
   }
 }
@@ -419,6 +425,9 @@ const fetchAllPhotos = async (furniture) => {
       let photoArray = await response.json();
       updateModal(photoArray, furniture);
       updateCacheAllPhotos(furniture, photoArray);
+    }else {
+      let photoArray = [notFoundPhoto];
+      updateModal(furniture, photoArray);
     }
   }
 }

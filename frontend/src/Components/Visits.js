@@ -1,4 +1,5 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
+import loadingPhoto from "../img/loadingImg.png";
 import {findCurrentUser} from "../utils/session";
 import {displayErrorMessage, gdpr, generateLoadingAnimation, displayImgs, baseUrl, getSignal} from "../utils/utils";
 import {RedirectUrl} from "./Router";
@@ -408,7 +409,7 @@ const generateFurnitureList = (request) => {
 
   request.furnitureList.forEach(furniture => {
     let photoId = furniture.favouritePhotoId;
-    let src = "none";
+    let src = loadingPhoto;
     if (!furniture.favouritePhotoId) {
       src = notFoundPhoto;
     }
@@ -508,18 +509,30 @@ const onChooseFurnitureBtnClick = async (e) => {
   e.preventDefault()
   if (verifyValidChoices() === true) {
     const matches = document.querySelectorAll(".form-check-input:checked");
-    for (const i in matches) {
-      let radio = matches[i];
-      if (radio.tagName === "INPUT") {
-        let furnitureId = radio.getAttribute("furniture-id");
-        switch (radio.id) {
-          case "AcceptFurniture":
-            await acceptFurniture(furnitureId);
-            break;
-          case "RefuseFurniture":
-            await refuseFurniture(furnitureId);
-            break;
-        }
+    let entries = [];
+    for(let radio of matches) {
+      let furnitureId = radio.getAttribute("furniture-id");
+      let value;
+      if(radio.id === "AcceptFurniture") {
+        let query = `.inputPrice[furniture-id='${furnitureId}']`;
+        let priceInput = document.querySelector(query);
+        if(priceInput) value = priceInput.value;
+      }
+      entries.push({
+        furnitureId: furnitureId,
+        value: value,
+        id: radio.id,
+      });
+    }
+
+    for (let entry of entries) {
+      switch (entry.id) {
+        case "AcceptFurniture":
+          await acceptFurniture(entry.furnitureId, entry.value);
+          break;
+        case "RefuseFurniture":
+          await refuseFurniture(entry.furnitureId);
+          break;
       }
     }
   }
@@ -1011,11 +1024,12 @@ async function getImage(furniture) {
 }
 
 
-const acceptFurniture = async (furnitureId) => {
-  let query = `.inputPrice[furniture-id='${furnitureId}']`;
-  let priceInput=document.querySelector(query);
-  if(!priceInput && priceInput.value !==0)return;
-  let bundle={purchasePrice: priceInput.value}
+const acceptFurniture = async (furnitureId, value) => {
+  if(!furnitureId || !value) {
+    return console.error("invalid fetch body");
+  }
+
+  let bundle={purchasePrice: value};
   try {
     let signal = getSignal();
 

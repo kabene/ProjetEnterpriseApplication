@@ -1,4 +1,5 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
+import loadingPhoto from "../img/loadingImg.png";
 import {RedirectUrl} from "./Router";
 import {generateCloseBtn, generateModalPlusTriggerBtn} from "../utils/modals.js"
 import {findCurrentUser} from "../utils/session.js";
@@ -27,7 +28,7 @@ const emptyFilter = {
   status: "",
   type: ""
 }
-let activeFilters = {...emptyFilter};
+let activeFilters = {...emptyFilter}; // deep copy
 
 const FurnitureList = async (id) => {
   currentUser = findCurrentUser();
@@ -268,7 +269,7 @@ const generateRow = (furniture, notNeededClassName) => {
  */
 const generateFavouritePhotoImgTag = (furniture) => {
   if (!furniture.favouritePhoto) {
-    return `<img class="img-fluid" src="${notFoundPhoto}" alt="not found photo" photo-id=${furniture.favouritePhotoId} furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
+    return `<img class="img-fluid" src="${loadingPhoto}" alt="not found photo" photo-id=${furniture.favouritePhotoId} furnitureId="${furniture.furnitureId}" id="favPhoto"/>`
   }
   return `<img class="img-fluid" src="${furniture.favouritePhoto.source}" alt="thumbnail id:${furniture.favouritePhoto.photoId}" photo-id=${furniture.favouritePhotoId} furnitureId="${furniture.furnitureId}" id="list-fav-photo" original_fav_id="${furniture.favouritePhoto.photoId}"/>`;
 }
@@ -1497,31 +1498,32 @@ const toSold = async (e, furniture) => {
     }
   }
   let signal = getSignal();
-
-  fetch(baseUrl+"/furniture/sold/" + furniture.furnitureId, {
-    signal,
-    method: "PATCH",
-    body: JSON.stringify(bundle),
-    headers: {
-      "Authorization": currentUser.token,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
+  try {
+    let response = await fetch(baseUrl+"/furniture/sold/" + furniture.furnitureId, {
+      signal,
+      method: "PATCH",
+      body: JSON.stringify(bundle),
+      headers: {
+        "Authorization": currentUser.token,
+        "Content-Type": "application/json",
+      },
+    })
     if (!response.ok) {
       if (response.status == 404)
         throw new Error("Le meuble ou le client n'existe pas");
       else
         throw new Error("Error code : " + response.status + " : " + response.statusText);
     }
-    return response.json();
-  }).then((data) => {
-    furnitureMap[data.furnitureId] = data;
+    let data = await response.json();
+    let photos = furnitureMap[data.furnitureId].photos;
+    let favouritePhoto = furnitureMap[data.furnitureId].favouritePhoto;
+
+    furnitureMap[data.furnitureId] = {...data, favouritePhoto: favouritePhoto, photos: photos};
     loadCard(data.furnitureId);
-  }).catch((err) => {
+  }catch(err) {
     console.error("Erreur de fetch !! :´<\n" + err);
     displayErrorMessage("errorDiv", err);
-  });
-
+  }
 }
 
 const loadCard = (furnitureId) => {
@@ -1799,6 +1801,10 @@ const fetchFav = async (furniture) => {
       let fav = await response.json();
       updateCacheFav(furniture, fav);
       displayImgs([fav]);
+    } else {
+      let notFound = {source: notFoundPhoto, furnitureId: furniture.furnitureId};
+      updateCacheFav(furniture, notFound);
+      displayImgs([notFound]);
     }
   }
 }

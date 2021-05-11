@@ -1,4 +1,5 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
+import loadingPhoto from "../img/loadingImg.png";
 import {findCurrentUser} from "../utils/session";
 import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr, baseUrl, getSignal} from "../utils/utils";
 
@@ -138,7 +139,7 @@ const onUserClickHandler = async (e) => {
   removeActiveRow();
   //get the tr element
   let element = e.target;
-  while (!element?.className?.includes("requestTableRow")) 
+  while (!element?.className?.includes("requestTableRow"))
       element = element.parentElement;
   setActiveRow(element.getAttribute("requestId"));
   let requestId = element.attributes["requestId"].value;
@@ -402,7 +403,7 @@ const generateSinglePhotoContainer = (furniture) => {
  */
 const generateFavouritePhotoImgTag = (furniture) => {
   if (!furniture.thumbnail)
-    return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + notFoundPhoto + `" alt="photoNotFound"/>`;
+    return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + loadingPhoto + `" alt="photoNotFound"/>`;
   else
     return `<img class="img-fluid" furniture-id="${furniture.furnitureId}" src="` + furniture.thumbnail + `" alt="photo"/>`;
 }
