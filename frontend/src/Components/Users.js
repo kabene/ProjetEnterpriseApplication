@@ -732,9 +732,9 @@ const onTakeoverClick = async (e) => {
     },
   });
   if (!response.ok) {
-    const err = "Erreur de fetch !! :´<\nError code : " + response.status + " : " + response.statusText;
+    const err = "Error code : " + response.status + " : " + response.statusText;
     console.error(err);
-    displayErrorMessage("errorDiv", err);
+    displayErrorMessage("errorDiv", new Error(err));
   }
   let data = await response.json();
 

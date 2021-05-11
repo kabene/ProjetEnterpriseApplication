@@ -1,5 +1,5 @@
 import notFoundPhoto from "../img/notFoundPhoto.png";
-import {getUserSessionData} from "../utils/session";
+import {findCurrentUser} from "../utils/session";
 import {removeTimeouts, generateLoadingAnimation, displayErrorMessage, gdpr, baseUrl, getSignal} from "../utils/utils";
 
 let page = document.querySelector("#page");
@@ -16,7 +16,7 @@ const errorDiv = `<div class="col-5 mx-auto">  <div id="errorDiv" class="d-none"
 
 
 const VisitRequest = async () => {
-  currentUser = getUserSessionData();
+  currentUser = findCurrentUser();
 
   page.innerHTML = errorDiv + generateLoadingAnimation();
 

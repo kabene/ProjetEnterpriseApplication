@@ -4,7 +4,7 @@ Authorization: {{jwt}}
 ###
 
 GET {{baseUrl}}/requestForVisit/me
-Authorization: {{jwt}}
+Authorization: {{takeover_jwt}}
 ###
 
 PATCH {{baseUrl}}/requestForVisit/cancel/1
