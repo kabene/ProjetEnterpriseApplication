@@ -728,10 +728,10 @@ const generatePhotoList = (furniture) => {
       }
       
       photos += `
-      <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
+      <div class="p-1 w-50 container photo-list-container" from-request="false" photoId=${photo.photoId}>
         <div class="row px-0">
           <div class="col-6">
-            <img class="img-fluid" src="${photo.source}" from-request="false" alt="photo id:${photo.photoId}"/>
+            <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
           </div>
           <div class="text-left col-6">
             <label class="form-check-label" for="${favRadioName}">
@@ -754,10 +754,10 @@ const generatePhotoList = (furniture) => {
     } else {
       //photo from request -> no input
       photos += `
-      <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
+      <div class="p-1 w-50 container photo-list-container" from-request="true" photoId=${photo.photoId}>
         <div class="row px-0">
           <div class="col-6">
-            <img class="img-fluid" src="${photo.source}" from-request="true" alt="photo id:${photo.photoId}"/>
+            <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
             <span class="mt-1 badge badge-secondary">Photo de demande<br/>de visite</span>
           </div>
         </div>
@@ -852,34 +852,37 @@ const findSelectedFav = () => {
 const findAllPhotosForFlagUpdate = () => {
   let arrayFound = new Array();
   document.querySelectorAll(".photo-list-container").forEach((container) => {
-    let visibleCheckbox = container.querySelector(".visibleCheckbox");
-    let homepageCheckbox = container.querySelector(".homepageCheckbox");
-    let photoId = container.getAttribute("photoid");
-    let isModified = false;
+    let fromRequest = container.getAttribute("from-request");
+    if(fromRequest==="false"){
+      let visibleCheckbox = container.querySelector(".visibleCheckbox");
+      let homepageCheckbox = container.querySelector(".homepageCheckbox");
+      let photoId = container.getAttribute("photoid");
+      let isModified = false;
 
-    let visibleChecked = "false";
-    let homepageChecked = "false";
-    if (visibleCheckbox.checked) {
-      visibleChecked = "true";
-    }
-    if (!homepageCheckbox.disabled && homepageCheckbox.checked) {
-      homepageChecked = "true";
-    }
-
-    if (visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
-      isModified = true;
-    } else if (homepageCheckbox.getAttribute("checked_originaly")
-        != homepageChecked) {
-      isModified = true;
-    }
-
-    if (isModified) {
-      let bundle = {
-        photoId: photoId,
-        isVisible: visibleCheckbox.checked,
-        isOnHomePage: homepageCheckbox.checked,
+      let visibleChecked = "false";
+      let homepageChecked = "false";
+      if (visibleCheckbox.checked) {
+        visibleChecked = "true";
       }
-      arrayFound.push(bundle);
+      if (!homepageCheckbox.disabled && homepageCheckbox.checked) {
+        homepageChecked = "true";
+      }
+
+      if (visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
+        isModified = true;
+      } else if (homepageCheckbox.getAttribute("checked_originaly")
+          != homepageChecked) {
+        isModified = true;
+      }
+
+      if (isModified) {
+        let bundle = {
+          photoId: photoId,
+          isVisible: visibleCheckbox.checked,
+          isOnHomePage: homepageCheckbox.checked,
+        }
+        arrayFound.push(bundle);
+      }
     }
   });
   return arrayFound;
