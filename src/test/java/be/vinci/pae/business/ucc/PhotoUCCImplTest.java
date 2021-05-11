@@ -61,6 +61,7 @@ class PhotoUCCImplTest {
 
   private static boolean defaultIsVisible = true;
   private static boolean defaultIsOnHomePage = true;
+  private static boolean defaultIsFromRequest = false;
 
   private static PhotoDTO mockPhotoDTO1;
   private static PhotoDTO mockPhotoDTO2;
@@ -139,6 +140,10 @@ class PhotoUCCImplTest {
     Mockito.when(mockPhotoDTO1.isOnHomePage()).thenReturn(defaultIsOnHomePage);
     Mockito.when(mockPhotoDTO2.isOnHomePage()).thenReturn(defaultIsOnHomePage);
     Mockito.when(mockPhotoDTO3.isOnHomePage()).thenReturn(defaultIsOnHomePage);
+
+    Mockito.when(mockPhotoDTO1.isFromRequest()).thenReturn(defaultIsFromRequest);
+    Mockito.when(mockPhotoDTO2.isFromRequest()).thenReturn(defaultIsFromRequest);
+    Mockito.when(mockPhotoDTO3.isFromRequest()).thenReturn(defaultIsFromRequest);
 
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId1)).thenReturn(mockFurnitureDTO1);
     Mockito.when(mockFurnitureDAO.findById(defaultFurnitureId2)).thenReturn(mockFurnitureDTO2);
@@ -321,6 +326,38 @@ class PhotoUCCImplTest {
     inOrder.verify(mockDal).startTransaction();
     inOrder.verify(mockDal).rollbackTransaction();
     inOrder.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  @DisplayName("TEST PhotoUCC.patchDisplayFlags() : given valid flags on request photo,"
+      + " should throw ConflictException")
+  @ParameterizedTest
+  @MethodSource
+  void test_patchDisplayFlags_requestPhoto_shouldThrowConflict(boolean isVisible,
+      boolean isOnHomePage) {
+    Mockito.when(mockPhotoDTO1.isFromRequest()).thenReturn(true);
+    assertThrows(ConflictException.class, ()->
+        photoUCC.patchDisplayFlags(defaultPhotoId1, isVisible, isOnHomePage));
+
+    InOrder inOrder = Mockito
+        .inOrder(mockPhotoDTO1, mockPhotoDAO, mockDal); // enforce invocation order
+    inOrder.verify(mockDal).startTransaction();
+    inOrder.verify(mockPhotoDAO).findById(defaultPhotoId1);
+    inOrder.verify(mockDal).rollbackTransaction();
+    inOrder.verifyNoMoreInteractions();
+    Mockito.verify(mockDal, Mockito.never()).commitTransaction();
+  }
+
+  /**
+   * MethodSource for test_patchDisplayFlags_nominalScenario_shouldReturnDTO.
+   *
+   * @return Stream of Arguments
+   */
+  private static Stream<Arguments> test_patchDisplayFlags_requestPhoto_shouldThrowConflict() {
+    return Stream.of(
+        Arguments.arguments(true, true),
+        Arguments.arguments(true, false),
+        Arguments.arguments(false, false)
+    );
   }
 
   @DisplayName("TEST PhotoUCC.patchDisplayFlags() : "
