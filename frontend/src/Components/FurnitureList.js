@@ -1580,14 +1580,14 @@ const respectsUserFilter = (furniture) => {
   } // active filter + no user -> FALSE
 
   if (furniture.seller !== undefined) {
-    if (furniture.seller.username.includes(activeFilters.username)) {
+    if (furniture.seller.username.toLowerCase().includes(activeFilters.username.toLowerCase())) {
       return true;
     }
   }
   if (!furniture.buyer) {
     return false;
   } else {
-    if (furniture.buyer.username.includes(activeFilters.username)) {
+    if (furniture.buyer.username.toLowerCase().includes(activeFilters.username.toLowerCase())) {
       return true;
     }
   }
@@ -1605,7 +1605,7 @@ const respectsInStoreFilter = (furniture) => {
     if(!buyer) {
       return false; // no buyer -> not in-store sale
     }
-    if(buyer.username !== inStorePurchaseUsername) {
+    if(buyer.username.toLowerCase() !== inStorePurchaseUsername.toLowerCase()) {
       return false;
     }
   }
