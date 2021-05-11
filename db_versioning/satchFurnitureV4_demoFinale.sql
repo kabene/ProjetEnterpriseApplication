@@ -195,7 +195,7 @@ INSERT INTO satchoFurniture.addresses
 VALUES (DEFAULT, 'Lammerskreuzstrasse', '6', NULL , '52159', 'Roetgen', 'Allemagne');
 INSERT INTO satchoFurniture.users
 VALUES (DEFAULT, 'Ile', 'Basile', 'bazz', 'bas.ile@gmail.be', 6, now(), 'customer',
-        '$2a$04$rvF3zWgvRyeKz2qSBeud5uXfAcHDkMeJWsOez01YPomtSBBqPTmmO', 0, 3, 'false');
+        '$2a$04$rvF3zWgvRyeKz2qSBeud5uXfAcHDkMeJWsOez01YPomtSBBqPTmmO', 0, 2, 'false');
 
 INSERT INTO satchoFurniture.users
 VALUES (DEFAULT, 'Ile', 'Théophile', 'Theo', 'theo.phile@proximus.be', 5 , now(), 'antique_dealer',
