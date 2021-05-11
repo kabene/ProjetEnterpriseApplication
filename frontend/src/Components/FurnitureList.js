@@ -443,7 +443,7 @@ const displayShortElements = async (e) => {
     document.querySelectorAll(".userLink").forEach(
       (link) => {
         link.addEventListener("click", onUserLinkClicked)
-    });  
+    });
     isDisplayingLargeTable = false;
   } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
@@ -745,7 +745,7 @@ const generatePhotoList = (furniture) => {
       } else {
         homePageChecked = `disabled`;
       }
-      
+
       photos += `
       <div class="p-1 w-50 container photo-list-container" from-request="false" photoId=${photo.photoId}>
         <div class="row px-0">
@@ -782,7 +782,7 @@ const generatePhotoList = (furniture) => {
         </div>
       </div>`;
     }
-    
+
   });
   let pId
   if (!furniture.favouritePhoto) {
@@ -1468,8 +1468,7 @@ const toSold = async (e, furniture) => {
   let buyerUsername;
 
   let bundle;
-
-  if (furniture.status === "AVAILABLE_FOR_SALE") {
+  if (furniture.status === "AVAILABLE_FOR_SALE" || furniture.status === "IN_RESTORATION") {
     specialSalePrice = e.target.parentElement.parentElement.querySelector("#specialSalePriceInput").value;
     let buyerInput = e.target.parentElement.parentElement.querySelector("#buyerUsernameInput");
     if (buyerInput.disabled)
