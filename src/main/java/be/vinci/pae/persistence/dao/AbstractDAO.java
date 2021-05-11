@@ -65,7 +65,7 @@ public abstract class AbstractDAO {
   protected <T> List<T> findByConditions(String tableName, QueryParameter... queryParameters) {
     String query = "SELECT t.* FROM " + schema + "." + tableName + " t";
     query += generateWhere(true, queryParameters);
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.FINE, query);
+    //Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.FINE, query);
     List<T> res = new ArrayList<>();
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
@@ -129,7 +129,7 @@ public abstract class AbstractDAO {
       }
     }
     query += generateWhere(false, idQueryParameter);
-    Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.FINE, query);
+    //Logger.getLogger(Main.CONSOLE_LOGGER_NAME).log(Level.FINE, query);
     try {
       PreparedStatement ps = dalServices.makeStatement(query);
       int parameterIndex = 1;

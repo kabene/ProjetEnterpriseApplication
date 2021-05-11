@@ -92,6 +92,9 @@ public class PhotoUCCImpl implements PhotoUCC {
     try {
       dalServices.startTransaction();
       PhotoDTO foundDto = photoDAO.findById(id);
+      if(foundDto.isFromRequest()) {
+        throw new ConflictException("Error : cannot change display flags on request photos");
+      }
       if (!isVisible && isOnHomePage) {
         throw new ConflictException(
             "Error: impossible flag configuration "

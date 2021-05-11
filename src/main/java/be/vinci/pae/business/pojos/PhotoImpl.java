@@ -20,6 +20,8 @@ public class PhotoImpl implements PhotoDTO {
   private Boolean onHomePage;
   @JsonView(Views.Public.class)
   private Boolean isVisible;
+  @JsonView(Views.AdminOnly.class)
+  private Boolean isFromRequest;
   @JsonView(Views.Public.class)
   private String source;
 
@@ -71,6 +73,16 @@ public class PhotoImpl implements PhotoDTO {
   @Override
   public void setVisible(Boolean isVisible) {
     this.isVisible = isVisible;
+  }
+
+  @Override
+  public Boolean isFromRequest() {
+    return this.isFromRequest;
+  }
+
+  @Override
+  public void setFromRequest(Boolean isFromRequest) {
+    this.isFromRequest = isFromRequest;
   }
 
   @Override
