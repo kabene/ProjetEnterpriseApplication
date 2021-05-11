@@ -24,7 +24,7 @@ public abstract class AbstractDAO {
    * Class representing a (columnName, value) pair in the database. Used for queries with unknown
    * parameter types, and/or multiple parameters.
    */
-  protected class QueryParameter {
+  protected static class QueryParameter {
 
     private String columnName;
     private Object value;
@@ -37,7 +37,6 @@ public abstract class AbstractDAO {
 
   // -- Protected (Available in DAOs) Methods --
 
-  // find all:
 
   /**
    * Finds all entries in a specific table. This method is inherited by all classes extending
@@ -51,11 +50,9 @@ public abstract class AbstractDAO {
     return findByConditions(tableName);
   }
 
-  // find all by conditions:
-
   /**
-   * Finds all the entries in a table that matches all the given conditions.
-   * All conditions are separated by AND.
+   * Finds all the entries in a table that matches all the given conditions. All conditions are
+   * separated by AND.
    *
    * @param tableName       : The table name
    * @param queryParameters : All conditions as QueryParameter (columnName + value)
@@ -85,8 +82,6 @@ public abstract class AbstractDAO {
     return res;
   }
 
-  // find one by conditions:
-
   /**
    * Finds one specific entry in a table based on specified conditions. If multiple entries are
    * found, only the first one will be returned.
@@ -105,7 +100,6 @@ public abstract class AbstractDAO {
     return lst.get(0);
   }
 
-  // update:
 
   /**
    * Updates one or multiple columns in an entry (given its table name and id).

@@ -25,6 +25,7 @@ const emptyFilter = {
   inStore: false,
   price: "-1",
   status: "",
+  type: ""
 }
 let activeFilters = {...emptyFilter};
 
@@ -56,6 +57,9 @@ const generateLargeTablePage = () => {
       element => element.addEventListener("click", displayShortElements));
   document.querySelector("#buttonReturn").addEventListener("click",
       displayLargeTable);
+  document.querySelectorAll(".userLink").forEach((link) => {
+    link.addEventListener("click", onUserLinkClicked);
+  });
 }
 
 /**
@@ -163,6 +167,7 @@ const generatePageHtml = (largeTable = true) => {
           <option value="WITHDRAWN">Retiré de la vente</option>
           <option value="REFUSED">Refusé</option>
         </select>
+        <div class="form-group m-3">` + generateSelectTypeTag() + `</div>
       </div>
       <button type="submit" id="apply-filters-btn" class="btn btn-primary mx-2">Appliquer</button>
       <button type="submit" id="clear-filters-btn" class="btn btn-secondary mx-2">Retirer les filtres</button>
@@ -200,6 +205,18 @@ const generatePageHtml = (largeTable = true) => {
   </div>
   </div>`;
   return res;
+}
+
+const generateSelectTypeTag = () => {
+  let ret = `<select class="form-control" id="furnitureTypeFilter"> <option value="">Rechercher un type de meuble</option>`;
+  typeList.forEach(type => ret += generateOptionTypeTag(type));
+  ret += `</select>`;
+  return ret;
+}
+
+
+const generateOptionTypeTag = (type) => {
+  return `<option value="` + type.typeName + `">` + type.typeName + `</option>`;
 }
 
 const generateAllRows = (notNeededClassName) => {
@@ -424,7 +441,9 @@ const displayShortElements = async (e) => {
     currentFurnitureId = id;
     loadCard(currentFurnitureId);
     document.querySelectorAll(".userLink").forEach(
-        (link) => link.addEventListener("click", onUserLinkClicked));
+      (link) => {
+        link.addEventListener("click", onUserLinkClicked)
+    });
     isDisplayingLargeTable = false;
   } else {
     displayErrorMessage("errorDiv", new Error("Meuble introuvable :'<"));
@@ -700,56 +719,70 @@ const fetching = async (base64, furnitureId) => {
 const generatePhotoList = (furniture) => {
   let photos = "";
   furniture.photos.forEach(photo => {
-    let favRadioName = `radioFav${photo.photoId}`;
-    let visibleCheckName = `checkboxVisible${photo.photoId}`;
-    let homePageCheckName = `checkboxHomepage${photo.photoId}`;
+    if(photo.fromRequest === false) {
+      let favRadioName = `radioFav${photo.photoId}`;
+      let visibleCheckName = `checkboxVisible${photo.photoId}`;
+      let homePageCheckName = `checkboxHomepage${photo.photoId}`;
 
-    let favChecked = ``;
-    if (furniture.favouritePhoto && photo.photoId
-        === furniture.favouritePhoto.photoId) {
-      favChecked = `checked`;
-    }
-
-    let visibleCheckedOriginaly = false;
-    let homePageCheckedOriginaly = false;
-    let visibileChecked = ``;
-    let homePageChecked = ``;
-    if (photo.isVisible) {
-      visibileChecked = `checked`;
-      visibleCheckedOriginaly = true;
-
-      if (photo.onHomePage && photo.isVisible) {
-        homePageChecked = `checked`;
-        homePageCheckedOriginaly = true;
+      let favChecked = ``;
+      if (furniture.favouritePhoto && photo.photoId
+          === furniture.favouritePhoto.photoId) {
+        favChecked = `checked`;
       }
+
+      let visibleCheckedOriginaly = false;
+      let homePageCheckedOriginaly = false;
+      let visibileChecked = ``;
+      let homePageChecked = ``;
+      if (photo.isVisible) {
+        visibileChecked = `checked`;
+        visibleCheckedOriginaly = true;
+
+        if (photo.onHomePage && photo.isVisible) {
+          homePageChecked = `checked`;
+          homePageCheckedOriginaly = true;
+        }
+      } else {
+        homePageChecked = `disabled`;
+      }
+
+      photos += `
+      <div class="p-1 w-50 container photo-list-container" from-request="false" photoId=${photo.photoId}>
+        <div class="row px-0">
+          <div class="col-6">
+            <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+          </div>
+          <div class="text-left col-6">
+            <label class="form-check-label" for="${favRadioName}">
+              <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId="${photo.photoId}" furnitureid="${photo.furnitureId}" ${favChecked}>
+              Photo favorite
+            </label>
+            <br/>
+            <label class="form-check-label" for="${visibleCheckName}">
+              <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
+              Visible
+            </label>
+            <br/>
+            <label class="form-check-label" for="${homePageCheckName}">
+              <input id="${homePageCheckName}" type="checkbox" class="form-check-input homepageCheckbox" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
+              Affiché sur la page d'accueil
+            </label>
+          </div>
+        </div>
+      </div>`;
     } else {
-      homePageChecked = `disabled`;
+      //photo from request -> no input
+      photos += `
+      <div class="p-1 w-50 container photo-list-container" from-request="true" photoId=${photo.photoId}>
+        <div class="row px-0">
+          <div class="col-6">
+            <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
+            <span class="mt-1 badge badge-secondary">Photo de demande<br/>de visite</span>
+          </div>
+        </div>
+      </div>`;
     }
 
-    photos += `
-    <div class="p-1 w-50 container photo-list-container" photoId=${photo.photoId}>
-      <div class="row px-0">
-        <div class="col-6">
-          <img class="img-fluid" src="${photo.source}" alt="photo id:${photo.photoId}"/>
-        </div>
-        <div class="text-left col-6">
-          <label class="form-check-label" for="${favRadioName}">
-            <input id="${favRadioName}" type="radio" class="form-check-input favRadio" name="${favRadioName}" photoId="${photo.photoId}" furnitureid="${photo.furnitureId}" ${favChecked}>
-            Photo favorite
-          </label>
-          <br/>
-          <label class="form-check-label" for="${visibleCheckName}">
-            <input id="${visibleCheckName}" type="checkbox" class="form-check-input visibleCheckbox" name="${visibleCheckName}" photoId=${photo.photoId} checked_originaly="${visibleCheckedOriginaly}" ${visibileChecked}>
-            Visible
-          </label>
-          <br/>
-          <label class="form-check-label" for="${homePageCheckName}">
-            <input id="${homePageCheckName}" type="checkbox" class="form-check-input homepageCheckbox" name="${homePageCheckName}" photoId=${photo.photoId} checked_originaly="${homePageCheckedOriginaly}" ${homePageChecked}>
-            Affiché sur la page d'accueil
-          </label>
-        </div>
-      </div>
-    </div>`;
   });
   let pId
   if (!furniture.favouritePhoto) {
@@ -838,34 +871,37 @@ const findSelectedFav = () => {
 const findAllPhotosForFlagUpdate = () => {
   let arrayFound = new Array();
   document.querySelectorAll(".photo-list-container").forEach((container) => {
-    let visibleCheckbox = container.querySelector(".visibleCheckbox");
-    let homepageCheckbox = container.querySelector(".homepageCheckbox");
-    let photoId = container.getAttribute("photoid");
-    let isModified = false;
+    let fromRequest = container.getAttribute("from-request");
+    if(fromRequest==="false"){
+      let visibleCheckbox = container.querySelector(".visibleCheckbox");
+      let homepageCheckbox = container.querySelector(".homepageCheckbox");
+      let photoId = container.getAttribute("photoid");
+      let isModified = false;
 
-    let visibleChecked = "false";
-    let homepageChecked = "false";
-    if (visibleCheckbox.checked) {
-      visibleChecked = "true";
-    }
-    if (!homepageCheckbox.disabled && homepageCheckbox.checked) {
-      homepageChecked = "true";
-    }
-
-    if (visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
-      isModified = true;
-    } else if (homepageCheckbox.getAttribute("checked_originaly")
-        != homepageChecked) {
-      isModified = true;
-    }
-
-    if (isModified) {
-      let bundle = {
-        photoId: photoId,
-        isVisible: visibleCheckbox.checked,
-        isOnHomePage: homepageCheckbox.checked,
+      let visibleChecked = "false";
+      let homepageChecked = "false";
+      if (visibleCheckbox.checked) {
+        visibleChecked = "true";
       }
-      arrayFound.push(bundle);
+      if (!homepageCheckbox.disabled && homepageCheckbox.checked) {
+        homepageChecked = "true";
+      }
+
+      if (visibleCheckbox.getAttribute("checked_originaly") != visibleChecked) {
+        isModified = true;
+      } else if (homepageCheckbox.getAttribute("checked_originaly")
+          != homepageChecked) {
+        isModified = true;
+      }
+
+      if (isModified) {
+        let bundle = {
+          photoId: photoId,
+          isVisible: visibleCheckbox.checked,
+          isOnHomePage: homepageCheckbox.checked,
+        }
+        arrayFound.push(bundle);
+      }
     }
   });
   return arrayFound;
@@ -1427,20 +1463,21 @@ const withdraw = (e, furniture) => {
 
 const toSold = async (e, furniture) => {
   e.preventDefault();
-  let specialSalePrice = "";
+
+  let specialSalePrice;
   let buyerUsername;
+
   let bundle;
   if (furniture.status === "AVAILABLE_FOR_SALE" || furniture.status === "IN_RESTORATION") {
     specialSalePrice = e.target.parentElement.parentElement.querySelector("#specialSalePriceInput").value;
     let buyerInput = e.target.parentElement.parentElement.querySelector("#buyerUsernameInput");
-    if(buyerInput.disabled) {
+    if (buyerInput.disabled)
       buyerUsername = inStorePurchaseUsername;
-    }else {
+    else
       buyerUsername = buyerInput.value;
-    }
-  } else if (furniture.status === "UNDER_OPTION") {
+  } else if (furniture.status === "UNDER_OPTION")
     buyerUsername = furniture.option.user.username;
-  }
+
   if (specialSalePrice !== "") {
     bundle = {
       buyerUsername: buyerUsername,
@@ -1463,16 +1500,17 @@ const toSold = async (e, furniture) => {
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(
-          response.status + " : " + response.statusText
-      );
+      if (response.status == 404)
+        throw new Error("Le meuble ou le client n'existe pas");
+      else
+        throw new Error("Error code : " + response.status + " : " + response.statusText);
     }
     return response.json();
   }).then((data) => {
     furnitureMap[data.furnitureId] = data;
     loadCard(data.furnitureId);
   }).catch((err) => {
-    console.log("Erreur de fetch !! :´\n" + err);
+    console.error("Erreur de fetch !! :´<\n" + err);
     displayErrorMessage("errorDiv", err);
   });
 
@@ -1522,6 +1560,7 @@ const respectsAllActiveFilters = (furniture) => {
   res = res && respectsInStoreFilter(furniture);
   res = res && respectsPriceFilters(furniture);
   res = res && respectsStatusFilter(furniture);
+  res = res && respectTypeFilter(furniture);
   return res;
 }
 
@@ -1636,6 +1675,10 @@ const respectsStatusFilter = (furniture) => {
   return furniture.status === activeFilters.status;
 }
 
+const respectTypeFilter = (furniture) => {
+  return activeFilters.type === "" || activeFilters.type === furniture.type
+}
+
 /**
  * remove all applied filter, then refresh display
  */
@@ -1652,11 +1695,13 @@ const applyFilters = (e) => {
   let inStoreCheckbox = document.querySelector("#in-store-filter");
   let priceInput = document.querySelector("#price-filter");
   let statusInput = document.querySelector("#status-filter");
+  let type = document.querySelector("#furnitureTypeFilter");
 
   activeFilters.username = usernameInput.value;
   activeFilters.inStore = inStoreCheckbox.checked;
   activeFilters.price = priceInput.value;
   activeFilters.status = statusInput.value;
+  activeFilters.type = type.value;
 
   refreshDisplay();
 }
@@ -1671,6 +1716,7 @@ const placeFilterForm = () => {
   let inStoreCheckbox = document.querySelector("#in-store-filter");
   let priceInput = document.querySelector("#price-filter");
   let statusInput = document.querySelector("#status-filter");
+  document.querySelector("[value='" + activeFilters.type + "']").setAttribute('selected', 'true');
 
   usernameInput.value = activeFilters.username;
   if(activeFilters.inStore) {
