@@ -371,7 +371,6 @@ const generateUsersPage = () => {
           <div id="errorDiv" class="d-none"></div>
         </div>
         <div class="container-fluid px-3 py-2 border border-top-0 border-right-0 border-left-0">
-          <h3>Filtrer les utilisateurs:</h3>
           <div class="form-inline">
             <div class="form-group mx-3">
               <input type="search" name="search" class="m-3 form-control" id="userSearchBar" placeholder="Rechercher par nom, prenom, code postal ou ville">

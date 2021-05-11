@@ -142,7 +142,6 @@ const generatePageHtml = (largeTable = true) => {
   }
   let res = `
   <div class="container-fluid px-5 py-3 border border-top-0 border-right-0 border-left-0">
-    <h3>Filtrer les meubles:</h3>
     <form class="form-inline">
       <div class="form-group mx-3">
         <input type="text" class="form-control" id="username-filter" placeholder="Filtrer par pseudo"/>

@@ -143,6 +143,27 @@
   margin-left: 30%!important;
 }
 
+.carouselPhoto {
+  height: 40em;
+}
+
+@media (max-width: 700px) {
+  .carouselPhoto {
+    height: 20em;
+  }
+}
+
+@media (max-width: 350px) {
+  .carouselPhoto {
+    height: 10em;
+  }
+}
+
+@media (max-width: 200px) {
+  .carouselPhoto {
+    height: 5em;
+  }
+}
 
 
 /********************************On Footer**********************************/
@@ -259,10 +280,7 @@ footer {
 
 /********************************Furniture**********************************/
 .wrapperFurniturePage {
-  display: grid;
-  grid-template-columns: 1fr 8fr 1fr;
-  grid-gap: 2em;
-  margin-top: 5em;
+  padding: 2em;
 }
 
 .contentFurniturePage {
@@ -271,6 +289,7 @@ footer {
   grid-gap: 2em;
   padding: 1em;
   border: solid 1px grey;
+  align-items: end;
 }
 
 .imageFurniturePage {
@@ -295,7 +314,7 @@ footer {
   }
 }
 
-@media (max-width: 450px) {
+@media (max-width: 600px) {
   .contentFurniturePage {
     grid-template-columns: 1fr;
   }
@@ -474,6 +493,7 @@ body, .search-bar {
 
 #largeTableContainer {
   overflow-x: auto;
+  padding: 1em !important;
 }
 
 #largeTable {
