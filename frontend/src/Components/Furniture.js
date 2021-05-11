@@ -67,8 +67,6 @@ const onClickApplyFilter = (e) => {
   page.innerHTML = errorDiv + generateTable();
   addAllEventListeners();
   document.querySelector("[value='" + filter.type + "']").setAttribute('selected', 'true');
-  let loadArea = document.querySelector("#loadArea");
-  loadArea.className = "d-none"
 }
 
 
@@ -241,7 +239,7 @@ const getHTMLEntireCarousel = (tabPhotoToRender, furniture) => {
   if(tabPhotoToRender.length === 0)
     return generateLoadingAnimation();
   return `
-  <div class="row mx-auto pt-5">
+  <div class="pt-5">
     <div id="carousel-${furniture.furnitureId}" class="carousel slide" data-ride="carousel">
       <ol class="carousel-indicators bg-secondary">` + getHTMLCarouselIndicators(tabPhotoToRender.length, furniture) + `</ol>
       <div class="carousel-inner">
@@ -283,7 +281,7 @@ const getHTMLCarouselPhotos = (tabPhotoToRender) => {
   if (tabPhotoToRender.length === 0) {
     ret = `
     <div class="carousel-item active text-center">
-      <img class="w-75 my-3" src="` + notFoundPhoto + `" alt="Photo introuvable">
+      <img class="my-3 imageCarouselFurniture" src="` + notFoundPhoto + `" alt="Photo introuvable">
     </div>
     `;
   }
@@ -291,12 +289,12 @@ const getHTMLCarouselPhotos = (tabPhotoToRender) => {
     if (ret === "") {
       ret += `
         <div class="carousel-item active text-center">
-          <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
+          <img class="my-3 imageCarouselFurniture" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
         </div>`;
     } else {
       ret += `
         <div class="carousel-item text-center">
-          <img class="w-75 my-3" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
+          <img class="my-3 imageCarouselFurniture" src="` + photo.source + `" alt="Photo meuble onError="this.src='` + notFoundPhoto + `'">
         </div>`;
     }
   });

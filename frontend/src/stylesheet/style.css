@@ -326,6 +326,10 @@ img-furniture {
   object-fit: cover;
 }
 
+.imageCarouselFurniture {
+  height: 35em;
+}
+
 .badgeSold {
   transform: rotateZ(-25deg) translateY(2em);;
   margin-top: 2em;
