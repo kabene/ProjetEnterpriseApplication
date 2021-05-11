@@ -1,8 +1,8 @@
 
-GET {{baseUrl}}/furniture/1
+GET {{baseUrl}}/furniture/5
 ###
 
-GET {{baseUrl}}/furniture/detail/1
+GET {{baseUrl}}/furniture/detail/5
 Authorization: {{jwt}}
 ###
 
