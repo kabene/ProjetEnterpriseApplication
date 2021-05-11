@@ -212,15 +212,15 @@ VALUES (DEFAULT, 'Line', 'Charles', 'Charline', 'charline@proximus.be', 6 , now(
 
 INSERT
 INTO satchoFurniture.requests_for_visit (request_id, request_date, time_slot, address_id, visit_date_time, explanatory_note, status, user_id)
-VALUES (1, '24-03-21', 'lundi de 18h à 22h', 5, '29-03-21 20:00:00', NULL, 'confirmed', 5);
+VALUES (DEFAULT, '24-03-21', 'lundi de 18h à 22h', 5, '29-03-21 20:00:00', NULL, 'confirmed', 5);
 
 INSERT
 INTO satchoFurniture.requests_for_visit (request_id, request_date, time_slot, address_id, visit_date_time, explanatory_note, status, user_id)
-VALUES (2, '25-03-21', 'lundi de 18h à 22h', 5, NULL, 'Meuble trop récent', 'canceled', 5);
+VALUES (DEFAULT, '25-03-21', 'lundi de 18h à 22h', 5, NULL, 'Meuble trop récent', 'canceled', 5);
 
 INSERT
 INTO satchoFurniture.requests_for_visit (request_id, request_date, time_slot, address_id, visit_date_time, explanatory_note, status, user_id)
-VALUES (3, '25-03-21', 'tous les jours de 15h à 18h', 6, '29-03-21 15:00:00', NULL, 'confirmed', 6);
+VALUES (DEFAULT, '25-03-21', 'tous les jours de 15h à 18h', 6, '29-03-21 15:00:00', NULL, 'confirmed', 6);
 
 
 
@@ -229,11 +229,11 @@ VALUES (DEFAULT, 'Rue Victor Buillenne', '9', '4C' , '4800', 'Verviers', 'Belgiq
 
 INSERT
 INTO satchoFurniture.requests_for_visit (request_id, request_date, time_slot, address_id, visit_date_time, explanatory_note, status, user_id)
-VALUES (4, '21-04-21', 'tous les matins 9h à 13h',8,NULL, NULL, 'waiting', 7);
+VALUES (DEFAULT, '21-04-21', 'tous les matins 9h à 13h',8,NULL, NULL, 'waiting', 7);
 
 INSERT
 INTO satchoFurniture.requests_for_visit (request_id, request_date, time_slot, address_id, visit_date_time, explanatory_note, status, user_id)
-VALUES (5, '22-04-21', 'tous les matins 16h à 19h',4,'26-04-21 18:00:00', NULL, 'confirmed', 4);
+VALUES (DEFAULT, '22-04-21', 'tous les matins 16h à 19h',4,'26-04-21 18:00:00', NULL, 'confirmed', 4);
 
 
 INSERT
