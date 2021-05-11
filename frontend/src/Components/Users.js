@@ -529,7 +529,7 @@ const generateUserCard = (userDetail) => {
             <h5 id="Name&Firstname">` + userDetail.lastName + ` ` + userDetail.firstName +`</h5>
             <p class="profile-rating">ROLE : 
               <span id="role">
-               ` + userDetail.role + ` 
+               ` + translateRoleToFrench(userDetail.role) + ` 
               </span>
             </p>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
