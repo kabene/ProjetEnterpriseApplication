@@ -854,7 +854,7 @@ const generateStatusInfos = (status) => {
       break;
     case "WAITING":
       res.classname = "warning";
-      res.status = "en attente";
+      res.status = "En attente";
       break;
     case "CANCELED":
       res.classname = "danger";
@@ -995,7 +995,7 @@ async function findVisitRequestList() {
  */
 async function getImage(furniture) {
   let signal = getSignal();
-
+  
   return fetch(baseUrl+"/photos/favourite/" + furniture.furnitureId, {
     signal,
     method: "GET",
