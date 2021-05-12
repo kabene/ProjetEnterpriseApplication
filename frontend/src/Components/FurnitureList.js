@@ -32,6 +32,7 @@ let activeFilters = {...emptyFilter}; // deep copy
 
 const FurnitureList = async (id) => {
   currentUser = findCurrentUser();
+  favFetched = false;
   gdpr(page);
   let pageHTML = errorDiv + `
   <div id="mainPage" class="col-12 px-0">${generateLoadingAnimation()}</div>`;
