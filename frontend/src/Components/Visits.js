@@ -854,10 +854,10 @@ const generateStatusInfos = (status) => {
       break;
     case "WAITING":
       res.classname = "warning";
-      res.status = "en attente";
+      res.status = "En attente";
       break;
     case "CANCELED":
-      res.classname = "danger";
+      res.classname = "danger";S
       res.status = "Annulé";
       break;
     default:
